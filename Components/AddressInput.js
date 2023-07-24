@@ -72,17 +72,6 @@ const AddressInput = () => {
     
                 return;
             }
-    
-            
-            // let map = new maplibregl.Map({
-            //     container: 'map',
-            //     attributionControl: false, 
-            //     style: 'https://tiles.locationiq.com/v3/light/vector.json?key='+locationiqKey,
-            //     zoom: 16,
-            //     center: endPoint
-            // });
-    
-            
             
             map.on('load', function () {
                 map.addLayer({
@@ -294,7 +283,7 @@ const AddressInput = () => {
         setIsSubmitLoading(true);
 
         // fetch("https://addressvalidator.onrender.com/register", {
-        fetch("http://localhost:3000/api/register", {
+        fetch("/api/register", {
             method: "POST",
             body: JSON.stringify(formValue),
             headers: {
