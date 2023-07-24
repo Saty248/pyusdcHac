@@ -1,27 +1,46 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+*{
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  padding: 0;
+  background-color: aliceblue;
+  font-family: 'Poppins', sans-serif;
+}
+
+#map{ 
+    width:90%; 
+    margin: auto;
+    margin-top: 2rem;
+    height: 70vh;
+  }
+
+button{
+  cursor: pointer;
+}
+
+#markerWithExternalCss{
+  background-image: url('https://maps.locationiq.com/v3/samples/marker50px.png');
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+/*Example 2, most of the CSS is set by JS*/
+.marker{
+  display: block;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (min-width: 992px){
+  body{
+    padding: 2rem 5rem;
+  }
 }
