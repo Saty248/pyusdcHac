@@ -4,11 +4,16 @@ import { Sequelize } from "sequelize";
 
 const handler = async(req, res) => {
   if(req.method === "POST") {
-    console.log(process.env.PORT)
-    console.log(process.env.DATABASE)
-    console.log(process.env.USER)
-    console.log(process.env.PASSWORD)
-    console.log(process.env.HOST)
+    // console.log(process.env.PORT)
+    // console.log(process.env.DATABASE)
+    // console.log(process.env.USER)
+    // console.log(process.env.PASSWORD)
+    // console.log(process.env.HOST)
+
+    res.status(201).json({
+        message: "User created",
+        userId: result._id
+    })
 
 
     const firstName = req.body.firstName;
@@ -37,10 +42,7 @@ const handler = async(req, res) => {
         return;
       }
 
-      res.status(201).json({
-                              message: "User created",
-                              userId: result._id
-                          })
+    
 
 
   //   sequelize.sync()
