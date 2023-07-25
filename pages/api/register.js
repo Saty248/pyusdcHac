@@ -66,39 +66,39 @@ const handler = (req, res) => {
     }
   })
 
-  if(req.method === "POST") {
-    console.log(process.env.PORT)
-    console.log(process.env.DATABASE)
-    console.log(process.env.USER)
-    console.log(process.env.PASSWORD)
-    console.log(process.env.HOST)
+  // if(req.method === "POST") {
+  //   console.log(process.env.PORT)
+  //   console.log(process.env.DATABASE)
+  //   console.log(process.env.USER)
+  //   console.log(process.env.PASSWORD)
+  //   console.log(process.env.HOST)
 
 
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const email = req.body.email;
-    const addressValue = req.body.address;
-    const longitude = req.body.longitude;
-    const latitude = req.body.latitude;
-    const coordinates = req.body.coordinates;
+  //   const firstName = req.body.firstName;
+  //   const lastName = req.body.lastName;
+  //   const email = req.body.email;
+  //   const addressValue = req.body.address;
+  //   const longitude = req.body.longitude;
+  //   const latitude = req.body.latitude;
+  //   const coordinates = req.body.coordinates;
 
-    const regex = /^\S+@\S+\.\S+/
-    const emailValid = regex.test(email)
+  //   const regex = /^\S+@\S+\.\S+/
+  //   const emailValid = regex.test(email)
 
 
-    if(!firstName ||
-        !lastName ||
-        !emailValid ||
-        !addressValue ||
-        !longitude ||
-        !latitude 
-        || !coordinates
-      ) {
-        res.status(422).json({
-          message: "Invalid input"
-        })
-        return;
-      }
+  //   if(!firstName ||
+  //       !lastName ||
+  //       !emailValid ||
+  //       !addressValue ||
+  //       !longitude ||
+  //       !latitude 
+  //       || !coordinates
+  //     ) {
+  //       res.status(422).json({
+  //         message: "Invalid input"
+  //       })
+  //       return;
+  //     }
 
    
 
@@ -134,7 +134,7 @@ const handler = (req, res) => {
     //       message: 'oops! something went wrong. please try again'
     //     })
     //   })
-  }
+  // }
 }
 
 export default handler;
