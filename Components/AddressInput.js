@@ -286,7 +286,7 @@ const AddressInput = () => {
             address: address,
             longitude: addressData.lon,
             latitude: addressData.lat,
-            // coordinates: addressData.geojson ? addressData.geojson.coordinates : []
+            coordinates: addressData.geojson ? addressData.geojson.coordinates : []
         }
 
         setIsSubmitLoading(true);
@@ -301,7 +301,7 @@ const AddressInput = () => {
                 address: address,
                 longitude: addressData.lon,
                 latitude: addressData.lat,
-                // coordinates: addressData.geojson ? addressData.geojson.coordinates : []
+                coordinates: addressData.geojson ? addressData.geojson.coordinates : []
             }),
             headers: {
                 "Content-Type": "application/json"
