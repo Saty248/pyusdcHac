@@ -22,7 +22,7 @@ const handler = (req, res) => {
     const addressValue = req.body.address;
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
-    // const coordinates = req.body.coordinates;
+    const coordinates = req.body.coordinates;
 
     const regex = /^\S+@\S+\.\S+/
     const emailValid = regex.test(email)
@@ -34,6 +34,7 @@ const handler = (req, res) => {
                 address: addressValue,
                 longitude: longitude,
                 latitude: latitude,
+                coordinates: coordinates
             }
 
     return res.status(201).json({
