@@ -37,25 +37,26 @@ const handler = (req, res) => {
                 coordinates: coordinates
             }
 
-    return res.status(201).json({
+ 
+
+    if(!firstName ||
+        !lastName ||
+        !emailValid ||
+        !addressValue ||
+        !longitude ||
+        !latitude 
+        || !coordinates
+      ) {
+        res.status(422).json({
+          message: "Invalid input"
+        })
+        return;
+      }
+
+         return res.status(201).json({
                           message: "User created",
                           body: body
                       })
-
-    // if(!firstName ||
-    //     !lastName ||
-    //     !emailValid ||
-    //     !addressValue ||
-    //     !longitude ||
-    //     !latitude 
-    //     // || !coordinates
-    //   ) {
-    //     res.status(422).json({
-    //       message: "Invalid input"
-    //     })
-    //     return;
-    //   }
-
 
     // sequelize.sync()
     // .then(() => {
