@@ -8,7 +8,7 @@ const nextConfig = (phase) => {
         DATABASE: "skye-addresses",
         PASSWORD: "@August11",
         HOST: "localhost",
-        PORT: 3306
+        // PORT: 3306
       }
     }
   } else {
