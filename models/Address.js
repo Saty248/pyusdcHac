@@ -2,7 +2,7 @@ import Sequelize from "sequelize";
 import { sequelize } from "@/db/database";
 import { DataTypes } from "sequelize";
 
-export const Address = sequelize.define("address", {
+export const Address = sequelize.define("location", {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,

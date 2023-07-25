@@ -299,9 +299,11 @@ const AddressInput = () => {
                 "Content-Type": "application/json"
             }
         }).then((res) => {
+            console.log(res)
             if(!res.ok) {
                 return res.json()
                     .then(errorData => {
+                        console.log(errorData.message)
                         throw new Error(errorData.message);
                     });
             }
