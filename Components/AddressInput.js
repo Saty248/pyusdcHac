@@ -300,7 +300,8 @@ const AddressInput = () => {
                 email: emailValue,
                 address: address,
                 longitude: addressData.lon,
-                latitude: addressData.lat
+                latitude: addressData.lat,
+                // coordinates: addressData.geojson ? addressData.geojson.coordinates : []
             }),
             headers: {
                 "Content-Type": "application/json"
