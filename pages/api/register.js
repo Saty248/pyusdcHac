@@ -51,7 +51,7 @@ const Address = sequelize.define("Location", {
     }
 });
 
-const handler = async(req, res) => {
+const handler = (req, res) => {
   console.log(req.method)
 
   if(req.method === "POST") {
