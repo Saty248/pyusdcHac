@@ -296,7 +296,11 @@ const AddressInput = () => {
             method: "POST",
             body: JSON.stringify({
                 firstName: firstNameValue,
-                lastName: lastNameValue
+                lastName: lastNameValue,
+                email: emailValue,
+                address: address,
+                longitude: addressData.lon,
+                latitude: addressData.lat
             }),
             headers: {
                 "Content-Type": "application/json"
