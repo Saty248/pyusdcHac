@@ -54,6 +54,18 @@ const Address = sequelize.define("Location", {
 const handler = (req, res) => {
   console.log(req.method)
 
+  return res.status(201).json({
+    payload: {
+                firstname: firstName,
+                lastname: lastName,
+                email: email,
+                address: addressValue,
+                longitude: longitude,
+                latitude: latitude,
+                coordinates: coordinates
+    }
+  })
+
   if(req.method === "POST") {
     console.log(process.env.PORT)
     console.log(process.env.DATABASE)
@@ -88,17 +100,7 @@ const handler = (req, res) => {
         return;
       }
 
-      return res.status(201).json({
-        payload: {
-                    firstname: firstName,
-                    lastname: lastName,
-                    email: email,
-                    address: addressValue,
-                    longitude: longitude,
-                    latitude: latitude,
-                    coordinates: coordinates
-        }
-      })
+   
 
     // sequelize.sync()
     // .then(() => {
