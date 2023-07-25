@@ -1,41 +1,43 @@
-import Sequelize from "sequelize";
-import { sequelize } from "@/db/database";
+// const Sequelize = require('sequelize');
+const sequelize = require("../db/database")
 import { DataTypes } from "sequelize";
 
-export const Address = sequelize.define("location", {
+const Address = sequelize.define("Location", {
     id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
     firstname: {
-                type: Sequelize.STRING,
+                type: DataTypes.STRING,
                 allowNull: false
             },
     lastname: {
-                type: Sequelize.STRING,
+                type: DataTypes.STRING,
                 allowNull: false
             },
     email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     address: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     longitude: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     latitude: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
-    // coordinates: {
-    //     type: DataTypes.JSON,
-    //     defaultValue: [],
-    //     allowNull: false
-    // }
+    coordinates: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+        allowNull: false
+    }
 });
+
+module.exports = Address;
