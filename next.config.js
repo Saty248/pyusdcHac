@@ -16,7 +16,7 @@ const nextConfig = (phase) => {
     env: {
       USER: "sky_claim_dev",
       DATABASE: "sky_claim_dev",
-      PASSWORD: "Pw2dv8i8g4hmkOj",
+      PASSWORD: "Pw2dv8i8g4hmkj",
       HOST: "mysql-17204-0.cloudclusters.net",
       PORT: 17204 
     }
