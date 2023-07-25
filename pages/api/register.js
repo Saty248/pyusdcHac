@@ -1,4 +1,4 @@
-// import { sequelize } from "@/db/database";
+import { sequelize } from "@/db/database";
 // import { Address } from "@/models/Address";
 // import { Sequelize } from "sequelize";
 
@@ -53,10 +53,27 @@ const handler = (req, res) => {
         return;
       }
 
-         return res.status(201).json({
-                          message: "User created",
-                          body: body
-                      })
+         
+    sequelize.sync()
+    .then(() => {
+          return res.status(200).json({
+            message: "Address already registered. Duplicate records are not allowed!"
+        })
+      })
+      // return Address.findAll({ where: { address: addressValue } }) })
+      // .then(addresses => {
+      //     const address = addresses[0]
+      //     if(address) {
+      //                 return res.status(422).json({
+      //                     message: "Address already registered. Duplicate records are not allowed!"
+      //                 })
+      //             }})
+                  .catch(err => {
+                        console.log(err)
+                        res.status(500).json({
+                          message: 'oops! something went wrong. please try again'
+                        })
+                      })           
 
     // sequelize.sync()
     // .then(() => {
