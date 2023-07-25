@@ -33,9 +33,9 @@ export const Address = sequelize.define("address", {
         type: Sequelize.STRING,
         allowNull: false
     },
-    coordinates: {
-        type: DataTypes.JSON,
-        defaultValue: [],
-        allowNull: false
-    }
+    // coordinates: {
+    //     type: DataTypes.JSON,
+    //     defaultValue: [],
+    //     allowNull: false
+    // }
 });

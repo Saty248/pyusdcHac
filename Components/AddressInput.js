@@ -56,19 +56,28 @@ const AddressInput = () => {
     
             if(!addressData.geojson || addressData.geojson.type !== "Polygon") {
                 console.log(endPoint)
+                
+                if(map) {
+                    // const el2 = document.createElement('p');
+                    // el2.className = 'marker';
+                    // el2.style.backgroundImage = 'url(https://maps.locationiq.com/v3/samples/marker50px.png)';
+                    // el2.style.width = '500px';
+                    // el2.style.height = '500px';
     
-                
-                let el2 = document.createElement('div');
-                el2.className = 'marker';
-                el2.style.backgroundImage = 'url(https://maps.locationiq.com/v3/samples/marker50px.png)';
-                el2.style.width = '50px';
-                el2.style.height = '50px';
-                
-            
-                new maplibregl.Marker()
-                // .setLngLat(["", ""])
-                .setLngLat(endPoint)
-                .addTo(map);
+                    // new maplibregl.Marker(el2)
+                    // .setLngLat(endPoint)
+                    // .addTo(map);
+
+                    var el = document.createElement('div');
+                    el.id = 'markerWithExternalCss';
+                    // finally, create the marker
+                    var markerWithExternalCss = new maplibregl.Marker(el)
+                        .setLngLat(endPoint)
+                        .addTo(map);
+    
+                    return;
+                }
+             
     
                 return;
             }
@@ -277,7 +286,7 @@ const AddressInput = () => {
             address: address,
             longitude: addressData.lon,
             latitude: addressData.lat,
-            coordinates: addressData.geojson ? addressData.geojson.coordinates : []
+            // coordinates: addressData.geojson ? addressData.geojson.coordinates : []
         }
 
         setIsSubmitLoading(true);

@@ -13,7 +13,7 @@ const handler = async(req, res) => {
   const addressValue = req.body.address;
   const longitude = req.body.longitude;
   const latitude = req.body.latitude;
-  const coordinates = req.body.coordinates;
+  // const coordinates = req.body.coordinates;
 
   const regex = /^\S+@\S+\.\S+/
   const emailValid = regex.test(email)
@@ -25,7 +25,7 @@ const handler = async(req, res) => {
       !addressValue ||
       !longitude ||
       !latitude ||
-      !coordinates
+      // !coordinates
     ) {
       res.status(422).json({
         message: "Invalid input"
@@ -51,7 +51,7 @@ const handler = async(req, res) => {
             address: addressValue,
             longitude: longitude,
             latitude: latitude,
-            coordinates: coordinates
+            // coordinates: coordinates
         })
         .then(result => {
             res.status(201).json({
