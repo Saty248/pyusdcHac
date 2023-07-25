@@ -1,6 +1,55 @@
-const sequelize = require("../../db/database")
-const Address = require("../../models/Address");
-import { Sequelize } from "sequelize";
+// const sequelize = require("../../db/database")
+// const Address = require("../../models/Address");
+// import { Sequelize } from "sequelize";
+const { Sequelize } = require('sequelize');
+import { DataTypes } from "sequelize";
+
+
+const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD, 
+    {dialect: "mysql", host: process.env.HOST, 
+    port: process.env.PORT});
+
+
+// const sequelize = require("../db/database")
+
+
+const Address = sequelize.define("Location", {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    firstname: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+    lastname: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    longitude: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    latitude: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    coordinates: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+        allowNull: false
+    }
+});
 
 const handler = async(req, res) => {
   if(req.method === "POST") {
