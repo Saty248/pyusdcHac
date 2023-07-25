@@ -56,12 +56,16 @@ const handler = (req, res) => {
     //   }
 
          
+    
     sequelize.sync()
-    .then(() => {
+    .then((result) => {
+          console.log(result)
           return res.status(200).json({
             message: "Address already registered. Duplicate records are not allowed!"
         })
       })
+
+
       // return Address.findAll({ where: { address: addressValue } }) })
       // .then(addresses => {
       //     const address = addresses[0]
