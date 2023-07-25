@@ -134,7 +134,7 @@ const handler = (req, res) => {
     //       message: 'oops! something went wrong. please try again'
     //     })
     //   })
-  // }
+  }
 }
 
 export default handler;
