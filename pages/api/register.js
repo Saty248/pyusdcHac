@@ -1,4 +1,6 @@
-import { sequelize } from "@/db/database";
+const sequelize = require("../../db/database");
+// import { sequelize } from "../../db/database";
+// import { sequelize } from "@/db/database";
 // import { Address } from "@/models/Address";
 // import { Sequelize } from "sequelize";
 
