@@ -78,7 +78,7 @@ const handler = (req, res) => {
                   address: addressValue,
                   longitude: longitude,
                   latitude: latitude,
-                  coordinates: coordinates
+                 
       }
     })
 
