@@ -10,7 +10,7 @@ const handler = async(req, res) => {
     // console.log(process.env.PASSWORD)
     // console.log(process.env.HOST)
 
-    res.status(201).json({
+    return res.status(201).json({
         message: "User created",
         userId: result._id
     })
