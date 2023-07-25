@@ -294,14 +294,15 @@ const AddressInput = () => {
         // fetch("https://addressvalidator.onrender.com/register", {
         fetch("/api/register", {
             method: "POST",
-            body: JSON.stringify(formValue),
+            body: JSON.stringify({name: "Ugwu"}),
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then((res) => {
-            console.log(res)
-            if(!res.ok) {
-                return res.json()
+        })
+        .then((response) => {
+            console.log(response)
+            if(!response.ok) {
+                return response.json()
                     .then(errorData => {
                         console.log(errorData.message)
                         throw new Error(errorData.message);
