@@ -294,7 +294,10 @@ const AddressInput = () => {
         // fetch("https://addressvalidator.onrender.com/register", {
         fetch("/api/register", {
             method: "POST",
-            body: JSON.stringify({name: "Ugwu"}),
+            body: JSON.stringify({
+                firstName: firstNameValue,
+                lastName: lastNameValue
+            }),
             headers: {
                 "Content-Type": "application/json"
             }
