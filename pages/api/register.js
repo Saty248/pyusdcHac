@@ -24,8 +24,8 @@ const handler = async(req, res) => {
       !emailValid ||
       !addressValue ||
       !longitude ||
-      !latitude ||
-      // !coordinates
+      !latitude 
+      // || !coordinates
     ) {
       res.status(422).json({
         message: "Invalid input"
