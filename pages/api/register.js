@@ -2,7 +2,7 @@ import { sequelize } from "@/db/database";
 import { Address } from "@/models/Address";
 import { Sequelize } from "sequelize";
 
-const handler = async(req, res) => {
+const handler = (req, res) => {
   if(req.method === "POST") {
     // console.log(process.env.PORT)
     // console.log(process.env.DATABASE)
