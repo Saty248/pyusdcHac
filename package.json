@@ -11,6 +11,7 @@
   "dependencies": {
     "autoprefixer": "10.4.14",
     "maplibre-gl": "^3.2.0",
+    "mongodb": "^5.7.0",
     "mysql2": "^3.5.2",
     "next": "13.4.12",
     "postcss": "8.4.27",
