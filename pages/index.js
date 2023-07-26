@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <Fragment>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
         <title>Address Validator</title>
-        <link href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css' rel='stylesheet' />
       </Head>
       <AddressInput />
     </Fragment>

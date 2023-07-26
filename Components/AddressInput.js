@@ -7,7 +7,6 @@ import classes from "./Addressinput.module.css";
 
 import Map from "./Map";
 import RegisterAddress from "./RegisterAddress";
-import ConfirmModal from "./ConfirmModal";
 
 
 const Backdrop = () => {
@@ -31,12 +30,11 @@ const AddressInput = () => {
     const [lastNameValid, setLastNameValid] = useState(true);
     const [emailValid, setEmailValid] = useState(true);
 
-
     const firstName = useRef();
     const lastName = useRef();
     const email = useRef();
 
-    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
+    const locationiqKey = process.env.API_KEY;
 
     useEffect(() => {
         if(addressData.lon && addressData.lat){
@@ -54,32 +52,15 @@ const AddressInput = () => {
             });
 
     
-            if(!addressData.geojson || addressData.geojson.type !== "Polygon") {
-                console.log(endPoint)
+            if(!addressData.geojson || addressData.geojson.type !== "Polygon") {  
+                let el = document.createElement('div');
+                el.id = 'markerWithExternalCss';
                 
-                if(map) {
-                    // const el2 = document.createElement('p');
-                    // el2.className = 'marker';
-                    // el2.style.backgroundImage = 'url(https://maps.locationiq.com/v3/samples/marker50px.png)';
-                    // el2.style.width = '500px';
-                    // el2.style.height = '500px';
-    
-                    // new maplibregl.Marker(el2)
-                    // .setLngLat(endPoint)
-                    // .addTo(map);
+                new maplibregl.Marker(el)
+                    .setLngLat(endPoint)
+                    .addTo(map);
 
-                    var el = document.createElement('div');
-                    el.id = 'markerWithExternalCss';
-                    // finally, create the marker
-                    var markerWithExternalCss = new maplibregl.Marker(el)
-                        .setLngLat(endPoint)
-                        .addTo(map);
-    
-                    return;
-                }
-             
-    
-                return;
+                return;    
             }
             
             map.on('load', function () {
@@ -200,10 +181,10 @@ const AddressInput = () => {
         email.current.value = ""
     }
 
-    const confirmFormSubmitHandler = () => {
-        setConfirmFormSubmit(false);
-        setShowForm(false);       
-    }
+    // const confirmFormSubmitHandler = () => {
+    //     setConfirmFormSubmit(false);
+    //     setShowForm(false);       
+    // }
 
     const mapLoadHandler = (e) => {
         e.preventDefault(); 
@@ -237,7 +218,6 @@ const AddressInput = () => {
                 return;
             }
             
-            // setShowMap(true)
             setAddressData(resData[0]);
             
             setError("")
@@ -245,7 +225,6 @@ const AddressInput = () => {
             setShowForm(false)
             setShowMap(true)
             // setConfirmFormSubmit(true)
-            console.log(addressData)
         })
         .catch((err) => {
             setError(err.message || "oops! something went wrong. please try again")
@@ -294,25 +273,15 @@ const AddressInput = () => {
         // fetch("https://addressvalidator.onrender.com/register", {
         fetch("/api/register", {
             method: "POST",
-            body: JSON.stringify({
-                firstName: firstNameValue,
-                lastName: lastNameValue,
-                email: emailValue,
-                address: address,
-                longitude: addressData.lon,
-                latitude: addressData.lat,
-                coordinates: addressData.geojson ? addressData.geojson.coordinates : []
-            }),
+            body: JSON.stringify(formValue),
             headers: {
                 "Content-Type": "application/json"
             }
         })
         .then((response) => {
-            console.log(response)
             if(!response.ok) {
                 return response.json()
                     .then(errorData => {
-                        console.log(errorData.message)
                         throw new Error(errorData.message);
                     });
             }
@@ -335,7 +304,6 @@ const AddressInput = () => {
             
         })
         .catch((err) => {
-            console.log(err)
             setIsSubmitLoading(false)
             setSubmitError(err.message || "opps! something went wrong. Kindly check your address.");
         })
@@ -351,7 +319,6 @@ const AddressInput = () => {
         setShowMap(false)
     }
 
-   
 
     return (
         <div>
@@ -383,31 +350,8 @@ const AddressInput = () => {
                 <Map onClose={closeMapHandler} onConfirm={confirmMapHandler} />
             }
 
-            {(confirmSubmit || confirmFormSubmit || isLoading) && <Backdrop />}
-            {/* {(confirmSubmit || confirmFormSubmit || isLoading) && ReactDom.createPortal(<Backdrop />, document.getElementById("backdrop-root"))} */}
-            
-            {confirmFormSubmit && <ConfirmModal onConfirm={confirmFormSubmitHandler} />}
-            {/* {confirmFormSubmit && ReactDom.createPortal(<ConfirmModal onConfirm={confirmFormSubmitHandler} />, document.getElementById("modal-root"))} */}
-            
-            {/* {confirmSubmit && <ConfirmModal onConfirm={confirmFormSubmitHandler} />} */}
-            <RegisterAddress 
-                            confirm={confirmSubmit}
-                            submitError={submitError}
-                            firstName={firstName}
-                            changeFirstName={firstNameHandler}
-                            firstNameValid={firstNameValid}
-                            lastName={lastName}
-                            changeLastName={lastNameHandler}
-                            lastNameValid={lastNameValid}
-                            changeEmail={emailHandler}
-                            email={email}
-                            emailValid={emailValid}
-                            address={address}
-                            submitLoading={isSubmitLoading}
-                            onClose={closeConfirmModal}
-                            onConfirm={confirmSubmitHandler}
-                        />
-            {/* {ReactDom.createPortal(<RegisterAddress 
+            {(confirmSubmit || confirmFormSubmit || isLoading) && ReactDom.createPortal(<Backdrop />,  document.getElementById("backdrop-root"))}
+            {confirmSubmit && ReactDom.createPortal(<RegisterAddress 
                             confirm={confirmSubmit}
                             submitError={submitError}
                             firstName={firstName}
@@ -424,7 +368,7 @@ const AddressInput = () => {
                             onClose={closeConfirmModal}
                             onConfirm={confirmSubmitHandler}
                         />, 
-                    document.getElementById("modal-root"))}  */}
+                    document.getElementById("modal-root"))} 
         </div>
     )
 }

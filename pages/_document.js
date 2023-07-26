@@ -3,8 +3,12 @@ import { Html, Head, Main, NextScript } from 'next/document'
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <link href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css' rel='stylesheet' />
+      </Head>
       <body>
+        <div id="backdrop-root"></div>
+        <div id="modal-root"></div>
         <Main />
         <NextScript />
       </body>
