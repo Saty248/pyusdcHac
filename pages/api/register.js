@@ -1,6 +1,5 @@
 const sequelize = require("../../db/database");
-// const Address = require("../../models/address");
-import Address from "../../models/address";
+import Address from "../../models/Address";
 
 
 const handler = (req, res) => {

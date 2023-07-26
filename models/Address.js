@@ -2,7 +2,7 @@
 const sequelize = require("../db/database")
 import { DataTypes } from "sequelize";
 
-const Address = sequelize.define("Location", {
+ const Address = sequelize.define("Location", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -40,4 +40,5 @@ const Address = sequelize.define("Location", {
     }
 });
 
-module.exports = Address;
+// module.exports = Address;
+export default Address;
