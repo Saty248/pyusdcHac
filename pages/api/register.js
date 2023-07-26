@@ -25,7 +25,7 @@ const handler = (req, res) => {
         || !coordinates
       ) {
         res.status(422).json({
-          message: "Invalid input"
+          message: "invalid input value"
         })
         return;
       }
