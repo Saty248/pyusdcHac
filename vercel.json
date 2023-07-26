@@ -1,0 +1,7 @@
+{
+    "build": {
+      "env": {
+        "MYSQL_UNIX_PORT": "/tmp/mysql.sock"
+        }
+    }
+}
