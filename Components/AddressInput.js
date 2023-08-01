@@ -305,7 +305,7 @@ const AddressInput = () => {
         })
         .catch((err) => {
             setIsSubmitLoading(false)
-            setSubmitError(err.message || "opps! something went wrong. Kindly check your address.");
+            setSubmitError(err.message || 'opps! something went wrong. kindly check your address.');
         })
     }
 
