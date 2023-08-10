@@ -1,44 +1,46 @@
-// const Sequelize = require('sequelize');
-const sequelize = require("../db/database");
+const sequelize = require("../db/database")
 import { DataTypes } from "sequelize";
 
- const Address = sequelize.define("Location", {
+const Drone = sequelize.define("Drone", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    firstname: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-    lastname: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
+    ownerName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    operatorName: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    physicalAddress: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    mailingAddress: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     email: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    address: {
+    phoneNumber: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    longitude: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    latitude: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    coordinates: {
+    drone: {
         type: DataTypes.JSON,
         defaultValue: [],
+        allowNull: false
+    },
+    password: {
+        type: DataTypes.STRING,
         allowNull: false
     }
 });
 
-// module.exports = Address;
-export default Address;
+export default Drone;

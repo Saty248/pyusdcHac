@@ -33,7 +33,7 @@ const handler = (req, res) => {
 
     sequelize.sync()
     .then(() => {
-      return Address.findAll({ where: { address: addressValue } }) })
+      Address.findAll({ where: { address: addressValue } }) })
       .then(addresses => {
           const address = addresses[0]
           if(address) {
