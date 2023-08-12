@@ -199,12 +199,14 @@ const registerDrone = () => {
 
         setIsLoading(true);
         setError(false);
+
+        
         
         fetch("/api/register-drone", {
             method: "POST",
             body: JSON.stringify(formValue),
             headers: {
-                "content-type": "application/json"
+                "Content-Type": "application/json"
             }
         }).then(res => {
             if(!res.ok) {
@@ -295,7 +297,7 @@ const registerDrone = () => {
             />
         </div>
         <div>
-            <input type="file" name="file" />
+            <input type="file" name="image" />
         </div>
         <div>
             <input type="password" name="password" placeholder="password" ref={password} 

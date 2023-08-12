@@ -1,6 +1,7 @@
 import Drone from "../../models/Drone";
 import sequelize from "@/db/database";
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
 
 const handler = (req, res) => {
     if(req.method === "POST") {
@@ -11,6 +12,7 @@ const handler = (req, res) => {
         const email = req.body.email;
         const phone = req.body.phone;
         const drone = req.body.drone;
+        const image = req.file;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
 
@@ -19,6 +21,7 @@ const handler = (req, res) => {
         const droneId = drone[0].serialNumber;
 
         
+        console.log(image);
 
         if(!ownerName ||
             !operatorName ||
@@ -33,7 +36,28 @@ const handler = (req, res) => {
                 })
             }
         
-        const hashedPassword = 
+        
+        const fileStorage = multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, "images")
+            },
+            filename: (req, file, cb) => {
+                cb(null, `${file.originalname}-${new Date().toISOString()}`);
+            }
+        })
+
+        const fileFilter = (req, file, cb) => {
+            if(file.mimetype === "image/png" ||
+                file.mimetype === "image/jpg" ||
+                file.mimetype === "image/jpeg"
+            ) {
+                cb(null, true);
+            } else {
+                cb(null, false);
+            }
+        }
+
+        multer({storage: fileStorage, fileFilter: fileFilter}).single('image');
 
         sequelize.sync()
         .then(() => Drone.findAll())
@@ -59,8 +83,6 @@ const handler = (req, res) => {
             .then(results => {
                 if(results.length > 0) {
                     const result = results[0];
-                    console.log(result)
-                    console.log(result.drone)
                     const newDroneArr = [...result.drone]
                     newDroneArr.push(drone[0])
                     result.drone = newDroneArr;
