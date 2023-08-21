@@ -1,4 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 
 *{
     box-sizing: border-box;
@@ -8,7 +13,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: aliceblue;
+  background-color: #F0F0FA;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -41,6 +46,6 @@ button{
 
 @media (min-width: 992px){
   body{
-    padding: 2rem 5rem;
+    /* padding: 2rem 5rem; */
   }
 }
