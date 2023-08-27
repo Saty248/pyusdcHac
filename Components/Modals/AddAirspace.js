@@ -49,7 +49,6 @@ const AddAirspace = (props) => {
                     'layout': {},
                     'paint': {
                         'fill-color': '#D20C0C',
-                        'fill-opacity': 0.5
                     }
                 });
             });

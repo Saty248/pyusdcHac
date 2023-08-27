@@ -47,9 +47,9 @@ const Airspace = () => {
         // alert("clicked")
     }
 
-    const closeAddAirspaceModalHandler = () => {
-        setShowAddAirspaceModal(false);
-    } 
+    // const closeAddAirspaceModalHandler = () => {
+    //     setShowAddAirspaceModal(false);
+    // } 
 
     const backdropCloseHandler = () => {
         setShowAddAirspaceModal(false);
@@ -143,17 +143,17 @@ const Airspace = () => {
             status: "Active"
         },
         {
-            id: "a1",
+            id: "a2",
             title: "Airspace Title", 
             status: "Inactive"
         },
         {
-            id: "a1",
+            id: "a3",
             title: "Airspace Title", 
             status: "Active"
         },
         {
-            id: "a1",
+            id: "a4",
             title: "Airspace Title", 
             status: "Inactive"
         },

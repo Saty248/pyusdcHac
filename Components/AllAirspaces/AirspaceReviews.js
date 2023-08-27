@@ -35,11 +35,11 @@ const AirspaceReviews = (props) => {
         <div className="flex flex-col items-center py-5 justify-center text-sm -mx-1" style={{borderTop: "0.01px solid blue", borderBottom: "0.01px solid blue"}}>
             <p className="text-5xl font-medium">4.5</p>
             <div className="flex flex-row items-center">
-                <Image src="/images/Star.png" width={14} height={14} />
-                <Image src="/images/Star.png" width={14} height={14} />
-                <Image src="/images/Star.png" width={14} height={14} />
-                <Image src="/images/Star.png" width={14} height={14} />
-                <Image src="/images/Star-half.png" width={12} height={12} />
+                <Image src="/images/Star.png" alt="star icon" width={14} height={14} />
+                <Image src="/images/Star.png" alt="star icon"width={14} height={14} />
+                <Image src="/images/Star.png" alt="star icon"width={14} height={14} />
+                <Image src="/images/Star.png" alt="star icon"width={14} height={14} />
+                <Image src="/images/Star-half.png" alt="star icon"width={12} height={12} />
             </div>
             <p>6 reviews</p>
             <button onClick={props.onClick} className="flex flex-row items-center mt-5 gap-1 rounded px-2 py-1" style={{border: "1px solid"}}>
@@ -64,17 +64,17 @@ const AirspaceReviews = (props) => {
                 </div>
             </div>
             <div className="flex flex-row justify-start mt-2.5 items-center me-5">
-                <Image src="/images/Ellipse.png" className="ms-6" width={40} height={40} />
+                <Image src="/images/Ellipse.png"  alt="icon" className="ms-6" width={40} height={40} />
                 <div className="me-5 ms-2">
                     <p className="font-base font-bold text-sm text-light-brown">John Doe</p>
                     <div className="flex flex-row items-center text-sm text-light-brown">
                         <p>4.5</p>
                         <div className="flex flex-row items-center">
-                            <Image src="/images/Star.png" width={12} height={12} />
-                            <Image src="/images/Star.png" width={12} height={12} />
-                            <Image src="/images/Star.png" width={12} height={12} />
-                            <Image src="/images/Star.png" width={12} height={12} />
-                            <Image src="/images/Star-half.png" width={12} height={12} />
+                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                            <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
                         </div>
                         <p>(6)</p>
                     </div>
@@ -84,7 +84,7 @@ const AirspaceReviews = (props) => {
         <div className="bg-white text-center flex flex-row items-center" style={{width: "100%", height: "50px",}}>
             <button className="mx-auto mt-10" style={{borderRadius: "50%", background: "aliceblue", width: "40px", height: "40px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M27.5502 14.9501C28.0384 15.4383 28.0384 16.2297 27.5502 16.7179L20.8836 23.3845C20.3954 23.8727 19.6039 23.8727 19.1158 23.3845L12.4491 16.7179C11.961 16.2297 11.961 15.4383 12.4491 14.9501C12.9373 14.4619 13.7287 14.4619 14.2169 14.9501L19.9997 20.7329L25.7825 14.9501C26.2706 14.4619 27.0621 14.4619 27.5502 14.9501Z" fill="#0653EA"/>
+                    <path fillRule="evenodd" clipRule="evenodd" d="M27.5502 14.9501C28.0384 15.4383 28.0384 16.2297 27.5502 16.7179L20.8836 23.3845C20.3954 23.8727 19.6039 23.8727 19.1158 23.3845L12.4491 16.7179C11.961 16.2297 11.961 15.4383 12.4491 14.9501C12.9373 14.4619 13.7287 14.4619 14.2169 14.9501L19.9997 20.7329L25.7825 14.9501C26.2706 14.4619 27.0621 14.4619 27.5502 14.9501Z" fill="#0653EA"/>
                 </svg>
             </button>
         </div>

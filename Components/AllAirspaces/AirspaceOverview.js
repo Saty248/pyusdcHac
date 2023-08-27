@@ -3,7 +3,7 @@ import Image from "next/image";
 const AllAirspaceOverview = (props) => {
     return  <div className="absolute rounded-md pb-3 bg-white top-5 left-96" style={{width: "339px", height: "553px"}}>
         <div className="relative">
-            <Image src="/images/airspace-preview.png" className="rounded-t-md" width={339} height={422} />
+            <Image src="/images/airspace-preview.png" alt="airspace preview" className="rounded-t-md" width={339} height={422} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 34 34" fill="none">
                     <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -25,11 +25,11 @@ const AllAirspaceOverview = (props) => {
             <div className="flex flex-row items-center ms-5 mt-4 text-sm">
                 <p>4.5</p>
                 <div className="flex flex-row items-center">
-                    <Image src="/images/Star.png" width={12} height={12} />
-                    <Image src="/images/Star.png" width={12} height={12} />
-                    <Image src="/images/Star.png" width={12} height={12} />
-                    <Image src="/images/Star.png" width={12} height={12} />
-                    <Image src="/images/Star-half.png" width={12} height={12} />
+                    <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                    <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                    <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                    <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                    <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
                 </div>
                 <p>(6)</p>
             </div>
