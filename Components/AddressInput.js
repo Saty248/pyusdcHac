@@ -9,9 +9,9 @@ import Map from "./Map";
 import RegisterAddress from "./RegisterAddress";
 
 
-const Backdrop = () => {
-    return <div className={classes.modal_backdrop}></div>
-}
+// const Backdrop = () => {
+//     return <div className={classes.modal_backdrop}></div>
+// }
 
 const AddressInput = () => {
     const [address, setAddress] =  useState("");

@@ -7,7 +7,7 @@ export default function Home() {
     <Fragment>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
-        <title>Address Validator</title>
+        <title>SkyTrades</title>
       </Head>
       <AddressInput />
     </Fragment>
