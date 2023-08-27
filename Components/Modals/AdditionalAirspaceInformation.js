@@ -25,12 +25,12 @@ const AdditionalAispaceInformation = () => {
             <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
                 <p htmlFor="AirSpace Title" className="font-medium me-14">Cost</p>
                 <div className="flex flex-row justify-center items-center">
-                    <input type="number" name="hour" min="1" placeholder="$ 3:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                    <input type="number" name="hour" min="1" placeholder="$ 3:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                     <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per hour</label>
                 </div>
                 <div>
                     <div className="flex flex-row justify-center items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Negotiable</label>
                     </div>
                     <div style={{width: "110px"}}>
@@ -46,15 +46,15 @@ const AdditionalAispaceInformation = () => {
                 </div>
                 <div className="ps-1">
                     <div className="flex flex-row justify-start items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Landing Deck</label>
                     </div>
                     <div className="flex flex-row justify-start items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Charging station</label>
                     </div>
                     <div className="flex flex-row justify-start items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Storage Hub</label>
                     </div>
                 </div>
@@ -134,11 +134,11 @@ const AdditionalAispaceInformation = () => {
                 </div>
                 <div className="ps-1">
                     <div className="flex flex-row justify-start items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="rent airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Rent AirSpace</label>
                     </div>
                     <div className="flex flex-row justify-start items-center gap-2">
-                        <input type="checkbox" name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                        <input type="checkbox" name="sell airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml">Sell AirSpace</label>
                     </div>
                 </div>
