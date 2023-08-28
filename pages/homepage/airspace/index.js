@@ -160,73 +160,77 @@ const Airspace = () => {
     ]
 
 
+    return <div>
+        Hello World
+    </div>
 
-    return <Fragment>
-        {showAddReviewModal &&
-            createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
-        }
 
-        {showAddAirspaceModal && <AddAirspaceModal closeMap={closeMapHandler} />}
-        {(showAddReviewModal || showAddAirspaceModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
-            <Sidebar />
-            <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
-                <Navbar />
-                <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "1182px", height: "933px"}}>
-                    <Airspaces 
-                            showMyAirspace={showMyAirspace} 
-                            airspace={airspace} 
-                            allAirspace={allAirspace}
-                            showAllAirspace={showAllAirspace}
-                            airSpaces={airSpaces}
-                            myAirspace={myAirspace}
-                            onAddAirspace={showAddAirspaceModalHandler}
-                            viewMyAirspace={showMyAirspaceHandler}
-                            viewAirspace={showAirspaceHandler}
-                            />
+    // return <Fragment>
+    //     {showAddReviewModal &&
+    //         createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
+    //     }
+
+    //     {showAddAirspaceModal && <AddAirspaceModal closeMap={closeMapHandler} />}
+    //     {(showAddReviewModal || showAddAirspaceModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+    //     <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+    //         <Sidebar />
+    //         <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
+    //             <Navbar />
+    //             <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "1182px", height: "933px"}}>
+    //                 <Airspaces 
+    //                         showMyAirspace={showMyAirspace} 
+    //                         airspace={airspace} 
+    //                         allAirspace={allAirspace}
+    //                         showAllAirspace={showAllAirspace}
+    //                         airSpaces={airSpaces}
+    //                         myAirspace={myAirspace}
+    //                         onAddAirspace={showAddAirspaceModalHandler}
+    //                         viewMyAirspace={showMyAirspaceHandler}
+    //                         viewAirspace={showAirspaceHandler}
+    //                         />
                 
-                    {viewMyAirspace && <MyAirspaceOverview 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
-                                                 myAirspaceReview={myAirspaceReviewHandler} 
-                                                 aboutMyAirspace={aboutMyAirspaceHandler} 
-                                                 closeDetails={closeAirspaceDetailsHandler}
-                                                 />}
-                    {aboutMyAirspace && <AboutMyAirspace 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
-                                                myAirspaceReview={myAirspaceReviewHandler} 
-                                                aboutMyAirspace={aboutMyAirspaceHandler} 
-                                                closeDetails={closeAirspaceDetailsHandler}
-                                            />}
-                    {myAirspaceReviews && <MyAirspaceReviews 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
-                                                myAirspaceReview={myAirspaceReviewHandler} 
-                                                aboutMyAirspace={aboutMyAirspaceHandler} 
-                                                closeDetails={closeAirspaceDetailsHandler}
-                                            />}
+    //                 {viewMyAirspace && <MyAirspaceOverview 
+    //                                             viewMyAirspace={myAirspaceOverviewHandler}
+    //                                              myAirspaceReview={myAirspaceReviewHandler} 
+    //                                              aboutMyAirspace={aboutMyAirspaceHandler} 
+    //                                              closeDetails={closeAirspaceDetailsHandler}
+    //                                              />}
+    //                 {aboutMyAirspace && <AboutMyAirspace 
+    //                                             viewMyAirspace={myAirspaceOverviewHandler}
+    //                                             myAirspaceReview={myAirspaceReviewHandler} 
+    //                                             aboutMyAirspace={aboutMyAirspaceHandler} 
+    //                                             closeDetails={closeAirspaceDetailsHandler}
+    //                                         />}
+    //                 {myAirspaceReviews && <MyAirspaceReviews 
+    //                                             viewMyAirspace={myAirspaceOverviewHandler}
+    //                                             myAirspaceReview={myAirspaceReviewHandler} 
+    //                                             aboutMyAirspace={aboutMyAirspaceHandler} 
+    //                                             closeDetails={closeAirspaceDetailsHandler}
+    //                                         />}
 
-                    {airSpaceReviews && <AirspaceReviews 
-                                                onClick={showAddReviewModalHandler} 
-                                                viewAirspace={airspaceOverviewHandler} 
-                                                viewAirspaceReview={airspaceReviewHandler} 
-                                                aboutAirspace={aboutAirspaceHandler}
-                                                closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
-                    {viewAirspace && <AllAirspaceOverview 
-                                                viewAirspace={airspaceOverviewHandler} 
-                                                viewAirspaceReview={airspaceReviewHandler} 
-                                                aboutAirspace={aboutAirspaceHandler} 
-                                                closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
-                    {aboutAirspace && <AboutAirspace 
-                                                viewAirspace={airspaceOverviewHandler} 
-                                                viewAirspaceReview={airspaceReviewHandler} 
-                                                aboutAirspace={aboutAirspaceHandler}
-                                                closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
-                </div>
-            </div>
-        </div>
-    </Fragment>
+    //                 {airSpaceReviews && <AirspaceReviews 
+    //                                             onClick={showAddReviewModalHandler} 
+    //                                             viewAirspace={airspaceOverviewHandler} 
+    //                                             viewAirspaceReview={airspaceReviewHandler} 
+    //                                             aboutAirspace={aboutAirspaceHandler}
+    //                                             closeDetails={closeAirspaceDetailsHandler} 
+    //                                             />}
+    //                 {viewAirspace && <AllAirspaceOverview 
+    //                                             viewAirspace={airspaceOverviewHandler} 
+    //                                             viewAirspaceReview={airspaceReviewHandler} 
+    //                                             aboutAirspace={aboutAirspaceHandler} 
+    //                                             closeDetails={closeAirspaceDetailsHandler} 
+    //                                             />}
+    //                 {aboutAirspace && <AboutAirspace 
+    //                                             viewAirspace={airspaceOverviewHandler} 
+    //                                             viewAirspaceReview={airspaceReviewHandler} 
+    //                                             aboutAirspace={aboutAirspaceHandler}
+    //                                             closeDetails={closeAirspaceDetailsHandler} 
+    //                                             />}
+    //             </div>
+    //         </div>
+    //     </div>
+    // </Fragment>
 }
 
 export default Airspace;
