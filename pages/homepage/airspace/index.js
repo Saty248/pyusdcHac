@@ -1,18 +1,18 @@
 import { Fragment, useState } from "react";
 import { createPortal } from "react-dom";
 
-import Navbar from "@/Components/Navbar";
-import Sidebar from "@/Components/Sidebar";
-import Backdrop from "@/Components/Backdrop";
-import AirspaceReviews from "@/Components/AllAirspaces/AirspaceReviews";
-import AboutAirspace from "@/Components/AllAirspaces/AboutAirspace";
-import AllAirspaceOverview from "@/Components/AllAirspaces/AirspaceOverview";
-import MyAirspaceOverview from "@/Components/MyAirspaces/MyAirspaceOverview";
-import AboutMyAirspace from "@/Components/MyAirspaces/AboutAirspace";
-import MyAirspaceReviews from "@/Components/MyAirspaces/MyAirspaceReviews";
-import Airspaces from "@/Components/Airspaces";
-import AddReviewModal from "@/Components/Modals/AddReviewModal";
-import AddAirspaceModal from "@/Components/Modals/AddAirspaceModal";
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
+import Backdrop from "@/components/Backdrop";
+import AirspaceReviews from "@/components/AllAirspaces/AirspaceReviews";
+import AboutAirspace from "@/components/AllAirspaces/AboutAirspace";
+import AllAirspaceOverview from "@/components/AllAirspaces/AirspaceOverview";
+import MyAirspaceOverview from "@/components/MyAirspaces/MyAirspaceOverview";
+import AboutMyAirspace from "@/components/MyAirspaces/AboutAirspace";
+import MyAirspaceReviews from "@/components/MyAirspaces/MyAirspaceReviews";
+import Airspaces from "@/components/Airspaces";
+import AddReviewModal from "@/components/Modals/AddReviewModal";
+import AddAirspaceModal from "@/components/Modals/AddAirspaceModal";
 
 
 
