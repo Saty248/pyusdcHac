@@ -1,6 +1,8 @@
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import { useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 // import { Chart } from "chart.js";
 import Chart from "chart.js/auto";
 
