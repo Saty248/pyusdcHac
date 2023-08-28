@@ -1,13 +1,10 @@
-// import Navbar from "@/components/Navbar";
-import Navbar from "../../../components/Navbar";
-// import Sidebar from "@/components/Sidebar";
-import Sidebar from "../../../components/Sidebar";
-
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-// import { Chart } from "chart.js";
 import Chart from "chart.js/auto";
+
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 const Dashboard = () => {
     useEffect(() => {

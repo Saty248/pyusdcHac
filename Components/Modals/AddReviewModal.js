@@ -2,11 +2,12 @@ import Image from "next/image";
 
 const AddReviewModal = (props) => {
     return <div className="bg-white rounded fixed z-20 " style={{width: "660px", height: "590px", 
-        // top: "217px", 
-        // bottom: "217px", 
-        top: "50px",
+        top: "217px",  // This is for live environment
+        bottom: "217px", // This is for live environment
+        // top: "50px",  // This is for live environment
         left: "390px", 
-        right: "390px"}}>
+        right: "390px" 
+        }}>
             <div className="relative">
                 <div className="flex flex-row items-center mt-6 gap-4 justify-center">
                     <h2 className="font-bold">AirSpace Title</h2>
