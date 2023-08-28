@@ -83,14 +83,12 @@ const AddAirspace = (props) => {
     }, [address]);
 
     return <div className="bg-white rounded fixed z-20 " style={{width: "886px", height: "764px", 
-
-        // top: "124px", 
-        // bottom: "264px", 
-
+        top: "124px",  //This is for live environment
+        bottom: "264px", 
 
         left: "277px", 
         right: "277px",
-        top: "-100px",
+        // top: "-100px", // This is for test environment
         }}  onClick={() => {setShowOptions(false)}}>
             <div className="relative">
                 <button onClick={props.onClose} className="absolute right-9 top-5">

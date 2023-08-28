@@ -77,7 +77,7 @@ const AddressInput = () => {
                     'layout': {},
                     'paint': {
                         'fill-color': '#D20C0C',
-                        'fill-opacity': 0.5
+                        'fillOpacity': 0.5
                         }
                     });
                 });
@@ -325,7 +325,7 @@ const AddressInput = () => {
             {showForm && 
             <form className={classes.add_collection} onSubmit={mapLoadHandler} onClick={() => {setShowOptions(false)}}>
                 {error && <p className={classes.error__text}>{error}</p>}
-                <textarea cols="40" rows="5" placeholder="Enter your address here" className={classes.text_area} onChange={addressChangeHandler} value={address} /> <br />
+                <textarea cols="40" rows=" " placeholder="Enter your address here" className={classes.text_area} onChange={addressChangeHandler} value={address} /> <br />
                 <button className={classes.confirm__btn}>Confirm Address</button>
                 {addresses.length > 0 &&
                 <div className={classes.add_value} 

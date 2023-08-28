@@ -1,5 +1,5 @@
-import Navbar from "@/Components/Navbar";
-import Sidebar from "@/Components/Sidebar";
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -81,6 +81,8 @@ const Dashboard = () => {
 
     return <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
         {/* <Sidebar /> */}
+
+
         <div className="bg-white relative border-e-2" style={{width: "257px", height: "100vh"}}>
             <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 ms-12 my-12" />
             <div className="flex flex-col gap-5 ms-10">
@@ -131,6 +133,10 @@ const Dashboard = () => {
                 <span>Log Out</span>
             </button>
         </div>
+
+
+
+        
         <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
             <header style={{width: "1183px", height: "91px"}} className="bg-white p-0">
                 <nav className="container mx-auto my-0 flex flex-row justify-between items-center">

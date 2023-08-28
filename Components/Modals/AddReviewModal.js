@@ -19,7 +19,7 @@ const AddReviewModal = (props) => {
                 </button>
             </div>
             <div className="flex flex-row justify-start mt-10 ms-12 items-center me-5">
-                <Image src="/images/Ellipse.png"  alt="icon" className="ms-6" width={40} height={40} />
+                <Image src="/images/Ellipse.png" alt="icon" className="ms-6" width={40} height={40} />
                 <div className="me-5 ms-2">
                     <p className="font-base font-bold text-base text-light-brown">John Doe</p>
                 </div>
