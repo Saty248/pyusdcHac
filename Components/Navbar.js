@@ -7,7 +7,7 @@ const Navbar = () => {
             <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2" width="17" height="17" viewBox="0 0 17 17" fill="none">
                 <path fillRule="evenodd" clipRule="evenodd" d="M10.7118 11.7481C8.12238 13.822 4.33202 13.6588 1.93164 11.2584C-0.643879 8.6829 -0.643879 4.50716 1.93164 1.93164C4.50716 -0.64388 8.68289 -0.643879 11.2584 1.93164C13.6588 4.33202 13.822 8.12238 11.7481 10.7118L16.7854 15.7491C17.0715 16.0352 17.0715 16.4992 16.7854 16.7854C16.4992 17.0715 16.0352 17.0715 15.7491 16.7854L10.7118 11.7481ZM2.96795 10.2221C0.964766 8.21893 0.964766 4.97113 2.96795 2.96795C4.97113 0.964767 8.21892 0.964767 10.2221 2.96795C12.2238 4.96966 12.2253 8.21416 10.2265 10.2177C10.225 10.2192 10.2236 10.2206 10.2221 10.2221C10.2206 10.2236 10.2192 10.225 10.2177 10.2265C8.21416 12.2253 4.96966 12.2238 2.96795 10.2221Z" fill="#252530" fillOpacity="0.55"/>
             </svg>
-            <input type="text" className="rounded-md my-7 ms-5 focus:outline-blue-200" style={{width: "433px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
+            <input type="text" className="rounded-md my-7 ps-3 ms-5 focus:outline-blue-200" style={{width: "433px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
         </div>
         <div className="flex flex-row justify-center items-center me-5 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" style={{background: "#EFEFF9", borderRadius: "50%", padding: '1px 5px'}} viewBox="0 0 16 20" fill="none">

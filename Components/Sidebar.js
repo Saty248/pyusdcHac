@@ -79,7 +79,7 @@ const Sidebar = (props) => {
             <span className={`${asPath == "/homepage/settings"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Settings</span>
         </NavLink>
     </div>
-    <button className="absolute bottom-10 ms-10 flex flex-row gap-2 w-11/12 rounded-md p-2 hover:border-s-2 hover:border-dark-blue hover:bg-gradient-to-r hover:from-blue-400 hover:to-white">
+    <button className="absolute bottom-10 ms-10 flex flex-row gap-2 w-10/12 rounded-md p-2 hover:border-s-2 hover:border-dark-blue hover:bg-gradient-to-r hover:from-blue-400 hover:to-white">
         <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
             <path d="M20.3 2.41602H17.1583C13.2917 2.41602 10.875 4.83268 10.875 8.69935V13.5931H18.4271C18.9225 13.5931 19.3333 14.0039 19.3333 14.4993C19.3333 14.9948 18.9225 15.4056 18.4271 15.4056H10.875V20.2993C10.875 24.166 13.2917 26.5827 17.1583 26.5827H20.2879C24.1546 26.5827 26.5712 24.166 26.5712 20.2993V8.69935C26.5833 4.83268 24.1667 2.41602 20.3 2.41602Z" fill="#252530"/>
             <path d="M5.51023 13.5937L8.01148 11.0925C8.19273 10.9112 8.27732 10.6816 8.27732 10.4521C8.27732 10.2225 8.19273 9.98081 8.01148 9.81164C7.66107 9.46122 7.08107 9.46122 6.73065 9.81164L2.68273 13.8596C2.33232 14.21 2.33232 14.79 2.68273 15.1404L6.73065 19.1883C7.08107 19.5387 7.66107 19.5387 8.01148 19.1883C8.3619 18.8379 8.3619 18.2579 8.01148 17.9075L5.51023 15.4062H10.8752V13.5937H5.51023Z" fill="#252530"/>

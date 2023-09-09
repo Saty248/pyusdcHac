@@ -8,6 +8,7 @@ const AddAirspace = (props) => {
     const [addressData, setAddressData] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
+    const [addressValid, setAddressValid] = useState();
     const [confirmMap, setConfirmMap] = useState(true);
 
     const locationiqKey = process.env.API_KEY;
@@ -108,7 +109,7 @@ const AddAirspace = (props) => {
                 return;
             }
             
-            console.log(resData);
+            setAddressValid(true);
             setAddressData(resData[0]);
 
 
@@ -190,7 +191,6 @@ const AddAirspace = (props) => {
     return <div className="bg-white rounded fixed z-20 " style={{width: "886px", height: "764px", 
         top: "124px",  //This is for live environment
         bottom: "264px", 
-
         left: "277px", 
         right: "277px",
         // top: "-100px", // This is for test environment
@@ -222,13 +222,13 @@ const AddAirspace = (props) => {
                         </div> */}
 
 
-                        {/* <div className="flex flex-row justify-center gap-1 items-center absolute right-3 top-4 z-10">
+                        {addressValid && <div className="flex flex-row justify-center gap-1 items-center absolute right-3 top-4 z-10">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                                 <path d="M6 11.375C3.035 11.375 0.625 8.965 0.625 6C0.625 3.035 3.035 0.625 6 0.625C8.965 0.625 11.375 3.035 11.375 6C11.375 8.965 8.965 11.375 6 11.375ZM6 1.375C3.45 1.375 1.375 3.45 1.375 6C1.375 8.55 3.45 10.625 6 10.625C8.55 10.625 10.625 8.55 10.625 6C10.625 3.45 8.55 1.375 6 1.375Z" fill="#29AE55"/>
                                 <path d="M5.28997 7.79078C5.18997 7.79078 5.09497 7.75078 5.02497 7.68078L3.60997 6.26578C3.46497 6.12078 3.46497 5.88078 3.60997 5.73578C3.75497 5.59078 3.99497 5.59078 4.13997 5.73578L5.28997 6.88578L7.85997 4.31578C8.00497 4.17078 8.24497 4.17078 8.38997 4.31578C8.53497 4.46078 8.53497 4.70078 8.38997 4.84578L5.55497 7.68078C5.48497 7.75078 5.38997 7.79078 5.28997 7.79078Z" fill="#29AE55"/>
                             </svg>
                             <p className="text-xml text-light-green">Verified</p>
-                        </div> */}
+                        </div>}
                     </div>
                     <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-zinc-400 disabled:hover:bg-zinc-500" style={{width: "120px", height: "37px", border: "none"}}>Verify</button>
                 </div>
