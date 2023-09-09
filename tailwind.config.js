@@ -14,19 +14,23 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        "light-pink": "#F0F0FA",
         "dark": "#252530",
         "light-dark": "#1E1E1E",
         "light-grey": "#F0F0FA",  
         'milk': "#E6EEFD",
-        "blue": "#0653EA",
+        "dark-blue": "#0653EA",
         "sky-blue": "#F4F8FF", 
+        "sky-blue-100": "rgba(244, 248, 255, 1)",
+        "bleach-blue": "#DEF1FF",
         "light-blue": "rgba(6, 83, 234, 0.10)",
         "light-brown": "rgba(63, 61, 86, 0.75)",
         "dark-brown": "#3F3D56",
-        "brown": "#3F3D56",
+        "bleach-brown": "rgba(63, 61, 86, 0.75)",
         "light-red": "#FC6681",
-        "light-green": "#29AE55"
+        "light-red-100": "#C80000",
+        'bleach-red': "rgba(255, 199, 194, 0.5)",
+        "light-green": "#29AE55",
+        "bleach-green": "#BED9C7"
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] 
@@ -44,6 +48,9 @@ module.exports = {
       },
       backgroundImage: {
         'map-bg': "url('/images/map-bg.png')",
+      },
+      transitionDuration: {
+        '2000': '5000ms',
       }
     },
   },

@@ -21,15 +21,15 @@ const MyAirspaceReviews = (props) => {
         <div className="flex flex-row justify-center gap-7 mt-8 pb-2.5 items-center">
             <button className="relative" onClick={props.viewMyAirspace}>
                 <p className="font-bold">Overview</p>
-                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div> */}
+                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
             <button className="relative" onClick={props.myAirspaceReview}>
-                <p className="font-bold text-blue">Reviews</p>
-                <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div>
+                <p className="font-bold text-dark-blue">Reviews</p>
+                <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
             <button className="relative" onClick={props.aboutMyAirspace}>
                 <p className="font-bold">About</p>
-                {/* <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-blue absolute rounded-t-md"></div> */}
+                {/* <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
         </div>
         <div className="flex flex-col items-center py-5 justify-center text-sm -mx-1" style={{borderTop: "0.01px solid blue", borderBottom: "0.01px solid blue"}}>

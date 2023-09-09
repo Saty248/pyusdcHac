@@ -19,19 +19,19 @@ const AboutAirspace = (props) => {
         <div className="flex flex-row justify-center gap-7 mt-8 pb-2.5 items-center">
             <button className="relative" onClick={props.viewAirspace}>
                 <p className="font-bold ">Overview</p>
-                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div> */}
+                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
             <button className="relative" onClick={props.viewAirspaceReview}>
                 <p className="font-bold">Reviews</p>
-                {/* <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div> */}
+                {/* <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
             <button className="relative" onClick={props.aboutAirspace}>
-                <p className="font-bold text-blue">About</p>
-                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-blue absolute rounded-t-md"></div>
+                <p className="font-bold text-dark-blue">About</p>
+                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
         </div>
         <div className="flex flex-row justify-center items-center py-7">
-            <p className="text-blue"><span className="font-bold">$3.00</span>/hr</p>
+            <p className="text-dark-blue"><span className="font-bold">$3.00</span>/hr</p>
         </div>
         <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-5 mb-4">
             <h3 className="font-bold text-brown">Facilities</h3>
@@ -41,14 +41,14 @@ const AboutAirspace = (props) => {
         </div>
         <div className="flex flex-row items-center gap-7 justify-center">
             <div className="flex flex-col justify-center items-center">
-                <button style={{width: "35px", height: "35px", borderRadius: "50%"}} className="bg-blue p-2.5">
+                <button style={{width: "35px", height: "35px", borderRadius: "50%"}} className="bg-dark-blue p-2.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M10.433 14.2754C10.1464 14.2754 9.8597 14.2154 9.62637 14.1021L6.12637 12.3487C5.92637 12.2487 5.53303 12.2554 5.3397 12.3687L3.76637 13.2687C3.08637 13.6554 2.38637 13.7087 1.8597 13.3954C1.32637 13.0887 1.02637 12.4621 1.02637 11.6754V5.19539C1.02637 4.58872 1.42637 3.90206 1.95303 3.60206L4.8397 1.94872C5.32637 1.66872 6.06637 1.64872 6.56637 1.90206L10.0664 3.65539C10.2664 3.75539 10.653 3.74206 10.853 3.63539L12.4197 2.74206C13.0997 2.35539 13.7997 2.30206 14.3264 2.61539C14.8597 2.92206 15.1597 3.54872 15.1597 4.33539V10.8221C15.1597 11.4287 14.7597 12.1154 14.233 12.4154L11.3464 14.0687C11.093 14.2021 10.7597 14.2754 10.433 14.2754ZM5.7597 11.2821C6.04637 11.2821 6.33303 11.3421 6.56637 11.4554L10.0664 13.2087C10.2664 13.3087 10.653 13.2954 10.853 13.1887L13.7397 11.5354C13.953 11.4154 14.1597 11.0554 14.1597 10.8154V4.32872C14.1597 3.90872 14.0397 3.59539 13.8197 3.47539C13.6064 3.35539 13.273 3.40206 12.913 3.60872L11.3464 4.50206C10.8597 4.78206 10.1197 4.80206 9.6197 4.54872L6.1197 2.79539C5.9197 2.69539 5.53303 2.70872 5.33303 2.81539L2.44637 4.46872C2.23303 4.58872 2.02637 4.94872 2.02637 5.19539V11.6821C2.02637 12.1021 2.14637 12.4154 2.3597 12.5354C2.57303 12.6621 2.90637 12.6087 3.27303 12.4021L4.8397 11.5087C5.0997 11.3554 5.43303 11.2821 5.7597 11.2821Z" fill="white"/>
                         <path d="M5.70606 11.8327C5.43272 11.8327 5.20605 11.606 5.20605 11.3327V2.66602C5.20605 2.39268 5.43272 2.16602 5.70606 2.16602C5.97939 2.16602 6.20606 2.39268 6.20606 2.66602V11.3327C6.20606 11.606 5.97939 11.8327 5.70606 11.8327Z" fill="white"/>
                         <path d="M10.4873 13.8321C10.214 13.8321 9.9873 13.6054 9.9873 13.3321V4.41211C9.9873 4.13878 10.214 3.91211 10.4873 3.91211C10.7606 3.91211 10.9873 4.13878 10.9873 4.41211V13.3321C10.9873 13.6054 10.7606 13.8321 10.4873 13.8321Z" fill="white"/>
                     </svg>
                 </button>
-                <p className="text-center text-blue text-sm">3D Map</p>
+                <p className="text-center text-dark-blue text-sm">3D Map</p>
             </div>
             <div className="flex flex-col justify-center items-center">
                 <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
@@ -57,7 +57,7 @@ const AboutAirspace = (props) => {
                         <path d="M9.81914 9.95586C9.73789 9.95586 9.65664 9.93711 9.58164 9.88711L7.64414 8.73086C7.16289 8.44336 6.80664 7.81211 6.80664 7.25586V4.69336C6.80664 4.43711 7.01914 4.22461 7.27539 4.22461C7.53164 4.22461 7.74414 4.43711 7.74414 4.69336V7.25586C7.74414 7.48086 7.93164 7.81211 8.12539 7.92461L10.0629 9.08086C10.2879 9.21211 10.3566 9.49961 10.2254 9.72461C10.1316 9.87461 9.97539 9.95586 9.81914 9.95586Z" fill="#0653EA"/>
                     </svg>
                 </button>
-                <p className="text-center text-blue text-sm">Rent</p>
+                <p className="text-center text-dark-blue text-sm">Rent</p>
             </div>
             <div className="flex flex-col justify-center items-center">
                 <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
@@ -68,7 +68,7 @@ const AboutAirspace = (props) => {
                         <path d="M13.125 5.46875H5.625C5.36875 5.46875 5.15625 5.25625 5.15625 5C5.15625 4.74375 5.36875 4.53125 5.625 4.53125H13.125C13.3813 4.53125 13.5938 4.74375 13.5938 5C13.5938 5.25625 13.3813 5.46875 13.125 5.46875Z" fill="#0653EA"/>
                     </svg>
                 </button>
-                <p className="text-center text-blue text-sm">Sell</p>
+                <p className="text-center text-dark-blue text-sm">Sell</p>
             </div>
         </div>
     </div>

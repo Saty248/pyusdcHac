@@ -24,8 +24,8 @@ const AirspaceReviews = (props) => {
                 {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div> */}
             </button>
             <button className="relative" onClick={props.viewAirspaceReview}>
-                <p className="font-bold text-blue">Reviews</p>
-                <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-blue absolute rounded-t-md"></div>
+                <p className="font-bold text-dark-blue">Reviews</p>
+                <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
             <button className="relative" onClick={props.aboutAirspace}>
                 <p className="font-bold">About</p>

@@ -24,8 +24,8 @@ const AboutMyAirspace = (props) => {
                 <p className="font-bold">Reviews</p>
             </button>
             <button className="relative" onClick={props.aboutMyAirspace}>
-                <p className="font-bold text-blue">About</p>
-                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-blue absolute rounded-t-md"></div>
+                <p className="font-bold text-dark-blue">About</p>
+                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
         </div>
         

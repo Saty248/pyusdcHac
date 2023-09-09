@@ -1,12 +1,13 @@
 import { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 
 const Dashboard = () => {
+    const router = useRouter();
+
     useEffect(() => {
         const ctx = document.getElementById('chart').getContext('2d');
 
@@ -56,8 +57,6 @@ const Dashboard = () => {
                     color: 'red'
                 },
                 displayColors: false,
-                // padding: 10,
-                boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.5)',
                 style: {
                     textAlign: 'center'
                 }
@@ -77,7 +76,9 @@ const Dashboard = () => {
         });
     }, [])
 
-
+    const navigationHandler = (route) => {
+        router.push(route)
+    }
 
     return <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
         <Sidebar />
@@ -86,7 +87,7 @@ const Dashboard = () => {
             <div className="flex flex-row">
                 <div className="">
                     <div className="flex flex-row gap-5">
-                        <div className="ms-5 my-5 p-5" style={{width: "262px", height: "169px", borderRadius: "10px", background: "#fff"}}>
+                        <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="ms-5 my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#BED9C7", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="17" viewBox="0 0 21 17" fill="none">
@@ -100,12 +101,12 @@ const Dashboard = () => {
                                     <p className="font-bold">.</p>
                                 </div>
                             </div>
-                            <div className="mt-10">
-                                <p>Balance</p>
-                                <h3>$4,000.85</h3>
+                            <div className="mt-10 text-start">
+                                <p className="text-sm">Balance</p>
+                                <p className="text-2xl">$4,000.85</p>
                             </div>
-                        </div>
-                        <div className="my-5 p-5" style={{width: "262px", height: "169px", borderRadius: "10px", background: "#fff"}}>
+                        </button>
+                        <button onClick={navigationHandler.bind(null, "/homepage/airspace")} className="my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#AAC0EA", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -118,12 +119,12 @@ const Dashboard = () => {
                                     <p className="font-bold">.</p>
                                 </div>
                             </div>
-                            <div className="mt-10">
-                                <p>My Airspace</p>
-                                <h3>5</h3>
+                            <div className="mt-10 text-start">
+                                <p className="text-sm">My Airspace</p>
+                                <p className="text-2xl">5</p>
                             </div>
-                        </div>
-                        <div className="my-5 p-5" style={{width: "262px", height: "169px", borderRadius: "10px", background: "#fff"}}>
+                        </button>
+                        <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#FFF4D1", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -143,11 +144,11 @@ const Dashboard = () => {
                                     <p className="font-bold">.</p>
                                 </div>
                             </div>
-                            <div className="mt-10">
-                                <p>UAVs</p>
-                                <h3>5</h3>
+                            <div className="mt-10 text-start">
+                                <p className="text-sm">UAVs</p>
+                                <p className="text-2xl">5</p>
                             </div>
-                        </div>            
+                        </button>            
                     </div>
                     <div className="bg-white mx-5 pt-10 px-5" style={{width: "826px", height: "553px", borderRadius: "10px"}}>
                         <canvas id="chart"></canvas>
@@ -155,10 +156,10 @@ const Dashboard = () => {
                     
                 </div>
                 <div>
-                    <div className="bg-white my-5 me-2" style={{width: "292px", height: "298px", borderRadius: "10px",}}>
+                    <div className="bg-white my-5 me-2" style={{width: "292px", height: "342px", borderRadius: "10px",}}>
                         
                     </div>
-                    <div className="bg-white my-5 me-2 py-5 px-4" style={{width: "292px", height: "424px", borderRadius: "10px"}}>
+                    <div className="bg-white my-5 me-2 py-5 px-4 overflow-y-auto" style={{width: "292px", height: "380px", borderRadius: "10px"}}>
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
                             <p className="font-semibold" style={{color: "#722ACF"}}>4 Jul</p>

@@ -12,7 +12,9 @@ import AboutMyAirspace from "@/Components/MyAirspaces/AboutAirspace";
 import MyAirspaceReviews from "@/Components/MyAirspaces/MyAirspaceReviews";
 import Airspaces from "@/Components/Airspaces";
 import AddReviewModal from "@/Components/Modals/AddReviewModal";
-import AddAirspaceModal from "@/Components/Modals/AddAirspaceModal";
+import NewAirspaceModal from "@/Components/Modals/NewAirspaceModal";
+import AddAirspace from "@/Components/Modals/AddAirspace";
+import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
 
 
 
@@ -28,6 +30,9 @@ const Airspace = () => {
     const [showAddReviewModal, setshowAddReviewModal] = useState(false);
     const [showAddAirspaceModal, setShowAddAirspaceModal] = useState(false);
     const [airspace, setAirspace] = useState("all");
+    const [confirmOnMap, setConfirmOnMap] = useState(false);
+    const [airspaceInfo, setAirspaceInfo ] = useState({});
+    const [additionalInfo, setAdditionalInfo] = useState(false);
 
     const showAddReviewModalHandler = () => {
         setshowAddReviewModal (true);
@@ -44,16 +49,13 @@ const Airspace = () => {
 
     const closeMapHandler = () => {
         setShowAddAirspaceModal(false)
-        // alert("clicked")
     }
-
-    // const closeAddAirspaceModalHandler = () => {
-    //     setShowAddAirspaceModal(false);
-    // } 
 
     const backdropCloseHandler = () => {
         setShowAddAirspaceModal(false);
         setshowAddReviewModal(false);
+        setConfirmOnMap(false);
+        setAdditionalInfo(false);
     }
 
     const showAllAirspace = () => {
@@ -69,11 +71,6 @@ const Airspace = () => {
     }
 
     const showAirspaceHandler = () => {
-        // if(viewMyAirspace) {
-        //     setViewMyAirSpace(false);
-        //     setViewAirSpace(true);
-            
-        // }
         setViewMyAirSpace(false);
         setMyAirSpaceReviews(false);
         setAboutMyAirspace(false);
@@ -81,7 +78,6 @@ const Airspace = () => {
         if(!airSpaceReviews && !aboutAirspace) {
             setViewAirSpace(true);
         }
-        
     }
 
     const showMyAirspaceHandler = () => {
@@ -136,6 +132,35 @@ const Airspace = () => {
         setAboutMyAirspace(false);
     }
 
+    const airspaceCategory = (category) => {
+        setAirspaceInfo(prev => {
+            return {
+                ...prev,
+                category: category
+            }
+        })
+        setShowAddAirspaceModal(false)
+        setConfirmOnMap(true);
+    }
+
+    const addressValueHandler = (value) => {
+        setAirspaceInfo(prev => {
+            return {
+                ...prev,
+                ...value
+            }
+        })
+
+        setConfirmOnMap(false);
+        setAdditionalInfo(true);
+        console.log(airspaceInfo);
+    }
+
+    const formSubmitHandler = (e) => {
+        e.preventDefault();
+        console.log(airspaceInfo)
+    }
+
     const airSpaces = [
         {
             id: "a1",
@@ -165,9 +190,12 @@ const Airspace = () => {
         {showAddReviewModal &&
             createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
         }
+        
+        {showAddAirspaceModal && createPortal(<NewAirspaceModal onClose={closeMapHandler} onAddCategory={airspaceCategory} />, document.getElementById("modal-root"))}
+        {additionalInfo && <AdditionalAispaceInformation onConfirm={formSubmitHandler} />}
+        {confirmOnMap && createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={() => setConfirmOnMap(false)} />, document.getElementById("modal-root"))}
 
-        {showAddAirspaceModal && <AddAirspaceModal closeMap={closeMapHandler} />}
-        {(showAddReviewModal || showAddAirspaceModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+        {(showAddReviewModal || showAddAirspaceModal || confirmOnMap || additionalInfo) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
             <Sidebar />
             <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
