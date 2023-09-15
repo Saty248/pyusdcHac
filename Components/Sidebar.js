@@ -21,7 +21,7 @@ const Sidebar = (props) => {
         setNavState(value)
     }
 
-    return <div className="bg-white relative border-e-2" style={{width: "257px", height: "100vh"}}>
+    return <aside className="bg-white relative border-e-2" style={{width: "257px", height: "100vh"}}>
     <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 ms-12 my-12" />
     <div className="flex flex-col gap-2 ms-10">
         <NavLink href="/homepage/dashboard">
@@ -86,7 +86,7 @@ const Sidebar = (props) => {
         </svg>
         <span className="text-light-brown font-semibold">Log Out</span>
     </button>
-</div>
+</aside>
 }
 
 export default Sidebar;

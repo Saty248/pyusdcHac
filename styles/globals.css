@@ -64,6 +64,6 @@ button{
 
 @media (min-width: 992px){
   body{
-    /* background-color: rgba(6, 83, 234, 0.2); */
+    background-color: #00000080;
   }
 }

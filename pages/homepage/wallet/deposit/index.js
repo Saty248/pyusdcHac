@@ -102,7 +102,7 @@ const Wallet = () => {
                                 </svg>
                             </div>
                             <div className="flex flex-row items-center gap-2">
-                                <input type="radio" id="no" name="broadcast" className="cursor-pointer" />
+                                <input type="radio" id="no" name="broadcast" value="mastercard" className="cursor-pointer" />
                             </div>
                         </div>
                     </div>

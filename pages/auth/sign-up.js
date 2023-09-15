@@ -31,7 +31,7 @@ const Signup = () => {
         <Image src="/images/logo.png" alt="Company's logo" width={172} height={61} />
         <p className=" text-dark text-2xl font-medium w-64" style={{marginTop: "28px"}}>Account Sign Up</p>
         <div className="mt-3.5">
-            <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Name / Company Name <span className="text-red-600">*</span></label> <br />
+            <label className="text-sm font-normal text-light-brown">Name / Company Name <span className="text-red-600">*</span></label> <br />
             <input type="text" className="bg-light-grey rounded-md focus:outline-blue-200 placeholder:text-light-brown placeholder:font-medium font-sans" placeholder="Name" style={{width: "396px",  height: "43px", paddingLeft: "14px", border: "0.5px solid rgba(0, 0, 0, 0.50)",}} />
         </div>
         <div className="mt-3.5">
@@ -47,7 +47,6 @@ const Signup = () => {
                                 {code}
                             </option>
                     })}
-                    
                 </select>
                 <Image src="/images/language.png" width={24} height={24} className="absolute top-8 left-3" />
                 <Image src="/images/vector.png" width={8} height={5} className="absolute top-11 right-4" />
@@ -57,7 +56,6 @@ const Signup = () => {
                 <input type="number" min="0" placeholder="Enter your Phone number" className="bg-light-grey rounded-md font-sans placeholder:text-light-brown placeholder:font-medium focus:outline-blue-200" style={{width: "266px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
             </div>
         </div>
-       
         <div className="flex flex-row gap-3 mt-5" style={{width: "396px",  height: "43px"}}>
             <div className="mt-3.5 relative">
                 <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Password<span className="text-red-600">*</span></label> <br />

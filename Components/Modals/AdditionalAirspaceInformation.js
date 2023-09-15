@@ -25,7 +25,7 @@ const AdditionalAispaceInformation = (props) => {
             <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
                 <p htmlFor="AirSpace Title" className="font-medium me-14">Cost</p>
                 <div className="flex flex-row justify-center items-center">
-                    <input type="number" name="hour" min="1" placeholder="$ 3:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
+                    <input type="number" name="hour" min="1" placeholder="$ 3:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                     <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per hour</label>
                 </div>
                 <div>
