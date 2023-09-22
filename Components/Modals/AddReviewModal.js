@@ -2,11 +2,9 @@ import Image from "next/image";
 
 const AddReviewModal = (props) => {
     return <div className="bg-white rounded fixed z-20 " style={{width: "660px", height: "590px", 
-        top: "217px",  // This is for live environment
-        bottom: "217px",
+        top: "2vh",  // This is for live environment
         // top: "50px",  // This is for text environment
-        left: "390px", 
-        right: "390px" 
+        left: "calc(50% - 330px)", 
         }}>
             <div className="relative">
                 <div className="flex flex-row items-center mt-6 gap-4 justify-center">
@@ -43,10 +41,10 @@ const AddReviewModal = (props) => {
                 </svg>
             </div>
             <form>
-                <textarea placeholder="Share details of your own experience at the AirSpace" className="mx-12 bg-sky-blue rounded placeholder:text-light-brown placeholder:text-sm ps-5 pt-5" style={{width: "558px", height: "232px"}}></textarea>
+                <textarea placeholder="Share details of your own experience at the AirSpace" className="mx-12 bg-sky-blue rounded focus:outline-blue-200 placeholder:text-light-brown placeholder:text-sm ps-5 pt-5" style={{width: "558px", height: "232px"}}></textarea>
                 <div className="flex flex-row gap-5 justify-end items-center mt-7 me-14">
-                    <button className="bg-white text-blue rounded-md" style={{width: "94px", height: "42px", border: "0.4px solid #3F3D56"}} onClick={props.onClose}>Cancel</button>
-                    <button className="rounded-md bg-blue text-white" style={{width: "94px", height: "42px", border: "0.4px solid #3F3D56"}}>Post</button>
+                    <button className="rounded-md text-dark-blue text-sml transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "94px", height: "42px", border: "1px solid #0653EA",}} onClick={props.onClose}>Cancel</button>
+                    <button className="rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "94px", height: "42px", border: "0.4px solid #3F3D56"}}>Post</button>
                 </div>
             </form>
         </div>

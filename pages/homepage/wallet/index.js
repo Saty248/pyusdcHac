@@ -15,9 +15,9 @@ const Wallet = () => {
         router.push("/homepage/wallet/withdraw")
     }
 
-    return <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+    return <div className="flex flex-row">
         <Sidebar />
-        <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
+        <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
             <Navbar />
             <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">
@@ -48,7 +48,7 @@ const Wallet = () => {
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M130.63 103H10C4.47717 103 0 98.5229 0 93V10.0757C13.4341 3.66759 29.0313 0 45.6673 0C96.1093 0 137.001 33.7183 137.001 75.3118C137.001 85.0882 134.742 94.4294 130.63 103Z" fill="#AECCB8"/>
                 </svg>
             </div>
-            <div className="bg-white mx-auto ps-6 pe-2.5 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="bg-white mx-auto ps-6 pe-2.5 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
                 <h3>Transaction History</h3>
                 <form className="flex flex-row justify-center gap-2 items-center">
                     <input type="text" className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" placeholder="Search Transaction" style={{width: "211px", height: "27px"}} />
@@ -58,7 +58,7 @@ const Wallet = () => {
                     </select>
                 </form>
             </div>
-            <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
                 <p className="w-1/12">Date</p>
                 <p className="w-2/12">Transaction ID</p>
                 <p className="w-4/12">Transaction Details</p>
@@ -66,7 +66,7 @@ const Wallet = () => {
                 <p className="w-3/12">Amount</p>
                 <p className="w-1/12">Status</p>
             </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px"}}>
                 <p className="w-1/12">28/10/2012</p>
                 <p className="w-2/12">509630</p>
                 <p className="w-4/12">Transaction Details</p>
@@ -79,7 +79,7 @@ const Wallet = () => {
                     Active
                 </p>
             </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px"}}>
                 <p className="w-1/12">28/10/2012</p>
                 <p className="w-2/12">509630</p>
                 <p className="w-4/12">Transaction Details</p>
@@ -92,7 +92,7 @@ const Wallet = () => {
                     Active
                 </p>
             </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px"}}>
                 <p className="w-1/12">28/10/2012</p>
                 <p className="w-2/12">509630</p>
                 <p className="w-4/12">Transaction Details</p>
@@ -105,7 +105,7 @@ const Wallet = () => {
                     Active
                 </p>
             </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
+            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px"}}>
                 <p className="w-1/12">28/10/2012</p>
                 <p className="w-2/12">509630</p>
                 <p className="w-4/12">Transaction Details</p>
@@ -118,33 +118,6 @@ const Wallet = () => {
                     Active
                 </p>
             </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
-                <p className="w-1/12">28/10/2012</p>
-                <p className="w-2/12">509630</p>
-                <p className="w-4/12">Transaction Details</p>
-                <p className="w-1/12">$<span>44.00</span></p>
-                <p className="w-3/12">Amount</p>
-                <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                        <circle cx="3" cy="3" r="3" fill="#1A572E"/>
-                    </svg>
-                    Active
-                </p>
-            </div>
-            <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "1139px", height: "47px"}}>
-                <p className="w-1/12">28/10/2012</p>
-                <p className="w-2/12">509630</p>
-                <p className="w-4/12">Transaction Details</p>
-                <p className="w-1/12">$<span>44.00</span></p>
-                <p className="w-3/12">Amount</p>
-                <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                        <circle cx="3" cy="3" r="3" fill="#1A572E"/>
-                    </svg>
-                    Active
-                </p>
-            </div>
-
         </div>
     </div>
 }

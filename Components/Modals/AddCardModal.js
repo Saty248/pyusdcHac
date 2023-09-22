@@ -2,13 +2,9 @@ import Image from "next/image";
 import mastercard from "../../public/images/mastercard-logo.png";
 
 const AddCardModal = (props) => {
-    return <div className="bg-white rounded fixed z-20" style={{width: "500px", height: "847px", 
-        top: "124px",  //This is for live environment
-        bottom: "109px", 
-
-        left: "470px", 
-        right: "470px",
-        // top: "-500px", // This is for test environment
+    return <div className="bg-white rounded fixed z-20 overflow-y-auto pb-5" style={{width: "500px", height: "90vh", maxHeight: "847px", 
+            top: "7vh", // This is for live environment
+            left: "calc(50% - 250px)", 
         }}>
             <div className="text-center relative mt-9 font-medium text-xl">   
                 <button onClick={props.onClose} className="absolute left-9 top-1" >

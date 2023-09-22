@@ -21,7 +21,9 @@ module.exports = {
         "dark-blue": "#0653EA",
         "sky-blue": "#F4F8FF", 
         "sky-blue-100": "rgba(244, 248, 255, 1)",
+        "light-blue": "#78A6FF",
         "bleach-blue": "#DEF1FF",
+        "bleach-blue-100": "#bde3ff33",
         "light-blue": "rgba(6, 83, 234, 0.10)",
         "light-brown": "rgba(63, 61, 86, 0.75)",
         "dark-brown": "#3F3D56",
@@ -45,6 +47,7 @@ module.exports = {
         '3xl': '32px',
         '4xl': '40px',
         '5xl': '50px',
+        "6xl": "100px"
       },
       backgroundImage: {
         'map-bg': "url('/images/map-bg.png')",

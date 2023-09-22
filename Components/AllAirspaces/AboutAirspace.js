@@ -1,5 +1,5 @@
 const AboutAirspace = (props) => {
-    return <div className="absolute rounded-md bg-white top-5 left-96 py-5 px-1" style={{width: "339px", height: "379px"}}>
+    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "379px", left: "50%"}}>
         <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
                 <button>

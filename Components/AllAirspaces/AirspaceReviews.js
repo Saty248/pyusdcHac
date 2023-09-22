@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const AirspaceReviews = (props) => {
-    return <div className="absolute rounded-md bg-white top-5 left-96 py-5 px-1" style={{width: "339px", height: "856px"}}>
+    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "90%", left: "50%"}}>
         <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
                 <button>
@@ -51,7 +51,7 @@ const AirspaceReviews = (props) => {
                 <p>Write a review</p>
             </button>
         </div>
-        <div style={{width: "100%", height: "450px"}} className="bg-white pt-6 overflow-y-auto">
+        <div style={{width: "100%", height: "40%"}} className="bg-white pt-6 overflow-y-auto">
             <div style={{width: "299px"}} className="bg-light-blue mx-auto p-2.5 rounded">
                 <p>“Lorem ipsum dolor sit amet, consectetur adipiscing et,
                     sed do eiusmod tempor incididunt ut Duis aute irure
@@ -81,13 +81,13 @@ const AirspaceReviews = (props) => {
                 </div>
             </div>
         </div>
-        <div className="bg-white text-center flex flex-row items-center" style={{width: "100%", height: "50px",}}>
+        {/* <div className="bg-white text-center flex flex-row items-center" style={{width: "100%", height: "50px",}}>
             <button className="mx-auto mt-10" style={{borderRadius: "50%", background: "aliceblue", width: "40px", height: "40px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
                     <path fillRule="evenodd" clipRule="evenodd" d="M27.5502 14.9501C28.0384 15.4383 28.0384 16.2297 27.5502 16.7179L20.8836 23.3845C20.3954 23.8727 19.6039 23.8727 19.1158 23.3845L12.4491 16.7179C11.961 16.2297 11.961 15.4383 12.4491 14.9501C12.9373 14.4619 13.7287 14.4619 14.2169 14.9501L19.9997 20.7329L25.7825 14.9501C26.2706 14.4619 27.0621 14.4619 27.5502 14.9501Z" fill="#0653EA"/>
                 </svg>
             </button>
-        </div>
+        </div> */}
     </div>
 }
 

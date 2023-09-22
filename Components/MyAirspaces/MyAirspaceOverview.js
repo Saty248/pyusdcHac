@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const MyAirspaceOverview = (props) => {
-    return  <div className="absolute rounded-md bg-white top-5 left-96" style={{width: "339px", height: "817px"}}>
+    return  <div className="absolute rounded-md bg-white top-5" style={{width: "339px", height: "90%", left: "50%"}}>
         <div className="relative">
             <Image src="/images/airspace-preview.png" alt="icon" className="rounded-t-md" width={339} height={422} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
@@ -48,7 +48,7 @@ const MyAirspaceOverview = (props) => {
             </button>
         </div>
 
-        <div style={{width: "100%", height: "470px"}} className="overflow-y-auto rounded-b-md">
+        <div style={{width: "100%", height: "30%"}} className="overflow-y-auto rounded-b-md">
             <div style={{width: "299px", height: "75px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Owner Detail</h3>
                 <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>Jorge Constantino Colindres Castillo</p>

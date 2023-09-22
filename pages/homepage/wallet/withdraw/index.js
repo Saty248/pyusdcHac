@@ -27,11 +27,11 @@ const Wallet = () => {
         router.push("/homepage/wallet")
     }
 
-    return <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+    return <div className="flex flex-row mx-auto">
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
         <Sidebar />
-        <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
+        <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="mx-auto overflow-y-auto">
             <Navbar />
             <div className="bg-bleach-green flex flex-col justify-center mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">

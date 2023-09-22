@@ -1,17 +1,25 @@
+import { counterActions } from '@/store/store';
 import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const AddAirspace = (props) => {
+    const dispatch = useDispatch();
+
     const [address, setAddress] =  useState("");
     const [addresses, setAddresses] =  useState([]);
     const [showOptions, setShowOptions] = useState(true);
     const [addressData, setAddressData] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
-    const [addressValid, setAddressValid] = useState();
+    const [addressValid, setAddressValid] = useState(false);
     const [confirmMap, setConfirmMap] = useState(true);
 
     const locationiqKey = process.env.API_KEY;
+
+    const airspaceValue = useSelector(state => state.value.airspaceData);
+    
+    console.log(airspaceValue);
 
     const addressChangeHandler = (e) => {
         if(!showOptions) {
@@ -60,7 +68,8 @@ const AddAirspace = (props) => {
     }, [])
 
     useEffect(() => {
-            setConfirmMap(true)
+            setConfirmMap(true);
+            setAddressValid(false);
             if(address) {        
             const addressHandler = setTimeout(() => {
                 fetch(`https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`)
@@ -172,6 +181,10 @@ const AddAirspace = (props) => {
         });     
     }
 
+    const closeModalHandler = () => {
+        dispatch(counterActions.closeConfirmOnMapModal());
+    }
+
     const confirmAddressHandler = (e) => {
         e.preventDefault();
         console.log(addressData);
@@ -183,27 +196,27 @@ const AddAirspace = (props) => {
             coordinates: addressData.geojson ? addressData.geojson.coordinates : []
         }
 
-        props.onConfirm(addressValue);
+        dispatch(counterActions.airspaceData(addressValue));
+        dispatch(counterActions.closeConfirmOnMapModal());
+        dispatch(counterActions.additionalInfoModal());
         console.log(addressValue);
     }
 
 
-    return <div className="bg-white rounded fixed z-20 " style={{width: "886px", height: "764px", 
-        top: "124px",  //This is for live environment
-        bottom: "264px", 
-        left: "277px", 
-        right: "277px",
-        // top: "-100px", // This is for test environment
+    return <div className="bg-white rounded fixed z-20 overflow-y-auto" style={{width: "886px", height: "564px", 
+        top: "7vh",  //This is for live environment
+        left: "calc(50% - 443px)", 
+        // top: "5vh", // This is for test environment
         }}  onClick={() => {setShowOptions(false)}}>
             <div className="relative">
-                <button onClick={props.onClose} className="absolute right-9 top-5">
+                <button onClick={closeModalHandler} className="absolute right-9 top-5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
                         <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
             </div>
-             <div className="flex flex-row items-center mt-20 mb-8 gap-4 justify-center">
+             <div className="flex flex-row items-center mt-10 mb-8 gap-4 justify-center">
                 <h2 className="font-bold">Add New AirSpace</h2>
             </div>
             <form className="relative">
@@ -230,9 +243,9 @@ const AddAirspace = (props) => {
                             <p className="text-xml text-light-green">Verified</p>
                         </div>}
                     </div>
-                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-zinc-400 disabled:hover:bg-zinc-500" style={{width: "120px", height: "37px", border: "none"}}>Verify</button>
+                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "37px", border: "none"}}>Verify</button>
                 </div>
-                {addresses.length > 0 &&
+                {(addresses.length > 0 && address.length > 0) &&
                 <div style={{width: "656px", height: "259px", border: "0.35px solid #0653EA", marginLeft: "52px"}} className={`${(!showOptions || !addresses.length > 1) && "hidden"} bg-white z-10 overflow-y-auto rounded px-3 py-1 absolute`}>
                     <p className="text-xs text-red-500">If any of the addresses listed below matches your address, click on it to select</p>
                     {addresses.map(address => {
@@ -250,16 +263,15 @@ const AddAirspace = (props) => {
                 }
                 <div className="mt-8">
                     <p className="-mb-7 ms-12">Kindly Confirm the Address on the Map</p>
-                    <div id="map" style={{width: "786px", height: "350px"}} className="rounded-md mt-0">
+                    <div id="map" style={{width: "786px", height: "250px"}} className="rounded-md mt-0">
 
                     </div>
-                    <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                        <button className="rounded-md text-dark-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}} onClick={props.onClose}>Cancel</button>
-                        <button disabled={!address || confirmMap} onClick={confirmAddressHandler} className="bg-dark-blue rounded-md text-white disabled:bg-zinc-400 disabled:hover:bg-zinc-500" style={{width: "120px", height: "40px"}}>Next</button>
+                    <div className="flex flex-row justify-center items-center mt-5 gap-5">
+                        <button onClick={closeModalHandler} className="rounded-md text-dark-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
+                        <button disabled={!address || confirmMap} onClick={confirmAddressHandler} className="bg-dark-blue rounded-md text-white disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "40px"}}>Next</button>
                     </div>
                 </div>
             </form>
-            
         </div> 
 }
 

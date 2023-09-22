@@ -34,11 +34,11 @@ const UAVs = (props) => {
         {addUav && createPortal(<AddUavModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
             <Sidebar />
-            <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
+            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
                 <Navbar />
-                <div className="bg-white py-11 px-10" style={{width: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
-                    <h3 className="font-semibold">UAVs</h3> 
-                    <div className="grid grid-cols-4 gap-y-5">
+                <div className="bg-white py-11 px-10 overflow-y-auto" style={{height: "100vh", borderTop: "2px solid #F0F0FA"}}>
+                    <h3 className="font-semibold mb-5">UAVs</h3> 
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-y-5">
                         <div className="rounded" style={{width: "260px", height: "324px", boxShadow: "0px 2px 12px 0px rgba(0, 0, 0, 0.08)"}}>
                             <Image src="/images/uav.png" alt="a picture of UAV" width={260} height={200} />
                             <div className="flex flex-col items-center">

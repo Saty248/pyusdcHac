@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import { createPortal } from "react-dom";
 
 import Navbar from "@/Components/Navbar";
@@ -13,8 +13,8 @@ import visa from "../../../public/images/visa-logo.png";
 
 const Settings = () => {
     const [addCard, setAddCard] = useState(false);
-    const [card, setCard] = useState("");
-    const visaRef = useRef();
+    // const [card, setCard] = useState("");
+    // const visaRef = useRef();
 
     const addCardHandler = (e) => {
         e.preventDefault();
@@ -25,29 +25,29 @@ const Settings = () => {
         setAddCard(false)
     }
 
-    const cardSelectHandler = (e) => {
-        e.preventDefault();
-        setCard(e.target.value);
-    }
+    // const cardSelectHandler = (e) => {
+    //     e.preventDefault();
+    //     setCard(e.target.value);
+    // }
 
-    const targetCard = (e) => {
-        visaRef.current.click();
-        console.log("clicked")
-    }
+    // const targetCard = (e) => {
+    //     visaRef.current.click();
+    //     console.log("clicked")
+    // }
 
     return <Fragment>
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
             <Sidebar />
-            <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
+            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
                 <Navbar />
-                <form className="bg-white py-16 px-10" style={{width: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
+                <form className="bg-white py-16 px-10 mx-auto" style={{maxWidth: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
                     <div>
                         <h3 className="text-2xl font-medium">My Profile</h3>
                         <p>Update your account settings</p>
                     </div>
-                    <div className="mt-10 px-6 flex justify-between items-center border-2 border-light-blue rounded-md" style={{width: "1053px", height: "143px"}}>
+                    <div className="mt-10 px-6 flex justify-between items-center border-2 border-light-blue rounded-md" style={{width: "", height: "143px"}}>
                         <div className="flex flex-row items-center me-5">
                             <Image src="/images/Ellipse.png" alt="icon" className="me-2" width={55} height={55} />
                             <p className="font-base font-medium">John Doe</p>
@@ -57,7 +57,7 @@ const Settings = () => {
                             <button className="bg-bleach-red text-light-red-100 rounded-md transition-all duration-500 ease-in-out hover:bg-red-200 hover:text-white" style={{width: "101px", height: "39px"}}>Remove</button>
                         </div>
                     </div>
-                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "1053px", height: "297px"}}>
+                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Personal Information</h3>
                             <p>update your personal information</p>
@@ -87,7 +87,7 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "1053px", height: "297px"}}>
+                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Change Password</h3>
                             <p>Your new password must be different from the previous used passwords</p>
@@ -112,7 +112,7 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="border-2 mt-10 px-6 py-5 border-light-blue rounded-md" style={{width: "1053px", height: "367px"}}>
+                    <div className="border-2 mt-10 px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "367px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Payment Method</h3>
                             <p>Update your payment information</p>

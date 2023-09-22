@@ -1,5 +1,7 @@
 import { Fragment, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -15,12 +17,13 @@ import AddReviewModal from "@/Components/Modals/AddReviewModal";
 import NewAirspaceModal from "@/Components/Modals/NewAirspaceModal";
 import AddAirspace from "@/Components/Modals/AddAirspace";
 import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
+import { counterActions } from "@/store/store";
 
 
 
 const Airspace = () => {
-    const [allAirspace, setAllAirSpace] = useState(true);
-    const [myAirspace, setMyAirSpace] = useState(false);
+    const [allAirspace, setAllAirSpace] = useState(false);
+    const [myAirspace, setMyAirSpace] = useState(true);
     const [viewAirspace, setViewAirSpace] = useState(false);
     const [viewMyAirspace, setViewMyAirSpace] = useState(false);
     const [airSpaceReviews, setAirSpaceReviews] = useState(false);
@@ -29,10 +32,27 @@ const Airspace = () => {
     const [aboutMyAirspace, setAboutMyAirspace] = useState(false);
     const [showAddReviewModal, setshowAddReviewModal] = useState(false);
     const [showAddAirspaceModal, setShowAddAirspaceModal] = useState(false);
-    const [airspace, setAirspace] = useState("all");
-    const [confirmOnMap, setConfirmOnMap] = useState(false);
+    const [airspace, setAirspace] = useState("mine");
     const [airspaceInfo, setAirspaceInfo ] = useState({});
-    const [additionalInfo, setAdditionalInfo] = useState(false);
+
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+
+    const newAirspace = useSelector(state => {
+        return state.value.newAirspace;
+    });
+
+    const confirmOnMap = useSelector(state => {
+        return state.value.confirmOnMap;
+    });
+
+    const additionalInfo = useSelector(state => state.value.airspaceAdditionalInfo);
+
+
+
+    console.log("The value", newAirspace);
+    console.log("confirm on map is", confirmOnMap);
 
     const showAddReviewModalHandler = () => {
         setshowAddReviewModal (true);
@@ -54,9 +74,16 @@ const Airspace = () => {
     const backdropCloseHandler = () => {
         setShowAddAirspaceModal(false);
         setshowAddReviewModal(false);
-        setConfirmOnMap(false);
-        setAdditionalInfo(false);
+
+
+        dispatch(counterActions.closeNewAirspaceModal());
+        dispatch(counterActions.closeConfirmOnMapModal());
+        dispatch(counterActions.closeAdditionalInfoModal());
     }
+
+
+
+
 
     const showAllAirspace = () => {
         setAllAirSpace(true);
@@ -75,16 +102,24 @@ const Airspace = () => {
         setMyAirSpaceReviews(false);
         setAboutMyAirspace(false);
 
-        if(!airSpaceReviews && !aboutAirspace) {
-            setViewAirSpace(true);
-        }
+        setViewAirSpace(true);
+        setAboutAirspace(false);
+
+        // if(!airSpaceReviews && !aboutAirspace) {
+        //     setViewAirSpace(true);
+        // }
     }
 
     const showMyAirspaceHandler = () => {
         setViewAirSpace(false);
+
         setAirSpaceReviews(false);
         setAboutAirspace(false);
+        // setViewMyAirSpace(true);
+
         setViewMyAirSpace(true);
+        setMyAirSpaceReviews(false);
+        setAboutMyAirspace(false);
     }
 
     const airspaceOverviewHandler = () => {
@@ -140,7 +175,6 @@ const Airspace = () => {
             }
         })
         setShowAddAirspaceModal(false)
-        setConfirmOnMap(true);
     }
 
     const addressValueHandler = (value) => {
@@ -151,7 +185,6 @@ const Airspace = () => {
             }
         })
 
-        setConfirmOnMap(false);
         setAdditionalInfo(true);
         console.log(airspaceInfo);
     }
@@ -160,6 +193,7 @@ const Airspace = () => {
         e.preventDefault();
         console.log(airspaceInfo)
     }
+
 
     const airSpaces = [
         {
@@ -189,18 +223,23 @@ const Airspace = () => {
     return <Fragment>
         {showAddReviewModal &&
             createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
-        }
-        
-        {showAddAirspaceModal && createPortal(<NewAirspaceModal onClose={closeMapHandler} onAddCategory={airspaceCategory} />, document.getElementById("modal-root"))}
-        {additionalInfo && <AdditionalAispaceInformation onConfirm={formSubmitHandler} />}
-        {confirmOnMap && createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={() => setConfirmOnMap(false)} />, document.getElementById("modal-root"))}
+            }
+        {newAirspace && 
+            createPortal(<NewAirspaceModal onClose={closeMapHandler} onAddCategory={airspaceCategory} />, document.getElementById("modal-root"))
+            }
+        {additionalInfo && 
+            <AdditionalAispaceInformation onConfirm={formSubmitHandler} />
+            }
+        {confirmOnMap && 
+            createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
+            }
 
-        {(showAddReviewModal || showAddAirspaceModal || confirmOnMap || additionalInfo) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+        {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+        <div className="flex flex-row mx-auto">
             <Sidebar />
-            <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
+            <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
                 <Navbar />
-                <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "1182px", height: "933px"}}>
+                <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
                     <Airspaces 
                             showMyAirspace={showMyAirspace} 
                             airspace={airspace} 

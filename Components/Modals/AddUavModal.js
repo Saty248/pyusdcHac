@@ -15,12 +15,9 @@ const AddUavModal = (props) => {
     }
 
 
-    return <div className="bg-white rounded px-12 fixed z-20 " style={{width: "886px", height: "1001px", 
-        top: "74px",  // This is for live environment
-        bottom: "44px",
-        // top: "-400px",  // This is for test environment
-        left: "277px", 
-        right: "277px" 
+    return <div className="bg-white rounded px-12 pb-10 fixed z-20 overflow-y-auto" style={{width: "886px", height: "90vh", maxHeight: "1001px",
+                top: "5vh",  // This is for live environment
+                left: "calc(50% - 443px)", 
         }}>
             <div className="flex flex-row items-center mt-20 gap-4 justify-center">
                 <h2 className="font-bold">Add UAV</h2>

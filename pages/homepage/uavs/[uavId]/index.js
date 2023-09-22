@@ -42,14 +42,18 @@ const UavProfile = () => {
         setShowEditUavModal(false)
     }
 
+    const ScheduleFlight = (id) => {
+        router.push(`/homepage/uavs/${id}/scheduleflight`);
+    }
+
     return <Fragment>
         {showEditUavModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {showEditUavModal && createPortal(<EditUavModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
-        <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+        <div className="flex flex-row mx-auto">
             <Sidebar />
-            <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
+            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className=" bg-white overflow-y-auto">
                 <Navbar />
-                <div className="bg-white py-16 px-10" style={{width: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
+                <div className="bg-white py-16 px-10 mx-auto" style={{maxWidth: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
                     <div className="flex flex-row items-center mb-6 gap-2">
                         <button onClick={returnToUavHandler}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -74,7 +78,7 @@ const UavProfile = () => {
                             <p className="text-light-dark mb-1.5"><span className="font-semibold">Range:</span> 27 Km</p>
                             <p className="text-light-dark"><span className="font-semibold">Battery Range:</span> 45 Mins</p>
                             <div className="flex flex-row justify-between items-center mt-10">
-                                <button className="bg-dark-blue text-white rounded-md transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "157px", height: "40px"}}>Schedule Flight</button>
+                                <button onClick={ScheduleFlight.bind(null, "1899")} className="bg-dark-blue text-white rounded-md transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "157px", height: "40px"}}>Schedule Flight</button>
                                 <div className="flex flex-row gap-2.5">
                                     <button onClick={showModalHandler} className="flex flex-row justify-center items-center gap-1 bg-bleach-blue text-dark-blue rounded-md transition-all duration-500 ease-in-out hover:bg-blue-300" style={{width: "90px", height: "40px"}}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -159,8 +163,8 @@ const UavProfile = () => {
                                 </div>
                             </div>}
                     {flightHistory && 
-                        <div className="overflow-y-auto mx-auto" style={{height: "900px"}}>
-                            <div className="mt-7 pb-5 mx-auto" style={{borderBottom: "0.1px solid rgba(74, 74, 241, 0.2)", width: "1000px"}}>
+                        <div className="overflow-y-auto overflow-x-hidden mx-auto flex flex-col items-center" style={{height: "900px"}}>
+                            <div className="mt-7 pb-5 mx-auto" style={{borderBottom: "0.1px solid rgba(74, 74, 241, 0.2)"}}>
                                 <div className="flex flex-row justify-between">
                                     <p>09/08/2023, 09:06</p>
                                     <div className="relative">
@@ -179,29 +183,57 @@ const UavProfile = () => {
                                         </svg>
                                     </div>  
                                 </div>
-                                <div className="" style={{width: "1000px", height: "311px"}}>
-                                    <Image src="/images/map-bg.png" className="mt-11" alt="map image" width={1000} height={311} style={{height: "100%", objectFit: "cover"}} />
+                                <div className="" style={{width: "", height: "311px"}}>
+                                    <Image src="/images/map-bg.png" className="mt-11" alt="map image" width={900} height={311} style={{height: "100%", objectFit: "cover"}} />
                                 </div>
                             </div>
-                            <div className="mt-7 pb-5 mx-auto" style={{borderBottom: "0.1px solid rgba(74, 74, 241, 0.2)", width: "1000px"}}>
+                            <div className="mt-7 pb-5 mx-auto" style={{borderBottom: "0.1px solid rgba(74, 74, 241, 0.2)"}}>
                                 <div className="flex flex-row justify-between">
                                     <p>09/08/2023, 09:06</p>
                                     <div className="relative">
-                                        <div className="flex flex-col items-center">
-                                            <p>
-                                                $ 00.00
-                                            </p>
-                                            <p className="text-sm text-light-brown">cancelled</p>
+                                        <p className="flex flex-row items-center">
+                                            $ 50.00
+                                        </p>
+                                        <div className="flex flex-row items-center">
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
                                         </div>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-0 bottom-1 -right-5" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                             <path fill-rule="evenodd" clip-rule="evenodd" d="M8.96967 7.46967C9.26256 7.17678 9.73744 7.17678 10.0303 7.46967L14.0303 11.4697C14.3232 11.7626 14.3232 12.2374 14.0303 12.5303L10.0303 16.5303C9.73744 16.8232 9.26256 16.8232 8.96967 16.5303C8.67678 16.2374 8.67678 15.7626 8.96967 15.4697L12.4393 12L8.96967 8.53033C8.67678 8.23744 8.67678 7.76256 8.96967 7.46967Z" fill="#3F3D56"/>
                                         </svg>
                                     </div>  
                                 </div>
-                                <div className="" style={{width: "1000px", height: "311px"}}>
-                                    <Image src="/images/map-bg.png" className="mt-11" alt="map image" width={1000} height={311} style={{height: "100%", objectFit: "cover"}} />
+                                <div className="" style={{width: "", height: "311px"}}>
+                                    <Image src="/images/map-bg.png" className="mt-11" alt="map image" width={900} height={311} style={{height: "100%", objectFit: "cover"}} />
                                 </div>
                             </div>
+                            <div className="mt-7 pb-5 mx-auto" style={{borderBottom: "0.1px solid rgba(74, 74, 241, 0.2)"}}>
+                                <div className="flex flex-row justify-between">
+                                    <p>09/08/2023, 09:06</p>
+                                    <div className="relative">
+                                        <p className="flex flex-row items-center">
+                                            $ 50.00
+                                        </p>
+                                        <div className="flex flex-row items-center">
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
+                                            <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
+                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-0 bottom-1 -right-5" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.96967 7.46967C9.26256 7.17678 9.73744 7.17678 10.0303 7.46967L14.0303 11.4697C14.3232 11.7626 14.3232 12.2374 14.0303 12.5303L10.0303 16.5303C9.73744 16.8232 9.26256 16.8232 8.96967 16.5303C8.67678 16.2374 8.67678 15.7626 8.96967 15.4697L12.4393 12L8.96967 8.53033C8.67678 8.23744 8.67678 7.76256 8.96967 7.46967Z" fill="#3F3D56"/>
+                                        </svg>
+                                    </div>  
+                                </div>
+                                <div className="" style={{width: "", height: "311px"}}>
+                                    <Image src="/images/map-bg.png" className="mt-11" alt="map image" width={900} height={311} style={{height: "100%", objectFit: "cover"}} />
+                                </div>
+                            </div>
+                            
                         </div>}     
                     </div>
                 </div>
