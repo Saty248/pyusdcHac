@@ -22,7 +22,7 @@ const PilotProfileModal = (props) => {
         }}>
             <div>
                 <div className="flex flex-row items-center mt-20 mx-auto gap-36 justify-center">
-                    <Image src={pilot} alt="a picture of UAV" width={193} height={193} />
+                    <Image src="/images/pilot-picture.png" alt="a picture of a pilot" width={193} height={193} />
                     <div>
                         <p className="text-dark-brown"><span className="font-semibold">Name: </span>Eleanor Pena</p>
                         <p className="text-dark-brown"><span className="font-semibold">FAA Tracking Number: </span>98573645</p>
