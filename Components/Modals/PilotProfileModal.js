@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Image from "next/image";
-import pilot from "../../public/images/pilot.png";
 
 const PilotProfileModal = (props) => {
     const [flightHistory, setFlightHistory] = useState(true);
