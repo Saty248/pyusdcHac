@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
+import pilot from "../../public/images/pilot.png";
 
 const PilotProfileModal = (props) => {
     const [flightHistory, setFlightHistory] = useState(true);
@@ -21,7 +22,7 @@ const PilotProfileModal = (props) => {
         }}>
             <div>
                 <div className="flex flex-row items-center mt-20 mx-auto gap-36 justify-center">
-                    <Image src="/images/pilot.png" alt="a picture of UAV" width={193} height={193} />
+                    <Image src={pilot} alt="a picture of UAV" width={193} height={193} />
                     <div>
                         <p className="text-dark-brown"><span className="font-semibold">Name: </span>Eleanor Pena</p>
                         <p className="text-dark-brown"><span className="font-semibold">FAA Tracking Number: </span>98573645</p>
