@@ -46,28 +46,28 @@ const UAVs = (props) => {
                     </div>
                     <div className="grid lg:grid-cols-3 2xl:grid-cols-4 gap-y-5">
                         <div className="rounded pt-5 flex flex-col items-center text-center bg-bleach-blue-100" style={{width: "260px", height: "324px",}}>
-                            <Image src="/images/pilot-picture.png" alt="a picture of a pilot" width={123} height={123} />
+                            <Image src="/images/Ellipse.png" alt="a picture of a pilot" width={123} height={123} />
                             <p className="font-medium text-dark-brown mt-3">Eleanor Pena</p>
                             <p className="text-dark-brown text-sml">156hrs Flight time</p>
                             <p className="text-dark-brown font-medium text-sml mt-2">3891 Ranchview Dr. Richardson, California 62639</p>
                             <button onClick={showPilotModalHandler} className="bg-dark-blue rounded-md text-sml font-normal text-white mt-2.5 transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Select</button>
                         </div> 
                         <div className="rounded pt-5 flex flex-col items-center text-center bg-bleach-blue-100" style={{width: "260px", height: "324px"}}>
-                            <Image src="/images/pilot-picture.png" alt="a picture of a pilot" width={123} height={123} />
+                            <Image src="/images/Ellipse.png" alt="a picture of a pilot" width={123} height={123} />
                             <p className="font-medium text-dark-brown mt-3">Eleanor Pena</p>
                             <p className="text-dark-brown text-sml">156hrs Flight time</p>
                             <p className="text-dark-brown font-medium text-sml mt-2">3891 Ranchview Dr. Richardson, California 62639</p>
                             <button onClick={showPilotModalHandler} className="bg-dark-blue rounded-md text-sml font-normal text-white mt-2.5 transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Select</button>
                         </div> 
                         <div className="rounded pt-5 flex flex-col items-center text-center bg-bleach-blue-100" style={{width: "260px", height: "324px"}}>
-                            <Image src="/images/pilot-picture.png" alt="a picture of a pilot" width={123} height={123} />
+                            <Image src="/images/Ellipse.png" alt="a picture of a pilot" width={123} height={123} />
                             <p className="font-medium text-dark-brown mt-3">Eleanor Pena</p>
                             <p className="text-dark-brown text-sml">156hrs Flight time</p>
                             <p className="text-dark-brown font-medium text-sml mt-2">3891 Ranchview Dr. Richardson, California 62639</p>
                             <button onClick={showPilotModalHandler} className="bg-dark-blue rounded-md text-sml font-normal text-white mt-2.5 transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Select</button>
                         </div> 
                         <div className="rounded pt-5 flex flex-col items-center text-center bg-bleach-blue-100" style={{width: "260px", height: "324px"}}>
-                            <Image src="/images/pilot-picture.png" alt="a picture of a pilot" width={123} height={123} />
+                            <Image src="/images/Ellipse.png" alt="a picture of a pilot" width={123} height={123} />
                             <p className="font-medium text-dark-brown mt-3">Eleanor Pena</p>
                             <p className="text-dark-brown text-sml">156hrs Flight time</p>
                             <p className="text-dark-brown font-medium text-sml mt-2">3891 Ranchview Dr. Richardson, California 62639</p>

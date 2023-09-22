@@ -70,6 +70,7 @@ const AddAirspace = (props) => {
     useEffect(() => {
             setConfirmMap(true);
             setAddressValid(false);
+            setError(false);
             if(address) {        
             const addressHandler = setTimeout(() => {
                 fetch(`https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`)
@@ -87,6 +88,7 @@ const AddAirspace = (props) => {
                 })
                 .catch((err) => {
                     console.log(err)
+                    setAddresses("");
                 })
             }, 500)
             return () => {
@@ -168,7 +170,6 @@ const AddAirspace = (props) => {
                     });
                 });
             
-            console.log(resData[0])
             setConfirmMap(false)
             setError("")
             setIsLoading(false)
@@ -176,8 +177,8 @@ const AddAirspace = (props) => {
             setShowMap(true)
         })
         .catch((err) => {
-            setError(err.message || "oops! something went wrong. please try again")
-            setIsLoading(false)
+            setError(`${err.message || ""}${err.message ? "." : ""} kindly check your address and try again`);
+            setIsLoading(false);
         });     
     }
 
@@ -224,6 +225,7 @@ const AddAirspace = (props) => {
                 
                 <div className="flex flex-row gap-2.5 justify-end items-center me-12">
                     <div className="relative"> 
+                        <p className='absolute -top-2 text-red-500 text-sm right-0'>{error}</p>
                         <input placeholder="AirSpace Address" onChange={addressChangeHandler} value={address} className="ms-12 mt-2.5 text-ellipsis rounded placeholder:text-light-brown placeholder:text-sm ps-5 pe-36 py-2.5 focus:outline-blue-200" style={{width: "656px", height: "37px", border: "0.35px solid #0653EA"}} />
                         {/* <div className="flex flex-row justify-center gap-1 items-center absolute right-3 top-4 z-10">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">

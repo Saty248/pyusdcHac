@@ -14,6 +14,7 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
+        "bleach-white": "rgba(255, 255, 255, 0.95)",
         "dark": "#252530",
         "light-dark": "#1E1E1E",
         "light-grey": "#F0F0FA",  
@@ -22,6 +23,7 @@ module.exports = {
         "sky-blue": "#F4F8FF", 
         "sky-blue-100": "rgba(244, 248, 255, 1)",
         "light-blue": "#78A6FF",
+        "light-blue-100": "#DFDFFF",
         "bleach-blue": "#DEF1FF",
         "bleach-blue-100": "#bde3ff33",
         "light-blue": "rgba(6, 83, 234, 0.10)",
@@ -38,6 +40,7 @@ module.exports = {
         "sans": ['poppins', 'sans-serif'] 
       },
       fontSize: {
+        'xxs': "8px",
         'xs': "10px",
         'sm': '12px',
         'sml': "14px",
