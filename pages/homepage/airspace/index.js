@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,10 +18,16 @@ import NewAirspaceModal from "@/Components/Modals/NewAirspaceModal";
 import AddAirspace from "@/Components/Modals/AddAirspace";
 import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
 import { counterActions } from "@/store/store";
+import User from "@/models/User"; 
+import Spinner from "@/Components/Spinner";
 
 
+const Airspace = (props) => {
+    const { users } = props;
 
-const Airspace = () => {
+    const router = useRouter();
+    const dispatch = useDispatch();
+
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
     const [viewAirspace, setViewAirSpace] = useState(false);
@@ -35,8 +41,33 @@ const Airspace = () => {
     const [airspace, setAirspace] = useState("mine");
     const [airspaceInfo, setAirspaceInfo ] = useState({});
 
-    const router = useRouter();
-    const dispatch = useDispatch();
+    const [user, setUser] = useState();
+
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
+    
 
 
     const newAirspace = useSelector(state => {
@@ -219,6 +250,12 @@ const Airspace = () => {
     ]
 
 
+    if(!user || !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    }
 
     return <Fragment>
         {showAddReviewModal &&
@@ -238,7 +275,7 @@ const Airspace = () => {
         <div className="flex flex-row mx-auto">
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
-                <Navbar />
+                <Navbar name={user.name} />
                 <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
                     <Airspaces 
                             showMyAirspace={showMyAirspace} 
@@ -264,20 +301,22 @@ const Airspace = () => {
                                                 aboutMyAirspace={aboutMyAirspaceHandler} 
                                                 closeDetails={closeAirspaceDetailsHandler}
                                             />}
-                    {myAirspaceReviews && <MyAirspaceReviews 
+                                            
+                    {/* {myAirspaceReviews && <MyAirspaceReviews 
                                                 viewMyAirspace={myAirspaceOverviewHandler}
                                                 myAirspaceReview={myAirspaceReviewHandler} 
                                                 aboutMyAirspace={aboutMyAirspaceHandler} 
                                                 closeDetails={closeAirspaceDetailsHandler}
-                                            />}
+                                            />} */}
 
-                    {airSpaceReviews && <AirspaceReviews 
+                    {/* {airSpaceReviews && <AirspaceReviews 
                                                 onClick={showAddReviewModalHandler} 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler}
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
+                                                />} */}
+
                     {viewAirspace && <AllAirspaceOverview 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
@@ -297,3 +336,15 @@ const Airspace = () => {
 }
 
 export default Airspace;
+
+
+export async function getStaticProps () {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+        revalidate : 60 * 30
+    }
+}

@@ -1,13 +1,54 @@
-import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
+import User from "@/models/User";
+import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
 
-const Weather = () => {
+const Weather = (props) => {
+    const { users } = props;
+
+    const router = useRouter();
+
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
+
+    if(!user && !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    } 
+
     return <div className="flex flex-row w-screen">
         <Sidebar />
         <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
-            <Navbar />
+            <Navbar name={user.name} />
             <div className="flex flex-row justify-center">
                 <div className="bg-white mx-5 my-5 p-5 rounded" style={{height: "893px", maxWidth: "339px"}}>
                     <div className="relative">
@@ -173,3 +214,14 @@ const Weather = () => {
 }
 
 export default Weather;
+
+export async function getStaticProps () {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+        revalidate : 60 * 30
+    }
+}

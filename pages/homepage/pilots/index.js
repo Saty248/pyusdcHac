@@ -1,16 +1,39 @@
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
 import Backdrop from "@/Components/Backdrop";
 import PilotProfileModal from "@/Components/Modals/PilotProfileModal";
 import AddPilotModal from "@/Components/Modals/AddPilotModal";
+import Spinner from "@/Components/Spinner";
+import User from "@/models/User";
 
 const UAVs = (props) => {
+    const { users } = props;
+    const router = useRouter();
+
     const [pilotProfile, setPilotProfile] = useState(false);
     const [addPilot, setAddPilot] = useState(false);
+
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = localStorage.getItem("openlogin_store")
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        }
+        setToken(fetchedToken);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
 
     const backdropCloseHandler = () => {
         setPilotProfile(false);
@@ -29,6 +52,13 @@ const UAVs = (props) => {
         setPilotProfile(false);
         setAddPilot(false);
     }
+
+    if(!user || !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    } 
 
     return <Fragment>
         {(pilotProfile || addPilot) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
@@ -81,3 +111,14 @@ const UAVs = (props) => {
 }
 
 export default UAVs;
+
+export async function getStaticProps () {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+        revalidate : 60 * 30
+    }
+}

@@ -19,12 +19,10 @@ const AboutAirspace = (props) => {
         <div className="flex flex-row justify-center gap-7 mt-8 pb-2.5 items-center">
             <button className="relative" onClick={props.viewAirspace}>
                 <p className="font-bold ">Overview</p>
-                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
-            <button className="relative" onClick={props.viewAirspaceReview}>
+            {/* <button className="relative" onClick={props.viewAirspaceReview}>
                 <p className="font-bold">Reviews</p>
-                {/* <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
-            </button>
+            </button> */}
             <button className="relative" onClick={props.aboutAirspace}>
                 <p className="font-bold text-dark-blue">About</p>
                 <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>

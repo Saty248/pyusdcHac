@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/router";
+
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -8,13 +10,50 @@ import Backdrop from "@/Components/Backdrop";
 import AddCardModal from "@/Components/Modals/AddCardModal";
 import mastercard from "../../../public/images/mastercard-logo.png";
 import visa from "../../../public/images/visa-logo.png";
+import User from "@/models/User";
+import swal from "sweetalert";
+import Spinner from "@/Components/Spinner";
 
 
 
-const Settings = () => {
+const Settings = (props) => {
+    const { users } = props;
+
+    const router = useRouter();
+
     const [addCard, setAddCard] = useState(false);
-    // const [card, setCard] = useState("");
-    // const visaRef = useRef();
+    const [nameValid, setNameValid] = useState(true);
+    const [emailValid, setEmailValid] = useState(true);
+    const [phoneValid, setPhoneValid] = useState(true);
+    const [user, setUser] = useState("");
+    const [token, setToken] = useState("");
+
+    const nameRef = useRef();
+    const emailRef = useRef();
+    const phoneRef = useRef();
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
 
     const addCardHandler = (e) => {
         e.preventDefault();
@@ -25,29 +64,112 @@ const Settings = () => {
         setAddCard(false)
     }
 
-    // const cardSelectHandler = (e) => {
-    //     e.preventDefault();
-    //     setCard(e.target.value);
-    // }
+    const updateDataHandler = (e) => {
+        e.preventDefault();
 
-    // const targetCard = (e) => {
-    //     visaRef.current.click();
-    //     console.log("clicked")
-    // }
+        const name = nameRef.current.value;
+        const phoneNumber = phoneRef.current.value;
+        const email = emailRef.current.value;
+
+        const regex = /^\S+@\S+\.\S+$/;
+        const emailIsValid = regex.test(email);
+
+        if(!name) {
+            setNameValid(false);
+            swal({
+                title: "oops!",
+                text: "Kindly complete all required fields",
+                timer: 2000
+              });
+            return;
+        }
+
+        if(!phoneNumber) {
+            setPhoneValid(false);
+            swal({
+                title: "oops!",
+                text: "Kindly complete all required fields",
+                timer: 2000
+              });
+            return;
+        }
+
+        if(!emailIsValid) {
+            setEmailValid(false);
+            swal({
+                title: "oops!",
+                text: "Kindly complete all required fields",
+                timer: 2000
+              });
+            return;
+        }
+
+        fetch("/api/update-user", {
+            method: "PUT",
+            body: JSON.stringify({
+                id: user.id,
+                name,
+                email,
+                phoneNumber
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then((res) => {
+            if(!res.ok) {
+                res.json()
+                .then(errorData => {
+                    swal({
+                        title: "oops!",
+                        text: `${errorData.message}`,
+                        // timer: 2000
+                      });
+                    // return;
+                    throw new Error(errorData.message);
+                });
+            }
+            return res.json();
+        }).then(() => {
+            localStorage.removeItem("email");
+            localStorage.setItem("email", email);
+            swal({
+                title: "Submitted",
+                text: "User's record successfully updated.",
+                icon: "success",
+                button: "Ok"
+              })
+            .then(() => {
+                router.push("/homepage/dashboard");
+            })
+        })
+        .catch(err => {
+            console.log(err);
+            // setError(err.toString());
+            // setIsLoading(false);
+        })
+    }
+
+    if(!user || !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    } 
 
     return <Fragment>
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
-        <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+        <div className="flex flex-row mx-auto">
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
-                <Navbar />
-                <form className="bg-white py-16 px-10 mx-auto" style={{maxWidth: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
+                <Navbar name={user.name} />
+                <form className="bg-white pt-16 pb-2 px-10 mx-auto" style={{maxWidth: "1183px", borderTop: "2px solid #F0F0FA"}}>
                     <div>
                         <h3 className="text-2xl font-medium">My Profile</h3>
                         <p>Update your account settings</p>
                     </div>
-                    <div className="mt-10 px-6 flex justify-between items-center border-2 border-light-blue rounded-md" style={{width: "", height: "143px"}}>
+                    {/* <div className="mt-10 px-6 flex justify-between items-center border-2 border-light-blue rounded-md" style={{width: "", height: "143px"}}>
                         <div className="flex flex-row items-center me-5">
                             <Image src="/images/Ellipse.png" alt="icon" className="me-2" width={55} height={55} />
                             <p className="font-base font-medium">John Doe</p>
@@ -56,59 +178,30 @@ const Settings = () => {
                             <button className="bg-dark text-white rounded-md transition-all duration-500 ease-in-out hover:bg-slate-950 hover:text-white" style={{width: "189px", height: "39px"}}>Upload new picture</button>
                             <button className="bg-bleach-red text-light-red-100 rounded-md transition-all duration-500 ease-in-out hover:bg-red-200 hover:text-white" style={{width: "101px", height: "39px"}}>Remove</button>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Personal Information</h3>
                             <p>update your personal information</p>
                         </div>
-                        <div className="flex gap-5">
-                            <div>
-                                <label className="text-bleach-brown" htmlFor="first name">First Name</label> <br />
-                                <input type="text" name="first name" defaultValue="John" id="first name" 
-                                    className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                            </div>
-                            <div>
-                                <label className="text-bleach-brown" htmlFor="last name">Last Name</label> <br />
-                                <input type="text" name="last name" defaultValue="Doe" id="last name" 
-                                    className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                            </div>
+                        <div className="relative mb-10"  style={{maxWidth: "660px", height: "37px"}}>
+                            <label className="text-bleach-brown" htmlFor="first name">Name</label> <br />
+                            <input type="text" ref={nameRef} onChange={() => setNameValid(true)} name="name" defaultValue={user.name} id="name" 
+                                className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "660px", height: "37px"}} />
+                            {!nameValid && <p className="absolute top-1 right-0 text-sm text-red-600">name cannot be empty</p>}
                         </div>
                         <div className="flex mt-6 gap-5">
-                            <div>
+                            <div className="relative">
                                 <label className="text-bleach-brown" htmlFor="email">Email</label> <br />
-                                <input type="email" name="email" defaultValue="johndoe12345@gmail.com" id="email" 
+                                <input type="email" onChange={() => setEmailValid(true)} ref={emailRef} name="email" defaultValue={user.email} id="email" 
                                     className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
+                                {!emailValid && <p className="absolute top-1 right-0 text-sm text-red-600">email is invalid</p>}
                             </div>
-                            <div>
+                            <div className="relative">
                                 <label className="text-bleach-brown" htmlFor="number">Phone Number</label> <br />
-                                <input type="text" name="number" defaultValue="+233445667874" id="number" 
+                                <input type="text" onChange={() => setPhoneValid(true)} ref={phoneRef} name="number"  defaultValue={user.phoneNumber} id="number" 
                                     className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
-                        <div className="mb-5">
-                            <h3 className="text-2xl font-medium">Change Password</h3>
-                            <p>Your new password must be different from the previous used passwords</p>
-                        </div>
-                        <div className="flex gap-4">
-                            <div>
-                                <label className="text-bleach-brown" htmlFor="password">Current password</label> <br />
-                                <input type="password" name="password" defaultValue="Current password" id="password" 
-                                    className="ps-3 placeholder:font-medium border-2 focus:outline-blue-200 border-light-blue placeholder:text-dark-brown rounded-md" style={{width: "660px", height: "37px"}} />
-                            </div>
-                        </div>
-                        <div className="flex mt-6 gap-5">
-                            <div>
-                                <label className="text-bleach-brown" htmlFor="password">New Password</label> <br />
-                                <input type="password" name="password" id="password" 
-                                    className="ps-3 placeholder:font-medium border-2 focus:outline-blue-200 border-light-blue placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                            </div>
-                            <div>
-                                <label className="text-bleach-brown" htmlFor="password">New Password</label> <br />
-                                <input type="password" name="password" id="password" 
-                                    className="ps-3 placeholder:font-medium border-2 focus:outline-blue-200 border-light-blue placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
+                                {!phoneValid && <p className="absolute top-1 right-0 text-sm text-red-600">invalid phone number</p>}
                             </div>
                         </div>
                     </div>
@@ -175,8 +268,8 @@ const Settings = () => {
                         </button>
                     </div>
                     <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                        <button className="rounded-md text-dark-blue transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
-                        <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Save</button>
+                        {/* <button className="rounded-md text-dark-blue transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button> */}
+                        <button onClick={updateDataHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Save</button>
                     </div>
                     <div className="flex flex-row mt-10 text-sm justify-between items-center">
                         <p>&copy; Skytrades 2023</p>
@@ -194,3 +287,13 @@ const Settings = () => {
 }
 
 export default Settings;
+
+export async function getStaticProps() {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+    }
+}

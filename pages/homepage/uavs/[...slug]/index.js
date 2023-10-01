@@ -1,14 +1,56 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
-import map from "../../../../public/images/map-bg.png"
+import map from "../../../../public/images/map-bg.png";
+import Spinner from "@/Components/Spinner";
+import Backdrop from "@/Components/Backdrop";
+import User from "@/models/User";
 
-const ScheduleFlight = () => {
+
+const ScheduleFlight = (props) => {
+    const { users } = props;
+    const router = useRouter();
+
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
+
+    if(!user || !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    } 
+
     return <div className="flex flex-row w-screen">
         <Sidebar />
         <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
-            <Navbar />
+            <Navbar name={user.name} />
             <div style={{height: "calc(100vh - 91px)"}}>
                 <Image src={map} alt="a map" style={{height: "50%"}} className="w-full max-w-6xl object-cover" />
                 <div style={{height: "50%"}} className="relative w-full max-w-6xl mx-auto">
@@ -77,3 +119,25 @@ const ScheduleFlight = () => {
 }
 
 export default ScheduleFlight;
+
+export async function getStaticPaths() {
+    return {
+      paths: [
+        {
+          params: { slug: ['a', 'b'] },
+        },
+      ],
+      fallback: true, // false or "blocking"
+    }
+  }
+
+export async function getStaticProps () {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+        revalidate : 60 * 30
+    }
+}

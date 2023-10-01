@@ -7,14 +7,44 @@ import Sidebar from "@/Components/Sidebar";
 import mastercard from "../../../../public/images/mastercard-logo.png";
 import visa from "../../../../public/images/visa-logo.png";
 import Backdrop from "@/Components/Backdrop";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddCardModal from "@/Components/Modals/AddCardModal";
+import Spinner from "@/Components/Spinner";
+import User from "@/models/User";
 
+const Wallet = (props) => {
+    const { users } = props;
 
-const Wallet = () => {
-    const router = useRouter();
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
     const [addCard, setAddCard] = useState(false);
+    
+    const router = useRouter();
 
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
+
+        if(!fetchedEmail || !fetchedToken) {
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
+
+    
     const addCardHandler = () => {
         setAddCard(true);
     }
@@ -27,12 +57,19 @@ const Wallet = () => {
         router.push("/homepage/wallet")
     }
 
+    if(!user || !token) {
+        return <div>            
+                <Backdrop />
+                <Spinner />
+            </div>
+    } 
+
     return <div className="flex flex-row mx-auto">
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
         <Sidebar />
         <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="mx-auto overflow-y-auto">
-            <Navbar />
+            <Navbar name={user.name} />
             <div className="bg-bleach-green flex flex-col justify-center mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">
                     <p className="text-light-brown">My Wallet</p>
@@ -137,3 +174,14 @@ const Wallet = () => {
 }
 
 export default Wallet;
+
+export async function getStaticProps () {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        },
+        revalidate : 60 * 30
+    }
+}

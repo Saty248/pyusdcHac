@@ -7,7 +7,10 @@ const initialState = {
         airspaceAdditionalInfo: false,
         airspaceData: {
 
-        }
+        },
+        category: {
+
+        },
     }
 };
 
@@ -42,6 +45,12 @@ const airspaceSlice = createSlice({
         airspaceData(state, action) {
             state.value.airspaceData = {
                 ...state.value.airspaceData,
+                ...action.payload
+            }
+        },
+        category(state, action) {
+            state.value.category = {
+                ...state.value.category,
                 ...action.payload
             }
         }

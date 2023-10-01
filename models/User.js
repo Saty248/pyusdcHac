@@ -1,28 +1,16 @@
-const sequelize = require("../db/database")
+const sequelize = require("../db/database");
 import { DataTypes } from "sequelize";
 
-const Drone = sequelize.define("Drone", {
+const User = sequelize.define("user", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    ownerName: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    operatorName: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    physicalAddress: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    mailingAddress: {
-        type: DataTypes.STRING,
-        allowNull: true
     },
     email: {
         type: DataTypes.STRING,
@@ -32,15 +20,18 @@ const Drone = sequelize.define("Drone", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    drone: {
-        type: DataTypes.JSON,
-        defaultValue: [],
-        allowNull: false
-    },
-    password: {
+    category: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    wallet: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    newsletter: {
+        type: DataTypes.BOOLEAN
     }
-});
+})
 
-export default Drone;
+
+export default User;

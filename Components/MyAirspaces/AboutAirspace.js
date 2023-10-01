@@ -20,9 +20,9 @@ const AboutMyAirspace = (props) => {
             <button className="relative" onClick={props.viewMyAirspace}>
                 <p className="font-bold">Overview</p>
             </button>
-            <button className="relative" onClick={props.myAirspaceReview}>
+            {/* <button className="relative" onClick={props.myAirspaceReview}>
                 <p className="font-bold">Reviews</p>
-            </button>
+            </button> */}
             <button className="relative" onClick={props.aboutMyAirspace}>
                 <p className="font-bold text-dark-blue">About</p>
                 <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>
