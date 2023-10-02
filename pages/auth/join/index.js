@@ -12,6 +12,8 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import { counterActions } from "@/store/store";
 import User from "@/models/User";
 import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
+import swal from "sweetalert";
 
 const Signup = (props) => {
     const { users } = props;
@@ -42,34 +44,34 @@ const Signup = (props) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    const chainConfig = {
-        chainNamespace: "solana",
-        chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://api.devnet.solana.com",
-        displayName: "Solana Devnet",
-        blockExplorer: "https://explorer.solana.com",
-        ticker: "SOL",
-        tickerName: "Solana",
-      }
-
-    //   For Live Environment
-    
     // const chainConfig = {
     //     chainNamespace: "solana",
-    //     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://rpc.ankr.com/solana",
-    //     displayName: "Solana Mainnet",
+    //     chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    //     rpcTarget: "https://api.devnet.solana.com",
+    //     displayName: "Solana Devnet",
     //     blockExplorer: "https://explorer.solana.com",
     //     ticker: "SOL",
     //     tickerName: "Solana",
-    // };
+    //   }
+
+    //   For Live Environment
+    
+    const chainConfig = {
+        chainNamespace: "solana",
+        chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        rpcTarget: "https://rpc.ankr.com/solana",
+        displayName: "Solana Mainnet",
+        blockExplorer: "https://explorer.solana.com",
+        ticker: "SOL",
+        tickerName: "Solana",
+    };
 
     const web3auth = new Web3AuthNoModal({
         // For Production
-        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY"
+        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
         
         // For Development
-        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
+        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
         web3AuthNetwork: "sapphire_mainnet", // Web3Auth Network
         chainConfig: chainConfig,
     });
@@ -105,18 +107,48 @@ const Signup = (props) => {
         setInitial(!initial);
         setIsLoading(true);
         
-        
-        const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-            loginProvider: "email_passwordless",
-            extraLoginOptions: {
-              login_hint: email,
-            },
-          });
+        let web3authProvider;
+
+        try{
+            web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+                loginProvider: "email_passwordless",
+                extraLoginOptions: {
+                  login_hint: email,
+                },
+            });
+        }
+        catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
 
         const solanaWallet = new SolanaWallet(web3authProvider);
-        const accounts = await solanaWallet.requestAccounts();
+
+        let accounts;
+
+        try{
+            accounts = await solanaWallet.requestAccounts();
+        } catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
         
-        const userInformation = await web3auth.getUserInfo();
+        let userInformation;
+        try{
+            userInformation = await web3auth.getUserInfo();
+        } catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
         
         const filteredUser = users.filter(user => user.email === email);
 
@@ -146,14 +178,46 @@ const Signup = (props) => {
 
         setIsLoading(true);
         
-        const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-            loginProvider: provider,
-          });
+        let web3authProvider;
+
+        try{
+            web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+                loginProvider: provider,
+              });
+        } catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
         
-        const userInformation = await web3auth.getUserInfo();
+        let userInformation;
+        try{
+            userInformation = await web3auth.getUserInfo();
+        } catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
+        
 
         const solanaWallet = new SolanaWallet(web3authProvider);
-        const accounts = await solanaWallet.requestAccounts();
+
+        let accounts;
+
+        try{
+            accounts = await solanaWallet.requestAccounts();
+        } catch(err) {
+            swal({
+                title: "oops!",
+                text: "Something went wrong. Kindly reload the page",
+              });
+            return;
+        }
+       
 
         console.log(userInformation);
         const filteredUser = users.filter(user => user.email === userInformation.email);
@@ -191,6 +255,7 @@ const Signup = (props) => {
 
     return <Fragment>
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
+        {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         {!categorySect && <div className="bg-white rounded px-12 mx-auto justify-center items-center relative" style={{width: "680px", height: "90vh", maxHeight: "593px", marginTop: "5vh"}}>
             <button onClick={() => router.push("/")} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
