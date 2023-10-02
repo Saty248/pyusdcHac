@@ -11,6 +11,9 @@ const initialState = {
         category: {
 
         },
+        web3: {
+
+        }
     }
 };
 
@@ -51,6 +54,12 @@ const airspaceSlice = createSlice({
         category(state, action) {
             state.value.category = {
                 ...state.value.category,
+                ...action.payload
+            }
+        },
+        
+        web3(state, action) {
+            state.value.web3 = {
                 ...action.payload
             }
         }

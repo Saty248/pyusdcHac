@@ -7,23 +7,21 @@ import { createPortal } from "react-dom";
 import swal from "sweetalert";
 
 import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
 
 const CorporateSignup = () => {
     const router = useRouter();
     const newsletterRef = useRef();
-    const robotRef = useRef();
     const nameRef = useRef();
-    const emailRef = useRef();
     const phoneNumberRef = useRef();
     const countryCodeRef = useRef();
 
-    const [robot, setRobot] = useState(false);
     const [newsLetter, setNewsLetter] = useState(false);
     const [nameValid, setNameValid] = useState(true);
-    
     const [phoneNumberValid, setPhoneNumberValid] = useState(true);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [pageLoad, setPageLoad] = useState(true);
 
     const countryCodes = ["+1", "+44", "+233", "+234", "+93", "+355", "+213", "+1-684", "+376", "+244", "+1-264", 
                             "+672", "+268", "+54", "+374", "+297", "+61", "+43", "+994", "+1-242", "+973", "+880",
@@ -40,16 +38,22 @@ const CorporateSignup = () => {
         if (typeof window !== 'undefined') {
             if(!category.category) {
                 router.replace("/auth/join");
+                return;
             }
         }
-    })
+
+        setPageLoad(false);
+    }, []);
+
     
     const category = useSelector(state => state.value.category);
 
-    console.log(category);
+    const web3 = useSelector(state => state.value.web3);
+    const token = web3.token;
+
+    console.log(token);
+
     
-
-
     const newsLetterHandler = () => {
         setNewsLetter(prev => !prev)
     }
@@ -101,7 +105,7 @@ const CorporateSignup = () => {
 
         setIsLoading(true);
 
-        fetch("/api/register-individual", {
+        fetch("/api/register-user", {
             method: "POST",
             body: JSON.stringify(userInfo),
             headers: {
@@ -126,10 +130,14 @@ const CorporateSignup = () => {
                 icon: "success",
                 button: "Ok"
               }).then(() => {
-                setIsLoading(false)
+                localStorage.setItem("email", category.email);
+                localStorage.setItem("openlogin_store", JSON.stringify({
+                    sessionId: token
+                }));
+                setIsLoading(false);
                 nameRef.current.value = ""
                 phoneNumberRef.current.value = ""
-                router.push("/auth/join");
+                router.replace("/homepage/dashboard");
               })
             return res.json();
         })
@@ -140,7 +148,9 @@ const CorporateSignup = () => {
         });
     }
 
-    
+    if(pageLoad) {
+        return <Spinner />
+    }
 
     return <Fragment>
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
@@ -192,11 +202,6 @@ const CorporateSignup = () => {
                     to our <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
             </div>
             <button className="bg-dark-blue text-white rounded-md mt-4  transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Create Account</button>
-            
-            
-            <div className="mt-3.5 text-sm" style={{color: "rgba(0, 0, 0, 0.50)", fontWeight: "400"}}>
-                    Already have an account? <Link href="/auth/sign-in" style={{color: "#0653EA", textDecoration: "underline"}}>Sign in</Link>
-            </div>
         </form>
     </Fragment>
 }

@@ -1,7 +1,6 @@
 import { Fragment, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
@@ -17,7 +16,6 @@ import Backdrop from "@/Components/Backdrop";
 const Signup = (props) => {
     const { users } = props;
 
-    const [category, setCategory] = useState(); 
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
     const [initial, setInitial] = useState(false);
@@ -25,7 +23,19 @@ const Signup = (props) => {
 
     const emailRef = useRef();
 
-    const userInfo = useSelector(state => state.value.category);
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length > 0 || fetchedEmail) {
+                router.push("/homepage/dashboard");
+                return;
+            };
+        };
+    }, []);
     
     
     
@@ -42,7 +52,23 @@ const Signup = (props) => {
         tickerName: "Solana",
       }
 
+    //   For Live Environment
+    
+    // const chainConfig = {
+    //     chainNamespace: "solana",
+    //     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    //     rpcTarget: "https://rpc.ankr.com/solana",
+    //     displayName: "Solana Mainnet",
+    //     blockExplorer: "https://explorer.solana.com",
+    //     ticker: "SOL",
+    //     tickerName: "Solana",
+    // };
+
     const web3auth = new Web3AuthNoModal({
+        // For Production
+        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY"
+        
+        // For Development
         clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
         web3AuthNetwork: "sapphire_mainnet", // Web3Auth Network
         chainConfig: chainConfig,
@@ -90,15 +116,22 @@ const Signup = (props) => {
         const solanaWallet = new SolanaWallet(web3authProvider);
         const accounts = await solanaWallet.requestAccounts();
         
+        const userInformation = await web3auth.getUserInfo();
         
         const filteredUser = users.filter(user => user.email === email);
+
         
         if(filteredUser.length < 1) {
+            const token = localStorage.getItem("openlogin_store");
+            dispatch(counterActions.web3({
+                token: token
+            }));
             localStorage.removeItem("openlogin_store");
             dispatch(counterActions.category({
                 email: email,
                 wallet: accounts[0]
             }));
+
             setIsLoading(false);
             setCategorySect(true);
             return;
@@ -119,23 +152,23 @@ const Signup = (props) => {
         
         const userInformation = await web3auth.getUserInfo();
 
-        // const web3authProvider = await web3auth.connect();
-
         const solanaWallet = new SolanaWallet(web3authProvider);
         const accounts = await solanaWallet.requestAccounts();
 
-        console.log(solanaWallet, accounts[0]);
-
         console.log(userInformation);
         const filteredUser = users.filter(user => user.email === userInformation.email);
-        
+
         if(filteredUser.length < 1) {
+            const token = localStorage.getItem("openlogin_store");
+            dispatch(counterActions.web3({
+                token: JSON.parse(token)
+            }));
             localStorage.removeItem("openlogin_store");
             dispatch(counterActions.category({
                 email: userInformation.email,
                 wallet: accounts[0]
             }));
-            
+
             setIsLoading(false);
             setCategorySect(true);
             return;
@@ -151,7 +184,6 @@ const Signup = (props) => {
         dispatch(counterActions.category({
             category: path
         }));
-
 
         router.push(`/auth/join/${path}`);
     }
@@ -222,7 +254,7 @@ const Signup = (props) => {
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
                         <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
                     </svg>
-                    <p>help@skytrades.com</p>
+                    <p>help@skytrades.io</p>
                 </div>
             </div>
         </div>}

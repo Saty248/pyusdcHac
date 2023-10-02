@@ -77,10 +77,7 @@ const UavProfile = (props) => {
     }
 
     if(!user || !token) {
-        return <div>            
-                <Backdrop />
-                <Spinner />
-            </div>
+        return <Spinner />
     } 
 
     return <Fragment>

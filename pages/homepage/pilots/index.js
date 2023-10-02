@@ -23,13 +23,22 @@ const UAVs = (props) => {
 
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = localStorage.getItem("openlogin_store")
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(fetchedToken) {
+            const tokenLength = Object.keys(fetchedToken).length;
+            console.log(tokenLength);
+            if(tokenLength.length < 1) {
+                localStorage.removeItem("openlogin_store");
+            };
+        };
 
         if(!fetchedEmail || !fetchedToken) {
             router.push("/auth/join");
             return;
-        }
-        setToken(fetchedToken);
+        };
+
+        setToken(fetchedToken.sessionId);
 
         const singleUser = users.filter(user => user.email === fetchedEmail);
         setUser(singleUser[0]);
@@ -54,10 +63,7 @@ const UAVs = (props) => {
     }
 
     if(!user || !token) {
-        return <div>            
-                <Backdrop />
-                <Spinner />
-            </div>
+        return <Spinner />
     } 
 
     return <Fragment>

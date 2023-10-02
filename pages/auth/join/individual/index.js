@@ -5,6 +5,9 @@ import { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
 
+import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
+
 const IndividualSignup = () => {
     const newsletterRef = useRef();
     const nameRef = useRef();
@@ -19,16 +22,28 @@ const IndividualSignup = () => {
     const [newsLetter, setNewsLetter] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    const category = useSelector(state => state.value.category);
+    const [pageLoad, setPageLoad] = useState(true);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             if(!category.category) {
                 router.replace("/auth/join");
+                return;
             }
         }
+
+        setPageLoad(false);
     }, []);
+
+    const category = useSelector(state => state.value.category);
+
+    console.log(category);
+
+    const web3 = useSelector(state => state.value.web3);
+    const token = web3.token;
+
+    console.log(token);
+    
 
     const countryCodes = ["+1", "+44", "+233", "+234", "+93", "+355", "+213", "+1-684", "+376", "+244", "+1-264", 
                             "+672", "+268", "+54", "+374", "+297", "+61", "+43", "+994", "+1-242", "+973", "+880",
@@ -114,10 +129,14 @@ const IndividualSignup = () => {
                 icon: "success",
                 button: "Ok"
               }).then(() => {
-                setIsLoading(false)
+                localStorage.setItem("email", category.email);
+                localStorage.setItem("openlogin_store", JSON.stringify({
+                    sessionId: token
+                }));
+                setIsLoading(false);
                 nameRef.current.value = ""
                 phoneNumberRef.current.value = ""
-                router.push("/auth/join");
+                router.replace("/homepage/dashboard");
               })
             return res.json();
         })
@@ -125,6 +144,10 @@ const IndividualSignup = () => {
             setError(error.toString());
             setIsLoading(false)
         });
+    }
+
+    if(pageLoad) {
+        return <Spinner />
     }
 
     return <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "697px", padding: "93px 142px"}}>
@@ -205,9 +228,6 @@ const IndividualSignup = () => {
                 <p>Facebook</p>
             </button>
         </div> */}
-        <div className="mt-3.5 text-sm" style={{color: "rgba(0, 0, 0, 0.50)", fontWeight: "400"}}>
-                Already have an account? <Link href="/auth/sign-in" style={{color: "#0653EA", textDecoration: "underline"}}>Sign in</Link>
-        </div>
     </form>
 }
 
