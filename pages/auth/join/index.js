@@ -72,7 +72,7 @@ const Signup = (props) => {
         
         // For Development
         // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
-        web3AuthNetwork: "sapphire_mainnet", // Web3Auth Network
+        web3AuthNetwork: "cyan", // Web3Auth Network
         chainConfig: chainConfig,
     });
 
