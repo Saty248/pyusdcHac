@@ -187,7 +187,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
+                text: "couldn't connect to web3authprovider. Kindly reload the page",
               });
             return;
         }
@@ -198,7 +198,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
+                text: "Couldn't get user info Kindly reload the page",
               });
             return;
         }
@@ -213,7 +213,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
+                text: "Solana wallet wasn't created Kindly reload the page",
               });
             return;
         }
