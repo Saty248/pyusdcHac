@@ -43,8 +43,7 @@ const Wallet = (props) => {
         const singleUser = users.filter(user => user.email === fetchedEmail);
         setUser(singleUser[0]);
     }, []);
-
-    console.log(user);
+    
 
     const addCardHandler = () => {
         setAddCard(true);
@@ -115,7 +114,7 @@ const Wallet = (props) => {
                         <p className="text-sml text-light-brown">Wallet ID</p>
                         <p className="text-sml text-light-brown">This is the wallet ID for deposit </p>
                         <div className="flex flex-row gap-2">
-                            <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" id="amount"  name="amount" defaultValue={user.wallet} style={{width: "516px", height: "37px", border: "0.35px solid #0653EA"}} />
+                            <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" id="amount"  name="amount" defaultValue={user.wallet} style={{width: "516px", height: "37px", border: "0.35px solid #0653EA"}} />
                             <button className="bg-dark-blue rounded flex flex-row justify-center items-center" style={{width: "44px", height: "37px"}}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                     <path opacity="0.4" d="M15.5 13.15H13.33C11.55 13.15 10.1 11.71 10.1 9.92V7.75C10.1 7.34 9.77 7 9.35 7H6.18C3.87 7 2 8.5 2 11.18V17.82C2 20.5 3.87 22 6.18 22H12.07C14.38 22 16.25 20.5 16.25 17.82V13.9C16.25 13.48 15.91 13.15 15.5 13.15Z" fill="white"/>
