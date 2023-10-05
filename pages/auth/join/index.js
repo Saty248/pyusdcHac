@@ -44,34 +44,34 @@ const Signup = (props) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    // const chainConfig = {
-    //     chainNamespace: "solana",
-    //     chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://api.devnet.solana.com",
-    //     displayName: "Solana Devnet",
-    //     blockExplorer: "https://explorer.solana.com",
-    //     ticker: "SOL",
-    //     tickerName: "Solana",
-    //   }
-
-    //   For Live Environment
-    
     const chainConfig = {
         chainNamespace: "solana",
-        chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://rpc.ankr.com/solana",
-        displayName: "Solana Mainnet",
+        chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        rpcTarget: "https://api.devnet.solana.com",
+        displayName: "Solana Devnet",
         blockExplorer: "https://explorer.solana.com",
         ticker: "SOL",
         tickerName: "Solana",
-    };
+      }
+
+    //   For Live Environment
+    
+    // const chainConfig = {
+    //     chainNamespace: "solana",
+    //     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    //     rpcTarget: "https://rpc.ankr.com/solana",
+    //     displayName: "Solana Mainnet",
+    //     blockExplorer: "https://explorer.solana.com",
+    //     ticker: "SOL",
+    //     tickerName: "Solana",
+    // };
 
     const web3auth = new Web3AuthNoModal({
         // For Production
-        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
+        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
         
         // For Development
-        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
+        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
         web3AuthNetwork: "cyan", // Web3Auth Network
         chainConfig: chainConfig,
     });
@@ -92,105 +92,138 @@ const Signup = (props) => {
         init();
     }, [initial]);
 
-    const emailSubmitHandler = async(e) => {
-        e.preventDefault();
-        const email = emailRef.current.value;
+    // const emailSubmitHandler = async(e) => {
+    //     e.preventDefault();
+    //     const email = emailRef.current.value;
 
+    //     const regex = /^\S+@\S+\.\S+$/;
+    //     const emailIsValid = regex.test(email);
+
+    //     if(!emailIsValid) {
+    //         setEmailValid(false);
+    //         return;
+    //     }
+
+    //     setInitial(!initial);
+    //     setIsLoading(true);
+        
+    //     let web3authProvider;
+
+    //     try{
+    //         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+    //             loginProvider: "email_passwordless",
+    //             extraLoginOptions: {
+    //               login_hint: email,
+    //             },
+    //         });
+    //     }
+    //     catch(err) {
+    //         localStorage.removeItem("openlogin_store");
+    //         swal({
+    //             title: "oops!",
+    //             text: "Something went wrong. Kindly reload the page",
+    //           });
+    //         return;
+    //     }
+
+    //     const solanaWallet = new SolanaWallet(web3authProvider);
+
+    //     let accounts;
+
+    //     try{
+    //         accounts = await solanaWallet.requestAccounts();
+    //     } catch(err) {
+    //         swal({
+    //             title: "oops!",
+    //             text: "Something went wrong. Kindly reload the page",
+    //           });
+    //         return;
+    //     }
+        
+    //     let userInformation;
+    //     try{
+    //         userInformation = await web3auth.getUserInfo();
+    //     } catch(err) {
+    //         swal({
+    //             title: "oops!",
+    //             text: "Something went wrong. Kindly reload the page",
+    //           });
+    //         return;
+    //     }
+        
+    //     const filteredUser = users.filter(user => user.email === email);
+
+        
+    //     if(filteredUser.length < 1) {
+    //         const token = localStorage.getItem("openlogin_store");
+    //         dispatch(counterActions.web3({
+    //             token: token
+    //         }));
+    //         localStorage.removeItem("openlogin_store");
+    //         dispatch(counterActions.category({
+    //             email: email,
+    //             wallet: accounts[0]
+    //         }));
+
+    //         setIsLoading(false);
+    //         setCategorySect(true);
+    //         return;
+    //     }
+
+    //     localStorage.setItem("email", userInformation.email);
+    //     router.replace("/homepage/dashboard");
+    // }
+
+    const loginHandler = async(provider, e) => {
+        e.preventDefault();
+
+        const email = emailRef.current.value;
         const regex = /^\S+@\S+\.\S+$/;
         const emailIsValid = regex.test(email);
-
-        if(!emailIsValid) {
+        
+        if(!provider && !emailIsValid) {
             setEmailValid(false);
             return;
-        }
+        };
 
-        setInitial(!initial);
-        setIsLoading(true);
-        
-        let web3authProvider;
-
-        try{
-            web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-                loginProvider: "email_passwordless",
-                extraLoginOptions: {
-                  login_hint: email,
-                },
-            });
-        }
-        catch(err) {
-            swal({
-                title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
-              });
-            return;
-        }
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        let accounts;
-
-        try{
-            accounts = await solanaWallet.requestAccounts();
-        } catch(err) {
-            swal({
-                title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
-              });
-            return;
-        }
-        
-        let userInformation;
-        try{
-            userInformation = await web3auth.getUserInfo();
-        } catch(err) {
-            swal({
-                title: "oops!",
-                text: "Something went wrong. Kindly reload the page",
-              });
-            return;
-        }
-        
-        const filteredUser = users.filter(user => user.email === email);
-
-        
-        if(filteredUser.length < 1) {
-            const token = localStorage.getItem("openlogin_store");
-            dispatch(counterActions.web3({
-                token: token
-            }));
-            localStorage.removeItem("openlogin_store");
-            dispatch(counterActions.category({
-                email: email,
-                wallet: accounts[0]
-            }));
-
-            setIsLoading(false);
-            setCategorySect(true);
-            return;
-        }
-
-        localStorage.setItem("email", userInformation.email);
-        router.replace("/homepage/dashboard");
-    }
-
-    const socialLoginHandler = async(provider, e) => {
-        e.preventDefault();
 
         setIsLoading(true);
         
         let web3authProvider;
 
-        try{
-            web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-                loginProvider: provider,
-              });
-        } catch(err) {
-            swal({
-                title: "oops!",
-                text: "couldn't connect to web3authprovider. Kindly reload the page",
-              });
-            return;
+        if(!provider) {
+            try{
+                web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+                    loginProvider: "email_passwordless",
+                    extraLoginOptions: {
+                      login_hint: email,
+                    },
+                });
+            }
+            catch(err) {
+                localStorage.removeItem("openlogin_store");
+                swal({
+                    title: "oops!",
+                    text: "Something went wrong. Kindly reload the page",
+                  });
+                return;
+            }
+        } else {
+            try{
+                web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+                    loginProvider: provider,
+                  });
+            } catch(err) {
+                localStorage.removeItem("openlogin_store");
+                swal({
+                    title: "oops!",
+                    text: "Something went wrong. Kindly reload the page",
+                  });
+                return;
+            }
         }
+
+        
         
         let userInformation;
         try{
@@ -271,18 +304,18 @@ const Signup = (props) => {
                     <input type="email" ref={emailRef} onChange={() => setEmailValid(true)} placeholder="E-mail Address" className="bg-light-grey rounded-md focus:outline-blue-200 placeholder:text-light-brown placeholder:font-medium font-sans" style={{width: "396px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
                     {!emailValid && <p className="absolute top-1 right-0 text-sm text-red-600">email is invalid</p>}
                 </div>
-                <button onClick={emailSubmitHandler} className="bg-dark-blue text-white rounded-md mt-4 transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Continue with Email</button>
+                <button onClick={loginHandler.bind(null, "")} className="bg-dark-blue text-white rounded-md mt-4 transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Continue with Email</button>
                 <div className="relative text-center my-8"> 
                     <div style={{width:"396px", height: "0.4px", background: "#B1B1B1",}}></div>
                     <p className="absolute -top-2" style={{width:"18px", fontSize: "10px", padding: "auto", height: "15px", color: "#B1B1B1", left: "47.5%", background: "white"}}>or</p>
                 </div>
                 {/* <p className=" text-dark-brown text-xl font-medium">Sign up using other methods</p> */}
                 <div className="flex flex-row w-full justify-center gap-5">
-                    <button onClick={socialLoginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    <button onClick={loginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/google-logo.png" alt="Google logo" width={33} height={33} />
                         <p>Google</p>
                     </button>
-                    <button onClick={socialLoginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    <button onClick={loginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/Facebook-logo.png" alt="Facebook logo" width={33} height={33} />
                         <p>Facebook</p>
                     </button>

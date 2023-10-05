@@ -39,7 +39,7 @@ const Wallet = (props) => {
     }, []);
 
     const depositRouteHandler = () => {
-        router.push("/homepage/wallet/deposit");
+        router.push("/homepage/wallet/direct-deposit");
     }
 
     const withdrawalRouteHandler = () => {
@@ -57,7 +57,8 @@ const Wallet = (props) => {
             <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">
                     <p className="text-light-brown">My Wallet</p>
-                    <p className="text-light-brown font-semibold mt-2 text-2xl">$<span>4.000.85</span></p>
+                    <p className="text-light-brown font-semibold mt-2 text-2xl">USDC 4,000.85</p>
+                    <p className="text-light-brown font-semibold -mt-2 text-sml">US$ 4000.85</p>
                 </div>
                 <div className="z-20 flex flex-row justify-center items-center gap-4 absolute -bottom-3">
                     <button onClick={depositRouteHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
@@ -87,7 +88,7 @@ const Wallet = (props) => {
                 <h3>Transaction History</h3>
                 <form className="flex flex-row justify-center gap-2 items-center">
                     <input type="text" className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" placeholder="Search Transaction" style={{width: "211px", height: "27px"}} />
-                    <button className="bg-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
+                    <button className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
                     <select type="text" className="bg-light-grey ps-3 text-sm rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" style={{width: "123px", height: "27px"}}>
                         <option disabled selected>Last 30 Days</option>
                     </select>

@@ -126,7 +126,7 @@ const CorporateSignup = () => {
             setError(false)
             swal({
                 title: "Submitted",
-                text: "User registered successfully. You can now proceed to sign in",
+                text: "User registered successfully. You will now be signed in",
                 icon: "success",
                 button: "Ok"
               }).then(() => {
@@ -134,7 +134,7 @@ const CorporateSignup = () => {
                 localStorage.setItem("openlogin_store", JSON.stringify({
                     sessionId: token
                 }));
-                setIsLoading(false);
+                // setIsLoading(false);
                 nameRef.current.value = ""
                 phoneNumberRef.current.value = ""
                 router.replace("/homepage/dashboard");
@@ -154,6 +154,7 @@ const CorporateSignup = () => {
 
     return <Fragment>
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
+        {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "100vh", maxHeight: "607px", padding: "93px 142px"}}>
             <button onClick={returnHandler} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
