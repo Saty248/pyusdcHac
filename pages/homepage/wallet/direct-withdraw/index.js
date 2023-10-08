@@ -109,7 +109,10 @@ const Wallet = (props) => {
                             <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" placeholder="Add Your USDC wallet" id="wallet"  name="wallet" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
                         </div>
                         <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                            <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button>
+                            <button onClick={(e) => {
+                            e.preventDefault();
+                            router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed")
+                        }} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button>
                         </div>
                     </div>
                 </div>

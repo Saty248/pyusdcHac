@@ -14,6 +14,7 @@ import User from "@/models/User";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import swal from "sweetalert";
+import logo from "../../../public/images/logo.png";
 
 const Signup = (props) => {
     const { users } = props;
@@ -44,27 +45,27 @@ const Signup = (props) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    const chainConfig = {
-        chainNamespace: "solana",
-        chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://api.devnet.solana.com",
-        displayName: "Solana Devnet",
-        blockExplorer: "https://explorer.solana.com",
-        ticker: "SOL",
-        tickerName: "Solana",
-      }
-
-    //   For Live Environment
-    
     // const chainConfig = {
     //     chainNamespace: "solana",
-    //     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://rpc.ankr.com/solana",
-    //     displayName: "Solana Mainnet",
+    //     chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    //     rpcTarget: "https://api.devnet.solana.com",
+    //     displayName: "Solana Devnet",
     //     blockExplorer: "https://explorer.solana.com",
     //     ticker: "SOL",
     //     tickerName: "Solana",
-    // };
+    //   }
+
+    //   For Live Environment
+    
+    const chainConfig = {
+        chainNamespace: "solana",
+        chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        rpcTarget: "https://api.testnet.solana.com",
+        displayName: "Solana Mainnet",
+        blockExplorer: "https://explorer.solana.com",
+        ticker: "SOL",
+        tickerName: "Solana",
+    };
 
     const web3auth = new Web3AuthNoModal({
         // For Production
@@ -91,88 +92,6 @@ const Signup = (props) => {
         
         init();
     }, [initial]);
-
-    // const emailSubmitHandler = async(e) => {
-    //     e.preventDefault();
-    //     const email = emailRef.current.value;
-
-    //     const regex = /^\S+@\S+\.\S+$/;
-    //     const emailIsValid = regex.test(email);
-
-    //     if(!emailIsValid) {
-    //         setEmailValid(false);
-    //         return;
-    //     }
-
-    //     setInitial(!initial);
-    //     setIsLoading(true);
-        
-    //     let web3authProvider;
-
-    //     try{
-    //         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-    //             loginProvider: "email_passwordless",
-    //             extraLoginOptions: {
-    //               login_hint: email,
-    //             },
-    //         });
-    //     }
-    //     catch(err) {
-    //         localStorage.removeItem("openlogin_store");
-    //         swal({
-    //             title: "oops!",
-    //             text: "Something went wrong. Kindly reload the page",
-    //           });
-    //         return;
-    //     }
-
-    //     const solanaWallet = new SolanaWallet(web3authProvider);
-
-    //     let accounts;
-
-    //     try{
-    //         accounts = await solanaWallet.requestAccounts();
-    //     } catch(err) {
-    //         swal({
-    //             title: "oops!",
-    //             text: "Something went wrong. Kindly reload the page",
-    //           });
-    //         return;
-    //     }
-        
-    //     let userInformation;
-    //     try{
-    //         userInformation = await web3auth.getUserInfo();
-    //     } catch(err) {
-    //         swal({
-    //             title: "oops!",
-    //             text: "Something went wrong. Kindly reload the page",
-    //           });
-    //         return;
-    //     }
-        
-    //     const filteredUser = users.filter(user => user.email === email);
-
-        
-    //     if(filteredUser.length < 1) {
-    //         const token = localStorage.getItem("openlogin_store");
-    //         dispatch(counterActions.web3({
-    //             token: token
-    //         }));
-    //         localStorage.removeItem("openlogin_store");
-    //         dispatch(counterActions.category({
-    //             email: email,
-    //             wallet: accounts[0]
-    //         }));
-
-    //         setIsLoading(false);
-    //         setCategorySect(true);
-    //         return;
-    //     }
-
-    //     localStorage.setItem("email", userInformation.email);
-    //     router.replace("/homepage/dashboard");
-    // }
 
     const loginHandler = async(provider, e) => {
         e.preventDefault();
@@ -223,8 +142,9 @@ const Signup = (props) => {
             }
         }
 
-        
-        
+        console.log(web3authProvider);
+        console.log(web3auth.provider);
+
         let userInformation;
         try{
             userInformation = await web3auth.getUserInfo();
@@ -252,7 +172,7 @@ const Signup = (props) => {
         }
        
 
-        console.log(userInformation);
+        console.log(accounts);
         const filteredUser = users.filter(user => user.email === userInformation.email);
 
         if(filteredUser.length < 1) {
@@ -297,7 +217,7 @@ const Signup = (props) => {
                 <p>Back</p>
             </button>
             <form className="flex flex-col mx-auto pt-20" style={{width: "396px"}}>
-                <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="my-4" />
+                <Image src={logo} alt="Company's logo" width={164} height={58} className="my-4" />
                 <p className=" text-dark-brown text-xl font-medium mt-12">Sign in/Sign Up</p>
                 <div className="mt-2 relative">
                     <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >E-mail Address<span className="text-red-600">*</span></label> <br />

@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { counterActions } from "@/store/store";
 import Spinner from "./Spinner";
 import Backdrop from "./Backdrop";
+import logo from "../public/images/logo.png";
 
 const Sidebar = (props) => {
     const dispatch = useDispatch();
@@ -48,7 +49,7 @@ const Sidebar = (props) => {
          {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <aside className="bg-white relative border-e-2" style={{width: "257px", height: "100vh"}}>
-            <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 ms-12 my-12" />
+            <Image src={logo} alt="Company's logo" width={164} height={58} className="mt-4 ms-12 my-12" />
             <div className="flex flex-col gap-2 ms-10">
                 <NavLink href="/homepage/dashboard">
                     <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill={`${asPath == "/homepage/dashboard" ? "#0653EA" : "#252530"}`}>

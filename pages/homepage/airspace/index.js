@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
+import maplibregl from 'maplibre-gl';
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -20,6 +21,8 @@ import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspace
 import { counterActions } from "@/store/store";
 import User from "@/models/User"; 
 import Spinner from "@/Components/Spinner";
+import AirspaceTab from "@/Components/AirspaceTab";
+import MyAirspaceTab from "@/Components/MyAirspaceTab";
 
 
 const Airspace = (props) => {
@@ -27,6 +30,8 @@ const Airspace = (props) => {
 
     const router = useRouter();
     const dispatch = useDispatch();
+    // const locationiqKey = process.env.LOCATIONIQ_KEY;
+    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
 
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
@@ -40,10 +45,63 @@ const Airspace = (props) => {
     const [showAddAirspaceModal, setShowAddAirspaceModal] = useState(false);
     const [airspace, setAirspace] = useState("mine");
     const [airspaceInfo, setAirspaceInfo ] = useState({});
+    const [myFilteredAirspace, setMyFilteredAirspace] = useState();
+    const [FilteredAirspaces, setFilteredAirspaces] = useState();
+    const [flyToAddress, setFlyToAddress] = useState("");
 
     const [user, setUser] = useState();
 
     const [token, setToken] = useState("");
+
+    const airSpaces = [
+        {
+            id: "a1",
+            title: "First Airspace", 
+            status: "Active"
+        },
+        {
+            id: "a2",
+            title: "Second Airspace", 
+            status: "Inactive"
+        },
+        {
+            id: "a3",
+            title: "Third Airspace", 
+            status: "Active"
+        },
+        {
+            id: "a4",
+            title: "Fourth Airspace", 
+            status: "Inactive"
+        },
+    ]
+
+    const myAirspaces = [
+        {
+            id: "a1",
+            title: "My First Airspace", 
+            name: "John Doe",
+            address: "50, Fremont Street, Transbay, San Francisco, California, 94105, USA",
+            identification: "9099020930992",
+            status: "inactive"
+        },
+        {
+            id: "a2",
+            title: "My Second Airspace", 
+            name: "John Doe",
+            address: "50, California Street, Financial District, San Francisco, California, 94111, USA",
+            identification: "9099020930992",
+            status: "Active"
+        },
+        {
+            id: "a3",
+            title: "My Third Airspace", 
+            name: "John Doe",
+            address: "50, Paramount Drive, Fruitville, Fruitville, Sarasota County, Florida, 34232, USA",
+            identification: "9099020930992",
+            status: "Active"
+        },
+    ]
 
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
@@ -68,7 +126,120 @@ const Airspace = (props) => {
         setUser(singleUser[0]);
     }, []);
     
+    useEffect(() => {
+        if(token && user) {
+            console.log("Loading map...")
+            const map = new maplibregl.Map({
+                container: 'map',
+                attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
+                style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
+                zoom: 12,
+                center: [-122.42, 37.779]
+            });
 
+            map.on('load', function () {
+                map.addLayer({
+                    'id': 'maine',
+                    'type': 'fill',
+                    'source': {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'Feature',
+                            'geometry': {
+                                'type': 'Polygon',
+                                'coordinates': []
+                            }
+                        }
+                    },
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#D20C0C',
+                        }
+                    });
+                });  
+        }
+    }, [token, user])
+
+    // useEffect(() => {
+    //     if(flyToAddress) {
+    //         fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`)
+    //         .then(res => {
+    //             if(!res.ok) {
+    //                 return res.json()
+    //                 .then(errorData => {
+    //                     throw new Error(errorData.error);
+    //                 });
+    //             }
+    //             return res.json()
+    //         })
+    //         .then(resData => {
+    //             if(resData.error) {
+    //                 console.log(resData.error);
+    //                 return;
+    //             }
+
+                
+            
+    //             const endPoint = []
+        
+    //             endPoint.push(resData[0].lon)
+    //             endPoint.push(resData[0].lat)
+
+    //             const map = new maplibregl.Map({
+    //                 container: 'map',
+    //                 attributionControl: false, 
+    //                 style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
+    //                 zoom: 18,
+    //                 center: endPoint
+    //             });
+
+        
+    //             if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
+    //                 let el = document.createElement('div');
+    //                 el.id = 'markerWithExternalCss';
+                    
+    //                 new maplibregl.Marker(el)
+    //                     .setLngLat(endPoint)
+    //                     .addTo(map);
+
+    //                 return;    
+    //             }
+                
+    //             map.on('load', function () {
+    //                 map.addLayer({
+    //                     'id': 'maine',
+    //                     'type': 'fill',
+    //                     'source': {
+    //                         'type': 'geojson',
+    //                         'data': {
+    //                             'type': 'Feature',
+    //                             'geometry': resData[0].geojson
+    //                         }
+    //                     },
+    //                     'layout': {},
+    //                     'paint': {
+    //                         'fill-color': '#D20C0C',
+    //                         'fill-opacity': 0.5
+    //                         }
+    //                     });
+    //                 });
+
+                    
+    //         })
+    //         .then(() => {
+    //             setViewAirSpace(false);
+    //             setAirSpaceReviews(false);
+    //             setAboutAirspace(false);
+    //             setViewMyAirSpace(true);
+    //             setMyAirSpaceReviews(false);
+    //             setAboutMyAirspace(false);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err)
+    //         });
+                
+    //     }
+    // }, [flyToAddress]);
 
     const newAirspace = useSelector(state => {
         return state.value.newAirspace;
@@ -79,8 +250,6 @@ const Airspace = (props) => {
     });
 
     const additionalInfo = useSelector(state => state.value.airspaceAdditionalInfo);
-
-
 
     console.log("The value", newAirspace);
     console.log("confirm on map is", confirmOnMap);
@@ -112,10 +281,6 @@ const Airspace = (props) => {
         dispatch(counterActions.closeAdditionalInfoModal());
     }
 
-
-
-
-
     const showAllAirspace = () => {
         setAllAirSpace(true);
         setMyAirSpace(false);
@@ -135,22 +300,89 @@ const Airspace = (props) => {
 
         setViewAirSpace(true);
         setAboutAirspace(false);
-
-        // if(!airSpaceReviews && !aboutAirspace) {
-        //     setViewAirSpace(true);
-        // }
     }
 
-    const showMyAirspaceHandler = () => {
-        setViewAirSpace(false);
+    const showMyAirspaceHandler = (id) => {
+        const filteredAirspace = myAirspaces.filter(airspace => airspace.id === id)
+        setMyFilteredAirspace(filteredAirspace[0])
+        const flyToAddress =  filteredAirspace[0].address;
 
+        setViewAirSpace(false);
         setAirSpaceReviews(false);
         setAboutAirspace(false);
-        // setViewMyAirSpace(true);
-
         setViewMyAirSpace(true);
         setMyAirSpaceReviews(false);
         setAboutMyAirspace(false);
+
+        fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`)
+        .then(res => {
+            if(!res.ok) {
+                return res.json()
+                .then(errorData => {
+                    throw new Error(errorData.error);
+                });
+            }
+            return res.json()
+        })
+        .then(resData => {
+            if(resData.error) {
+                console.log(resData.error);
+                return;
+            }
+
+            const endPoint = []
+    
+            endPoint.push(resData[0].lon)
+            endPoint.push(resData[0].lat)
+
+            const map = new maplibregl.Map({
+                container: 'map',
+                attributionControl: false, 
+                style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
+                zoom: 18,
+                center: endPoint
+            });
+
+    
+            if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
+                let el = document.createElement('div');
+                el.id = 'markerWithExternalCss';
+                
+                new maplibregl.Marker(el)
+                    .setLngLat(endPoint)
+                    .addTo(map);
+
+                return;    
+            }
+            
+            map.on('load', function () {
+                map.addLayer({
+                    'id': 'maine',
+                    'type': 'fill',
+                    'source': {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'Feature',
+                            'geometry': resData[0].geojson
+                        }
+                    },
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#D20C0C',
+                        'fill-opacity': 0.5
+                        }
+                    });
+                });
+
+                
+        })
+        .then(() => {
+            console.log("defaulting to default...")
+            console.log(viewMyAirspace)
+        })
+        .catch((err) => {
+            console.log(err)
+        });
     }
 
     const airspaceOverviewHandler = () => {
@@ -226,28 +458,7 @@ const Airspace = (props) => {
     }
 
 
-    const airSpaces = [
-        {
-            id: "a1",
-            title: "Airspace Title", 
-            status: "Active"
-        },
-        {
-            id: "a2",
-            title: "Airspace Title", 
-            status: "Inactive"
-        },
-        {
-            id: "a3",
-            title: "Airspace Title", 
-            status: "Active"
-        },
-        {
-            id: "a4",
-            title: "Airspace Title", 
-            status: "Inactive"
-        },
-    ]
+  
 
 
     if(!user || !token) {
@@ -273,7 +484,7 @@ const Airspace = (props) => {
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
                 <Navbar name={user.name} />
-                <div className="bg-map-bg relative bg-cover bg-center mt-0 pt-5" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
+                <div className="relative mt-0" id="map" style={{width: "calc(100vw - 257px)", height: "100vh", marginTop: "0"}}>
                     <Airspaces 
                             showMyAirspace={showMyAirspace} 
                             airspace={airspace} 
@@ -282,16 +493,39 @@ const Airspace = (props) => {
                             airSpaces={airSpaces}
                             myAirspace={myAirspace}
                             onAddAirspace={showAddAirspaceModalHandler}
-                            viewMyAirspace={showMyAirspaceHandler}
-                            viewAirspace={showAirspaceHandler}
-                            />
+                            >
+                        {allAirspace && airSpaces.map(airspace => {
+                            return <AirspaceTab 
+                                            key={airspace.id}
+                                            id={airspace.id} 
+                                            viewAirspace={showAirspaceHandler} 
+                                            title={airspace.title} 
+                                            status={airspace.status}
+                                        />
+                        })}  
+
+                        {myAirspace && myAirspaces.map(airspace => {
+                            return  <MyAirspaceTab 
+                                    title={airspace.title}
+                                    name={airspace.name}
+                                    address={airspace.address}
+                                    identification={airspace.identification}
+                                    status={airspace.status}
+                                    viewMyAirspace={showMyAirspaceHandler.bind(null, airspace.id)}
+                                     />
+                        })}
+                    </Airspaces>
                 
                     {viewMyAirspace && <MyAirspaceOverview 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
+                                                viewMyAirspace={showMyAirspaceHandler}
                                                  myAirspaceReview={myAirspaceReviewHandler} 
                                                  aboutMyAirspace={aboutMyAirspaceHandler} 
                                                  closeDetails={closeAirspaceDetailsHandler}
+                                                 address={myFilteredAirspace.address}
+                                                 title={myFilteredAirspace.title}
+                                                 name={myFilteredAirspace.name}
                                                  />}
+
                     {aboutMyAirspace && <AboutMyAirspace 
                                                 viewMyAirspace={myAirspaceOverviewHandler}
                                                 myAirspaceReview={myAirspaceReviewHandler} 

@@ -202,68 +202,6 @@ const Settings = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="border-2 mt-10 px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "367px"}}>
-                        <div className="mb-5">
-                            <h3 className="text-2xl font-medium">Payment Method</h3>
-                            <p>Update your payment information</p>
-                        </div>
-                        <div className="flex flex-row justify-start gap-5 mt-5">
-                            <div className="flex flex-col items-center gap-5">
-                                <div className="bg-white flex flex-col relative justify-between rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
-                                    <div className="flex flex-row justify-between z-10">
-                                        <p className="text-light-brown text-sm">John Doe</p>
-                                        <p className="text-light-brown text-sm">05/24</p>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="20" viewBox="0 0 4 20" fill="none">
-                                            <circle cx="2" cy="2" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                            <circle cx="2" cy="10" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                            <circle cx="2" cy="18" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                        </svg>
-                                    </div>
-                                    <div className="flex flex-row justify-between items-end z-10">
-                                        <p className="font-medium text-2xl text-dark">**** **** **** 1234</p>
-                                        <Image src={visa} alt="mastercard" className="-mb-4" />
-                                    </div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-0 left-0" style={{zIndex: 2}} width="137" height="103" viewBox="0 0 137 103" fill="none">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M130.63 103H10C4.47717 103 0 98.5229 0 93V10.0757C13.4341 3.66759 29.0313 0 45.6673 0C96.1093 0 137.001 33.7183 137.001 75.3118C137.001 85.0882 134.742 94.4294 130.63 103Z" fill="#F9F9F9"/>
-                                    </svg>
-                                </div>
-                                <div className="flex flex-row items-center gap-2">
-                                    <input type="radio" id="no" value="visa" name="broadcast" className="cursor-pointer" />
-                                </div>
-                            </div>
-                            <div className="flex flex-col items-center gap-5">
-                                <div className="bg-white flex flex-col relative justify-between rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
-                                    <div className="flex flex-row justify-between z-10">
-                                        <p className="text-light-brown text-sm">John Doe</p>
-                                        <p className="text-light-brown text-sm">05/24</p>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="20" viewBox="0 0 4 20" fill="none">
-                                            <circle cx="2" cy="2" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                            <circle cx="2" cy="10" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                            <circle cx="2" cy="18" r="2" fill="rgba(63, 61, 86, 0.75)"/>
-                                        </svg>
-                                    </div>
-                                    <div className="flex flex-row justify-between z-10">
-                                        <p className="font-medium text-2xl text-dark">**** **** **** 1234</p>
-                                        <Image src={mastercard} alt="mastercard" />
-                                    </div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-0 left-0" style={{zIndex: 2}} width="137" height="103" viewBox="0 0 137 103" fill="none">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M130.63 103H10C4.47717 103 0 98.5229 0 93V10.0757C13.4341 3.66759 29.0313 0 45.6673 0C96.1093 0 137.001 33.7183 137.001 75.3118C137.001 85.0882 134.742 94.4294 130.63 103Z" fill="#F9F9F9"/>
-                                    </svg>
-                                </div>
-                                <div className="flex flex-row items-center gap-2">
-                                    <input type="radio" id="no" name="broadcast" value="mastercard" className="cursor-pointer" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onClick={addCardHandler} className="flex flex-row items-center gap-2 mt-2 font-medium text-dark-blue">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 17V7" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M7 12L17 12" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                            <p className="mt-1">Add New Card</p>
-                        </button>
-                    </div>
                     <div className="flex flex-row justify-center items-center mt-8 gap-5">
                         {/* <button className="rounded-md text-dark-blue transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button> */}
                         <button onClick={updateDataHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Save</button>

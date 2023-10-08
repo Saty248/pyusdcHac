@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const AllAirspaceOverview = (props) => {
-    return  <div className="absolute rounded-md pb-3 bg-white top-5" style={{width: "339px", height: "90%", left: "50%"}}>
+    return  <div className="absolute rounded-md pb-3 bg-white top-5" style={{width: "339px", height: "90%", left: "380px"}}>
         <div className="relative">
             <Image src="/images/airspace-preview.png" alt="airspace preview" className="rounded-t-md" width={339} height={222} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
@@ -38,7 +38,7 @@ const AllAirspaceOverview = (props) => {
         <div className="flex flex-row justify-center gap-7 mt-5 pb-2.5 items-center" style={{borderBottom: "0.5px solid rgba(229, 229, 234, 0.7)"}}>
             <button className="relative" onClick={props.viewAirspace}>
                 <p className="font-bold text-dark-blue">Overview</p>
-                <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div>
+                <div style={{height: "4px", width: "40px", bottom: "-10px", left: "10%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
             {/* <button className="relative" onClick={props.viewAirspaceReview}>
                 <p className="font-bold text-brown">Reviews</p>
