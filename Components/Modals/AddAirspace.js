@@ -6,13 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 const AddAirspace = (props) => {
     const dispatch = useDispatch();
 
-    console.log(process.env.DATABASE)
-    console.log(process.env.USER)
-    console.log(process.env.PASSWORD)
-    console.log(process.env.HOST)
-    console.log(process.env.DB_PORT)
-    console.log(process.env.LOCATIONIQ_KEY)
-
     const [address, setAddress] =  useState("");
     const [addresses, setAddresses] =  useState([]);
     const [showOptions, setShowOptions] = useState(true);
@@ -25,11 +18,7 @@ const AddAirspace = (props) => {
     // const locationiqKey = process.env.LOCATIONIQ_KEY;
     const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
 
-    console.log(locationiqKey);
-
     const airspaceValue = useSelector(state => state.value.airspaceData);
-    
-    console.log(airspaceValue);
 
     const addressChangeHandler = (e) => {
         if(!showOptions) {
@@ -37,7 +26,6 @@ const AddAirspace = (props) => {
         }
 
         setAddress(e.target.value)
-        console.log(address);
     }
 
     const buttonSelectHandler = (e) => {
@@ -198,7 +186,6 @@ const AddAirspace = (props) => {
 
     const confirmAddressHandler = (e) => {
         e.preventDefault();
-        console.log(addressData);
 
         const addressValue = {
             address: address,
@@ -210,7 +197,6 @@ const AddAirspace = (props) => {
         dispatch(counterActions.airspaceData(addressValue));
         dispatch(counterActions.closeConfirmOnMapModal());
         dispatch(counterActions.additionalInfoModal());
-        console.log(addressValue);
     }
 
 

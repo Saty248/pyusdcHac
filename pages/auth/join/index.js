@@ -14,8 +14,13 @@ import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import swal from "sweetalert";
 import logo from "../../../public/images/logo.png";
+import User from "@/models/User";
 
 const Signup = (props) => {
+    const { users } = props;
+
+    console.log(users);
+
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
     const [initial, setInitial] = useState(false);
@@ -25,15 +30,13 @@ const Signup = (props) => {
 
     useEffect(() => {
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-            console.log(fetchedToken);
 
-            if(fetchedToken) {
-                const tokenLength = Object.keys(fetchedToken).length;
-                if(tokenLength.length > 0) {
-                    router.push("/homepage/dashboard");
-                    return;
-                };
-            };  
+        if(fetchedToken) {
+            if(fetchedToken.sessionId) {
+                router.push("/homepage/dashboard");
+                return;
+            };
+        };  
     }, []);
     
     
@@ -117,9 +120,10 @@ const Signup = (props) => {
             }
             catch(err) {
                 localStorage.removeItem("openlogin_store");
+                localStorage.removeItem("email");
                 swal({
                     title: "oops!",
-                    text: "Something went wrong from first level. Kindly reload the page",
+                    text: "Something went wrong. Kindly reload the page",
                   });
                 return;
             }
@@ -130,6 +134,7 @@ const Signup = (props) => {
                   });
             } catch(err) {
                 localStorage.removeItem("openlogin_store");
+                localStorage.removeItem("email");
                 swal({
                     title: "oops!",
                     text: "Something went wrong from first level. Kindly reload the page",
@@ -164,37 +169,39 @@ const Signup = (props) => {
             return;
         }
 
-       
-        fetch("/api/get-user")
-        .then((res) => {
-            return res.json()
-        })
-        .then(data => {
-            console.log(data)
-            const filteredUser = data.users.filter(user => user.email === userInformation.email);
+        const filteredUser = users.filter(user => user.email === userInformation.email);
 
-            if(filteredUser.length < 1) {
-                const token = localStorage.getItem("openlogin_store");
-                dispatch(counterActions.web3({
-                    token: JSON.parse(token)
-                }));
-                localStorage.removeItem("openlogin_store");
-                dispatch(counterActions.category({
-                    email: userInformation.email,
-                    wallet: accounts[0]
-                }));
+        if(filteredUser.length < 1) {
+            const token = localStorage.getItem("openlogin_store");
+            dispatch(counterActions.web3({
+                token: JSON.parse(token)
+            }));
+            localStorage.removeItem("openlogin_store");
+            localStorage.removeItem("email");
+            dispatch(counterActions.category({
+                email: userInformation.email,
+                wallet: accounts[0]
+            }));
 
-                setIsLoading(false);
-                setCategorySect(true);
-                return;
-            }
+            setIsLoading(false);
+            setCategorySect(true);
+            return;
+        }
+        
+        localStorage.setItem("email", userInformation.email);
+        router.replace("/homepage/dashboard");
+
+
+        // fetch("/api/get-user")
+        // .then((res) => {
+        //     return res.json()
+        // })
+        // .then(data => {
             
-            localStorage.setItem("email", userInformation.email);
-            router.replace("/homepage/dashboard");
-        })
-        .catch((err) => {
-            console.log(err)
-        })   
+        // })
+        // .catch((err) => {
+        //     console.log(err)
+        // })   
     }
 
     const formSubmitHandler = (path, e) => {
@@ -282,3 +289,13 @@ const Signup = (props) => {
 }
 
 export default Signup;
+
+export async function getServerSideProps() {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        }
+    }
+}

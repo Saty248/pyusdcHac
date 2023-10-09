@@ -46,7 +46,6 @@ const Airspace = (props) => {
     const [airspace, setAirspace] = useState("mine");
     const [airspaceInfo, setAirspaceInfo ] = useState({});
     const [myFilteredAirspace, setMyFilteredAirspace] = useState();
-    const [FilteredAirspaces, setFilteredAirspaces] = useState();
     const [flyToAddress, setFlyToAddress] = useState("");
 
     const [user, setUser] = useState();
@@ -107,15 +106,7 @@ const Airspace = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };
@@ -190,43 +181,6 @@ const Airspace = (props) => {
                     center: endPoint
                 });
 
-
-
-
-                // const start = [-74.5, 40];
-                // const end = endPoint;
-            
-                // let isAtStart = true;
-            
-            
-                // // depending on whether we're currently at point a or b, aim for
-                // // point a or b
-                // const target = isAtStart ? end : start;
-        
-                // // and now we're at the opposite point
-                // isAtStart = !isAtStart;
-            
-                // map.flyTo({
-                //     // These options control the ending camera position: centered at
-                //     // the target, at zoom level 9, and north up.
-                //     center: target,
-                //     zoom: 16,
-                //     bearing: 0,
-    
-                //     speed: 0.5, 
-                //     curve: 1, 
-        
-                    
-                //     easing (t) {
-                //         return t;
-                //     },
-        
-                    
-                //     essential: true
-                // });
-
-
-                
         
                 if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
                     let el = document.createElement('div');
@@ -256,9 +210,7 @@ const Airspace = (props) => {
                             'fill-opacity': 0.5
                             }
                         });
-                    });
-
-                    
+                    });     
             })
             .catch((err) => {
                 console.log(err)
@@ -276,9 +228,6 @@ const Airspace = (props) => {
     });
 
     const additionalInfo = useSelector(state => state.value.airspaceAdditionalInfo);
-
-    console.log("The value", newAirspace);
-    console.log("confirm on map is", confirmOnMap);
 
     const showAddReviewModalHandler = () => {
         setshowAddReviewModal (true);
@@ -403,9 +352,6 @@ const Airspace = (props) => {
                 ...value
             }
         })
-
-        setAdditionalInfo(true);
-        console.log(airspaceInfo);
     }
 
     const formSubmitHandler = (e) => {
@@ -462,6 +408,7 @@ const Airspace = (props) => {
 
                         {myAirspace && myAirspaces.map(airspace => {
                             return  <MyAirspaceTab 
+                                    key={airspace.id}
                                     title={airspace.title}
                                     name={airspace.name}
                                     address={airspace.address}
@@ -525,13 +472,12 @@ const Airspace = (props) => {
 export default Airspace;
 
 
-export async function getStaticProps () {
+export async function getServerSideProps() {
     const users = await User.findAll();
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
-        },
-        revalidate : 60 * 30
+        }
     }
 }

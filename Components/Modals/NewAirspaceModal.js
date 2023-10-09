@@ -15,14 +15,12 @@ const NewAirspaceModal = (props) => {
 
 
     const categoryHandler = (e) => {
-        console.log(e.target.value)
         setCategory(e.target.value)
     }
 
     const categorySelectHandler = (value, e) => {
         e.preventDefault();
         setCategory(value);
-        console.log(category);
     }
 
     const formSubmitHandler = (e) => {
@@ -47,11 +45,11 @@ const NewAirspaceModal = (props) => {
                <div className="mt-11 flex flex-row gap-5">
                     <div className="flex flex-col items-center gap-4">
                         <button onClick={categorySelectHandler.bind(null, "Home Owner Association")} className="rounded-md text-sml font-medium" style={{width: "192px", height: "55px", border: "0.35px solid #0653EA"}}>Home Owner Association</button>
-                        <input type="radio" id="home owner" checked={category === "Home Owner Association"}  value="Home Owner Association" onClick={categoryHandler} name="category" className="cursor-pointer" /> 
+                        <input type="radio" id="home owner" checked={category === "Home Owner Association"}  value="Home Owner Association" onChange={categoryHandler} name="category" className="cursor-pointer" /> 
                     </div>
                     <div className="flex flex-col items-center gap-4">
                         <button onClick={categorySelectHandler.bind(null, "Individual")}  className="rounded-md text-sml font-medium" style={{width: "192px", height: "55px", border: "0.35px solid #0653EA"}}>Individual</button>
-                        <input type="radio" id="individual" checked={category === "Individual"} value="Individual" onClick={categoryHandler} name="category" className="cursor-pointer" /> 
+                        <input type="radio" id="individual" checked={category === "Individual"} value="Individual" onChange={categoryHandler} name="category" className="cursor-pointer" /> 
                     </div>
                </div>
                <div className="flex flex-row items-center mt-20 gap-3">

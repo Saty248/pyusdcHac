@@ -21,15 +21,7 @@ const ScheduleFlight = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 65){
             router.push("/auth/join");
             return;
         };

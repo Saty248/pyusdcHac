@@ -3,7 +3,6 @@ import { Fragment, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
 
-
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
@@ -11,7 +10,6 @@ import AddCardModal from "@/Components/Modals/AddCardModal";
 import User from "@/models/User";
 import swal from "sweetalert";
 import Spinner from "@/Components/Spinner";
-
 
 
 const Settings = (props) => {
@@ -34,15 +32,7 @@ const Settings = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };

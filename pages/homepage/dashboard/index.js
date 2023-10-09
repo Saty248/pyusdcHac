@@ -31,15 +31,7 @@ const Dashboard = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };
@@ -49,38 +41,6 @@ const Dashboard = (props) => {
         const singleUser = users.filter(user => user.email === fetchedEmail);
         setUser(singleUser[0]);
     }, []);
-
-    // useEffect(() => {
-    //     fetch("/api/get-user")
-    //     .then((res) => {
-    //         return res.json()
-    //     })
-    //     .then((data) => {
-    //         const singleUser = data.users.filter(user => user.email === fetchedEmail);
-    //         setUser(singleUser[0]);
-    //     })
-    //     .catch((err) => {
-    //         console.log(err)
-    //     })   
-
-    //     const fetchedEmail = localStorage.getItem("email");
-    //     const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-
-    //     if(fetchedToken) {
-    //         const tokenLength = Object.keys(fetchedToken).length;
-    //         console.log(tokenLength);
-    //         if(tokenLength.length < 1) {
-    //             localStorage.removeItem("openlogin_store");
-    //         };
-    //     };
-
-    //     if(!fetchedToken) {
-    //         router.push("/auth/join");
-    //         return;
-    //     };
-
-    //     setToken(fetchedToken.sessionId);
-    // }, []);
 
 
 
@@ -294,15 +254,15 @@ const Dashboard = (props) => {
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M10.5084 1.84102C10.2084 1.60768 9.79174 1.60768 9.49174 1.84102C7.90841 3.04935 3.2334 6.99101 3.2584 11.5827C3.2584 15.2993 6.28341 18.3327 10.0084 18.3327C13.7334 18.3327 16.7584 15.3077 16.7584 11.591C16.7667 7.06602 12.0834 3.05768 10.5084 1.84102Z" stroke="#0653EA" stroke-width="1.5" stroke-miterlimit="10"/>
+                                        <path d="M10.5084 1.84102C10.2084 1.60768 9.79174 1.60768 9.49174 1.84102C7.90841 3.04935 3.2334 6.99101 3.2584 11.5827C3.2584 15.2993 6.28341 18.3327 10.0084 18.3327C13.7334 18.3327 16.7584 15.3077 16.7584 11.591C16.7667 7.06602 12.0834 3.05768 10.5084 1.84102Z" stroke="#0653EA" strokeWidth="1.5" strokeMiterlimit="10"/>
                                     </svg>
                                     <p className="text-dark-brown font-semibold text-sml">16 %</p>
                                     <p className="text-dark-brown text-xxs">Humidity</p>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M12.9833 10.0009C12.9833 11.6509 11.6499 12.9842 9.99993 12.9842C8.34993 12.9842 7.0166 11.6509 7.0166 10.0009C7.0166 8.35091 8.34993 7.01758 9.99993 7.01758C11.6499 7.01758 12.9833 8.35091 12.9833 10.0009Z" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M9.99987 16.8913C12.9415 16.8913 15.6832 15.1579 17.5915 12.1579C18.3415 10.9829 18.3415 9.00794 17.5915 7.83294C15.6832 4.83294 12.9415 3.09961 9.99987 3.09961C7.0582 3.09961 4.31654 4.83294 2.4082 7.83294C1.6582 9.00794 1.6582 10.9829 2.4082 12.1579C4.31654 15.1579 7.0582 16.8913 9.99987 16.8913Z" stroke="#0653EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M12.9833 10.0009C12.9833 11.6509 11.6499 12.9842 9.99993 12.9842C8.34993 12.9842 7.0166 11.6509 7.0166 10.0009C7.0166 8.35091 8.34993 7.01758 9.99993 7.01758C11.6499 7.01758 12.9833 8.35091 12.9833 10.0009Z" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M9.99987 16.8913C12.9415 16.8913 15.6832 15.1579 17.5915 12.1579C18.3415 10.9829 18.3415 9.00794 17.5915 7.83294C15.6832 4.83294 12.9415 3.09961 9.99987 3.09961C7.0582 3.09961 4.31654 4.83294 2.4082 7.83294C1.6582 9.00794 1.6582 10.9829 2.4082 12.1579C4.31654 15.1579 7.0582 16.8913 9.99987 16.8913Z" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                     <p className="text-dark-brown font-semibold text-sml">1.4 km</p>
                                     <p className="text-dark-brown text-xxs">Visibility</p>
