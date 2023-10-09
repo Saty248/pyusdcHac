@@ -355,13 +355,12 @@ const Dashboard = (props) => {
 
 export default Dashboard;
 
-export async function getStaticProps () {
+export async function getServerSideProps() {
     const users = await User.findAll();
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
         },
-        revalidate : 60 * 30
     }
 }
