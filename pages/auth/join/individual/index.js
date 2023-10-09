@@ -111,6 +111,7 @@ const IndividualSignup = () => {
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
+                        console.log(errorData);
                         swal({
                             title: "oops!",
                             text: `${errorData.message}`,
