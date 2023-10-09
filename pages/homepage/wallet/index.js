@@ -2,9 +2,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Fragment } from "react";
 import { createPortal } from "react-dom";
-import { SolanaWallet } from "@web3auth/solana-provider";
-import { Web3AuthNoModal } from "@web3auth/no-modal";
-// import connect
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -14,8 +11,6 @@ import Spinner from "@/Components/Spinner";
 import WalletModal from "@/Components/Modals/WalletModal";
 
 const Wallet = (props) => {
-    
-
     const { users } = props;
 
     const router = useRouter();
@@ -26,44 +21,7 @@ const Wallet = (props) => {
     const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
 
 
-
-    const chainConfig = {
-        chainNamespace: "solana",
-        chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://api.devnet.solana.com",
-        displayName: "Solana Devnet",
-        blockExplorer: "https://explorer.solana.com",
-        ticker: "SOL",
-        tickerName: "Solana",
-      }
-
-    //   For Live Environment
     
-    // const chainConfig = {
-    //     chainNamespace: "solana",
-    //     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://rpc.ankr.com/solana",
-    //     displayName: "Solana Mainnet",
-    //     blockExplorer: "https://explorer.solana.com",
-    //     ticker: "SOL",
-    //     tickerName: "Solana",
-    // };
-
-    const web3auth = new Web3AuthNoModal({
-        // For Production
-        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
-        
-        // For Development
-        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
-        web3AuthNetwork: "cyan", // Web3Auth Network
-        chainConfig: chainConfig,
-    });
-
-    console.log(web3auth.provider);
-
-
-
-
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));

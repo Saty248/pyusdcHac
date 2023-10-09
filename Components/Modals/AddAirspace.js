@@ -6,6 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 const AddAirspace = (props) => {
     const dispatch = useDispatch();
 
+    console.log(process.env.DATABASE)
+    console.log(process.env.USER)
+    console.log(process.env.PASSWORD)
+    console.log(process.env.HOST)
+    console.log(process.env.DB_PORT)
+    console.log(process.env.LOCATIONIQ_KEY)
+
     const [address, setAddress] =  useState("");
     const [addresses, setAddresses] =  useState([]);
     const [showOptions, setShowOptions] = useState(true);

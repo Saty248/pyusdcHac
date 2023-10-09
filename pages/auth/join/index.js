@@ -32,7 +32,6 @@ const Signup = (props) => {
 
         if(fetchedToken) {
             const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
             if(tokenLength.length > 0 || fetchedEmail) {
                 router.push("/homepage/dashboard");
                 return;
@@ -142,9 +141,6 @@ const Signup = (props) => {
             }
         }
 
-        console.log(web3authProvider);
-        console.log(web3auth.provider);
-
         let userInformation;
         try{
             userInformation = await web3auth.getUserInfo();
@@ -172,7 +168,6 @@ const Signup = (props) => {
         }
        
 
-        console.log(accounts);
         const filteredUser = users.filter(user => user.email === userInformation.email);
 
         if(filteredUser.length < 1) {
@@ -212,7 +207,7 @@ const Signup = (props) => {
         {!categorySect && <div className="bg-white rounded px-12 mx-auto justify-center items-center relative" style={{width: "680px", height: "90vh", maxHeight: "593px", marginTop: "5vh"}}>
             <button onClick={() => router.push("/")} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <p>Back</p>
             </button>
@@ -246,7 +241,7 @@ const Signup = (props) => {
         {categorySect && <div className="bg-white rounded px-12 mx-auto flex flex-col justify-center items-center relative" style={{width: "680px", height: "475px", marginTop: "10vh"}}>
             <button onClick={() => router.push("/")} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <p>Back</p>
             </button>

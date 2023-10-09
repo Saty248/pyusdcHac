@@ -27,7 +27,7 @@ const CorporateSignup = () => {
                             "+672", "+268", "+54", "+374", "+297", "+61", "+43", "+994", "+1-242", "+973", "+880",
                             "+1-246", "+375", "+32", "+501", "+229", "+1-441", "+975", "+591", "+387", "+267",  
                             "+55", "+246", "+1-284", "+673", "+359", "+226", "+257", "+238", "+1-345", "+236",
-                            "+235", "+56", "+86", "+61", "+57", "+269", "+682", "+506", "+385", "+53", "+599",
+                            "+235", "+56", "+86", "+57", "+269", "+682", "+506", "+385", "+53", "+599",
                             "+357", "+420", "+243", "+45", "+253", "+1-767", "+1-809", "+1-829", "+1-849", "+670",
                             "+593", "+20", "+503", "+240", "+291", "+372", "+251", "+500", "+298", "+679", "+358",
                             "+33", "+689", "+241", "+220",
@@ -51,7 +51,6 @@ const CorporateSignup = () => {
     const web3 = useSelector(state => state.value.web3);
     const token = web3.token;
 
-    console.log(token);
 
     
     const newsLetterHandler = () => {
@@ -70,9 +69,6 @@ const CorporateSignup = () => {
         const name = nameRef.current.value;
         const countryCode = countryCodeRef.current.value;
         const phoneNumber = phoneNumberRef.current.value;
-
-        console.log(phoneNumber);
-
         
 
         if(!name) {
@@ -144,7 +140,6 @@ const CorporateSignup = () => {
         .catch(error => {
             setError(error.toString());
             setIsLoading(false)
-            console.log(error.toString());
         });
     }
 
@@ -158,7 +153,7 @@ const CorporateSignup = () => {
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "100vh", maxHeight: "607px", padding: "93px 142px"}}>
             <button onClick={returnHandler} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <p>Back</p>
             </button>
@@ -176,13 +171,13 @@ const CorporateSignup = () => {
                     <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Country code<span className="text-red-600">*</span></label> <br />
                     <select ref={countryCodeRef} className="ps-10 appearance-none hover:cursor-pointer bg-light-grey rounded-md font-sans focus:outline-blue-200" style={{width: "118px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}} >
                         {countryCodes.map(code => {
-                            return <option className="text-dark font-medium font-sans">
+                            return <option key={code} className="text-dark font-medium font-sans">
                                     {code}
                                 </option>
                         })}
                     </select>
-                    <Image src="/images/language.png" width={24} height={24} className="absolute top-8 left-3" />
-                    <Image src="/images/vector.png" width={8} height={5} className="absolute top-11 right-4" />
+                    <Image src="/images/language.png" alt="world icon" width={24} height={24} className="absolute top-8 left-3" />
+                    <Image src="/images/vector.png" alt="dropdown arrow" width={8} height={5} className="absolute top-11 right-4" />
                 </div>
                 <div className="relative">
                     <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Phone Number<span className="text-red-600">*</span></label> <br />
@@ -191,7 +186,7 @@ const CorporateSignup = () => {
                 </div>
             </div>
             <div className="mt-12 flex flex-row items-center">
-                <input type="checkbox" onClick={newsLetterHandler} checked={newsLetter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
+                <input type="checkbox" onChange={newsLetterHandler} checked={newsLetter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
                 <label onClick={newsLetterHandler} className="text-sm font-normal cursor-pointer text-light-brown">Send me news letters and keep me updated on daily news</label>
             </div>
             {/* <div className="mt-3.5 flex flex-row items-center">

@@ -38,13 +38,9 @@ const IndividualSignup = () => {
     }, []);
 
     const category = useSelector(state => state.value.category);
-
-    console.log(category);
-
     const web3 = useSelector(state => state.value.web3);
     const token = web3.token;
 
-    console.log(token);
     
 
     const countryCodes = ["+1", "+44", "+233", "+234", "+93", "+355", "+213", "+1-684", "+376", "+244", "+1-264", 
@@ -102,7 +98,6 @@ const IndividualSignup = () => {
             newsLetter
         }
 
-        console.log(userInfo);
 
         setIsLoading(true);
 
@@ -158,7 +153,7 @@ const IndividualSignup = () => {
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "697px", padding: "93px 142px"}}>
             <button onClick={returnHandler} className="flex flex-row items-center gap-2 absolute top-8 left-8">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8" fill="none">
-                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4" stroke="#252530" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <p>Back</p>
             </button>

@@ -128,10 +128,9 @@ const Airspace = (props) => {
     
     useEffect(() => {
         if(token && user) {
-            console.log("Loading map...")
             const map = new maplibregl.Map({
                 container: 'map',
-                attributionControl: false, //need this to show a compact attribution icon (i) instead of the whole text
+                attributionControl: false, 
                 style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
                 zoom: 12,
                 center: [-122.42, 37.779]
@@ -160,86 +159,113 @@ const Airspace = (props) => {
         }
     }, [token, user])
 
-    // useEffect(() => {
-    //     if(flyToAddress) {
-    //         fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`)
-    //         .then(res => {
-    //             if(!res.ok) {
-    //                 return res.json()
-    //                 .then(errorData => {
-    //                     throw new Error(errorData.error);
-    //                 });
-    //             }
-    //             return res.json()
-    //         })
-    //         .then(resData => {
-    //             if(resData.error) {
-    //                 console.log(resData.error);
-    //                 return;
-    //             }
+    useEffect(() => {
+        if(flyToAddress) {
+            fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`)
+            .then(res => {
+                if(!res.ok) {
+                    return res.json()
+                    .then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+                return res.json()
+            })
+            .then(resData => {
+                if(resData.error) {
+                    console.log(resData.error);
+                    return;
+                }
 
-                
+                const endPoint = []
+        
+                endPoint.push(resData[0].lon)
+                endPoint.push(resData[0].lat)
+
+                const map = new maplibregl.Map({
+                    container: 'map',
+                    attributionControl: false, 
+                    style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
+                    zoom: 18,
+                    center: endPoint
+                });
+
+
+
+
+                // const start = [-74.5, 40];
+                // const end = endPoint;
             
-    //             const endPoint = []
+                // let isAtStart = true;
+            
+            
+                // // depending on whether we're currently at point a or b, aim for
+                // // point a or b
+                // const target = isAtStart ? end : start;
         
-    //             endPoint.push(resData[0].lon)
-    //             endPoint.push(resData[0].lat)
-
-    //             const map = new maplibregl.Map({
-    //                 container: 'map',
-    //                 attributionControl: false, 
-    //                 style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
-    //                 zoom: 18,
-    //                 center: endPoint
-    //             });
-
+                // // and now we're at the opposite point
+                // isAtStart = !isAtStart;
+            
+                // map.flyTo({
+                //     // These options control the ending camera position: centered at
+                //     // the target, at zoom level 9, and north up.
+                //     center: target,
+                //     zoom: 16,
+                //     bearing: 0,
+    
+                //     speed: 0.5, 
+                //     curve: 1, 
         
-    //             if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
-    //                 let el = document.createElement('div');
-    //                 el.id = 'markerWithExternalCss';
                     
-    //                 new maplibregl.Marker(el)
-    //                     .setLngLat(endPoint)
-    //                     .addTo(map);
+                //     easing (t) {
+                //         return t;
+                //     },
+        
+                    
+                //     essential: true
+                // });
 
-    //                 return;    
-    //             }
+
                 
-    //             map.on('load', function () {
-    //                 map.addLayer({
-    //                     'id': 'maine',
-    //                     'type': 'fill',
-    //                     'source': {
-    //                         'type': 'geojson',
-    //                         'data': {
-    //                             'type': 'Feature',
-    //                             'geometry': resData[0].geojson
-    //                         }
-    //                     },
-    //                     'layout': {},
-    //                     'paint': {
-    //                         'fill-color': '#D20C0C',
-    //                         'fill-opacity': 0.5
-    //                         }
-    //                     });
-    //                 });
+        
+                if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
+                    let el = document.createElement('div');
+                    el.id = 'markerWithExternalCss';
+                    
+                    new maplibregl.Marker(el)
+                        .setLngLat(endPoint)
+                        .addTo(map);
+
+                    return;    
+                }
+                
+                map.on('load', function () {
+                    map.addLayer({
+                        'id': 'maine',
+                        'type': 'fill',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'geometry': resData[0].geojson
+                            }
+                        },
+                        'layout': {},
+                        'paint': {
+                            'fill-color': '#D20C0C',
+                            'fill-opacity': 0.5
+                            }
+                        });
+                    });
 
                     
-    //         })
-    //         .then(() => {
-    //             setViewAirSpace(false);
-    //             setAirSpaceReviews(false);
-    //             setAboutAirspace(false);
-    //             setViewMyAirSpace(true);
-    //             setMyAirSpaceReviews(false);
-    //             setAboutMyAirspace(false);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         });
+            })
+            .catch((err) => {
+                console.log(err)
+            });
                 
-    //     }
-    // }, [flyToAddress]);
+        }
+    }, [flyToAddress]);
 
     const newAirspace = useSelector(state => {
         return state.value.newAirspace;
@@ -305,7 +331,7 @@ const Airspace = (props) => {
     const showMyAirspaceHandler = (id) => {
         const filteredAirspace = myAirspaces.filter(airspace => airspace.id === id)
         setMyFilteredAirspace(filteredAirspace[0])
-        const flyToAddress =  filteredAirspace[0].address;
+        setFlyToAddress(filteredAirspace[0].address);
 
         setViewAirSpace(false);
         setAirSpaceReviews(false);
@@ -313,76 +339,6 @@ const Airspace = (props) => {
         setViewMyAirSpace(true);
         setMyAirSpaceReviews(false);
         setAboutMyAirspace(false);
-
-        fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`)
-        .then(res => {
-            if(!res.ok) {
-                return res.json()
-                .then(errorData => {
-                    throw new Error(errorData.error);
-                });
-            }
-            return res.json()
-        })
-        .then(resData => {
-            if(resData.error) {
-                console.log(resData.error);
-                return;
-            }
-
-            const endPoint = []
-    
-            endPoint.push(resData[0].lon)
-            endPoint.push(resData[0].lat)
-
-            const map = new maplibregl.Map({
-                container: 'map',
-                attributionControl: false, 
-                style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
-                zoom: 18,
-                center: endPoint
-            });
-
-    
-            if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
-                let el = document.createElement('div');
-                el.id = 'markerWithExternalCss';
-                
-                new maplibregl.Marker(el)
-                    .setLngLat(endPoint)
-                    .addTo(map);
-
-                return;    
-            }
-            
-            map.on('load', function () {
-                map.addLayer({
-                    'id': 'maine',
-                    'type': 'fill',
-                    'source': {
-                        'type': 'geojson',
-                        'data': {
-                            'type': 'Feature',
-                            'geometry': resData[0].geojson
-                        }
-                    },
-                    'layout': {},
-                    'paint': {
-                        'fill-color': '#D20C0C',
-                        'fill-opacity': 0.5
-                        }
-                    });
-                });
-
-                
-        })
-        .then(() => {
-            console.log("defaulting to default...")
-            console.log(viewMyAirspace)
-        })
-        .catch((err) => {
-            console.log(err)
-        });
     }
 
     const airspaceOverviewHandler = () => {

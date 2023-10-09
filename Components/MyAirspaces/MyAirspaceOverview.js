@@ -23,8 +23,8 @@ const MyAirspaceOverview = (props) => {
                 </svg>
             </button>
         </div>
-        <div className="flex flex-row items-center justify-between">
-            <div className="flex flex-row items-center ms-5 mt-4 text-sm">
+        <div className="flex flex-row items-center justify-end">
+            {/* <div className="flex flex-row items-center ms-5 mt-4 text-sm">
                 <p>4.5</p>
                 <div className="flex flex-row items-center">
                     <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
@@ -34,7 +34,7 @@ const MyAirspaceOverview = (props) => {
                     <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
                 </div>
                 <p>(6)</p>
-            </div>
+            </div> */}
             <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">$3.00</span>/hr</p>
         </div>
         <div className="flex flex-row justify-center gap-7 mt-5 pb-2.5 items-center" style={{borderBottom: "0.5px solid rgba(229, 229, 234, 0.7)"}}>
@@ -51,7 +51,7 @@ const MyAirspaceOverview = (props) => {
         </div>
 
         <div style={{width: "100%", height: "30%"}} className="overflow-y-auto rounded-b-md">
-            <div style={{width: "299px", height: "75px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
+            <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Owner Detail</h3>
                 <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>{props.name}</p>
                 <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Email: </span>jorgeyyty@gmail.com</p>
@@ -59,14 +59,14 @@ const MyAirspaceOverview = (props) => {
 
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Details</h3>
-                <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Addreess: </span>{props.address}</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">(e) Resident Identification: </span>900000000005</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Email: </span>jorge.colindres@spi-inertia.com</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Lodgement Registry Number: </span>100</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Property Size: </span>100m3</p>
+                <p className="text-sm text-light-brown mt-2"><span className="font-bold">Addreess: </span>{props.address}</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">(e) Resident Identification: </span>900000000005</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Resident Email: </span>jorge.colindres@spi-inertia.com</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Lodgement Registry Number: </span>100</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Property Size: </span>100m3</p>
             </div>
     
             <div className="flex flex-row items-center gap-7 justify-center">
@@ -103,9 +103,9 @@ const MyAirspaceOverview = (props) => {
             </div>
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-sm text-brown">Facilities</h3>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>
             </div>
         </div>
     </div>
