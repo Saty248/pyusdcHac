@@ -1,37 +1,32 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, } from "react-redux";
 import Image from "next/image";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-// import 'react-calendar/dist/Calendar.css';
 import { counterActions } from "@/store/store";
-import User from "@/models/User";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
+import User from "@/models/User";
 
 const Dashboard = (props) => {
+    const { users } = props;
     const dispatch = useDispatch();
 
-    const { users } = props;
     const date = new Date()
     const month = date.toLocaleString('default', { month: 'short' })
     const day = date.getDate();
-
-    console.log(month, day);
     
     const router = useRouter();
 
-    const [value, onChange] = useState(new Date());
 
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
     const [newsletters, setNewsletters] = useState([]);
     const [newslettersLoading, setNewslettersLoading] = useState(false);
     
-
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
@@ -54,6 +49,40 @@ const Dashboard = (props) => {
         const singleUser = users.filter(user => user.email === fetchedEmail);
         setUser(singleUser[0]);
     }, []);
+
+    // useEffect(() => {
+    //     fetch("/api/get-user")
+    //     .then((res) => {
+    //         return res.json()
+    //     })
+    //     .then((data) => {
+    //         const singleUser = data.users.filter(user => user.email === fetchedEmail);
+    //         setUser(singleUser[0]);
+    //     })
+    //     .catch((err) => {
+    //         console.log(err)
+    //     })   
+
+    //     const fetchedEmail = localStorage.getItem("email");
+    //     const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+    //     if(fetchedToken) {
+    //         const tokenLength = Object.keys(fetchedToken).length;
+    //         console.log(tokenLength);
+    //         if(tokenLength.length < 1) {
+    //             localStorage.removeItem("openlogin_store");
+    //         };
+    //     };
+
+    //     if(!fetchedToken) {
+    //         router.push("/auth/join");
+    //         return;
+    //     };
+
+    //     setToken(fetchedToken.sessionId);
+    // }, []);
+
+
 
     useEffect(() => {
         setNewslettersLoading(true)
@@ -361,6 +390,6 @@ export async function getServerSideProps() {
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
-        },
+        }
     }
 }

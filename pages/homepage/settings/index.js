@@ -8,8 +8,6 @@ import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
 import AddCardModal from "@/Components/Modals/AddCardModal";
-import mastercard from "../../../public/images/mastercard-logo.png";
-import visa from "../../../public/images/visa-logo.png";
 import User from "@/models/User";
 import swal from "sweetalert";
 import Spinner from "@/Components/Spinner";
@@ -55,10 +53,6 @@ const Settings = (props) => {
         setUser(singleUser[0]);
     }, []);
 
-    const addCardHandler = (e) => {
-        e.preventDefault();
-        setAddCard(true);
-    }
 
     const closeAddCardHandler = () => {
         setAddCard(false)
@@ -123,9 +117,7 @@ const Settings = (props) => {
                     swal({
                         title: "oops!",
                         text: `${errorData.message}`,
-                        // timer: 2000
                       });
-                    // return;
                     throw new Error(errorData.message);
                 });
             }
@@ -145,8 +137,6 @@ const Settings = (props) => {
         })
         .catch(err => {
             console.log(err);
-            // setError(err.toString());
-            // setIsLoading(false);
         })
     }
 
@@ -222,12 +212,12 @@ const Settings = (props) => {
 
 export default Settings;
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const users = await User.findAll();
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
-        },
+        }
     }
 }

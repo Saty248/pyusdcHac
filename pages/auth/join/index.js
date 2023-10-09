@@ -10,15 +10,12 @@ import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { counterActions } from "@/store/store";
-import User from "@/models/User";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import swal from "sweetalert";
 import logo from "../../../public/images/logo.png";
 
 const Signup = (props) => {
-    const { users } = props;
-
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
     const [initial, setInitial] = useState(false);
@@ -27,16 +24,16 @@ const Signup = (props) => {
     const emailRef = useRef();
 
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            console.log(fetchedToken);
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            if(tokenLength.length > 0 || fetchedEmail) {
-                router.push("/homepage/dashboard");
-                return;
-            };
-        };
+            if(fetchedToken) {
+                const tokenLength = Object.keys(fetchedToken).length;
+                if(tokenLength.length > 0) {
+                    router.push("/homepage/dashboard");
+                    return;
+                };
+            };  
     }, []);
     
     
@@ -68,10 +65,10 @@ const Signup = (props) => {
 
     const web3auth = new Web3AuthNoModal({
         // For Production
-        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
+        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
         
         // For Development
-        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
+        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
         web3AuthNetwork: "cyan", // Web3Auth Network
         chainConfig: chainConfig,
     });
@@ -122,7 +119,7 @@ const Signup = (props) => {
                 localStorage.removeItem("openlogin_store");
                 swal({
                     title: "oops!",
-                    text: "Something went wrong. Kindly reload the page",
+                    text: "Something went wrong from first level. Kindly reload the page",
                   });
                 return;
             }
@@ -135,7 +132,7 @@ const Signup = (props) => {
                 localStorage.removeItem("openlogin_store");
                 swal({
                     title: "oops!",
-                    text: "Something went wrong. Kindly reload the page",
+                    text: "Something went wrong from first level. Kindly reload the page",
                   });
                 return;
             }
@@ -166,28 +163,38 @@ const Signup = (props) => {
               });
             return;
         }
+        
        
+        fetch("/api/get-user")
+        .then((res) => {
+            return res.json()
+        })
+        .then(data => {
+            console.log(data)
+            const filteredUser = data.users.filter(user => user.email === userInformation.email);
 
-        const filteredUser = users.filter(user => user.email === userInformation.email);
+            if(filteredUser.length < 1) {
+                const token = localStorage.getItem("openlogin_store");
+                dispatch(counterActions.web3({
+                    token: JSON.parse(token)
+                }));
+                localStorage.removeItem("openlogin_store");
+                dispatch(counterActions.category({
+                    email: userInformation.email,
+                    wallet: accounts[0]
+                }));
 
-        if(filteredUser.length < 1) {
-            const token = localStorage.getItem("openlogin_store");
-            dispatch(counterActions.web3({
-                token: JSON.parse(token)
-            }));
-            localStorage.removeItem("openlogin_store");
-            dispatch(counterActions.category({
-                email: userInformation.email,
-                wallet: accounts[0]
-            }));
-
-            setIsLoading(false);
-            setCategorySect(true);
-            return;
-        }
-
-        localStorage.setItem("email", userInformation.email);
-        router.replace("/homepage/dashboard");
+                setIsLoading(false);
+                setCategorySect(true);
+                return;
+            }
+            
+            localStorage.setItem("email", userInformation.email);
+            router.replace("/homepage/dashboard");
+        })
+        .catch((err) => {
+            console.log(err)
+        })   
     }
 
     const formSubmitHandler = (path, e) => {
@@ -275,14 +282,3 @@ const Signup = (props) => {
 }
 
 export default Signup;
-
-export async function getStaticProps () {
-    const users = await User.findAll();
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(users))
-        },
-        revalidate : 60 * 30
-    }
-}
