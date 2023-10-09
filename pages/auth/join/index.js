@@ -65,11 +65,11 @@ const Signup = (props) => {
 
     const web3auth = new Web3AuthNoModal({
         // For Production
-        // clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
+        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
         
         // For Development
-        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
-        web3AuthNetwork: "cyan", // Web3Auth Network
+        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
+        web3AuthNetwork: "cyan",
         chainConfig: chainConfig,
     });
 
@@ -163,7 +163,7 @@ const Signup = (props) => {
               });
             return;
         }
-        
+
        
         fetch("/api/get-user")
         .then((res) => {
