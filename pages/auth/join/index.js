@@ -56,7 +56,7 @@ const Signup = (props) => {
     
     const chainConfig = {
         chainNamespace: "solana",
-        chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        chainId: "0x2", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
         rpcTarget: "https://api.testnet.solana.com",
         displayName: "Solana Mainnet",
         blockExplorer: "https://explorer.solana.com",
@@ -68,10 +68,10 @@ const Signup = (props) => {
     const web3auth = new Web3AuthNoModal({
         // For Production
         // clientId: "",
-        clientId: process.env.PROD_CLIENT_ID,
+        // clientId: process.env.PROD_CLIENT_ID,
 
         // For Development
-        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8",
+        clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8",
         web3AuthNetwork: "cyan",
         chainConfig: chainConfig,
     });
