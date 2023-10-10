@@ -30,8 +30,7 @@ const Airspace = (props) => {
 
     const router = useRouter();
     const dispatch = useDispatch();
-    // const locationiqKey = process.env.LOCATIONIQ_KEY;
-    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
+    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);

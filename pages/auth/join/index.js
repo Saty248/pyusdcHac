@@ -64,14 +64,16 @@ const Signup = (props) => {
         tickerName: "Solana",
     };
 
+    console.log(process.env.NEXT_PUBLIC_PROD_CLIENT_ID)
+    console.log(process.env.NEXT_PUBLIC_DEV_CLIENT_ID)
 
     const web3auth = new Web3AuthNoModal({
         // For Production
         // clientId: "",
-        clientId: process.env.PROD_CLIENT_ID,
+        // clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
 
         // For Development
-        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8",
+        clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
         web3AuthNetwork: "cyan",
         chainConfig: chainConfig,
     });

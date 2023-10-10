@@ -15,7 +15,7 @@ const AddAirspace = (props) => {
     const [addressValid, setAddressValid] = useState(false);
     const [confirmMap, setConfirmMap] = useState(true);
 
-    const locationiqKey = process.env.LOCATIONIQ_KEY;
+    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
     const airspaceValue = useSelector(state => state.value.airspaceData);
 
