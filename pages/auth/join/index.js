@@ -67,7 +67,7 @@ const Signup = (props) => {
 
     const web3auth = new Web3AuthNoModal({
         // For Production
-        clientId: process.env.PROD_CLIENT_ID,
+        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
         
         // For Development
         // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8",
