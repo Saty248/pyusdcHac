@@ -21,7 +21,7 @@ const ScheduleFlight = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(!fetchedEmail || fetchedToken.sessionId.length !== 65){
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };
@@ -109,24 +109,13 @@ const ScheduleFlight = (props) => {
 
 export default ScheduleFlight;
 
-export async function getStaticPaths() {
-    return {
-      paths: [
-        {
-          params: { slug: ['a', 'b'] },
-        },
-      ],
-      fallback: true, // false or "blocking"
-    }
-  }
 
-export async function getStaticProps () {
-    const users = await User.findAll();
+export async function getServerSideProps() {
+    const { slug } = context.query;
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+        slug,
         },
-        revalidate : 60 * 30
-    }
+    };
 }

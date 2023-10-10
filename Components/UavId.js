@@ -24,7 +24,7 @@ const UavProfile = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(!fetchedEmail || fetchedToken.sessionId.length !== 65){
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };
@@ -269,25 +269,15 @@ const UavProfile = (props) => {
 
 export default UavProfile;
 
+export async function getServerSideProps(context) {
+    const { params } = context;
+    const slug = params.slug;
 
-export async function getStaticPaths() {
-    return {
-      paths: [
-        {
-          params: { uavId: "1"},
-        },
-      ],
-      fallback: true, // false or "blocking"
-    }
-  }
-
-export async function getStaticProps () {
     const users = await User.findAll();
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
         },
-        revalidate : 60 * 30
     }
 }
