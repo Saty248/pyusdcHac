@@ -19,8 +19,6 @@ import User from "@/models/User";
 const Signup = (props) => {
     const { users } = props;
 
-    console.log(users);
-
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
     const [initial, setInitial] = useState(false);
@@ -66,12 +64,13 @@ const Signup = (props) => {
         tickerName: "Solana",
     };
 
+
     const web3auth = new Web3AuthNoModal({
         // For Production
-        clientId: "BJzzStRTLHjLmRYkzxs2sUVlina3gkhzF4K7I0a3WScwQ7maUDSruzHYWG4nM8OB5B0Jx5mBSzqFCuMlqdQ_ZoY",
+        clientId: process.env.PROD_CLIENT_ID,
         
         // For Development
-        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8", // Get your Client ID from the Web3Auth Dashboard
+        // clientId: "BNJIzlT_kyic6LCnqAsHyBoaXy0WtCs7ZR3lu6ZTTzHIJGCDtCgDCFpSVMZjxL_Zu4rRsiJjjaGokDeqlGfxoo8",
         web3AuthNetwork: "cyan",
         chainConfig: chainConfig,
     });
@@ -137,7 +136,7 @@ const Signup = (props) => {
                 localStorage.removeItem("email");
                 swal({
                     title: "oops!",
-                    text: "Something went wrong from first level. Kindly reload the page",
+                    text: "Something went wrong. Kindly reload the page",
                   });
                 return;
             }
