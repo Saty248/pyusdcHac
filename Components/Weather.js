@@ -19,15 +19,7 @@ const Weather = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
             router.push("/auth/join");
             return;
         };
@@ -212,13 +204,12 @@ const Weather = (props) => {
 
 export default Weather;
 
-export async function getStaticProps () {
+export async function getServerSideProps() {
     const users = await User.findAll();
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(users))
-        },
-        revalidate : 60 * 30
+        }
     }
 }
