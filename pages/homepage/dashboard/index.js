@@ -1,93 +1,164 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
+import { useDispatch, } from "react-redux";
+import Image from "next/image";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
+import { counterActions } from "@/store/store";
+import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
+import User from "@/models/User";
 
-const Dashboard = () => {
+const Dashboard = (props) => {
+    const { users } = props;
+    const dispatch = useDispatch();
+
+    const date = new Date()
+    const month = date.toLocaleString('default', { month: 'short' })
+    const day = date.getDate();
+    
     const router = useRouter();
 
-    useEffect(() => {
-        const ctx = document.getElementById('chart').getContext('2d');
 
-        if (ctx) {
-            const existingChart = Chart.getChart(ctx);
-      
-            if (existingChart) {
-              existingChart.destroy();
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
+    const [newsletters, setNewsletters] = useState([]);
+    const [newslettersLoading, setNewslettersLoading] = useState(false);
+    
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
+
+
+
+    useEffect(() => {
+        setNewslettersLoading(true)
+        fetch("/api/newsletters")
+        .then(res => {
+            if(!res.ok) {
+                return res.json()
+                .then(errorData => {
+                    throw new Error(errorData.message);
+                });
             }
-        }
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['August 21', 'August 22', 'August 23', 
-                        'August 24', 'August 25', 'August 26',
-                      ],
-            datasets: [{
-              label: 'Payment Overview',
-              data: [2, 4, 2, 
-                      4, 8, 12,  
-                      ],
-            //   backgroundColor: 'rgb(255, 211, 11)',
-              color: "black",
-              barThickness: 10,
-              borderRadius: 10
-            }]
-          },
-          options: {
-            scales: {
-              x: {
-                // display: false 
-              },
-              y: {
-                // display: false 
-              }
-            },
-            plugins: {
-              tooltip: {
-                backgroundColor: 'black', 
-                bodyColor: 'white',
-                yAlign: 'bottom',
-                titleFont: {
-                    size: 14,
-                },
-                titleColor: "white",
-                bodyFont: {
-                    color: 'red'
-                },
-                displayColors: false,
-                style: {
-                    textAlign: 'center'
+            return res.json();
+        })
+        .then(response => {
+            setNewslettersLoading(false)
+            setNewsletters(response.newsletters.reverse());
+        })
+        .catch(err => {
+            console.log(err);
+        }) 
+    }, []);
+
+    useEffect(() => {
+        if(token && user) {
+            const ctx = document.getElementById('chart').getContext('2d');
+
+            if (ctx) {
+                const existingChart = Chart.getChart(ctx);
+        
+                if (existingChart) {
+                    existingChart.destroy();
                 }
-              },
-              legend: {
-                // display: false, 
-              },
-              label: {
-                display: false
-              },
-              title: {
-                display: false,
-                text: "August 10"
-              }
             }
-          }
-        });
-    }, [])
+            new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['August 21', 'August 22', 'August 23', 
+                            'August 24', 'August 25', 'August 26',
+                        ],
+                datasets: [{
+                label: 'Payment Overview',
+                data: [2, 4, 2, 
+                        4, 8, 12,  
+                        ],
+                //   backgroundColor: 'rgb(255, 211, 11)',
+                color: "black",
+                barThickness: 10,
+                borderRadius: 10
+                }]
+            },
+            options: {
+                scales: {
+                x: {
+                    // display: false 
+                },
+                y: {
+                    // display: false 
+                }
+                },
+                plugins: {
+                tooltip: {
+                    backgroundColor: 'black', 
+                    bodyColor: 'white',
+                    yAlign: 'bottom',
+                    titleFont: {
+                        size: 14,
+                    },
+                    titleColor: "white",
+                    bodyFont: {
+                        color: 'red'
+                    },
+                    displayColors: false,
+                    style: {
+                        textAlign: 'center'
+                    }
+                },
+                legend: {
+                    // display: false, 
+                },
+                label: {
+                    display: false
+                },
+                title: {
+                    display: false,
+                    text: "August 10"
+                }
+                }
+            }
+            });
+        }
+    }, []);
+
+  
 
     const navigationHandler = (route) => {
         router.push(route)
     }
 
-    return <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
+    const addAirspaceHandler = (event) => {
+        event.stopPropagation();   
+        router.push("/homepage/airspace");
+        dispatch(counterActions.newAirspaceModal());
+    }
+
+    if(!user || !token) {
+        return <Spinner />
+    } 
+
+    return <div className="flex flex-row mx-auto">
         <Sidebar />
-        <div style={{width: "1183px", height: "100vh", overflowY: "scroll"}}>
-            <Navbar />
-            <div className="flex flex-row">
-                <div className="">
-                    <div className="flex flex-row gap-5">
-                        <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="ms-5 my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
+        <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
+            <Navbar name={user.name} />
+            <div className="flex flex-row justify-between">
+                <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}>
+                    <div className="mx-auto flex flex-row justify-between gap-5" style={{height: "169px", width: "95%"}}>
+                        <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#BED9C7", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="17" viewBox="0 0 21 17" fill="none">
@@ -106,7 +177,7 @@ const Dashboard = () => {
                                 <p className="text-2xl">$4,000.85</p>
                             </div>
                         </button>
-                        <button onClick={navigationHandler.bind(null, "/homepage/airspace")} className="my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
+                        <div onClick={navigationHandler.bind(null, "/homepage/airspace")} className="p-5 bg-white cursor-pointer hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#AAC0EA", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -119,12 +190,16 @@ const Dashboard = () => {
                                     <p className="font-bold">.</p>
                                 </div>
                             </div>
-                            <div className="mt-10 text-start">
-                                <p className="text-sm">My Airspace</p>
-                                <p className="text-2xl">5</p>
+                            <div className="flex flex-row items-center justify-between">
+                                <div className="mt-10 text-start">
+                                    <p className="text-sm">My Airspace</p>
+                                    <p className="text-2xl">5</p>
+                                </div>
+                                <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
                             </div>
-                        </button>
-                        <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="my-5 p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "262px", height: "169px", borderRadius: "10px"}}>
+                        </div>
+                        {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}> */}
+                        <button className="p-5 bg-white cursor-default transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#FFF4D1", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -146,23 +221,92 @@ const Dashboard = () => {
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">UAVs</p>
-                                <p className="text-2xl">5</p>
+                                <p className="text-2xl">0</p>
                             </div>
                         </button>            
                     </div>
-                    <div className="bg-white mx-5 pt-10 px-5" style={{width: "826px", height: "553px", borderRadius: "10px"}}>
+                    <div className="mx-auto mt-5 bg-white pt-10 flex flex-row justify-center rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)", maxHeight: "653px"}}>
                         <canvas id="chart"></canvas>
                     </div>
-                    
                 </div>
-                <div>
-                    <div className="bg-white my-5 me-2" style={{width: "292px", height: "342px", borderRadius: "10px",}}>
-                        
-                    </div>
-                    <div className="bg-white my-5 me-2 py-5 px-4 overflow-y-auto" style={{width: "292px", height: "380px", borderRadius: "10px"}}>
+                <div className="my-5 me-5 rounded-md" style={{width: "292px", height: "100vh",}}>
+                    {/* <div className="bg-white my-5 me-2 p-3" style={{width: "100%", height: "342px", borderRadius: "10px",}}>
+                        <div className="bg-light-blue-100 relative rounded-md py-5 px-3" style={{height: "175px"}}>
+                            <div className="rounded-md flex flex-row justify-center items-center" style={{height: "118px", background: "linear-gradient(118deg, #AAC0EA 9.28%, #6A6AED 101.85%)"}}>
+                                <div>
+                                    <p className="text-light-blue-100">Cloudy</p>
+                                    <p className="text-5xl text-light-blue-100 relative">31<span className="absolute top-0 text-sm">o</span></p>
+                                </div>
+                                <Image src="/images/cloud.png" alt="a cloud picture" width={86} height={86} />
+                            </div>
+                            <div className="bg-white absolute flex flex-row items-center justify-center top-1 rounded-2xl" style={{width: "60%", left: "20%", height: "22px"}}>
+                                <p className="text-sm text-dark-brown">Tuesday, 4 July</p>
+                            </div>
+                            <div className="bg-white absolute flex flex-row items-center justify-between px-5 shadow-md rounded-md -bottom-8" style={{width: "90%", height: "61px"}}>
+                                <div className="flex flex-col items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M15.4165 18.9583C13.4665 18.9583 11.8748 17.3667 11.8748 15.4167V15C11.8748 14.6583 12.1582 14.375 12.4998 14.375C12.8415 14.375 13.1248 14.6583 13.1248 15V15.4167C13.1248 16.6833 14.1498 17.7083 15.4165 17.7083C16.6832 17.7083 17.7082 16.6833 17.7082 15.4167C17.7082 14.15 16.6832 13.125 15.4165 13.125H1.6665C1.32484 13.125 1.0415 12.8417 1.0415 12.5C1.0415 12.1583 1.32484 11.875 1.6665 11.875H15.4165C17.3665 11.875 18.9582 13.4667 18.9582 15.4167C18.9582 17.3667 17.3665 18.9583 15.4165 18.9583Z" fill="#0653EA"/>
+                                        <path d="M15.4165 10.6243H1.6665C1.32484 10.6243 1.0415 10.341 1.0415 9.99935C1.0415 9.65768 1.32484 9.37435 1.6665 9.37435H15.4165C16.6832 9.37435 17.7082 8.34935 17.7082 7.08268C17.7082 5.81602 16.6832 4.79102 15.4165 4.79102C14.1498 4.79102 13.1248 5.81602 13.1248 7.08268V7.49935C13.1248 7.84102 12.8415 8.12435 12.4998 8.12435C12.1582 8.12435 11.8748 7.84102 11.8748 7.49935V7.08268C11.8748 5.13268 13.4665 3.54102 15.4165 3.54102C17.3665 3.54102 18.9582 5.13268 18.9582 7.08268C18.9582 9.03268 17.3665 10.6243 15.4165 10.6243Z" fill="#0653EA"/>
+                                        <path d="M7.75817 8.12591H1.6665C1.32484 8.12591 1.0415 7.84258 1.0415 7.50091C1.0415 7.15925 1.32484 6.87591 1.6665 6.87591H7.75817C8.64984 6.87591 9.37484 6.15091 9.37484 5.25924C9.37484 4.36758 8.64984 3.64258 7.75817 3.64258C6.8665 3.64258 6.1415 4.36758 6.1415 5.25924V5.57591C6.1415 5.91758 5.85817 6.20091 5.5165 6.20091C5.17483 6.20091 4.8915 5.91758 4.8915 5.57591V5.25924C4.8915 3.67591 6.17484 2.39258 7.75817 2.39258C9.3415 2.39258 10.6248 3.67591 10.6248 5.25924C10.6248 6.84258 9.3415 8.12591 7.75817 8.12591Z" fill="#0653EA"/>
+                                    </svg>
+                                    <p className="text-dark-brown font-semibold text-sml">6 km/h</p>
+                                    <p className="text-dark-brown text-xxs">Wind</p>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M10.5084 1.84102C10.2084 1.60768 9.79174 1.60768 9.49174 1.84102C7.90841 3.04935 3.2334 6.99101 3.2584 11.5827C3.2584 15.2993 6.28341 18.3327 10.0084 18.3327C13.7334 18.3327 16.7584 15.3077 16.7584 11.591C16.7667 7.06602 12.0834 3.05768 10.5084 1.84102Z" stroke="#0653EA" strokeWidth="1.5" strokeMiterlimit="10"/>
+                                    </svg>
+                                    <p className="text-dark-brown font-semibold text-sml">16 %</p>
+                                    <p className="text-dark-brown text-xxs">Humidity</p>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M12.9833 10.0009C12.9833 11.6509 11.6499 12.9842 9.99993 12.9842C8.34993 12.9842 7.0166 11.6509 7.0166 10.0009C7.0166 8.35091 8.34993 7.01758 9.99993 7.01758C11.6499 7.01758 12.9833 8.35091 12.9833 10.0009Z" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M9.99987 16.8913C12.9415 16.8913 15.6832 15.1579 17.5915 12.1579C18.3415 10.9829 18.3415 9.00794 17.5915 7.83294C15.6832 4.83294 12.9415 3.09961 9.99987 3.09961C7.0582 3.09961 4.31654 4.83294 2.4082 7.83294C1.6582 9.00794 1.6582 10.9829 2.4082 12.1579C4.31654 15.1579 7.0582 16.8913 9.99987 16.8913Z" stroke="#0653EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                    <p className="text-dark-brown font-semibold text-sml">1.4 km</p>
+                                    <p className="text-dark-brown text-xxs">Visibility</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <p>Today</p>
+                            <div className="flex flex-row gap-2">
+                                <div className="w-1/5 rounded mt-1 flex flex-col justify-center items-center" style={{height: "61px", background: "linear-gradient(118deg, #AAC0EA 9.28%, #6A6AED 101.85%)"}}>
+                                    <p className="text-sml text-light-blue-100 relative">31<span className="absolute top-0 text-xxs">o</span></p>
+                                    <Image src="/images/cloud.png" alt="a cloud picture" width={20} height={20} />
+                                    <p className="text-sml text-light-blue-100 relative">11:00</p>
+                                </div>
+                                <div className="w-1/5 rounded mt-1 bg-bleach-white shadow flex flex-col justify-center items-center" style={{height: "61px",}}>
+                                    <p className="text-sml text-dark-brown relative">29<span className="absolute top-0 text-xxs">o</span></p>
+                                    <Image src="/images/cloud-drizzle.png" alt="a cloud picture" width={20} height={20} />
+                                    <p className="text-sml text-dark-brown relative">12:00</p>
+                                </div>
+                                <div className="w-1/5 rounded mt-1 bg-bleach-white shadow flex flex-col justify-center items-center" style={{height: "61px",}}>
+                                    <p className="text-sml text-dark-brown relative">33<span className="absolute top-0 text-xxs">o</span></p>
+                                    <Image src="/images/cloud-lightning.png" alt="a cloud picture" width={20} height={20} />
+                                    <p className="text-sml text-dark-brown relative">12:00</p>
+                                </div>
+                                <div className="w-1/5 rounded mt-1 bg-bleach-white shadow flex flex-col justify-center items-center" style={{height: "61px",}}>
+                                    <p className="text-sml text-dark-brown relative">31<span className="absolute top-0 text-xxs">o</span></p>
+                                    <Image src="/images/cloud-snow.png" alt="a cloud picture" width={20} height={20} />
+                                    <p className="text-sml text-dark-brown relative">12:00</p>
+                                </div>
+                                <div className="w-1/5 rounded mt-1 bg-bleach-white shadow flex flex-col justify-center items-center" style={{height: "61px",}}>
+                                    <p className="text-sml text-dark-brown relative">24<span className="absolute top-0 text-xxs">o</span></p>
+                                    <Image src="/images/sun.png" alt="a cloud picture" width={20} height={20} />
+                                    <p className="text-sml text-dark-brown relative">12:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> */}
+
+
+
+                    <div className="bg-white me-2 py-5 px-4 overflow-y-auto" style={{width: "100%", height: "100%", borderRadius: "10px"}}>
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
-                            <p className="font-semibold" style={{color: "#722ACF"}}>4 Jul</p>
+                            <p className="font-semibold" style={{color: "#722ACF"}}>{month} {day}</p>
                             <hr style={{width: "150px"}}></hr>
                             <div className="flex flex-row ">
                                 <p className="font-bold">.</p>
@@ -170,33 +314,24 @@ const Dashboard = () => {
                                 <p className="font-bold">.</p>
                             </div>
                         </div>
-                        <div className="flex flex-row items-center mb-3">
-                            <p>9:00am</p>
-                            <div className="border-l-4 border-black ps-2 ms-2">
-                                <h3>Title</h3>
-                                <p className="text-sm">Lorem ipsum dolor sit amet, adipiscing elit, sed doeiusmod temporut.</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-row items-center mb-3">
-                            <p>9:00am</p>
-                            <div className="border-l-4 border-black ps-2 ms-2">
-                                <h3>Title</h3>
-                                <p className="text-sm">Lorem ipsum dolor sit amet, adipiscing elit, sed doeiusmod temporut.</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-row items-center mb-3">
-                            <p>9:00am</p>
-                            <div className="border-l-4 border-black ps-2 ms-2">
-                                <h3>Title</h3>
-                                <p className="text-sm">Lorem ipsum dolor sit amet, adipiscing elit, sed doeiusmod temporut.</p>
-                            </div>
-                        </div>
+                        {(newslettersLoading && newsletters.length < 1) && <p className="text-sm text-center">Loading...</p>}
+                        {newsletters.map(newsletter => {
+                            return <div key={newsletter.id} className="flex flex-row items-center mb-3">
+                                    <p className="text-sm w-1/4">{newsletter.date}</p>
+                                    <div className="border-l-4 w-3/4 border-black ps-2 ms-2">
+                                        <h3 className="text-sml font-bold">{newsletter.title}</h3>
+                                        <p className="text-sm">{newsletter.text}</p>
+                                        <a className="text-xs text-blue-600" href={newsletter.link}>continue reading</a>
+                                    </div>
+                                </div>
+                            }) 
+                        }
                     </div>
                 </div>
             </div>
             <div className="flex flex-row mt-10 justify-between items-center">
                 <p className="ms-5">&copy; Skytrades 2023</p>
-                <div className="flex flex-row -me-24 items-center gap-1">
+                <div className="flex flex-row items-center gap-1 pe-5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
                         <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
                     </svg>
@@ -205,7 +340,16 @@ const Dashboard = () => {
             </div>
         </div>
     </div>
-    
 }
 
 export default Dashboard;
+
+export async function getServerSideProps() {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        }
+    }
+}

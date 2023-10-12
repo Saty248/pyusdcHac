@@ -1,7 +1,9 @@
 import Image from "next/image";
 
 const MyAirspaceOverview = (props) => {
-    return  <div className="absolute rounded-md bg-white top-5 left-96" style={{width: "339px", height: "817px"}}>
+   
+
+    return  <div className="absolute rounded-md bg-white top-5 z-10" style={{width: "339px", height: "90%", maxHeight: "537px", left: "380px"}}>
         <div className="relative">
             <Image src="/images/airspace-preview.png" alt="icon" className="rounded-t-md" width={339} height={422} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
@@ -12,7 +14,7 @@ const MyAirspaceOverview = (props) => {
             </button>
         </div>
         <div className="flex flex-row items-center justify-between px-5 mb-2">
-            <p className="font-bold mt-5">AirSpace Title</p>
+            <p className="font-bold mt-5">{props.title}</p>
             <button className="flex justify-center items-center mt-3" style={{height: "27px", width: "27px", border: "1px solid blue", borderRadius: "50%"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <path d="M8.75033 13.2702H5.25033C2.08283 13.2702 0.729492 11.9169 0.729492 8.74935V5.24935C0.729492 2.08185 2.08283 0.728516 5.25033 0.728516H6.41699C6.65616 0.728516 6.85449 0.926849 6.85449 1.16602C6.85449 1.40518 6.65616 1.60352 6.41699 1.60352H5.25033C2.56116 1.60352 1.60449 2.56018 1.60449 5.24935V8.74935C1.60449 11.4385 2.56116 12.3952 5.25033 12.3952H8.75033C11.4395 12.3952 12.3962 11.4385 12.3962 8.74935V7.58268C12.3962 7.34352 12.5945 7.14518 12.8337 7.14518C13.0728 7.14518 13.2712 7.34352 13.2712 7.58268V8.74935C13.2712 11.9169 11.9178 13.2702 8.75033 13.2702Z" fill="#0653EA"/>
@@ -21,8 +23,8 @@ const MyAirspaceOverview = (props) => {
                 </svg>
             </button>
         </div>
-        <div className="flex flex-row items-center justify-between">
-            <div className="flex flex-row items-center ms-5 mt-4 text-sm">
+        <div className="flex flex-row items-center justify-end">
+            {/* <div className="flex flex-row items-center ms-5 mt-4 text-sm">
                 <p>4.5</p>
                 <div className="flex flex-row items-center">
                     <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
@@ -32,39 +34,39 @@ const MyAirspaceOverview = (props) => {
                     <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
                 </div>
                 <p>(6)</p>
-            </div>
+            </div> */}
             <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">$3.00</span>/hr</p>
         </div>
         <div className="flex flex-row justify-center gap-7 mt-5 pb-2.5 items-center" style={{borderBottom: "0.5px solid rgba(229, 229, 234, 0.7)"}}>
             <button className="relative" onClick={props.viewMyAirspace}>
                 <p className="font-bold text-dark-blue">Overview</p>
-                <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div>
+                <div style={{height: "4px", width: "40px", bottom: "-10px", left: "10%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
-            <button className="relative" onClick={props.myAirspaceReview}>
+            {/* <button className="relative" onClick={props.myAirspaceReview}>
                 <p className="font-bold text-brown">Reviews</p>
-            </button>
+            </button> */}
             <button className="relative" onClick={props.aboutMyAirspace}>
                 <p className="font-bold text-brown">About</p>
             </button>
         </div>
 
-        <div style={{width: "100%", height: "470px"}} className="overflow-y-auto rounded-b-md">
-            <div style={{width: "299px", height: "75px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
+        <div style={{width: "100%", height: "30%"}} className="overflow-y-auto rounded-b-md">
+            <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Owner Detail</h3>
-                <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>Jorge Constantino Colindres Castillo</p>
+                <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>{props.name}</p>
                 <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Email: </span>jorgeyyty@gmail.com</p>
             </div>
 
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Details</h3>
-                <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Addreess: </span>6391 Elgin St. Celina, Delaware 10299</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">(e) Resident Identification: </span>90000000000035</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Email: </span>jorge.colindres@spi-inertia.com</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Lodgement Registry Number: </span>100</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Property Size: </span>100m3</p>
+                <p className="text-sm text-light-brown mt-2"><span className="font-bold">Addreess: </span>{props.address}</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">(e) Resident Identification: </span>900000000005</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Resident Email: </span>jorge.colindres@spi-inertia.com</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Lodgement Registry Number: </span>100</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Property Size: </span>100m3</p>
             </div>
     
             <div className="flex flex-row items-center gap-7 justify-center">
@@ -78,7 +80,7 @@ const MyAirspaceOverview = (props) => {
                     </button>
                     <p className="text-center text-dark-blue text-sm">3D Map</p>
                 </div>
-                <div className="flex flex-col justify-center items-center">
+                <div onClick={() => alert("Button clicked")} className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M7.5 14.2188C3.79375 14.2188 0.78125 11.2063 0.78125 7.5C0.78125 3.79375 3.79375 0.78125 7.5 0.78125C11.2063 0.78125 14.2188 3.79375 14.2188 7.5C14.2188 11.2063 11.2063 14.2188 7.5 14.2188ZM7.5 1.71875C4.3125 1.71875 1.71875 4.3125 1.71875 7.5C1.71875 10.6875 4.3125 13.2813 7.5 13.2813C10.6875 13.2813 13.2813 10.6875 13.2813 7.5C13.2813 4.3125 10.6875 1.71875 7.5 1.71875Z" fill="#0653EA"/>
@@ -101,9 +103,9 @@ const MyAirspaceOverview = (props) => {
             </div>
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-sm text-brown">Facilities</h3>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>
+                <p className="text-sm text-light-brown"><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>
             </div>
         </div>
     </div>

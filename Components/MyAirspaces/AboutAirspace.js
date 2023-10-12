@@ -1,5 +1,5 @@
 const AboutMyAirspace = (props) => {
-    return <div className="absolute rounded-md bg-white top-5 left-96 py-5 px-1" style={{width: "339px", height: "725px"}}>
+    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "90%", left: "380px"}}>
         <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
                 <button>
@@ -20,16 +20,16 @@ const AboutMyAirspace = (props) => {
             <button className="relative" onClick={props.viewMyAirspace}>
                 <p className="font-bold">Overview</p>
             </button>
-            <button className="relative" onClick={props.myAirspaceReview}>
+            {/* <button className="relative" onClick={props.myAirspaceReview}>
                 <p className="font-bold">Reviews</p>
-            </button>
+            </button> */}
             <button className="relative" onClick={props.aboutMyAirspace}>
                 <p className="font-bold text-dark-blue">About</p>
-                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>
+                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "7%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
         </div>
         
-        <div className="overflow-y-auto py-5" style={{width: "100%", height: "580px"}}>
+        <div className="overflow-y-auto py-5" style={{width: "100%", height: "80%"}}>
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto">
                 <h3 className="font-bold text-sm text-brown">Lodging party details</h3>
                 <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>Jorge Constantino Colindres Castillo</p>

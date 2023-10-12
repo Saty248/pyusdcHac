@@ -1,16 +1,37 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
+import { Fragment, useState, useEffect } from "react";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
-import { Fragment, useState } from "react";
 import AddUavModal from "@/Components/Modals/AddUavModal";
 import Backdrop from "@/Components/Backdrop";
+import Spinner from "@/Components/Spinner";
+import User from "@/models/User";
 
 const UAVs = (props) => {
+    const { users } = props;
+
     const router = useRouter();
     const [addUav, setAddUav] = useState();
+    const [user, setUser] = useState();
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const fetchedEmail = localStorage.getItem("email");
+        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            router.push("/auth/join");
+            return;
+        };
+
+        setToken(fetchedToken.sessionId);
+
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setUser(singleUser[0]);
+    }, []);
 
     const uavProfileHandler = () => {
         router.push("/homepage/uavs/1");
@@ -29,16 +50,20 @@ const UAVs = (props) => {
         setAddUav(false)
     }
 
+    if(!user || !token) {
+        return <Spinner />
+    } 
+
     return <Fragment>
         {addUav && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {addUav && createPortal(<AddUavModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row mx-auto" style={{maxWidth: "1440px"}}>
             <Sidebar />
-            <div style={{width: "1183px", height: "100vh"}} className="overflow-y-auto">
-                <Navbar />
-                <div className="bg-white py-11 px-10" style={{width: "1183px", height: "1526px", borderTop: "2px solid #F0F0FA"}}>
-                    <h3 className="font-semibold">UAVs</h3> 
-                    <div className="grid grid-cols-4 gap-y-5">
+            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
+                <Navbar name={user.name} />
+                <div className="bg-white py-11 px-10 overflow-y-auto" style={{height: "100vh", borderTop: "2px solid #F0F0FA"}}>
+                    <h3 className="font-semibold mb-5">UAVs</h3> 
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-y-5">
                         <div className="rounded" style={{width: "260px", height: "324px", boxShadow: "0px 2px 12px 0px rgba(0, 0, 0, 0.08)"}}>
                             <Image src="/images/uav.png" alt="a picture of UAV" width={260} height={200} />
                             <div className="flex flex-col items-center">
@@ -102,3 +127,13 @@ const UAVs = (props) => {
 }
 
 export default UAVs;
+
+export async function getServerSideProps() {
+    const users = await User.findAll();
+
+    return {
+        props: {
+            users: JSON.parse(JSON.stringify(users))
+        }
+    }
+}

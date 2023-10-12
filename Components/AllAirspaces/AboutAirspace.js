@@ -1,5 +1,5 @@
 const AboutAirspace = (props) => {
-    return <div className="absolute rounded-md bg-white top-5 left-96 py-5 px-1" style={{width: "339px", height: "379px"}}>
+    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "379px", left: "380px"}}>
         <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
                 <button>
@@ -19,15 +19,13 @@ const AboutAirspace = (props) => {
         <div className="flex flex-row justify-center gap-7 mt-8 pb-2.5 items-center">
             <button className="relative" onClick={props.viewAirspace}>
                 <p className="font-bold ">Overview</p>
-                {/* <div style={{height: "4px", width: "40px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
             </button>
-            <button className="relative" onClick={props.viewAirspaceReview}>
+            {/* <button className="relative" onClick={props.viewAirspaceReview}>
                 <p className="font-bold">Reviews</p>
-                {/* <div style={{height: "4px", width: "35px", bottom: "-10px", left: "20%"}} className="bg-dark-blue absolute rounded-t-md"></div> */}
-            </button>
+            </button> */}
             <button className="relative" onClick={props.aboutAirspace}>
                 <p className="font-bold text-dark-blue">About</p>
-                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "18%"}} className="bg-dark-blue absolute rounded-t-md"></div>
+                <div style={{height: "4px", width: "30px", bottom: "-10px", left: "7%"}} className="bg-dark-blue absolute rounded-t-md"></div>
             </button>
         </div>
         <div className="flex flex-row justify-center items-center py-7">
