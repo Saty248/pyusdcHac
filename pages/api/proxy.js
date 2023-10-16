@@ -24,6 +24,7 @@ const handler = async (req, res) => {
     );
 
     const resData = await fetchRes.json();
+    console.log(resData);
 
     if (resData?.data && resData?.data?.statusCode >= 400) {
       throw new Error(resData.data.message);
@@ -33,7 +34,7 @@ const handler = async (req, res) => {
   } catch (err) {
     // todo: return error from backend server
     console.error(err.message);
-    return res.json({ errorMessage: err.message });
+    return res.status(500).json({ ok: false, errorMessage: err.message });
   }
 };
 

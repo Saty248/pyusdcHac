@@ -2,47 +2,250 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Fragment } from "react";
 import { createPortal } from "react-dom";
+import ReactPaginate from "react-paginate";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import User from "@/models/User";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import WalletModal from "@/Components/Modals/WalletModal";
 
 const Wallet = (props) => {
     const { users } = props;
+    const url = 'https://api.testnet.solana.com';
 
     const router = useRouter();
 
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
+    const [tokenBalance, setTokenBalance] = useState("");
+    const [tokenAccount, setTokenAccount] = useState("");
+    const [transactionHistory, setTransactionHistory] = useState();
+    const [transactionData, setTransactionData] = useState([]);
+    const [completedTrans, setCompletedTrans] = useState();
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+    const [pageNumber, setPageNumber] = useState(0);
 
-
+    const transactionsPerPage = 1;
+    const pagesVisited = pageNumber * transactionsPerPage;
+    
+    const pageCount = transactionHistory && Math.ceil(transactionHistory.length / transactionsPerPage);
     
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+            console.log("false")
+            localStorage.removeItem("openlogin_store")
             router.push("/auth/join");
             return;
         };
 
-        setToken(fetchedToken.sessionId);
-
-        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setToken(fetchedToken.sessionId);  
         setUser(singleUser[0]);
     }, []);
+
+    useEffect(() => {
+        if(user) {
+            console.log("running wallet")
+            const data =   {
+                jsonrpc: "2.0",
+                id: 1,
+                method: "getTokenAccountsByOwner",
+                params: [
+                //   user.wallet,
+                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
+                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  {
+                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                  },
+                  {
+                    encoding: "jsonParsed"
+                  }
+                ]
+              }
+   
+            fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    return response.json()
+                    .then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+
+                return response.json()
+            })
+            .then(result => {
+                console.log(result)
+                console.log(result.result.value[0].pubkey)
+                setTokenAccount(result.result.value[0].pubkey)
+                setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if(tokenAccount) {
+            console.log(tokenAccount)
+            const data = {
+                jsonrpc: "2.0",
+                id: 1,
+                method: "getSignaturesForAddress",
+                params: [
+                    tokenAccount
+                ]
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        return response.json()
+                        .then(errorData => {
+                            throw new Error(errorData.error);
+                        });
+                    }
+                    return response.json()
+                })
+                .then(result => {
+                    console.log(result.result)
+                    setTransactionHistory(result.result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    }, [tokenAccount]);
+
+    useEffect(() => {
+        let userArray = [];
+        if(transactionHistory && transactionHistory.length > 0) {
+            transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage).map(trans => {
+                console.log(trans)
+                userArray.push(trans);
+            });   
+            console.log(userArray);
+            setCompletedTrans(userArray);  
+        }   
+  }, [pagesVisited, transactionHistory]);
+
+    useEffect(() => {
+        if(completedTrans && completedTrans.length > 0) {
+            setTransactionData([]);
+            for(const transaction of completedTrans) {
+                console.log(transaction);
+
+
+                const date = new Date(transaction.blockTime * 1000)
+                const month = date.toLocaleString('default', { month: 'short' })
+                const day = date.getDate();
+                const year = date.getFullYear();
+                transaction.date = `${month} ${day} ${year}` 
+                const data =   {
+                    jsonrpc: "2.0",
+                    id: 1,
+                    method: "getTransaction",
+                    params: [
+                            transaction.signature,
+                            "json"
+                        ]
+                    }
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        return response.json()
+                        .then(errorData => {
+                            throw new Error(errorData.error);
+                        });
+                    }
+                    return response.json()
+                })
+                .then((resData) => {
+                    console.log(resData.result.meta)
+
+                    const senderPostBalance = resData.result.meta.postTokenBalances.filter(sender => {
+                        // For live
+                        // return sender.owner === user.wallet
+        
+                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    }) 
+
+                    const senderPreBalance = resData.result.meta.preTokenBalances.filter(sender => {
+                        // For live
+                        // return sender.owner === user.wallet
+
+                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    });
+
+                    let postBalance;
+                    if(senderPostBalance[0].uiTokenAmount) {
+                        postBalance = senderPostBalance[0].uiTokenAmount.uiAmountString
+                    }
+                    
+                    // const postBalance = senderPostBalance[0]
+                    let preBalance;
+                    if(senderPreBalance[0].uiTokenAmount) {
+                        preBalance = senderPreBalance[0].uiTokenAmount.uiAmountString
+                    }
+
+                    // const preBalance = senderPreBalance[0]
+
+                    
+                    
+                    const transactionAmount = postBalance - preBalance;
+                    
+                    transaction.amount = +transactionAmount.toFixed(4);
+                    setTransactionData(prev => {
+                        return [
+                            ...prev,
+                            transaction
+                        ]
+                    })
+                    console.log(result.result);
+                    transArray = [...result.result];
+                    // return res
+                })
+                .then((data) => {
+                    console.log(data)
+                    // console.log(transArray);
+                    // setTransactionHistory(transArray);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
+        }
+    }, [completedTrans]);
+
+    const changePage = ({selected}) => {
+        setPageNumber(selected);
+    }
 
     const backdropCloseHandler = () => {
         setShowDepositModal(false);
@@ -76,13 +279,14 @@ const Wallet = (props) => {
         {showDepositModal && createPortal(<WalletModal method="deposit" form="from" navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
             <Sidebar />
-            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
+            <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
                 <Navbar name={user.name} />
                 <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                     <div className="z-10 text-center">
                         <p className="text-light-brown">My Wallet</p>
-                        <p className="text-light-brown font-semibold mt-2 text-2xl">USDC 4,000.85</p>
-                        <p className="text-light-brown font-semibold -mt-2 text-sml">US$ 4000.85</p>
+                        {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                        {tokenBalance && <p className="text-light-brown font-semibold mt-2 text-2xl">USDC {tokenBalance}</p>}
+                        {tokenBalance && <p className="text-light-brown font-semibold -mt-2 text-sml">US$ {tokenBalance}</p>}
                     </div>
                     <div style={{zIndex: "10"}} className="flex flex-row justify-center items-center gap-4 absolute -bottom-3">
                         <button onClick={showDepositModalHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
@@ -119,65 +323,47 @@ const Wallet = (props) => {
                     </form>
                 </div>
                 <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
-                    <p className="w-1/12">Date</p>
-                    <p className="w-2/12">Transaction ID</p>
-                    <p className="w-4/12">Transaction Details</p>
-                    <p className="w-1/12">In/Out</p>
-                    <p className="w-3/12">Amount</p>
+                    <p className="w-2/12">Date</p>
+                    <p className="w-4/12">Transaction ID</p>
+                    <p className="w-2/12">Amount</p>
                     <p className="w-1/12">Status</p>
                 </div>
-                <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-1/12">28/10/2012</p>
-                    <p className="w-2/12">509630</p>
-                    <p className="w-4/12">Transaction Details</p>
-                    <p className="w-1/12">$<span>44.00</span></p>
-                    <p className="w-3/12">Amount</p>
-                    <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
+                {!transactionHistory && 
+                        // <div className="text-center">
+                            <p className="mt-5 text-center">Loading...</p>
+                        // </div>
+                        // <Spinner />
+                        } 
+                {(transactionHistory && transactionHistory.length < 1) && 
+                    <div className="flex flex-row justify-center mt-20">
+                        <p>You don't have any transaction at the moment</p>
+                    </div>
+                } 
+                {(transactionData && transactionData.length > 0) && transactionData.map(history => {
+                    return <div key={history.signature} className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
+                    <p className="w-2/12">{history.date}</p>
+                    {/*remove the cluster before going live  */}
+                    <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=testnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
+                    <p className={`w-2/12 ${history.amount > 0 ? "text-green-500" : "text-red-600"}`}><span>{history.amount ? history.amount : ""}</span></p>
+                    <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
                             <circle cx="3" cy="3" r="3" fill="#1A572E"/>
                         </svg>
-                        Active
+                        {history.confirmationStatus}
                     </p>
                 </div>
-                <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-1/12">28/10/2012</p>
-                    <p className="w-2/12">509630</p>
-                    <p className="w-4/12">Transaction Details</p>
-                    <p className="w-1/12">$<span>44.00</span></p>
-                    <p className="w-3/12">Amount</p>
-                    <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                            <circle cx="3" cy="3" r="3" fill="#1A572E"/>
-                        </svg>
-                        Active
-                    </p>
-                </div>
-                <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-1/12">28/10/2012</p>
-                    <p className="w-2/12">509630</p>
-                    <p className="w-4/12">Transaction Details</p>
-                    <p className="w-1/12">$<span>44.00</span></p>
-                    <p className="w-3/12">Amount</p>
-                    <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                            <circle cx="3" cy="3" r="3" fill="#1A572E"/>
-                        </svg>
-                        Active
-                    </p>
-                </div>
-                <div className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-1/12">28/10/2012</p>
-                    <p className="w-2/12">509630</p>
-                    <p className="w-4/12">Transaction Details</p>
-                    <p className="w-1/12">$<span>44.00</span></p>
-                    <p className="w-3/12">Amount</p>
-                    <p className="w-1/12 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                            <circle cx="3" cy="3" r="3" fill="#1A572E"/>
-                        </svg>
-                        Active
-                    </p>
-                </div>
+                })}
+                {(transactionData && transactionData.length > 0) && <ReactPaginate
+                            previousLabel={"Previous"}
+                            nextLabel={"Next"}
+                            pageCount={pageCount}
+                            onPageChange={changePage}
+                            containerClassName={"paginationBttns"}
+                            previousLinkClassName={'previousBttn'}
+                            nextLinkClassName={'nextBttn'}
+                            disabledClassName='pagination-disabled'
+                            activeClassName='paginationActive'
+                        />}
             </div>
         </div>
     </Fragment>
@@ -186,11 +372,28 @@ const Wallet = (props) => {
 export default Wallet;
 
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("http://localhost:3000/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
+   
+    console.log(data)
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

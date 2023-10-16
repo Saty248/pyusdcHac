@@ -21,14 +21,14 @@ const IndividualSignup = () => {
     const [nameValid, setNameValid] = useState(true);
     const [emailValid, setEmailValid] = useState(true);
     const [phoneNumberValid, setPhoneNumberValid] = useState(true);
-    const [newsLetter, setNewsLetter] = useState(false);
+    const [newsletter, setnewsletter] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            if(!category.category) {
+            if(!category.categoryId) {
                 router.replace("/auth/join");
                 return;
             }
@@ -54,8 +54,8 @@ const IndividualSignup = () => {
                         ]
 
 
-    const newsLetterHandler = () => {
-        setNewsLetter(prev => !prev)
+    const newsletterHandler = () => {
+        setnewsletter(prev => !prev)
     }
 
     const returnHandler = (e) => {
@@ -93,31 +93,35 @@ const IndividualSignup = () => {
 
         const userInfo = {
             ...category,
+            categoryId: +category.categoryId,
             name,
             phoneNumber: `${countryCode}${phoneNumber}`,
-            newsLetter
+            newsletter
         }
+
+        console.log(newsletter);
 
 
         setIsLoading(true);
 
-        fetch("/api/register-user", {
+        fetch("/api/proxy", {
             method: "POST",
             body: JSON.stringify(userInfo),
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                uri: "/users/create"
             }
         }).then(res => {
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
                         console.log(errorData);
+                        console.log(errorData);
                         swal({
                             title: "oops!",
-                            text: `${errorData.message}`,
-                            // timer: 2000
+                            text: `${errorData.errorMessage}`,
                           });
-                        throw new Error(errorData.message);
+                        throw new Error(errorData.errorMessage);
                     });
                 }
             setError(false)
@@ -139,7 +143,8 @@ const IndividualSignup = () => {
             return res.json();
         })
         .catch(error => {
-            setError(error.toString());
+            console.log(error);
+            setError(error);
             setIsLoading(false);
         });
     }
@@ -203,8 +208,8 @@ const IndividualSignup = () => {
                 </div>
             </div> */}
             <div className="mt-12 flex flex-row items-center">
-                <input type="checkbox" onChange={newsLetterHandler} checked={newsLetter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
-                <label onClick={newsLetterHandler} className="text-sm font-normal cursor-pointer text-light-brown">Send me news letters and keep me updated on daily news</label>
+                <input type="checkbox" onChange={newsletterHandler} checked={newsletter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
+                <label onClick={newsletterHandler} className="text-sm font-normal cursor-pointer text-light-brown">Send me news letters and keep me updated on daily news</label>
             </div>
             {/* <div className="mt-3.5 flex flex-row items-center">
                 <input type="checkbox" onClick={robotHandler} checked={robot} ref={robotRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />

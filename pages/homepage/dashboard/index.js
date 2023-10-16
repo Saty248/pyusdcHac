@@ -9,10 +9,19 @@ import Sidebar from "@/Components/Sidebar";
 import { counterActions } from "@/store/store";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
-import User from "@/models/User";
+import swal from "sweetalert";
 
 const Dashboard = (props) => {
     const { users } = props;
+    const { error } = props;
+
+    if(error) {
+        swal({
+            title: "oops!",
+            text: "something went wrong. kindly try again",
+          });
+    }
+    // const [users, setUsers] = useState([]);
     const dispatch = useDispatch();
 
     const date = new Date()
@@ -26,27 +35,131 @@ const Dashboard = (props) => {
     const [token, setToken] = useState("");
     const [newsletters, setNewsletters] = useState([]);
     const [newslettersLoading, setNewslettersLoading] = useState(false);
+    const [tokenBalance, setTokenBalance] = useState("");
     
+
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            const fetchedEmail = localStorage.getItem("email");
+            const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        
+            if(users) {
+                const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            router.push("/auth/join");
-            return;
-        };
+                // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.removeItem("openlogin_store")
+                router.push("/auth/join");
+                return;
+            };
 
-        setToken(fetchedToken.sessionId);
-
-        const singleUser = users.filter(user => user.email === fetchedEmail);
-        setUser(singleUser[0]);
+            setToken(fetchedToken.sessionId);  
+            setUser(singleUser[0]);
+        }
     }, []);
+
+    useEffect(() => {
+        if(user) {
+            console.log("running wallet")
+            const data =   {
+                jsonrpc: "2.0",
+                id: 1,
+                method: "getTokenAccountsByOwner",
+                params: [
+                //   user.wallet,
+                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
+                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  {
+                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                  },
+                  {
+                    encoding: "jsonParsed"
+                  }
+                ]
+              }
+   
+            fetch('https://api.testnet.solana.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    return response.json()
+                    .then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+
+                return response.json()
+            })
+            .then(result => {
+                setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    }, [user]);
+    
+    // useEffect(() => {
+    //     fetch("/api/proxy", {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             uri: "/users"
+    //         }
+    //     }).then(res => {
+    //         if(!res.ok) {
+    //             return res.json()
+    //             .then(err => {
+    //                 console.log(err)
+    //                 return;
+    //             })
+    //         }
+    //         return res.json()
+    //     }).then(response => {
+    //         console.log(users)
+    //         console.log(response)
+    //         setUsers(response)
+    //         const fetchedEmail = localStorage.getItem("email");
+    //         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+    //         const singleUser = users.filter(user => user.email === fetchedEmail);
+
+    //         console.log(singleUser);
+
+    //         console.log(fetchedToken.sessionId)
+    //         console.log(fetchedToken.sessionId.length)
+
+    //         if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+    //         // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+    //             console.log("false")
+    //             localStorage.removeItem("openlogin_store")
+    //             router.push("/auth/join");
+    //             return;
+    //         };
+
+    //         setToken(fetchedToken.sessionId);
+
+            
+    //         console.log(singleUser);
+    //         setUser(singleUser[0]);
+    //     }).catch(err => {
+    //         console.log(err)
+    //     })
+    // }, [token]);
 
 
 
     useEffect(() => {
         setNewslettersLoading(true)
-        fetch("/api/newsletters")
+        fetch("/api/proxy", {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/newsletters"
+            }
+        })
         .then(res => {
             if(!res.ok) {
                 return res.json()
@@ -57,83 +170,85 @@ const Dashboard = (props) => {
             return res.json();
         })
         .then(response => {
-            setNewslettersLoading(false)
-            setNewsletters(response.newsletters.reverse());
+            setNewslettersLoading(false);
+            if(response.length > 1) { 
+                setNewsletters(response.newsletters.reverse());
+            }
         })
         .catch(err => {
             console.log(err);
         }) 
     }, []);
 
-    useEffect(() => {
-        if(token && user) {
-            const ctx = document.getElementById('chart').getContext('2d');
+    // useEffect(() => {
+    //     if(token && user) {
+    //         const ctx = document.getElementById('chart').getContext('2d');
 
-            if (ctx) {
-                const existingChart = Chart.getChart(ctx);
+    //         if (ctx) {
+    //             const existingChart = Chart.getChart(ctx);
         
-                if (existingChart) {
-                    existingChart.destroy();
-                }
-            }
-            new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['August 21', 'August 22', 'August 23', 
-                            'August 24', 'August 25', 'August 26',
-                        ],
-                datasets: [{
-                label: 'Payment Overview',
-                data: [2, 4, 2, 
-                        4, 8, 12,  
-                        ],
-                //   backgroundColor: 'rgb(255, 211, 11)',
-                color: "black",
-                barThickness: 10,
-                borderRadius: 10
-                }]
-            },
-            options: {
-                scales: {
-                x: {
-                    // display: false 
-                },
-                y: {
-                    // display: false 
-                }
-                },
-                plugins: {
-                tooltip: {
-                    backgroundColor: 'black', 
-                    bodyColor: 'white',
-                    yAlign: 'bottom',
-                    titleFont: {
-                        size: 14,
-                    },
-                    titleColor: "white",
-                    bodyFont: {
-                        color: 'red'
-                    },
-                    displayColors: false,
-                    style: {
-                        textAlign: 'center'
-                    }
-                },
-                legend: {
-                    // display: false, 
-                },
-                label: {
-                    display: false
-                },
-                title: {
-                    display: false,
-                    text: "August 10"
-                }
-                }
-            }
-            });
-        }
-    }, []);
+    //             if (existingChart) {
+    //                 existingChart.destroy();
+    //             }
+    //         }
+    //         new Chart(ctx, {
+    //         type: 'line',
+    //         data: {
+    //             labels: ['August 21', 'August 22', 'August 23', 
+    //                         'August 24', 'August 25', 'August 26',
+    //                     ],
+    //             datasets: [{
+    //             label: 'Payment Overview',
+    //             data: [2, 4, 2, 
+    //                     4, 8, 12,  
+    //                     ],
+    //             //   backgroundColor: 'rgb(255, 211, 11)',
+    //             color: "black",
+    //             barThickness: 10,
+    //             borderRadius: 10
+    //             }]
+    //         },
+    //         options: {
+    //             scales: {
+    //             x: {
+    //                 // display: false 
+    //             },
+    //             y: {
+    //                 // display: false 
+    //             }
+    //             },
+    //             plugins: {
+    //             tooltip: {
+    //                 backgroundColor: 'black', 
+    //                 bodyColor: 'white',
+    //                 yAlign: 'bottom',
+    //                 titleFont: {
+    //                     size: 14,
+    //                 },
+    //                 titleColor: "white",
+    //                 bodyFont: {
+    //                     color: 'red'
+    //                 },
+    //                 displayColors: false,
+    //                 style: {
+    //                     textAlign: 'center'
+    //                 }
+    //             },
+    //             legend: {
+    //                 // display: false, 
+    //             },
+    //             label: {
+    //                 display: false
+    //             },
+    //             title: {
+    //                 display: false,
+    //                 text: "August 10"
+    //             }
+    //             }
+    //         }
+    //         });
+    //     }
+    // }, []);
 
   
 
@@ -174,7 +289,8 @@ const Dashboard = (props) => {
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">Balance</p>
-                                <p className="text-2xl">$4,000.85</p>
+                                <p className="text-2xl font-semibold">USDC {tokenBalance}</p>
+                                <p className="-mt-2 text-sml">US$ {tokenBalance}</p>
                             </div>
                         </button>
                         <div onClick={navigationHandler.bind(null, "/homepage/airspace")} className="p-5 bg-white cursor-pointer hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
@@ -193,7 +309,7 @@ const Dashboard = (props) => {
                             <div className="flex flex-row items-center justify-between">
                                 <div className="mt-10 text-start">
                                     <p className="text-sm">My Airspace</p>
-                                    <p className="text-2xl">5</p>
+                                    <p className="text-2xl">0</p>
                                 </div>
                                 <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
                             </div>
@@ -344,12 +460,30 @@ const Dashboard = (props) => {
 
 export default Dashboard;
 
+
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("http://localhost:3000/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
+   
+    console.log(data)
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

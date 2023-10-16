@@ -19,7 +19,6 @@ import NewAirspaceModal from "@/Components/Modals/NewAirspaceModal";
 import AddAirspace from "@/Components/Modals/AddAirspace";
 import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
 import { counterActions } from "@/store/store";
-import User from "@/models/User"; 
 import Spinner from "@/Components/Spinner";
 import AirspaceTab from "@/Components/AirspaceTab";
 import MyAirspaceTab from "@/Components/MyAirspaceTab";
@@ -27,11 +26,11 @@ import MyAirspaceTab from "@/Components/MyAirspaceTab";
 
 const Airspace = (props) => {
     const { users } = props;
-
     const router = useRouter();
     const dispatch = useDispatch();
     const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
+    // const [users, setUsers] = useState([]);
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
     const [viewAirspace, setViewAirSpace] = useState(false);
@@ -104,17 +103,62 @@ const Airspace = (props) => {
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+            console.log("false")
+            localStorage.removeItem("openlogin_store")
             router.push("/auth/join");
             return;
         };
 
-        setToken(fetchedToken.sessionId);
-
-        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setToken(fetchedToken.sessionId);  
         setUser(singleUser[0]);
     }, []);
+
+    useEffect(() => {
+        fetch("/api/proxy", {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users"
+            }
+        }).then(res => {
+            if(!res.ok) {
+                return res.json()
+                .then(err => {
+                    console.log(err)
+                    return;
+                })
+            }
+            return res.json()
+        }).then(response => {
+            console.log(response)
+            setUsers(response)
+            const fetchedEmail = localStorage.getItem("email");
+            const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            const singleUser = users.filter(user => user.email === fetchedEmail);
+
+            console.log(fetchedToken.sessionId)
+            console.log(fetchedToken.sessionId.length)
+
+            if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.setItem("openlogin_store", JSON.stringify({}));
+                router.push("/auth/join");
+                return;
+            };
+
+            setToken(fetchedToken.sessionId);
+
+            
+            console.log(singleUser);
+            setUser(singleUser[0]);
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [token]);
     
     useEffect(() => {
         if(token && user) {
@@ -125,6 +169,10 @@ const Airspace = (props) => {
                 zoom: 12,
                 center: [-122.42, 37.779]
             });
+
+            var nav = new maplibregl.NavigationControl();
+            map.addControl(nav, 'top-right');
+
 
             map.on('load', function () {
                 map.addLayer({
@@ -383,7 +431,7 @@ const Airspace = (props) => {
         {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         <div className="flex flex-row mx-auto">
             <Sidebar />
-            <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
+            <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
                 <Navbar name={user.name} />
                 <div className="relative mt-0" id="map" style={{width: "calc(100vw - 257px)", height: "100vh", marginTop: "0"}}>
                     <Airspaces 
@@ -470,13 +518,29 @@ const Airspace = (props) => {
 
 export default Airspace;
 
-
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("http://localhost:3000/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
+   
+    console.log(data)
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

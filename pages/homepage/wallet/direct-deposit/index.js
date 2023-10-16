@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useState, useEffect, useRef } from "react";
@@ -6,12 +5,9 @@ import QRCode from "react-qr-code";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import mastercard from "../../../../public/images/mastercard-logo.png";
-import visa from "../../../../public/images/visa-logo.png";
 import Backdrop from "@/Components/Backdrop";
 import AddCardModal from "@/Components/Modals/AddCardModal";
 import Spinner from "@/Components/Spinner";
-import User from "@/models/User";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 
@@ -25,31 +21,72 @@ const Wallet = (props) => {
     const [token, setToken] = useState("");
     const [copied, setCopied] = useState();
     const [copy, setCopy] = useState(false);
+    const [tokenBalance, setTokenBalance] = useState("");
 
-    const walletRef = useRef();
 
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        const singleUser = users.filter(user => user.email === fetchedEmail);
+        console.log(singleUser)
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+            console.log("false")
+            localStorage.removeItem("openlogin_store")
             router.push("/auth/join");
             return;
         };
 
-        setToken(fetchedToken.sessionId);
-
-        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setToken(fetchedToken.sessionId);  
         setUser(singleUser[0]);
     }, []);
+
+    useEffect(() => {
+        if(user) {
+            console.log("running wallet")
+            const data =   {
+                jsonrpc: "2.0",
+                id: 1,
+                method: "getTokenAccountsByOwner",
+                params: [
+                //   user.wallet,
+                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
+                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  {
+                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                  },
+                  {
+                    encoding: "jsonParsed"
+                  }
+                ]
+              }
+   
+            fetch('https://api.testnet.solana.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    return response.json()
+                    .then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+
+                return response.json()
+            })
+            .then(result => {
+                setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    }, [user]);
     
 
     const copyTextHandler = () => {
@@ -81,8 +118,9 @@ const Wallet = (props) => {
             <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">
                     <p className="text-light-brown">My Wallet</p>
-                    <p className="text-light-brown font-semibold mt-2 text-2xl">USDC 4,000.85</p>
-                    <p className="text-light-brown font-semibold -mt-2 text-sml">US$ 4000.85</p>
+                    {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                    {tokenBalance && <p className="text-light-brown font-semibold mt-2 text-2xl">USDC {tokenBalance}</p>}
+                    {tokenBalance && <p className="text-light-brown font-semibold -mt-2 text-sml">US$ {tokenBalance}</p>}
                 </div>
                
                 <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-4 right-6 z-10" width="146" height="121" viewBox="0 0 146 121" fill="none">
@@ -103,7 +141,7 @@ const Wallet = (props) => {
                     <h3 className="font-medium text-xl">Deposit</h3>
                 </div>
                 <div className="px-7"> 
-                    <div className="relative mt-8 mx-auto">
+                    {/* <div className="relative mt-8 mx-auto">
                         <p className="mt-12 text-dark-brown">Amount</p>
                         <p className="text-sm text-dark-brown">The platform only supports USDC at this time</p> 
                         <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="amount"  name="amount" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
@@ -111,11 +149,11 @@ const Wallet = (props) => {
                     </div>
                     <div className="flex flex-row justify-center mt-5">
                         <p>1 USDC = 1 US$</p>
-                    </div>
-                    <div>
+                    </div> */}
+                    <div className="mt-20">
                         <p className="text-dark-brown">Scan code for wallet</p>
                         <p className="text-dark-brown text-sm">Scan code for wallet</p>
-                        <QRCode value={user.wallet} />
+                        <QRCode value={user.blockchainAddress} />
                     </div>
                     <div className="relative text-center my-8"> 
                     <div className="relative" style={{width:"570px", height: "0.4px", background: "#B1B1B1",}}></div>
@@ -126,8 +164,8 @@ const Wallet = (props) => {
                         <p className="text-sml text-light-brown">This is the wallet ID for deposit </p>
                         <div className="flex flex-row gap-2 relative">
                             {copy && <p className="text-light-green absolute right-2 -top-7">copied</p>}
-                            <input disabled className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" id="wallet-address"  name="amount" defaultValue={user.wallet} style={{width: "516px", height: "37px", border: "0.35px solid #0653EA"}} />
-                            <CopyToClipboard text={user.wallet} onCopy={copyTextHandler}>
+                            <input disabled className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" id="wallet-address"  name="amount" defaultValue={user.blockchainAddress} style={{width: "516px", height: "37px", border: "0.35px solid #0653EA"}} />
+                            <CopyToClipboard text={user.blockchainAddress} onCopy={copyTextHandler}>
                                 <button className={`${copy ? "bg-light-green" : "bg-dark-blue"} rounded flex flex-row justify-center items-center`} style={{width: "44px", height: "37px"}}>
                                     {copy ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-check-circle" viewBox="0 0 16 16">
                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -152,12 +190,30 @@ const Wallet = (props) => {
 export default Wallet;
 
 
+
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("http://localhost:3000/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
+   
+    console.log(data)
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

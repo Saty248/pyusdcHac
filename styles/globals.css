@@ -61,10 +61,37 @@ button{
   background-color: #555;
 }
 
-.loader {
+.paginationBttns {
+  width: 100%;
+  height: 40px;
+  list-style: none;
+  display: flex;
+  justify-content: end;
+  /* margin-right: 2rem; */
+}
+
+.paginationBttns a {
+  padding: 10px;
+  margin: 8px;
+  border-radius: 5px;
+  border: 1px solid #2b2eff;
+  color: #2b2eff;
+  cursor: pointer;
+}
+
+.paginationBttns a:hover{
+  color: white;
+  background-color: #2b2eff;
+}
+
+.paginationActive a {
+  color: white;
+  background-color: #2b2eff;
+}
+
+.loader{
       width: 48px;
       height: 48px;
-      /* margin-top: 30vh; */
       border: 5px solid #FFF;
       border-bottom-color: #0653EA;
       border-radius: 50%;
@@ -84,6 +111,9 @@ button{
         transform: rotate(360deg);
     }
   } 
+
+
+  
 
 
 

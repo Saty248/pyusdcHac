@@ -13,11 +13,10 @@ import { counterActions } from "@/store/store";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import swal from "sweetalert";
-import logo from "../../../public/images/logo.png";
-import User from "@/models/User";
+import logo from "../../../public/images/logo.jpg";
 
 const Signup = (props) => {
-    const { users } = props;
+    const [users, setUsers] = useState([]);
 
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
@@ -171,46 +170,56 @@ const Signup = (props) => {
             return;
         }
 
-        const filteredUser = users.filter(user => user.email === userInformation.email);
+        fetch("/api/proxy", {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users"
+            }
+        }).then(res => {
+            if(!res.ok) {
+                return res.json()
+                .then(err => {
+                    console.log(err)
+                    return;
+                })
+            }
+            return res.json()
+        }).then(response => {
+            console.log(response)
+            const filteredUser = response.filter(user => user.email === userInformation.email);
 
-        if(filteredUser.length < 1) {
-            const token = localStorage.getItem("openlogin_store");
-            dispatch(counterActions.web3({
-                token: JSON.parse(token)
-            }));
-            localStorage.removeItem("openlogin_store");
-            localStorage.removeItem("email");
-            dispatch(counterActions.category({
-                email: userInformation.email,
-                wallet: accounts[0]
-            }));
+            if(filteredUser.length < 1) {
+                const token = localStorage.getItem("openlogin_store");
+                dispatch(counterActions.web3({
+                    token: JSON.parse(token)
+                }));
+                localStorage.removeItem("openlogin_store");
+                localStorage.removeItem("email");
+                dispatch(counterActions.category({
+                    email: userInformation.email,
+                    blockchainAddress: accounts[0]
+                }));
 
-            setIsLoading(false);
-            setCategorySect(true);
-            return;
-        }
-        
-        localStorage.setItem("email", userInformation.email);
-        router.replace("/homepage/dashboard");
+                setIsLoading(false);
+                setCategorySect(true);
+                return;
+            }
 
-
-        // fetch("/api/get-user")
-        // .then((res) => {
-        //     return res.json()
-        // })
-        // .then(data => {
-            
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        // })   
+            localStorage.setItem("email", userInformation.email);
+            router.replace("/homepage/dashboard");
+        }).catch(err => {
+            console.log(err)
+        })     
     }
 
     const formSubmitHandler = (path, e) => {
         e.preventDefault();
 
+        console.log(path);
+
         dispatch(counterActions.category({
-            category: path
+            categoryId: path === "individual" ? "0" : "1"
+            // categoryId: 1
         }));
 
         router.push(`/auth/join/${path}`);
@@ -291,13 +300,3 @@ const Signup = (props) => {
 }
 
 export default Signup;
-
-export async function getServerSideProps() {
-    const users = await User.findAll();
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(users))
-        }
-    }
-}

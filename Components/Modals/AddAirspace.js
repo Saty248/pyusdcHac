@@ -134,6 +134,10 @@ const AddAirspace = (props) => {
                 center: endPoint
             });
 
+            
+            var nav = new maplibregl.NavigationControl();
+            map.addControl(nav, 'top-right');
+
     
             if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
                 let el = document.createElement('div');
