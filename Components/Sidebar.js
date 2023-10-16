@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { counterActions } from "@/store/store";
 import Spinner from "./Spinner";
 import Backdrop from "./Backdrop";
-import logo from "../public/images/logo.png";
+import logo from "../public/images/logo.jpg";
 
 const Sidebar = (props) => {
     const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const Sidebar = (props) => {
     return <Fragment>
          {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
-        <aside className="bg-white relative border-e-2" style={{width: "257px", height: "100vh"}}>
+        <aside className="bg-white relative border-e-2 pe-5" style={{width: "257px", height: "100vh"}}>
             <Image src={logo} alt="Company's logo" width={164} height={58} className="mt-4 ms-12 my-12" />
             <div className="flex flex-col gap-2 ms-10">
                 <NavLink href="/homepage/dashboard">
@@ -101,8 +101,9 @@ const Sidebar = (props) => {
                         <path d="M24.2272 12.845L18.5843 10.4163L17.3276 9.88458C17.1343 9.78792 16.9651 9.53417 16.9651 9.31667V5.61917C16.9651 4.45917 16.1072 3.08167 15.068 2.55C14.7055 2.36875 14.2705 2.36875 13.908 2.55C12.8809 3.08167 12.023 4.47125 12.023 5.63125V9.32875C12.023 9.54625 11.8538 9.8 11.6605 9.89667L4.77301 12.8571C4.01176 13.1713 3.39551 14.1258 3.39551 14.9475V16.5425C3.39551 17.5696 4.16884 18.0771 5.12342 17.6663L11.1772 15.0563C11.6484 14.8508 12.0351 15.1046 12.0351 15.6242V16.9654V19.1404C12.0351 19.4183 11.878 19.8171 11.6847 20.0104L8.88134 22.8258C8.59134 23.1158 8.45842 23.6838 8.59134 24.0946L9.13509 25.7379C9.35259 26.4508 10.1622 26.7892 10.8268 26.4508L13.7026 24.0342C14.1376 23.6596 14.8505 23.6596 15.2855 24.0342L18.1613 26.4508C18.8259 26.7771 19.6355 26.4508 19.8772 25.7379L20.4209 24.0946C20.5538 23.6958 20.4209 23.1158 20.1309 22.8258L17.3276 20.0104C17.1222 19.8171 16.9651 19.4183 16.9651 19.1404V15.6242C16.9651 15.1046 17.3397 14.8629 17.823 15.0563L23.8768 17.6663C24.8313 18.0771 25.6047 17.5696 25.6047 16.5425V14.9475C25.6047 14.1258 24.9884 13.1713 24.2272 12.845Z" fill=""/>
                     </svg>
                     <span className={`${asPath.includes("/homepage/uavs")  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>UAVs</span>
-                    <div className="me-1.5 flex flex-row items-center justify-center font-semibold gap-1 bg-bleach-green absolute -top-1 left-20 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
-                        <p className="text-sm text-light-green">Soon</p>
+                    <div className="me-1.5 flex flex-col items-center justify-center font-semibold absolute right-0 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
+                        <p className="text-sm text-dark-green">Coming</p>
+                        <span className="text-sm text-dark-green">Soon</span>
                     </div>
                 </div>
 
@@ -111,8 +112,9 @@ const Sidebar = (props) => {
                         <path d="M24.3724 21.2301C23.732 21.8221 22.9949 22.2692 22.1974 22.5713C21.3999 22.8734 20.542 22.2934 20.542 21.4355V19.8405C20.542 17.4842 18.6328 15.5751 16.2766 15.5751H12.7241C10.3678 15.5751 8.45866 17.4842 8.45866 19.8405V21.7496C8.45866 22.4142 7.91491 22.958 7.25033 22.958H6.70658C3.74616 22.5109 2.41699 20.1063 2.41699 17.9555C2.41699 15.9255 3.60116 13.678 6.17491 13.0496C5.46199 10.2342 6.06616 7.58797 7.90282 5.66672C9.99324 3.47964 13.3282 2.60964 16.2041 3.50381C18.8503 4.31339 20.7112 6.48839 21.3757 9.50922C23.6837 10.0288 25.5324 11.7688 26.2695 14.1855C27.067 16.8076 26.342 19.5021 24.3724 21.2301Z" fill=""/>
                     </svg>
                     <span className="text-light-brown font-semibold">Weather</span>
-                    <div className="me-1.5 flex flex-row items-center justify-center font-semibold gap-1 bg-bleach-green absolute -top-1 left-24 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
-                        <p className="text-sm text-light-green">Soon</p>
+                    <div className="me-1.5 flex flex-col items-center justify-center font-semibold absolute right-0 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
+                        <p className="text-sm text-dark-green">Coming</p>
+                        <span className="text-sm text-dark-green">Soon</span>
                     </div>
                 </div>
 
@@ -135,8 +137,9 @@ const Sidebar = (props) => {
                         <path d="M23.5746 7.0681L16.3971 2.92352C15.225 2.24685 13.775 2.24685 12.5908 2.92352L5.4254 7.0681C4.25332 7.74477 3.52832 9.00143 3.52832 10.3668V18.6318C3.52832 19.9852 4.25332 21.2418 5.4254 21.9306L12.6029 26.0752C13.775 26.7518 15.225 26.7518 16.4092 26.0752L23.5867 21.9306C24.7587 21.2539 25.4837 19.9973 25.4837 18.6318V10.3668C25.4717 9.00143 24.7467 7.75685 23.5746 7.0681ZM14.5 8.86852C16.0587 8.86852 17.3154 10.1252 17.3154 11.6839C17.3154 13.2427 16.0587 14.4993 14.5 14.4993C12.9412 14.4993 11.6846 13.2427 11.6846 11.6839C11.6846 10.1373 12.9412 8.86852 14.5 8.86852ZM17.7383 20.1302H11.2617C10.2829 20.1302 9.71499 19.0427 10.2587 18.2331C11.0804 17.0127 12.6754 16.191 14.5 16.191C16.3246 16.191 17.9196 17.0127 18.7412 18.2331C19.285 19.0306 18.705 20.1302 17.7383 20.1302Z" />
                     </svg>
                     <span className={`${asPath == "/homepage/pilots"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Pilots</span>
-                    <div className="me-1.5 flex flex-row items-center justify-center font-semibold gap-1 bg-bleach-green absolute -top-1 left-20 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
-                        <p className="text-sm text-light-green">Soon</p>
+                    <div className="me-1.5 flex flex-col items-center justify-center font-semibold absolute right-0 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
+                        <p className="text-sm text-dark-green">Coming</p>
+                        <span className="text-sm text-dark-green">Soon</span>
                     </div>
                 </div>
 

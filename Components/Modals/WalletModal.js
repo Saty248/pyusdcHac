@@ -30,8 +30,8 @@ const WalletModal = (props) => {
                     <p className="text-sm">e.g Stripe, Paypal, Visa card, Master card...</p>
                 </button>
                 <button className="rounded flex flex-col items-center justify-center transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "328px", height: "50px", border: "0.2px solid #0653EA"}}>
-                    <Image src="/images/Transak.png" alt="Ramp logo" height={18} width={77} />
-                    <p className="text-sm">e.g Stripe, Paypal, Visa card, Master card...</p>
+                    <Image src="/images/stripe-logo.png" alt="Ramp logo" height={18} width={77} />
+                    <p className="text-sm -mt-2">e.g Stripe, Paypal, Visa card, Master card...</p>
                 </button>
             </div>
     </div>

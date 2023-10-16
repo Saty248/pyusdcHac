@@ -16,7 +16,7 @@ const CorporateSignup = () => {
     const phoneNumberRef = useRef();
     const countryCodeRef = useRef();
 
-    const [newsLetter, setNewsLetter] = useState(false);
+    const [newsletter, setnewsletter] = useState(false);
     const [nameValid, setNameValid] = useState(true);
     const [phoneNumberValid, setPhoneNumberValid] = useState(true);
     const [error, setError] = useState("");
@@ -36,7 +36,7 @@ const CorporateSignup = () => {
     
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            if(!category.category) {
+            if(!category.categoryId) {
                 router.replace("/auth/join");
                 return;
             }
@@ -53,8 +53,8 @@ const CorporateSignup = () => {
 
 
     
-    const newsLetterHandler = () => {
-        setNewsLetter(prev => !prev)
+    const newsletterHandler = () => {
+        setnewsletter(prev => !prev)
     }
 
     const returnHandler = (e) => {
@@ -94,18 +94,20 @@ const CorporateSignup = () => {
 
         const userInfo = {
             ...category,
+            categoryId: +category.categoryId,
             name,
             phoneNumber: `${countryCode}${phoneNumber}`,
-            newsLetter
+            newsletter
         }
 
         setIsLoading(true);
 
-        fetch("/api/register-user", {
+        fetch("/api/proxy", {
             method: "POST",
             body: JSON.stringify(userInfo),
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                uri: "/users/create"
             }
         }).then(res => {
                 if(!res.ok) {
@@ -113,10 +115,9 @@ const CorporateSignup = () => {
                     .then(errorData => {
                         swal({
                             title: "oops!",
-                            text: `${errorData.message}`,
-                            // timer: 2000
+                            text: `${errorData.errorMessage}`,
                           });
-                        throw new Error(errorData.message);
+                        throw new Error(errorData.errorMessage);
                     });
                 }
             setError(false)
@@ -186,8 +187,8 @@ const CorporateSignup = () => {
                 </div>
             </div>
             <div className="mt-12 flex flex-row items-center">
-                <input type="checkbox" onChange={newsLetterHandler} checked={newsLetter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
-                <label onClick={newsLetterHandler} className="text-sm font-normal cursor-pointer text-light-brown">Send me news letters and keep me updated on daily news</label>
+                <input type="checkbox" onChange={newsletterHandler} checked={newsletter} ref={newsletterRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />
+                <label onClick={newsletterHandler} className="text-sm font-normal cursor-pointer text-light-brown">Send me news letters and keep me updated on daily news</label>
             </div>
             {/* <div className="mt-3.5 flex flex-row items-center">
                 <input type="checkbox" onClick={robotHandler} checked={robot} ref={robotRef} className="me-1 bg-light-grey rounded-md cursor-pointer" />

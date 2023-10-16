@@ -10,7 +10,6 @@ import Backdrop from "@/Components/Backdrop";
 import { useState, useEffect } from "react";
 import AddCardModal from "@/Components/Modals/AddCardModal";
 import Spinner from "@/Components/Spinner";
-import User from "@/models/User";
 
 const Wallet = (props) => {
     const { users } = props;
@@ -18,32 +17,72 @@ const Wallet = (props) => {
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
     const [addCard, setAddCard] = useState(false);
+    const [tokenBalance, setTokenBalance] = useState("");
     
     const router = useRouter();
 
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        if(fetchedToken) {
-            const tokenLength = Object.keys(fetchedToken).length;
-            console.log(tokenLength);
-            if(tokenLength.length < 1) {
-                localStorage.removeItem("openlogin_store");
-            };
-        };
-
-        if(!fetchedEmail || !fetchedToken) {
+        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+            console.log("false")
+            localStorage.removeItem("openlogin_store")
             router.push("/auth/join");
             return;
         };
 
-        setToken(fetchedToken.sessionId);
-
-        const singleUser = users.filter(user => user.email === fetchedEmail);
+        setToken(fetchedToken.sessionId);  
         setUser(singleUser[0]);
     }, []);
 
+    useEffect(() => {
+        if(user) {
+            console.log("running wallet")
+            const data =   {
+                jsonrpc: "2.0",
+                id: 1,
+                method: "getTokenAccountsByOwner",
+                params: [
+                //   user.wallet,
+                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
+                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                  {
+                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                  },
+                  {
+                    encoding: "jsonParsed"
+                  }
+                ]
+              }
+   
+            fetch('https://api.testnet.solana.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            })
+            .then(response => {
+                if(!response.ok) {
+                    return response.json()
+                    .then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+
+                return response.json()
+            })
+            .then(result => {
+                setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    }, [user]);
     
     const addCardHandler = () => {
         setAddCard(true);
@@ -70,8 +109,9 @@ const Wallet = (props) => {
                 <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                     <div className="z-20 text-center">
                         <p className="text-light-brown">My Wallet</p>
-                        <p className="text-light-brown font-semibold mt-2 text-2xl">USDC 4,000.85</p>
-                        <p className="text-light-brown font-semibold -mt-2 text-sml">US$ 4000.85</p>
+                        {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                        {tokenBalance && <p className="text-light-brown font-semibold mt-2 text-2xl">USDC {tokenBalance}</p>}
+                        {tokenBalance && <p className="text-light-brown font-semibold -mt-2 text-sml">US$ {tokenBalance}</p>}
                     </div>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-4 right-6 z-10" width="146" height="121" viewBox="0 0 146 121" fill="none">
@@ -122,12 +162,30 @@ const Wallet = (props) => {
 
 export default Wallet;
 
+
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("http://localhost:3000/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
+   
+    console.log(data)
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

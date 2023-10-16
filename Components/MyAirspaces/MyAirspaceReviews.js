@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const MyAirspaceReviews = (props) => {
-    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "90%", left: "50%"}}>
+    return <div className="absolute rounded-md bg-white top-5 py-5 px-1" style={{width: "339px", height: "90%", left: "380px"}}>
         <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
                 <button>
