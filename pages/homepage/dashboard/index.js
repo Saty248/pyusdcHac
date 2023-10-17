@@ -4,6 +4,7 @@ import Chart from "chart.js/auto";
 import { useDispatch, } from "react-redux";
 import Image from "next/image";
 
+import { useVerification } from "@/hooks/useVerification";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import { counterActions } from "@/store/store";
@@ -14,6 +15,7 @@ import swal from "sweetalert";
 const Dashboard = (props) => {
     const { users } = props;
     const { error } = props;
+    const { verificationCheck } = useVerification();
 
     if(error) {
         swal({
@@ -259,7 +261,8 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         router.push("/homepage/airspace");
-        dispatch(counterActions.newAirspaceModal());
+        verificationCheck(users);
+        // dispatch(counterActions.newAirspaceModal());
     }
 
     if(!user || !token) {
@@ -267,7 +270,7 @@ const Dashboard = (props) => {
     } 
 
     return <div className="flex flex-row mx-auto">
-        <Sidebar />
+        <Sidebar users={users}/>
         <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
             <Navbar name={user.name} />
             <div className="flex flex-row justify-between">
