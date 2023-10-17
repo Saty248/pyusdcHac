@@ -1,37 +1,28 @@
-// import { buffer } from "micro";
+import { buffer } from "micro";
 const { createHmac, timingSafeEqual } = await import('node:crypto'); 
+
+export const config = {
+    api: {
+        bodyParser: false,
+    }
+}
 
 const handler = async (req, res) => {
     if(req.method === "POST") {
-        console.log("referenceId => ", req.body.data.attributes.payload.data.attributes['reference-id']);
-        // const sigParams = {}
-        // req.headers['persona-signature']
-        //     .split(',')
-        //     .forEach(pair => {
-        //         const [key, value] = pair.split('=');
-        //         sigParams[key] = value;
-        //     })
-        // if (sigParams.t && sigParams.v1) {
-        //     const hmac = createHmac('sha256', process.env.WEBHOOK_SECRET_KEY)
-        //     .update(`${sigParams.t}.${req.body}`)
-        //     .digest('hex');
-        //     if (timingSafeEqual(Buffer.from(hmac), Buffer.from(sigParams.v1))) {
-        //         // Handle verified webhook event
-        //         console.log("event received successfully ");
-        //         res.json({ received: true });
-        //     }
-        // }
-        
-    
-    
-        
-        let event;
+        const rawBody = await buffer(req);
+        console.log("referenceId => ", JSON.parse(rawBody).data.attributes.payload.data.attributes['reference-id']);
+        console.log("event => ",JSON.parse(rawBody).data.attributes.name);
+        console.log("signature => ", req.headers['persona-signature']);
+
         try {
-            event = req.body.data.attributes.name;
+            const data = JSON.parse(rawBody).data.attributes;
             const reqBody = {
-              userId: Number(req.body.data.attributes.payload.data.attributes['reference-id']),
-              event: event
+              signature: req.headers['persona-signature'],
+              userId: Number(data.payload.data.attributes['reference-id']),
+              event: data.name,
+              rawBody: rawBody
             }
+            // console.log(reqBody);
             const fetchOptions = {
               method: "POST",
               headers: {
@@ -55,26 +46,6 @@ const handler = async (req, res) => {
             res.status(400).send(`Webhook Error: ${message}`);
             return;
           }
-
-          
-
-        // console.log("respose received => ", event); 
-        // switch (event) {
-        //     case "inquiry.approved":
-        //       console.log("Yohoo!!!! Inquiry approved")
-        //       break;
-        //     case "inquiry.declined":
-        //         console.log("oops!!! Inquiry declined")
-        //         break;
-        //     case "document.errored":
-        //         console.log("there has been error in the document")
-        //         break;
-        //     case "inquiry.marked-for-review":
-        //         console.log("Verification may take longer")
-        //         break;
-        //     default:
-        //       console.log(`Unhandled event received ${event}`);
-        //   }
           res.json({ received: true });
     }
 }
