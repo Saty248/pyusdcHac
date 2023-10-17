@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 
+import { useVerification } from "@/hooks/useVerification";
 import { counterActions } from "@/store/store";
 import Spinner from "./Spinner";
 import Backdrop from "./Backdrop";
@@ -14,6 +15,7 @@ const Sidebar = (props) => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { asPath } = router;
+    const { verificationCheck } = useVerification();
    
     const [airspaceOptions, setAirspaceOption] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,7 @@ const Sidebar = (props) => {
 
     const airspaceSection = () => {
         router.push("/homepage/airspace");
-        dispatch(counterActions.newAirspaceModal());
+        verificationCheck(props.users);
     };
 
     const logoutHandler = () => {

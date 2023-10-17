@@ -428,7 +428,7 @@ const Airspace = (props) => {
 
         {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         <div className="flex flex-row mx-auto">
-            <Sidebar />
+            <Sidebar users={users}/>
             <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
                 <Navbar name={user.name} />
                 <div className="relative mt-0" id="map" style={{width: "calc(100vw - 257px)", height: "100vh", marginTop: "0"}}>
@@ -440,6 +440,7 @@ const Airspace = (props) => {
                             airSpaces={airSpaces}
                             myAirspace={myAirspace}
                             onAddAirspace={showAddAirspaceModalHandler}
+                            users={users}
                             >
                         {allAirspace && airSpaces.map(airspace => {
                             return <AirspaceTab 
