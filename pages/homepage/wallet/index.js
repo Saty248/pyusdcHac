@@ -153,8 +153,6 @@ const Wallet = (props) => {
             setTransactionData([]);
             for(const transaction of completedTrans) {
                 console.log(transaction);
-
-
                 const date = new Date(transaction.blockTime * 1000)
                 const month = date.toLocaleString('default', { month: 'short' })
                 const day = date.getDate();
@@ -385,8 +383,8 @@ const Wallet = (props) => {
                             containerClassName={"paginationBttns"}
                             previousLinkClassName={'previousBttn'}
                             nextLinkClassName={'nextBttn'}
-                            disabledClassName='pagination-disabled'
-                            activeClassName='paginationActive'
+                            disabledClassName={'pagination-disabled'}
+                            activeClassName={'paginationActive'}
                         />}
             </div>
         </div>
