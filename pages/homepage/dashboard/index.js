@@ -268,10 +268,11 @@ const Dashboard = (props) => {
 
     return <div className="flex flex-row mx-auto">
         <Sidebar />
-        <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
+        <div className="overflow-y-auto" style={{width: "calc(100vw - 257px)", height: "100vh",}}>
             <Navbar name={user.name} />
-            <div className="flex flex-row justify-between">
-                <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}>
+            <div className="flex flex-row justify-start">
+                {/* <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}> */}
+                <div className="my-5" style={{width: "828px", height: "100vh"}}>
                     <div className="mx-auto flex flex-row justify-between gap-5" style={{height: "169px", width: "95%"}}>
                         <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px"}}>
                             <div className="flex flex-row justify-between items-center">
@@ -289,8 +290,9 @@ const Dashboard = (props) => {
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">Balance</p>
-                                <p className="text-2xl font-semibold">USDC {tokenBalance}</p>
-                                <p className="-mt-2 text-sml">US$ {tokenBalance}</p>
+                                {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                                {tokenBalance && <p className="text-2xl font-semibold">USDC {tokenBalance}</p>}
+                                {tokenBalance && <p className="-mt-2 text-sml">US$ {tokenBalance}</p>}
                             </div>
                         </button>
                         <div onClick={navigationHandler.bind(null, "/homepage/airspace")} className="p-5 bg-white cursor-pointer hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
@@ -448,10 +450,14 @@ const Dashboard = (props) => {
             <div className="flex flex-row mt-10 justify-between items-center">
                 <p className="ms-5">&copy; Skytrades 2023</p>
                 <div className="flex flex-row items-center gap-1 pe-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
-                        <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
-                    </svg>
-                    <p>help@skytrades.com</p>
+                    <a className="flex flex-row items-center gap-1" href="mailto:help@skytrades.io">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
+                            <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
+                        </svg>
+                        <span>
+                            help@skytrades.io
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>

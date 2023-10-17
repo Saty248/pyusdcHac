@@ -179,34 +179,39 @@ const Signup = (props) => {
             if(!res.ok) {
                 return res.json()
                 .then(err => {
-                    console.log(err)
+                    localStorage.removeItem("openlogin_store");
+                    swal({
+                        title: "oops!",
+                        text: "something went wrong. kindly try again",
+                      })
                     return;
                 })
             }
             return res.json()
-        }).then(response => {
-            console.log(response)
-            const filteredUser = response.filter(user => user.email === userInformation.email);
-
-            if(filteredUser.length < 1) {
-                const token = localStorage.getItem("openlogin_store");
-                dispatch(counterActions.web3({
-                    token: JSON.parse(token)
-                }));
-                localStorage.removeItem("openlogin_store");
-                localStorage.removeItem("email");
-                dispatch(counterActions.category({
-                    email: userInformation.email,
-                    blockchainAddress: accounts[0]
-                }));
-
-                setIsLoading(false);
-                setCategorySect(true);
-                return;
-            }
-
-            localStorage.setItem("email", userInformation.email);
-            router.replace("/homepage/dashboard");
+            .then(response => {
+                console.log(response)
+                const filteredUser = response.filter(user => user.email === userInformation.email);
+    
+                if(filteredUser.length < 1) {
+                    const token = localStorage.getItem("openlogin_store");
+                    dispatch(counterActions.web3({
+                        token: JSON.parse(token)
+                    }));
+                    localStorage.removeItem("openlogin_store");
+                    localStorage.removeItem("email");
+                    dispatch(counterActions.category({
+                        email: userInformation.email,
+                        blockchainAddress: accounts[0]
+                    }));
+    
+                    setIsLoading(false);
+                    setCategorySect(true);
+                    return;
+                }
+    
+                localStorage.setItem("email", userInformation.email);
+                router.replace("/homepage/dashboard");
+            })
         }).catch(err => {
             console.log(err)
         })     

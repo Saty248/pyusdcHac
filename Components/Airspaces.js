@@ -13,8 +13,8 @@ const Airspaces = (props) => {
 
     return <div className="bg-white absolute top-5 z-10" style={{width: "340px", height: "80%", left: "20px", borderRadius: "5px"}}>
         <div className="flex flex-row">
-            <button onClick={props.showAllAirspace} className={`${props.airspace == "all" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "170px", height: "40px", borderRadius: "5px 0px 0px 0px"}}>Airspaces</button>
-            <button onClick={props.showMyAirspace} className={`${props.airspace == "mine" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "170px", height: "40px", borderRadius: "0px 5px 0px 0px"}}>My Airspaces</button>
+            {/* <button onClick={props.showAllAirspace} className={`${props.airspace == "all" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "170px", height: "40px", borderRadius: "5px 0px 0px 0px"}}>Airspaces</button> */}
+            <button onClick={props.showMyAirspace} className={`${props.airspace == "mine" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "100%", height: "40px", borderRadius: "5px 5px 0px 0px"}}>My Airspaces</button>
         </div>
         <div className="flex flex-row justify-center" style={{width: "340px", height: "100%", background: "linear-gradient(180deg, #0653EA, white)"}}>
             {props.allAirspace && <div className="bg-white flex pb-10 overflow-y-auto flex-col items-center" style={{width: "99%", height: "100%", marginTop: "2px"}}>

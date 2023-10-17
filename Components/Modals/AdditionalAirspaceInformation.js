@@ -3,11 +3,11 @@ import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const AdditionalAispaceInformation = (props) => {
-    const [costChecked, setCostChecked] = useState(false);
+    const [costChecked, setCostChecked] = useState(true);
     const [deckChecked, setDeckChecked] = useState(false);
     const [stationChecked, setStationChecked] = useState(false);
     const [storageChecked, setStorageChecked] = useState(false);
-    const [rentChecked, setRentChecked] = useState(false);
+    const [rentChecked, setRentChecked] = useState(true);
     const [sellChecked, setSellChecked] = useState(false);
 
     const [negotiable, setNegotiable] = useState(false);
@@ -161,7 +161,7 @@ const AdditionalAispaceInformation = (props) => {
             </div>
             <hr />
             <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
-                <p htmlFor="AirSpace Title" className="font-medium me-14">Cost</p>
+                <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
                 <div className="flex flex-row justify-center items-center">
                     <input type="number" ref={costRef} name="hour" min="1" placeholder="$ 3:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                     <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per hour</label>
@@ -169,10 +169,10 @@ const AdditionalAispaceInformation = (props) => {
                 <div>
                     <div className="flex flex-row justify-center items-center gap-2">
                         <input type="checkbox" onChange={costCheckedHandler} checked={costChecked} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
-                        <label htmlFor="hour" onClick={costCheckedHandler} className="text-dark-brown text-sml cursor-pointer">Negotiable</label>
+                        <label htmlFor="hour" onClick={costCheckedHandler} className="text-dark-brown text-sml cursor-pointer">Variable</label>
                     </div>
                     <div style={{width: "110px"}}>
-                        <p className="text-xs ps-2">Select if your cost can be negotiated</p>
+                        <p className="text-xs ps-4">Select if your cost can be negotiated</p>
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@ const AdditionalAispaceInformation = (props) => {
                 </div>
             </div>
             <hr />
-            <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-start gap-8">
+            {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-start gap-8">
                 <div style={{width: "138px"}} className="">
                     <p className="font-medium">Restrictions</p>
                     <p className="text-xs">Restriction on the AirSpace</p>
@@ -272,7 +272,7 @@ const AdditionalAispaceInformation = (props) => {
                     <input type="number" ref={restrictionRef} name="hour" min="1" placeholder="20" style={{width: "62px", height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml focus:outline-blue-200 placeholder:text-light-brown rounded-sm" />
                     <label htmlFor="hour" className="text-dark-brown text-sml">metre landing radius</label>
                 </div>
-            </div>
+            </div> */}
             <hr />
             <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                 <div style={{width: "147px"}} className="">
@@ -284,10 +284,10 @@ const AdditionalAispaceInformation = (props) => {
                         <input type="checkbox" onChange={rentHandler} checked={rentChecked} value={rentAirspace} name="rent airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
                         <label htmlFor="hour" onClick={rentHandler} className="text-dark-brown text-sml cursor-pointer">Rent AirSpace</label>
                     </div>
-                    <div className="flex flex-row justify-start items-center gap-2">
+                    {/* <div className="flex flex-row justify-start items-center gap-2">
                         <input type="checkbox" onChange={sellHandler} checked={sellChecked} value={sellAirspace} name="sell airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
                         <label htmlFor="hour" onClick={sellHandler} className="text-dark-brown text-sml cursor-pointer">Sell AirSpace</label>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="flex flex-row justify-center items-center mt-8 gap-5">

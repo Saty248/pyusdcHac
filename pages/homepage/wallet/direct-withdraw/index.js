@@ -1,23 +1,26 @@
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
+import { useState, useEffect, useRef } from "react";
+import swal from "sweetalert";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import mastercard from "../../../../public/images/mastercard-logo.png";
-import visa from "../../../../public/images/visa-logo.png";
 import Backdrop from "@/Components/Backdrop";
-import { useState, useEffect } from "react";
+
 import AddCardModal from "@/Components/Modals/AddCardModal";
 import Spinner from "@/Components/Spinner";
 
 const Wallet = (props) => {
     const { users } = props;
+    // const amountRef = useRef();
 
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
     const [addCard, setAddCard] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
+    const [amount, setAmount] = useState();
+    const [address, setAddress] = useState();
     
     const router = useRouter();
 
@@ -88,6 +91,31 @@ const Wallet = (props) => {
         setAddCard(true);
     }
 
+    const amountChangeHandler = (e) => {
+        setAmount(e.target.value);
+    }
+
+    const addressChangeHandler = (e) => {
+        setAddress(e.target.value);
+        console.log(address)
+    }
+
+    const formSubmitHandler = (e) => {
+        e.preventDefault();
+        
+        if(!address || !amount) {
+            swal({
+                title: "oops!",
+                text: "kindly complete all fields",
+              });
+            return;
+        }
+
+        console.log(amount, address);
+        
+        // router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed");
+    }
+
     const closeAddCardHandler = () => {
         setAddCard(false)
     }
@@ -135,24 +163,21 @@ const Wallet = (props) => {
                         <div className="relative mt-8 mx-auto">
                             <label htmlFor="amount" className="mt-12 text-dark-brown">Amount</label>
                             <p className="text-sm text-dark-brown">The platform only supports USDC at this time</p> 
-                            <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="amount"  name="amount" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
+                            <input value={amount} onChange={amountChangeHandler} className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="amount"  name="amount" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
                             <p className="absolute text-light-brown top-12 right-4">Min USDC <span>20.00</span></p>
-                            <p className="text-dark-brown">Transfer fees = 0.00</p>
+                            <p className="text-dark-brown">Transfer fees = {amount ? (amount * 0.1).toFixed(2) : 0}</p>
                         </div>
                         <div className="flex flex-col mt-5">
                             <label htmlFor="total" className="text-dark-brown">Total</label>
-                            <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="total"  name="total" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
+                            <input disabled value={amount * 0.9} className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="total"  name="total" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
                             <p className="w-full text-center">1 USDC = 1 US$</p>
                         </div>
                         <div className="flex flex-col mt-5">
                             <label htmlFor="wallet" className="text-dark-brown">Enter your USDC wallet</label>
-                            <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" placeholder="Add Your USDC wallet" id="wallet"  name="wallet" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
+                            <input onChange={addressChangeHandler} className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" placeholder="Add Your USDC wallet" id="wallet"  name="wallet" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
                         </div>
                         <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                            <button onClick={(e) => {
-                            e.preventDefault();
-                            router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed")
-                        }} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button>
+                            <button onClick={formSubmitHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button>
                         </div>
                     </div>
                 </div>

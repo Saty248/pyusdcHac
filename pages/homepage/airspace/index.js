@@ -30,7 +30,6 @@ const Airspace = (props) => {
     const dispatch = useDispatch();
     const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
-    // const [users, setUsers] = useState([]);
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
     const [viewAirspace, setViewAirSpace] = useState(false);
@@ -134,7 +133,6 @@ const Airspace = (props) => {
             return res.json()
         }).then(response => {
             console.log(response)
-            setUsers(response)
             const fetchedEmail = localStorage.getItem("email");
             const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
             const singleUser = users.filter(user => user.email === fetchedEmail);

@@ -80,12 +80,12 @@ const Sidebar = (props) => {
                             <button onClick={airspaceSection}>
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Claim Airspace</span>
                             </button>
-                            <button className="hover:text-dark-blue">
+                            <button onClick={() => router.push("/homepage/airspace")} className="hover:text-dark-blue">
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Airspace</span>
                             </button>
-                            <button className="hover:text-dark-blue">
+                            {/* <button className="hover:text-dark-blue">
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">My Airspace</span>
-                            </button>
+                            </button> */}
                         </div>  
                     }
                 </div>
