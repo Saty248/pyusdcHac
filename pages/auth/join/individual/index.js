@@ -110,7 +110,8 @@ const IndividualSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                Authorization: "Bearer XXX"
+                // 'Authorization': "Bearer XXX"
+                'api_key': "XXX"
             }
         }).then(res => {
             console.log(res)

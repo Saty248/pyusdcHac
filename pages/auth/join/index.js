@@ -170,7 +170,8 @@ const Signup = (props) => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users",
-                Authorization: "Bearer XXX"
+                // 'Authorization': "Bearer XXX"
+                'api_key': "XXX"
             }
         }).then(res => {
             if(!res.ok) {
