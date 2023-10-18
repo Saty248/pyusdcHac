@@ -104,6 +104,8 @@ const IndividualSignup = () => {
 
         setIsLoading(true);
 
+        const api_key = "XXX"
+
         fetch("/api/proxy", {
             method: "POST",
             body: JSON.stringify(userInfo),
@@ -111,10 +113,11 @@ const IndividualSignup = () => {
                 "Content-Type": "application/json",
                 uri: "/users/create",
                 // 'Authorization': "Bearer XXX"
-                'api_key': "XXX"
+                'api_key': api_key
             }
         }).then(res => {
             console.log(res)
+            console.log(api_key)
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {

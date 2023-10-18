@@ -101,6 +101,7 @@ const CorporateSignup = () => {
         }
 
         setIsLoading(true);
+        const api_key = "XXX"
 
         fetch("/api/proxy", {
             method: "POST",
@@ -108,10 +109,10 @@ const CorporateSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                // 'Authorization': "Bearer XXX"
-                'api_key': "XXX"
+                'api_key': api_key
             }
         }).then(res => {
+            console.log(api_key)
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
