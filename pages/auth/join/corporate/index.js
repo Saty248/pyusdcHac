@@ -108,7 +108,8 @@ const CorporateSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                'Authorization': "Bearer XXX"
+                // 'Authorization': "Bearer XXX"
+                api_key: "XXX"
             }
         }).then(res => {
                 if(!res.ok) {
