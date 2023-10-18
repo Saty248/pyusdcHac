@@ -16,8 +16,6 @@ import swal from "sweetalert";
 import logo from "../../../public/images/logo.jpg";
 
 const Signup = (props) => {
-    const [users, setUsers] = useState([]);
-
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
     const [initial, setInitial] = useState(false);
@@ -63,8 +61,6 @@ const Signup = (props) => {
         tickerName: "Solana",
     };
 
-    console.log(process.env.NEXT_PUBLIC_PROD_CLIENT_ID)
-    console.log(process.env.NEXT_PUBLIC_DEV_CLIENT_ID)
 
     const web3auth = new Web3AuthNoModal({
         // For Production
@@ -180,11 +176,7 @@ const Signup = (props) => {
                 return res.json()
                 .then(err => {
                     localStorage.removeItem("openlogin_store");
-                    swal({
-                        title: "oops!",
-                        text: "something went wrong. kindly try again",
-                      })
-                    return;
+                    throw new Error(err.message)
                 })
             }
             return res.json()
@@ -214,17 +206,18 @@ const Signup = (props) => {
             })
         }).catch(err => {
             console.log(err)
+            swal({
+                title: "oops!",
+                text: err.message || "something went wrong. kindly try again",
+              })
         })     
     }
 
     const formSubmitHandler = (path, e) => {
         e.preventDefault();
 
-        console.log(path);
-
         dispatch(counterActions.category({
             categoryId: path === "individual" ? "0" : "1"
-            // categoryId: 1
         }));
 
         router.push(`/auth/join/${path}`);

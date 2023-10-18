@@ -1,6 +1,10 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const MyAirspaceTab = (props) => {
+   
+
+
     return <button onClick={props.viewMyAirspace} className="bg-white mt-8 pb-2 transition-all duration-500 ease-in-out hover:bg-blue-100" style={{width: "299px", borderRadius: "3px", border: "1px solid blue"}}>
         <div className="flex flex-row items-center justify-between pb-5" style={{borderBottom: "1px solid blue"}}>
             <div className="flex flex-row mt-5 ms-2 items-center gap-2 text-sm font-medium font-sans">
@@ -11,14 +15,14 @@ const MyAirspaceTab = (props) => {
                 </svg>   
                 <p>{props.title}</p> 
             </div> 
-            <div className="mt-5 me-1.5 flex flex-row items-center justify-center font-semibold gap-1" style={{width: "66px", height: "21px", borderRadius:"3px", background: `${props.status == "Active" ? "#BED9C7" : "#FFC7C2"}`, }}>
+            <div className="mt-5 me-1.5 flex flex-row items-center justify-center font-semibold gap-1" style={{width: "66px", height: "21px", borderRadius:"3px", background: `${!props.status ? "#BED9C7" : "#FFC7C2"}`, }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                    <circle cx="3" cy="3" r="3" fill={`${props.status == "Active" ? "#1A572E" : "#C80000"} `}/>
+                    <circle cx="3" cy="3" r="3" fill={`${!props.status ? "#1A572E" : "#C80000"} `}/>
                 </svg>
-                <p style={{color: `${props.status == "Active" ? "#1A572E" : "#C80000"}`}} className="text-sm">{props.status}</p>
+                <p style={{color: `${!props.status ? "#1A572E" : "#C80000"}`}} className="text-sm">{props.status ? "Inactive" : "Active"}</p>
             </div>
         </div>
-        <div className="flex flex-row items-center mt-2 text-xs ms-2">
+        {/* <div className="flex flex-row items-center mt-2 text-xs ms-2">
             <p className="text-red-600">4.5</p>
             <div className="flex flex-row items-center">
                 <Image src="/images/Star.png" alt="star icon" width={12} height={12} />
@@ -28,7 +32,7 @@ const MyAirspaceTab = (props) => {
                 <Image src="/images/Star-half.png" alt="star icon" width={12} height={12} />
             </div>
             <p>(6)</p>
-        </div>
+        </div> */}
         <div className="text-xs text-light-brown text-start ms-2">
             <p><span className="font-semibold">Resident Name: </span>{props.name}</p>
             <p><span className="font-semibold">Address: </span>{props.address}</p>

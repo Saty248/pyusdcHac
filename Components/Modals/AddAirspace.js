@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+
 const AddAirspace = (props) => {
     const dispatch = useDispatch();
 
@@ -112,6 +113,7 @@ const AddAirspace = (props) => {
         })
         .then(resData => {
             if(resData.error) {
+                console.log(resData)
                 setError(resData.error);
                 setIsLoading(false)
                 return;
@@ -174,10 +176,9 @@ const AddAirspace = (props) => {
             setConfirmMap(false)
             setError("")
             setIsLoading(false)
-            setShowForm(false)
-            setShowMap(true)
         })
         .catch((err) => {
+            console.log(err);
             setError(`${err.message || ""}${err.message ? "." : ""} kindly check your address and try again`);
             setIsLoading(false);
         });     
@@ -190,11 +191,34 @@ const AddAirspace = (props) => {
     const confirmAddressHandler = (e) => {
         e.preventDefault();
 
+        console.log(addressData)
+
+        const vertexes = []
+
+        if(addressData.geojson && addressData.geojson.type === "Polygon") {
+            for(const address of addressData.geojson.coordinates) {
+                for(const val of address) {
+                    const addValue = {}
+                    const long = parseFloat(val[0].toFixed(2))
+                    const lat = parseFloat(val[1].toFixed(2))
+                    addValue.longitude = +long
+                    addValue.latitude = +lat
+                    vertexes.push(addValue)
+                }
+            }
+        }
+
+        console.log(vertexes);
+
+        const longitude = parseFloat(addressData.lon).toFixed(2);
+        const latitude = parseFloat(addressData.lat).toFixed(2);
+        
+
         const addressValue = {
             address: address,
-            longitude: addressData.lon,
-            latitude: addressData.lat,
-            coordinates: addressData.geojson ? addressData.geojson.coordinates : []
+            longitude: +longitude,
+            latitude: +latitude,
+            vertexes: vertexes
         }
 
         dispatch(counterActions.airspaceData(addressValue));

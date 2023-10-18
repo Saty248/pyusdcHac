@@ -112,11 +112,10 @@ const IndividualSignup = () => {
                 uri: "/users/create"
             }
         }).then(res => {
+            console.log(res)
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
-                        console.log(errorData);
-                        console.log(errorData);
                         swal({
                             title: "oops!",
                             text: `${errorData.errorMessage}`,
@@ -141,6 +140,12 @@ const IndividualSignup = () => {
                 router.replace("/homepage/dashboard");
               })
             return res.json();
+        })
+        .then((data) => {
+            if(data.statusCode === 500) {
+                throw new Error("opps! something went wrong")
+            }
+            console.log(data)
         })
         .catch(error => {
             console.log(error);

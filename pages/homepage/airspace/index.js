@@ -44,6 +44,7 @@ const Airspace = (props) => {
     const [airspaceInfo, setAirspaceInfo ] = useState({});
     const [myFilteredAirspace, setMyFilteredAirspace] = useState();
     const [flyToAddress, setFlyToAddress] = useState("");
+    const [myAirspaces, setMyAirspaces] = useState([]);
 
     const [user, setUser] = useState();
 
@@ -72,7 +73,7 @@ const Airspace = (props) => {
         },
     ]
 
-    const myAirspaces = [
+    const a = [
         {
             id: "a1",
             title: "My First Airspace", 
@@ -264,6 +265,33 @@ const Airspace = (props) => {
         }
     }, [flyToAddress]);
 
+    useEffect(() => {
+        if(user) {
+            fetch("/api/proxy", {
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: "/properties"
+                    // uri: `/user-properties/${user.id}`
+                }
+            }).then((res) => {
+                if(!res.ok) {
+                    return res.json()
+                    .then((err) => {
+                        throw new Error(err.message)
+                    })
+                }
+                return res.json()
+                .then((data) =>{
+                    console.log(data)
+                    setMyAirspaces(data)
+                })
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        }
+    }, [user])
+
     const newAirspace = useSelector(state => {
         return state.value.newAirspace;
     });
@@ -416,11 +444,11 @@ const Airspace = (props) => {
         {showAddReviewModal &&
             createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
             }
-        {newAirspace && 
+        {/* {newAirspace && 
             createPortal(<NewAirspaceModal onClose={closeMapHandler} onAddCategory={airspaceCategory} />, document.getElementById("modal-root"))
-            }
+            } */}
         {additionalInfo && 
-            <AdditionalAispaceInformation onConfirm={formSubmitHandler} />
+            <AdditionalAispaceInformation user={user} onConfirm={formSubmitHandler} />
             }
         {confirmOnMap && 
             createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
@@ -442,7 +470,7 @@ const Airspace = (props) => {
                             onAddAirspace={showAddAirspaceModalHandler}
                             users={users}
                             >
-                        {allAirspace && airSpaces.map(airspace => {
+                        {/* {allAirspace && airSpaces.map(airspace => {
                             return <AirspaceTab 
                                             key={airspace.id}
                                             id={airspace.id} 
@@ -450,16 +478,16 @@ const Airspace = (props) => {
                                             title={airspace.title} 
                                             status={airspace.status}
                                         />
-                        })}  
+                        })}   */}
 
-                        {myAirspace && myAirspaces.map(airspace => {
+                        {(myAirspaces && myAirspaces.length > 1) && myAirspaces.map(airspace => {
                             return  <MyAirspaceTab 
                                     key={airspace.id}
                                     title={airspace.title}
-                                    name={airspace.name}
+                                    name={user.name}
                                     address={airspace.address}
                                     identification={airspace.identification}
-                                    status={airspace.status}
+                                    status={airspace.noFlyZone}
                                     viewMyAirspace={showMyAirspaceHandler.bind(null, airspace.id)}
                                      />
                         })}
@@ -534,12 +562,10 @@ export async function getServerSideProps() {
     }
     
     const data = await response.json();
-   
-    console.log(data)
 
     return {
         props: {
             users: JSON.parse(JSON.stringify(data))
         }
-    }
+    };
 }

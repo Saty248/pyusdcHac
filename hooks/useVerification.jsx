@@ -17,7 +17,7 @@ export const useVerification = () => {
         })
         const resp = await userDetails.json();
         if(resp.KYCStatusId == 2)
-            dispatch(counterActions.newAirspaceModal());
+            dispatch(counterActions.confirmOnMapModal());
         else if(resp.KYCStatusId == 1)
             alert("KYC is yet to be approved. It might take some time")
         else {
