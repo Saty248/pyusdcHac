@@ -101,7 +101,6 @@ const CorporateSignup = () => {
         }
 
         setIsLoading(true);
-        const api_key = "XXX"
 
         fetch(`/api/proxy?${Date.now()}`, {
             method: "POST",
@@ -109,7 +108,7 @@ const CorporateSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                'api_key': api_key
+                proxy_to_method: "POST",
             }
         }).then(res => {
                 if(!res.ok) {

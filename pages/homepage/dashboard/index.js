@@ -157,9 +157,12 @@ const Dashboard = (props) => {
     useEffect(() => {
         setNewslettersLoading(true)
         fetch(`/api/proxy?${Date.now()}`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                uri: "/newsletters"
+                uri: "/newsletters",
+                proxy_to_method: "GET",
+
             }
         })
         .then(res => {
@@ -277,11 +280,11 @@ const Dashboard = (props) => {
             <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
                                                 : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
-            <div className="flex flex-row justify-start">
+            <div className="flex flex-row justify-start w-full">
                 {/* <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}> */}
-                <div className="my-5" style={{width: "828px", height: "100vh"}}>
-                    <div className="mx-auto flex flex-row justify-between gap-5" style={{height: "169px", width: "95%"}}>
-                        <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px"}}>
+                <div className="my-5" style={{width: "100%", height: "100vh"}}>
+                    <div className="mx-auto grid grid-cols-3 gap-5" style={{height: "169px", width: "95%"}}>
+                        <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#BED9C7", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="17" viewBox="0 0 21 17" fill="none">
@@ -302,7 +305,7 @@ const Dashboard = (props) => {
                                 {tokenBalance && <p className="-mt-2 text-sml">US$ {tokenBalance}</p>}
                             </div>
                         </button>
-                        <div onClick={navigationHandler.bind(null, "/homepage/airspace")} className="p-5 bg-white cursor-pointer hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
+                        <div onClick={navigationHandler.bind(null, "/homepage/airspace")} className="p-5 bg-white cursor-pointer hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#AAC0EA", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -323,8 +326,8 @@ const Dashboard = (props) => {
                                 <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
                             </div>
                         </div>
-                        {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}> */}
-                        <button className="p-5 bg-white cursor-default transition-all duration-500 ease-in-out" style={{width: "33%", maxWidth: "262px", height: "169px", borderRadius: "10px"}}>
+                        {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}> */}
+                        <button className="p-5 bg-white cursor-default transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#FFF4D1", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -354,7 +357,7 @@ const Dashboard = (props) => {
                         <canvas id="chart"></canvas>
                     </div>
                 </div>
-                <div className="my-5 me-5 rounded-md" style={{width: "292px", height: "100vh",}}>
+                <div className="my-5 me-5 rounded-md" style={{width: "20vw", height: "100vh",}}>
                     {/* <div className="bg-white my-5 me-2 p-3" style={{width: "100%", height: "342px", borderRadius: "10px",}}>
                         <div className="bg-light-blue-100 relative rounded-md py-5 px-3" style={{height: "175px"}}>
                             <div className="rounded-md flex flex-row justify-center items-center" style={{height: "118px", background: "linear-gradient(118deg, #AAC0EA 9.28%, #6A6AED 101.85%)"}}>
@@ -432,7 +435,7 @@ const Dashboard = (props) => {
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
                             <p className="font-semibold" style={{color: "#722ACF"}}>{month} {day}</p>
-                            <hr style={{width: "150px"}}></hr>
+                            <hr style={{width: "11rem"}}></hr>
                             <div className="flex flex-row ">
                                 <p className="font-bold">.</p>
                                 <p className="font-bold">.</p>

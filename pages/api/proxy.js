@@ -4,9 +4,11 @@
 const handler = async (req, res) => {
   try {
     const requestBody = JSON.stringify(req.body);
+    
+    const method = req.headers.proxy_to_method
 
     const fetchOptions = {
-      method: req.method,
+      method,
       headers: {
         "Content-Type": "application/json",
         // api_key: process.env.FRONTEND_API_KEY,
@@ -15,7 +17,7 @@ const handler = async (req, res) => {
     };
 
     // todo: somehow prevent the user to call unexistent routes or w/ the wrong method
-    if (req.method !== "GET") {
+    if (method !== "GET") {
       fetchOptions.body = requestBody;
     }
 

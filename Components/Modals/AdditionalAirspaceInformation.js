@@ -200,7 +200,8 @@ const AdditionalAispaceInformation = (props) => {
             body: JSON.stringify(airspaceInformation),
             headers: {
                 "Content-Type": "application/json",
-                URI: "/properties/claim"
+                URI: "/properties/claim",
+                proxy_to_method: "POST",
             }
         })
         .then(res => {

@@ -8,10 +8,11 @@ export const useVerification = () => {
         const currentUser = users.filter(user => user.email === fetchedEmail);
         const currentUserId =  currentUser[0]?.id;
         let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "uri": `/users/find-one/${currentUserId}`
+                "uri": `/users/find-one/${currentUserId}`,
+                proxy_to_method: "GET",
             }
         })
         const resp = await userDetails.json();

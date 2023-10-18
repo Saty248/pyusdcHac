@@ -90,7 +90,7 @@ const Settings = (props) => {
         }
 
         fetch(`/api/proxy?${Date.now()}`, {
-            method: "PATCH",
+            method: "POST",
             body: JSON.stringify({
                 userId: user.id,
                 name,
@@ -99,7 +99,9 @@ const Settings = (props) => {
             }),
             headers: {
                 "Content-Type": "application/json",
-                uri: "/users/update"
+                uri: "/users/update",
+                proxy_to_method: "PATCH",
+
             }
         })
         .then((res) => {

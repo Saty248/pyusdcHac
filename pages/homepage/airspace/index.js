@@ -72,9 +72,11 @@ const Airspace = (props) => {
 
     useEffect(() => {
         fetch(`/api/proxy?${Date.now()}`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                uri: "/users"
+                uri: "/users",
+                proxy_to_method: "GET",
             }
         }).then(res => {
             if(!res.ok) {
@@ -217,17 +219,16 @@ const Airspace = (props) => {
         }
     }, [flyToAddress]);
 
-    const api_key = "XXX"
-
     useEffect(() => {
         if(user) {
             // fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
             fetch(`/api/proxy?${Date.now()}`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // uri: "/properties"
                     uri: `/properties/user-properties/${user.id}`,
-                    api_key: api_key
+                    proxy_to_method: "GET",
+    
                 }
             }).then((res) => {
                 console.log(res);
