@@ -9,7 +9,6 @@ import Backdrop from "@/Components/Backdrop";
 import PilotProfileModal from "@/Components/Modals/PilotProfileModal";
 import AddPilotModal from "@/Components/Modals/AddPilotModal";
 import Spinner from "@/Components/Spinner";
-import User from "@/models/User";
 
 const UAVs = (props) => {
     const { users } = props;
