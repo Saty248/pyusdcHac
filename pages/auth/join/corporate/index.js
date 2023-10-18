@@ -107,7 +107,8 @@ const CorporateSignup = () => {
             body: JSON.stringify(userInfo),
             headers: {
                 "Content-Type": "application/json",
-                uri: "/users/create"
+                uri: "/users/create",
+                'Authorization': "Bearer XXX"
             }
         }).then(res => {
                 if(!res.ok) {

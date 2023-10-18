@@ -109,7 +109,8 @@ const IndividualSignup = () => {
             body: JSON.stringify(userInfo),
             headers: {
                 "Content-Type": "application/json",
-                uri: "/users/create"
+                uri: "/users/create",
+                Authorization: "Bearer XXX"
             }
         }).then(res => {
             console.log(res)
