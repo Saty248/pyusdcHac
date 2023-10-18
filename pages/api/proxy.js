@@ -21,7 +21,8 @@ const handler = async (req, res) => {
     console.log(process.env.SERVER_URL);
 
     const fetchRes = await fetch(
-      `${process.env.SERVER_URL}${req.headers.uri}`,
+      // `${process.env.SERVER_URL}${req.headers.uri}`,
+      `http://ec2-13-53-187-133.eu-north-1.compute.amazonaws.com:8888${req.headers.uri}`,
       fetchOptions
     );
 
