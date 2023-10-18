@@ -143,7 +143,9 @@ const Settings = (props) => {
         <div className="flex flex-row mx-auto">
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
-                <Navbar name={user.name} />
+                <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
+                                                user.KYCStatusId === 1 ? "pending" 
+                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
                 <form className="bg-white pt-16 pb-2 px-10 mx-auto" style={{width: "calc(100vw-257px)", minHeight: "600px", height: "calc(100vh - 91px)", borderTop: "2px solid #F0F0FA"}}>
                     <div>
                         <h3 className="text-2xl font-medium">My Profile</h3>
@@ -210,6 +212,7 @@ const Settings = (props) => {
 export default Settings;
 
 export async function getServerSideProps() {
+    // const response = await fetch("http://localhost:3000/api/proxy", {
     const response = await fetch("/api/proxy", {
         headers: {
             "Content-Type": "application/json",

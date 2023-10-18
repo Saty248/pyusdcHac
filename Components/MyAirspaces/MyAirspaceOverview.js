@@ -35,7 +35,7 @@ const MyAirspaceOverview = (props) => {
                 </div>
                 <p>(6)</p>
             </div> */}
-            <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">$3.00</span>/hr</p>
+            <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">${props.amount}</span>/journey</p>
         </div>
         <div className="flex flex-row justify-center gap-7 mt-5 pb-2.5 items-center" style={{borderBottom: "0.5px solid rgba(229, 229, 234, 0.7)"}}>
             <button className="relative" onClick={props.viewMyAirspace}>
@@ -45,28 +45,28 @@ const MyAirspaceOverview = (props) => {
             {/* <button className="relative" onClick={props.myAirspaceReview}>
                 <p className="font-bold text-brown">Reviews</p>
             </button> */}
-            <button className="relative" onClick={props.aboutMyAirspace}>
+            {/* <button className="relative" onClick={props.aboutMyAirspace}>
                 <p className="font-bold text-brown">About</p>
-            </button>
+            </button> */}
         </div>
 
         <div style={{width: "100%", height: "30%"}} className="overflow-y-auto rounded-b-md">
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Owner Detail</h3>
                 <p className="text-xs mt-2" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Resident Name: </span>{props.name}</p>
-                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Email: </span>jorgeyyty@gmail.com</p>
+                <p className="text-xs" style={{fontSize: "11px", color: "rgba(63, 61, 86, 0.75)"}}><span className="font-bold">Email: </span>{props.email}</p>
             </div>
 
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-brown text-sm">AirSpace Details</h3>
                 <p className="text-sm text-light-brown mt-2"><span className="font-bold">Addreess: </span>{props.address}</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">(e) Resident Identification: </span>900000000005</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Resident Email: </span>jorge.colindres@spi-inertia.com</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Lodgement Registry Number: </span>100</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Property Size: </span>100m3</p>
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">(e) Resident Identification: </span>900000000005</p> */}
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">Resident Title: </span>Legal Rep. of/Rep. Legal de Owners /Propietarios</p> */}
+                <p className="text-sm text-light-brown"><span className="font-bold">Resident Email: </span>{props.email}</p>
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">Property Institute Matriculation No: </span>0000601348-00000</p> */}
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">ZEDE Property Registry Number: </span>34101000000010.52</p> */}
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">Lodgement Registry Number: </span>100</p> */}
+                {/* <p className="text-sm text-light-brown"><span className="font-bold">Property Size: </span>100m3</p> */}
             </div>
     
             <div className="flex flex-row items-center gap-7 justify-center">
@@ -89,7 +89,7 @@ const MyAirspaceOverview = (props) => {
                     </button>
                     <p className="text-center text-dark-blue text-sm">Rent</p>
                 </div>
-                <div className="flex flex-col justify-center items-center">
+                {/* <div className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M11.3688 11.0938H4.7125C4.09375 11.0938 3.5 10.8313 3.08125 10.375C2.6625 9.91875 2.45 9.30625 2.5 8.6875L3.01875 2.4625C3.0375 2.26875 2.96875 2.08125 2.8375 1.9375C2.70625 1.79375 2.525 1.71875 2.33125 1.71875H1.25C0.99375 1.71875 0.78125 1.50625 0.78125 1.25C0.78125 0.99375 0.99375 0.78125 1.25 0.78125H2.3375C2.79375 0.78125 3.225 0.974998 3.53125 1.30625C3.7 1.49375 3.825 1.7125 3.89375 1.95625H11.7C12.3313 1.95625 12.9125 2.20625 13.3375 2.65625C13.7562 3.1125 13.9688 3.70625 13.9188 4.3375L13.5812 9.025C13.5125 10.1688 12.5125 11.0938 11.3688 11.0938ZM3.925 2.8875L3.4375 8.76249C3.40625 9.12499 3.525 9.46874 3.76875 9.73749C4.0125 10.0062 4.35 10.15 4.7125 10.15H11.3688C12.0188 10.15 12.6062 9.6 12.6562 8.95L12.9937 4.2625C13.0187 3.89375 12.9 3.54376 12.6562 3.28751C12.4125 3.02501 12.075 2.88124 11.7062 2.88124H3.925V2.8875Z" fill="#0653EA"/>
@@ -99,7 +99,7 @@ const MyAirspaceOverview = (props) => {
                         </svg>
                     </button>
                     <p className="text-center text-dark-blue text-sm">Sell</p>
-                </div>
+                </div> */}
             </div>
             <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
                 <h3 className="font-bold text-sm text-brown">Facilities</h3>

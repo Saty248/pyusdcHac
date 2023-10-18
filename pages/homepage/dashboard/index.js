@@ -163,6 +163,7 @@ const Dashboard = (props) => {
             }
         })
         .then(res => {
+            console.log(res)
             if(!res.ok) {
                 return res.json()
                 .then(errorData => {
@@ -172,6 +173,7 @@ const Dashboard = (props) => {
             return res.json();
         })
         .then(response => {
+            console.log(response)
             setNewslettersLoading(false);
             if(response.length > 1) { 
                 setNewsletters(response.newsletters.reverse());
@@ -272,7 +274,9 @@ const Dashboard = (props) => {
     return <div className="flex flex-row mx-auto">
         <Sidebar users={users}/>
         <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
-            <Navbar name={user.name} />
+            <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
+                                                user.KYCStatusId === 1 ? "pending" 
+                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
             <div className="flex flex-row justify-start">
                 {/* <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}> */}
                 <div className="my-5" style={{width: "828px", height: "100vh"}}>
@@ -471,7 +475,8 @@ export default Dashboard;
 
 
 export async function getServerSideProps() {
-    const response = await fetch("http://localhost:3000/api/proxy", {
+    // const response = await fetch("http://localhost:3000/api/proxy", {
+    const response = await fetch("/api/proxy", {
         headers: {
             "Content-Type": "application/json",
             uri: "/users"

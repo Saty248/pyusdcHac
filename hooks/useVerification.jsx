@@ -20,14 +20,14 @@ export const useVerification = () => {
         else if(resp.KYCStatusId == 1)
             alert("KYC is yet to be approved. It might take some time")
         else {
-            console.log("Please do KYC");
+            // console.log("Please do KYC");
             const client = new Persona.Client({
                 templateId: 'itmpl_mp1885pUwnRvVwEoKxwyUiZz',
                 referenceId: currentUserId,
                 environmentId: 'env_m7beq2gaxaLfWVkYPaGdMHS3',
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {
-                console.log(`Completed inquiry ${inquiryId} with status ${status}`);
+                // console.log(`Completed inquiry ${inquiryId} with status ${status}`);
                 }
             });
         }

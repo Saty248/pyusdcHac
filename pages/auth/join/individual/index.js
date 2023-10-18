@@ -99,8 +99,6 @@ const IndividualSignup = () => {
             newsletter
         }
 
-        console.log(newsletter);
-
 
         setIsLoading(true);
 
@@ -112,12 +110,9 @@ const IndividualSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                // 'Authorization': "Bearer XXX"
-                'api_key': api_key
+                api_key: api_key
             }
         }).then(res => {
-            console.log(res)
-            console.log(api_key)
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
@@ -150,10 +145,8 @@ const IndividualSignup = () => {
             if(data.statusCode === 500) {
                 throw new Error("opps! something went wrong")
             }
-            console.log(data)
         })
         .catch(error => {
-            console.log(error);
             setError(error);
             setIsLoading(false);
         });

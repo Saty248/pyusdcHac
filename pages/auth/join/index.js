@@ -175,7 +175,6 @@ const Signup = (props) => {
                 api_key: api_key
             }
         }).then(res => {
-            console.log(api_key);
             if(!res.ok) {
                 return res.json()
                 .then(err => {
@@ -185,7 +184,6 @@ const Signup = (props) => {
             }
             return res.json()
             .then(response => {
-                console.log(response)
                 const filteredUser = response.filter(user => user.email === userInformation.email);
     
                 if(filteredUser.length < 1) {
@@ -209,7 +207,6 @@ const Signup = (props) => {
                 router.replace("/homepage/dashboard");
             })
         }).catch(err => {
-            console.log(err)
             swal({
                 title: "oops!",
                 text: err.message || "something went wrong. kindly try again",

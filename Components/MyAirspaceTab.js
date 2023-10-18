@@ -36,7 +36,7 @@ const MyAirspaceTab = (props) => {
         <div className="text-xs text-light-brown text-start ms-2">
             <p><span className="font-semibold">Resident Name: </span>{props.name}</p>
             <p><span className="font-semibold">Address: </span>{props.address}</p>
-            <p><span className="font-semibold">(e) Resident Identification: </span>{props.identification}</p>
+            {/* <p><span className="font-semibold">(e) Resident Identification: </span>{props.identification}</p> */}
         </div>
     </button>
 }

@@ -114,7 +114,9 @@ const Wallet = (props) => {
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
         <Sidebar />
         <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
-            <Navbar name={user.name} />
+            <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
+                                                user.KYCStatusId === 1 ? "pending" 
+                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"}  />
             <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                 <div className="z-20 text-center">
                     <p className="text-light-brown">My Wallet</p>
@@ -192,6 +194,7 @@ export default Wallet;
 
 
 export async function getServerSideProps() {
+    // const response = await fetch("http://localhost:3000/api/proxy", {
     const response = await fetch("/api/proxy", {
         headers: {
             "Content-Type": "application/json",
