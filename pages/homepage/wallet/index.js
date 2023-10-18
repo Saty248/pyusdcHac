@@ -259,37 +259,6 @@ const Wallet = (props) => {
         setShowDepositModal(true);
     }
 
-    const stripeHandler = () => {
-        // fetch("/api/on-ramp", {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         wallet: user.blockchainAddress
-        //     })
-        // })
-        // .then(res => res.json())
-        // .then(response => {
-        //     console.log(response);
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        // })
-
-        const stripeSecretKey = 'sk_test_51MRzIzIVelVZN1eROv5D4liCOoUHOH5UfbI2YUlVT3wGT1rkqeYnSJVfVxnt0g9Zk2nDn2ZOqFPTg0361oDlRJc1009xmc5dXi';
-
-        fetch('https://api.stripe.com/v1/crypto/onramp_sessions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${stripeSecretKey}`,
-            'Content-Type': 'application/json',
-        },
-        // You can add any request body here if needed
-        // body: JSON.stringify({ key: 'value' }),
-        })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error:', error));
-    }
-
     if(!user || !token) {
         return <Spinner />
     }     
@@ -298,7 +267,7 @@ const Wallet = (props) => {
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
         {showDepositModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        {showDepositModal && createPortal(<WalletModal stripe={stripeHandler} method="deposit" form="from" navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {showDepositModal && createPortal(<WalletModal method="deposit" form="from" navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
