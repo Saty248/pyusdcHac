@@ -195,7 +195,7 @@ const AdditionalAispaceInformation = (props) => {
 
         setIsLoading(true);
 
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             method: "POST",
             body: JSON.stringify(airspaceInformation),
             headers: {

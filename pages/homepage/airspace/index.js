@@ -71,7 +71,7 @@ const Airspace = (props) => {
     }, []);
 
     useEffect(() => {
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users"
@@ -222,7 +222,7 @@ const Airspace = (props) => {
     useEffect(() => {
         if(user) {
             // fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
-            fetch("/api/proxy?test=1", {
+            fetch(`/api/proxy?${Date.now()}`, {
                 headers: {
                     "Content-Type": "application/json",
                     // uri: "/properties"

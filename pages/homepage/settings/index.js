@@ -89,7 +89,7 @@ const Settings = (props) => {
             return;
         }
 
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             method: "PATCH",
             body: JSON.stringify({
                 userId: user.id,

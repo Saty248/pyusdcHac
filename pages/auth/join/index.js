@@ -168,7 +168,7 @@ const Signup = (props) => {
 
         const api_key = "XXX"
 
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users",

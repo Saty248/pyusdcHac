@@ -103,7 +103,7 @@ const CorporateSignup = () => {
         setIsLoading(true);
         const api_key = "XXX"
 
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             method: "POST",
             body: JSON.stringify(userInfo),
             headers: {

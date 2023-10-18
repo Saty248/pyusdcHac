@@ -7,7 +7,7 @@ export const useVerification = () => {
         const fetchedEmail = localStorage.getItem("email");
         const currentUser = users.filter(user => user.email === fetchedEmail);
         const currentUserId =  currentUser[0]?.id;
-        let userDetails = await fetch("/api/proxy", {
+        let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

@@ -107,7 +107,7 @@ const Dashboard = (props) => {
     }, [user]);
     
     // useEffect(() => {
-    //     fetch("/api/proxy", {
+    //     fetch(`/api/proxy?${Date.now()}`, {
     //         headers: {
     //             "Content-Type": "application/json",
     //             uri: "/users"
@@ -156,7 +156,7 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         setNewslettersLoading(true)
-        fetch("/api/proxy", {
+        fetch(`/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/newsletters"
