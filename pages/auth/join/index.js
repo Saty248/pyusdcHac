@@ -169,7 +169,8 @@ const Signup = (props) => {
         fetch("/api/proxy", {
             headers: {
                 "Content-Type": "application/json",
-                uri: "/users"
+                uri: "/users",
+                Authorization: "Bearer XXX"
             }
         }).then(res => {
             if(!res.ok) {
