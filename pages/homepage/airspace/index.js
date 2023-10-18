@@ -104,8 +104,6 @@ const Airspace = (props) => {
 
             setToken(fetchedToken.sessionId);
 
-            
-            console.log(singleUser);
             setUser(singleUser[0]);
             setStatus(singleUser[0].KYCStatusId)
         }).catch(err => {
@@ -219,15 +217,20 @@ const Airspace = (props) => {
         }
     }, [flyToAddress]);
 
+    const api_key = "XXX"
+
     useEffect(() => {
         if(user) {
+            // fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
             fetch("/api/proxy", {
                 headers: {
                     "Content-Type": "application/json",
                     // uri: "/properties"
-                    uri: `/properties/user-properties/${user.id}`
+                    uri: `/properties/user-properties/${user.id}`,
+                    api_key: api_key
                 }
             }).then((res) => {
+                console.log(res);
                 if(!res.ok) {
                     return res.json()
                     .then((err) => {
