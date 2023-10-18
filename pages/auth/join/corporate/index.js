@@ -112,7 +112,6 @@ const CorporateSignup = () => {
                 'api_key': api_key
             }
         }).then(res => {
-            console.log(api_key)
                 if(!res.ok) {
                     return res.json()
                     .then(errorData => {
