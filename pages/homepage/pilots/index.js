@@ -110,11 +110,26 @@ const UAVs = (props) => {
 export default UAVs;
 
 export async function getServerSideProps() {
-    const users = await User.findAll();
+    const response = await fetch("/api/proxy", {
+        headers: {
+            "Content-Type": "application/json",
+            uri: "/users"
+        }
+    })
+
+    if(!response.ok) {
+        return {
+            props: { 
+                error: "oops! something went wrong. Kindly try again."
+            }
+        }
+    }
+    
+    const data = await response.json();
 
     return {
         props: {
-            users: JSON.parse(JSON.stringify(users))
+            users: JSON.parse(JSON.stringify(data))
         }
     }
 }

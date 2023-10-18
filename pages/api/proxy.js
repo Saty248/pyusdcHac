@@ -18,6 +18,8 @@ const handler = async (req, res) => {
       fetchOptions.body = requestBody;
     }
 
+    console.log(process.env.SERVER_URL);
+
     const fetchRes = await fetch(
       `${process.env.SERVER_URL}${req.headers.uri}`,
       fetchOptions

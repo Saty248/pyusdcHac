@@ -471,7 +471,7 @@ export default Dashboard;
 
 
 export async function getServerSideProps() {
-    const response = await fetch("http://localhost:3000/api/proxy", {
+    const response = await fetch("/api/proxy", {
         headers: {
             "Content-Type": "application/json",
             uri: "/users"
