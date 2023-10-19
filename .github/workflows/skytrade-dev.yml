@@ -19,4 +19,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: bash ./aws_ps_get_dev_env.sh
     - run: npm i && npm run build
