@@ -3,9 +3,13 @@
 // Proxy URL: ${frontendHttp}/api/proxy
 const handler = async (req, res) => {
   try {
-    const requestBody = JSON.stringify(req.body);
+    console.log(req)
+    console.log("This is the request body", req.body)
+    
     
     const method = req.headers.proxy_to_method
+
+    console.log("This is the method", method)
 
     const fetchOptions = {
       method,
@@ -13,11 +17,12 @@ const handler = async (req, res) => {
         "Content-Type": "application/json",
         // api_key: process.env.FRONTEND_API_KEY,
         api_key: "XXX",
-      },
+      }
     };
 
     // todo: somehow prevent the user to call unexistent routes or w/ the wrong method
     if (method !== "GET") {
+      const requestBody = JSON.stringify(req.body);
       fetchOptions.body = requestBody;
     }
 

@@ -113,8 +113,7 @@ const Dashboard = (props) => {
                 headers: {
                     "Content-Type": "application/json",
                     uri: `/properties/user-properties/${user.id}`,
-                    // proxy_to_method: "GET",
-    
+                    proxy_to_method: "GET",
                 }
             }).then((res) => {
                 console.log(res);
@@ -191,8 +190,7 @@ const Dashboard = (props) => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/newsletters",
-                // proxy_to_method: "GET",
-
+                proxy_to_method: "GET",
             }
         })
         .then(res => {
@@ -513,7 +511,7 @@ export async function getServerSideProps() {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
-            // proxy_to_method: "GET",
+            proxy_to_method: "GET",
         }
     })
 

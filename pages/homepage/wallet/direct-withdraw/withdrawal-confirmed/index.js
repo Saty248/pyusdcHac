@@ -157,7 +157,7 @@ export async function getServerSideProps() {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
-            // proxy_to_method: "GET",
+            proxy_to_method: "GET",
         }
     })
 

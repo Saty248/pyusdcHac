@@ -112,7 +112,6 @@ const Settings = (props) => {
                 "Content-Type": "application/json",
                 uri: "/users/update",
                 proxy_to_method: "PATCH",
-
             }
         })
         .then((res) => {
@@ -230,7 +229,7 @@ export async function getServerSideProps() {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
-            // proxy_to_method: "GET",
+            proxy_to_method: "GET",
         }
     })
 
