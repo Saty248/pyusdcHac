@@ -7,7 +7,7 @@ const handler = async (req, res) => {
     console.log("This is the request body", req.body)
     
     
-    const method = req.headers.proxy_to_method
+    const method = req.method
 
     console.log("This is the method", method)
 
@@ -21,7 +21,7 @@ const handler = async (req, res) => {
     };
 
     // todo: somehow prevent the user to call unexistent routes or w/ the wrong method
-    if (method !== "GET") {
+    if (method !== "GET" && method !== "HEAD") {
       const requestBody = JSON.stringify(req.body);
       fetchOptions.body = requestBody;
     }
