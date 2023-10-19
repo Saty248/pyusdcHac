@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Please update below varoables as per your production setup
 PARAMATER="DEV_FRONTEND_ENV"
 REGION="eu-north-1"
 
