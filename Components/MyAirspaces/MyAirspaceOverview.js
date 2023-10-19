@@ -15,7 +15,7 @@ const MyAirspaceOverview = (props) => {
         </div>
         <div className="flex flex-row items-center justify-between px-5 mb-2">
             <p className="font-bold mt-5">{props.title}</p>
-            <button className="flex justify-center items-center mt-3" style={{height: "27px", width: "27px", border: "1px solid blue", borderRadius: "50%"}}>
+            <button onClick={props.editAirspace} className="flex justify-center items-center mt-3" style={{height: "27px", width: "27px", border: "1px solid blue", borderRadius: "50%"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <path d="M8.75033 13.2702H5.25033C2.08283 13.2702 0.729492 11.9169 0.729492 8.74935V5.24935C0.729492 2.08185 2.08283 0.728516 5.25033 0.728516H6.41699C6.65616 0.728516 6.85449 0.926849 6.85449 1.16602C6.85449 1.40518 6.65616 1.60352 6.41699 1.60352H5.25033C2.56116 1.60352 1.60449 2.56018 1.60449 5.24935V8.74935C1.60449 11.4385 2.56116 12.3952 5.25033 12.3952H8.75033C11.4395 12.3952 12.3962 11.4385 12.3962 8.74935V7.58268C12.3962 7.34352 12.5945 7.14518 12.8337 7.14518C13.0728 7.14518 13.2712 7.34352 13.2712 7.58268V8.74935C13.2712 11.9169 11.9178 13.2702 8.75033 13.2702Z" fill="#0653EA"/>
                     <path d="M4.95828 10.3193C4.60244 10.3193 4.27578 10.191 4.03661 9.95766C3.75078 9.67182 3.62828 9.25766 3.69244 8.82016L3.94328 7.06432C3.98994 6.72599 4.21161 6.28849 4.45078 6.04932L9.04744 1.45266C10.2083 0.291823 11.3866 0.291823 12.5474 1.45266C13.1833 2.08849 13.4691 2.73599 13.4108 3.38349C13.3583 3.90849 13.0783 4.42182 12.5474 4.94682L7.95078 9.54349C7.71161 9.78266 7.27411 10.0043 6.93578 10.051L5.17994 10.3018C5.10411 10.3193 5.02828 10.3193 4.95828 10.3193ZM9.66578 2.07099L5.06911 6.66766C4.95828 6.77849 4.82994 7.03516 4.80661 7.18682L4.55578 8.94266C4.53244 9.11182 4.56744 9.25182 4.65494 9.33932C4.74244 9.42682 4.88244 9.46182 5.05161 9.43849L6.80744 9.18766C6.95911 9.16432 7.22161 9.03599 7.32661 8.92516L11.9233 4.32849C12.3024 3.94932 12.5008 3.61099 12.5299 3.29599C12.5649 2.91682 12.3666 2.51432 11.9233 2.06516C10.9899 1.13182 10.3483 1.39432 9.66578 2.07099Z" fill="#0653EA"/>
@@ -80,6 +80,7 @@ const MyAirspaceOverview = (props) => {
                     </button>
                     <p className="text-center text-dark-blue text-sm">3D Map</p>
                 </div>
+                {!props.noFlyZone &&
                 <div onClick={() => alert("Button clicked")} className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -88,7 +89,7 @@ const MyAirspaceOverview = (props) => {
                         </svg>
                     </button>
                     <p className="text-center text-dark-blue text-sm">Rent</p>
-                </div>
+                </div>}
                 {/* <div className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -101,12 +102,17 @@ const MyAirspaceOverview = (props) => {
                     <p className="text-center text-dark-blue text-sm">Sell</p>
                 </div> */}
             </div>
-            <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
-                <h3 className="font-bold text-sm text-brown">Facilities</h3>
-                <p className="text-sm text-light-brown"><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>
-                <p className="text-sm text-light-brown"><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>
-            </div>
+            {(props.landingDeck || 
+                props.chargingStation || 
+                    props.storageHub) &&
+                    <div style={{width: "299px", border: "1px solid blue"}} className="p-2.5 rounded mx-auto my-6">
+                        <h3 className="font-bold text-sm text-brown">Facilities</h3>
+                        {props.landingDeck && <p className="text-sm text-light-brown"><span className="font-bold">Landing Deck: </span>Place to land your UAV safely</p>}
+                        {props.chargingStation && <p className="text-sm text-light-brown"><span className="font-bold">Charging Station: </span>We offer a place to charge your UAV</p>}
+                        {props.storageHub && <p className="text-sm text-light-brown"><span className="font-bold">Storage Hub: </span>Warehousing for UAV packages</p>}
+                    </div>
+                }
+            
         </div>
     </div>
 }

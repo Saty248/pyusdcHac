@@ -24,15 +24,20 @@ const UAVs = (props) => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
 
-        if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            router.push("/auth/join");
-            return;
-        };
+        if(users) {
+            const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        setToken(fetchedToken.sessionId);
+            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.removeItem("openlogin_store")
+                router.push("/auth/join");
+                return;
+            };
 
-        const singleUser = users.filter(user => user.email === fetchedEmail);
-        setUser(singleUser[0]);
+            setToken(fetchedToken.sessionId);  
+            setUser(singleUser[0]);
+        }
     }, []);
 
     const backdropCloseHandler = () => {

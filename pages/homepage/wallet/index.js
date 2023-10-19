@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Fragment } from "react";
 import { createPortal } from "react-dom";
 import ReactPaginate from "react-paginate";
+import swal from "sweetalert";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -12,6 +13,15 @@ import WalletModal from "@/Components/Modals/WalletModal";
 
 const Wallet = (props) => {
     const { users } = props;
+    const { error } = props;
+
+    if(error) {
+        swal({
+            title: "oops!",
+            text: "something went wrong. kindly try again",
+          });
+    }
+
     const url = 'https://api.testnet.solana.com';
 
     const router = useRouter();
@@ -35,18 +45,21 @@ const Wallet = (props) => {
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-        const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-            console.log("false")
-            localStorage.removeItem("openlogin_store")
-            router.push("/auth/join");
-            return;
-        };
+        if(users) {
+            const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        setToken(fetchedToken.sessionId);  
-        setUser(singleUser[0]);
+            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.removeItem("openlogin_store")
+                router.push("/auth/join");
+                return;
+            };
+
+            setToken(fetchedToken.sessionId);  
+            setUser(singleUser[0]);
+        }
     }, []);
 
     useEffect(() => {
@@ -369,7 +382,8 @@ export async function getServerSideProps() {
     const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
-            uri: "/users"
+            uri: "/users",
+            proxy_to_method: "GET",
         }
     })
 

@@ -34,7 +34,8 @@ const handler = async (req, res) => {
               body: JSON.stringify(reqBody)
             };
             const fetchRes = await fetch(
-              `${process.env.SERVER_URL}/services/persona`,
+              // `${process.env.SERVER_URL}/services/persona`,
+              `http://ec2-13-53-187-133.eu-north-1.compute.amazonaws.com:8888/services/persona`,
               fetchOptions
             );
             const resData = await fetchRes.json();

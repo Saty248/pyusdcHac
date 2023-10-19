@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import swal from "sweetalert";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
@@ -7,6 +8,14 @@ import Spinner from "@/Components/Spinner";
 
 const DepositConfirm = (props) => {
     const { users } = props;
+    const { error } = props;
+
+    if(error) {
+        swal({
+            title: "oops!",
+            text: "something went wrong. kindly try again",
+          });
+    }
 
     const router = useRouter();
 
@@ -17,18 +26,20 @@ const DepositConfirm = (props) => {
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-        const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-            console.log("false")
-            localStorage.removeItem("openlogin_store")
-            router.push("/auth/join");
-            return;
-        };
+        if(users) {
+            const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        setToken(fetchedToken.sessionId);  
-        setUser(singleUser[0]);
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.removeItem("openlogin_store")
+                router.push("/auth/join");
+                return;
+            };
+
+            setToken(fetchedToken.sessionId);  
+            setUser(singleUser[0]);
+        }
     }, []);
 
     
@@ -145,7 +156,8 @@ export async function getServerSideProps() {
     const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
-            uri: "/users"
+            uri: "/users",
+            proxy_to_method: "GET",
         }
     })
 

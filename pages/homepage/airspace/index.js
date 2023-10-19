@@ -22,10 +22,19 @@ import { counterActions } from "@/store/store";
 import Spinner from "@/Components/Spinner";
 import AirspaceTab from "@/Components/AirspaceTab";
 import MyAirspaceTab from "@/Components/MyAirspaceTab";
+import EditAispaceModal from "@/Components/Modals/EditAirspaceModal";
 
 
 const Airspace = (props) => {
     const { users } = props;
+    const { error } = props;
+
+    if(error) {
+        swal({
+            title: "oops!",
+            text: "something went wrong. kindly try again",
+          });
+    }
     const router = useRouter();
     const dispatch = useDispatch();
     const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
@@ -45,8 +54,7 @@ const Airspace = (props) => {
     const [myFilteredAirspace, setMyFilteredAirspace] = useState();
     const [flyToAddress, setFlyToAddress] = useState("");
     const [myAirspaces, setMyAirspaces] = useState();
-    const [status, setStatus] = useState();
-    const [amount, setAmount] = useState();
+    const [editAirspace, setEditAirspace] = useState();
 
     const [user, setUser] = useState();
 
@@ -56,62 +64,61 @@ const Airspace = (props) => {
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-        const singleUser = users.filter(user => user.email === fetchedEmail);
-
-        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-            console.log("false")
-            localStorage.removeItem("openlogin_store")
-            router.push("/auth/join");
-            return;
-        };
-
-        setToken(fetchedToken.sessionId);  
-        setUser(singleUser[0]);
-    }, []);
-
-    useEffect(() => {
-        fetch(`/api/proxy?${Date.now()}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                uri: "/users",
-                proxy_to_method: "GET",
-            }
-        }).then(res => {
-            if(!res.ok) {
-                return res.json()
-                .then(err => {
-                    console.log(err)
-                    return;
-                })
-            }
-            return res.json()
-        }).then(response => {
-            console.log(response)
-            const fetchedEmail = localStorage.getItem("email");
-            const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+        if(users) {
             const singleUser = users.filter(user => user.email === fetchedEmail);
 
-            console.log(fetchedToken.sessionId)
-            console.log(fetchedToken.sessionId.length)
-
-            if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
                 console.log("false")
-                localStorage.setItem("openlogin_store", JSON.stringify({}));
+                localStorage.removeItem("openlogin_store")
                 router.push("/auth/join");
                 return;
             };
 
-            setToken(fetchedToken.sessionId);
-
+            setToken(fetchedToken.sessionId);  
             setUser(singleUser[0]);
-            setStatus(singleUser[0].KYCStatusId)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [token]);
+        }
+    }, []);
+
+    // useEffect(() => {
+    //     fetch(`/api/proxy?${Date.now()}`, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             uri: "/users",
+    //             proxy_to_method: "GET",
+    //         }
+    //     }).then(res => {
+    //         if(!res.ok) {
+    //             return res.json()
+    //             .then(err => {
+    //                 console.log(err)
+    //                 return;
+    //             })
+    //         }
+    //         return res.json()
+    //     }).then(response => {
+    //         console.log(response)
+    //         const fetchedEmail = localStorage.getItem("email");
+    //         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+    //         const singleUser = users.filter(user => user.email === fetchedEmail);
+
+
+    //         if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+    //         // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+    //             console.log("false")
+    //             localStorage.setItem("openlogin_store", JSON.stringify({}));
+    //             router.push("/auth/join");
+    //             return;
+    //         };
+
+    //         setToken(fetchedToken.sessionId);
+
+    //         setUser(singleUser[0]);
+    //         setStatus(singleUser[0].KYCStatusId)
+    //     }).catch(err => {
+    //         console.log(err)
+    //     })
+    // }, [token]);
     
     useEffect(() => {
         if(token && user) {
@@ -221,8 +228,6 @@ const Airspace = (props) => {
 
     useEffect(() => {
         if(user) {
-            console.log("This is the user Id", user.id);
-            // fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
             fetch(`/api/proxy?${Date.now()}`, {
                 method: "POST",
                 headers: {
@@ -285,7 +290,11 @@ const Airspace = (props) => {
 
         dispatch(counterActions.closeNewAirspaceModal());
         dispatch(counterActions.closeConfirmOnMapModal());
-        dispatch(counterActions.closeAdditionalInfoModal());
+        // dispatch(counterActions.closeAdditionalInfoModal());
+    }
+
+    const editAirspaceHandler = () => {
+        setEditAirspace(true);
     }
 
     const showAllAirspace = () => {
@@ -311,7 +320,6 @@ const Airspace = (props) => {
 
     const showMyAirspaceHandler = (id) => {
         const filteredAirspace = myAirspaces.filter(airspace => airspace.id === id)
-        setAmount(filteredAirspace[0].transitFee);
         setMyFilteredAirspace(filteredAirspace[0])
         setFlyToAddress(filteredAirspace[0].address);
 
@@ -413,8 +421,15 @@ const Airspace = (props) => {
         {confirmOnMap && 
             createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
             }
+        
+        {editAirspace && createPortal(<EditAispaceModal 
+                            variable={myFilteredAirspace.isFixedTransitFee}
+                            onClose={(e) => {
+                                e.preventDefault()
+                                setEditAirspace(false)
+                            }} />, document.getElementById("modal-root"))}
 
-        {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+        {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap || editAirspace) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         <div className="flex flex-row mx-auto">
             <Sidebar users={users}/>
             <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
@@ -425,7 +440,7 @@ const Airspace = (props) => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd" d="M10.7118 11.7481C8.12238 13.822 4.33202 13.6588 1.93164 11.2584C-0.643879 8.6829 -0.643879 4.50716 1.93164 1.93164C4.50716 -0.64388 8.68289 -0.643879 11.2584 1.93164C13.6588 4.33202 13.822 8.12238 11.7481 10.7118L16.7854 15.7491C17.0715 16.0352 17.0715 16.4992 16.7854 16.7854C16.4992 17.0715 16.0352 17.0715 15.7491 16.7854L10.7118 11.7481ZM2.96795 10.2221C0.964766 8.21893 0.964766 4.97113 2.96795 2.96795C4.97113 0.964767 8.21892 0.964767 10.2221 2.96795C12.2238 4.96966 12.2253 8.21416 10.2265 10.2177C10.225 10.2192 10.2236 10.2206 10.2221 10.2221C10.2206 10.2236 10.2192 10.225 10.2177 10.2265C8.21416 12.2253 4.96966 12.2238 2.96795 10.2221Z" fill="#252530" fillOpacity="0.55"/>
                         </svg>
-                        <input type="text" className="rounded-md my-7 ps-3 ms-5 focus:outline-blue-200" style={{width: "433px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
+                        <input type="text" placeholder="Search AirSpace" className="rounded-md my-7 ps-3 ms-5 focus:outline-blue-200" style={{width: "433px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
                     </div>
                 </Navbar>
                 <div className="relative mt-0" id="map" style={{width: "calc(100vw - 257px)", height: "100vh", marginTop: "0"}}>
@@ -477,6 +492,11 @@ const Airspace = (props) => {
                                                  name={user.name}
                                                  email={user.email}
                                                  amount={myFilteredAirspace.transitFee}
+                                                 landingDeck={myFilteredAirspace.hasLandingDeck}
+                                                 chargingStation={myFilteredAirspace.hasChargingStation}
+                                                 storageHub={myFilteredAirspace.hasStorageHub}
+                                                 noFlyZone={myFilteredAirspace.noFlyZone}
+                                                 editAirspace={editAirspaceHandler}
                                                  />}
 {/* 
                     {aboutMyAirspace && <AboutMyAirspace 
@@ -526,7 +546,8 @@ export async function getServerSideProps() {
     const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
-            uri: "/users"
+            uri: "/users",
+            proxy_to_method: "GET",
         }
     })
 

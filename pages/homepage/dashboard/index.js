@@ -23,7 +23,6 @@ const Dashboard = (props) => {
             text: "something went wrong. kindly try again",
           });
     }
-    // const [users, setUsers] = useState([]);
     const dispatch = useDispatch();
 
     const date = new Date()
@@ -38,6 +37,7 @@ const Dashboard = (props) => {
     const [newsletters, setNewsletters] = useState([]);
     const [newslettersLoading, setNewslettersLoading] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
+    const [airspaceLength, setAirspaceLength] = useState();
     
 
     useEffect(() => {
@@ -48,12 +48,12 @@ const Dashboard = (props) => {
                 const singleUser = users.filter(user => user.email === fetchedEmail);
 
                 // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                console.log("false")
-                localStorage.removeItem("openlogin_store")
-                router.push("/auth/join");
-                return;
-            };
+                if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                    console.log("false")
+                    localStorage.removeItem("openlogin_store")
+                    router.push("/auth/join");
+                    return;
+                };
 
             setToken(fetchedToken.sessionId);  
             setUser(singleUser[0]);
@@ -105,6 +105,36 @@ const Dashboard = (props) => {
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        if(user) {
+            fetch(`/api/proxy?${Date.now()}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: `/properties/user-properties/${user.id}`,
+                    proxy_to_method: "GET",
+    
+                }
+            }).then((res) => {
+                console.log(res);
+                if(!res.ok) {
+                    return res.json()
+                    .then((err) => {
+                        throw new Error(err.message)
+                    })
+                }
+                return res.json()
+                .then((data) =>{
+                    console.log(data.length)
+                    setAirspaceLength(data.length)
+                })
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        }
+    }, [user])
     
     // useEffect(() => {
     //     fetch(`/api/proxy?${Date.now()}`, {
@@ -178,8 +208,8 @@ const Dashboard = (props) => {
         .then(response => {
             console.log(response)
             setNewslettersLoading(false);
-            if(response.length > 1) { 
-                setNewsletters(response.newsletters.reverse());
+            if(response.length > 0) { 
+                setNewsletters(response.reverse());
             }
         })
         .catch(err => {
@@ -187,75 +217,75 @@ const Dashboard = (props) => {
         }) 
     }, []);
 
-    // useEffect(() => {
-    //     if(token && user) {
-    //         const ctx = document.getElementById('chart').getContext('2d');
+    useEffect(() => {
+        if(user) {
+            const ctx = document.getElementById('chart').getContext('2d');
 
-    //         if (ctx) {
-    //             const existingChart = Chart.getChart(ctx);
+            if (ctx) {
+                const existingChart = Chart.getChart(ctx);
         
-    //             if (existingChart) {
-    //                 existingChart.destroy();
-    //             }
-    //         }
-    //         new Chart(ctx, {
-    //         type: 'line',
-    //         data: {
-    //             labels: ['August 21', 'August 22', 'August 23', 
-    //                         'August 24', 'August 25', 'August 26',
-    //                     ],
-    //             datasets: [{
-    //             label: 'Payment Overview',
-    //             data: [2, 4, 2, 
-    //                     4, 8, 12,  
-    //                     ],
-    //             //   backgroundColor: 'rgb(255, 211, 11)',
-    //             color: "black",
-    //             barThickness: 10,
-    //             borderRadius: 10
-    //             }]
-    //         },
-    //         options: {
-    //             scales: {
-    //             x: {
-    //                 // display: false 
-    //             },
-    //             y: {
-    //                 // display: false 
-    //             }
-    //             },
-    //             plugins: {
-    //             tooltip: {
-    //                 backgroundColor: 'black', 
-    //                 bodyColor: 'white',
-    //                 yAlign: 'bottom',
-    //                 titleFont: {
-    //                     size: 14,
-    //                 },
-    //                 titleColor: "white",
-    //                 bodyFont: {
-    //                     color: 'red'
-    //                 },
-    //                 displayColors: false,
-    //                 style: {
-    //                     textAlign: 'center'
-    //                 }
-    //             },
-    //             legend: {
-    //                 // display: false, 
-    //             },
-    //             label: {
-    //                 display: false
-    //             },
-    //             title: {
-    //                 display: false,
-    //                 text: "August 10"
-    //             }
-    //             }
-    //         }
-    //         });
-    //     }
-    // }, []);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+            }
+            new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['United States', 'India', 'United Kingdom', 
+                            'Canada', 'Brazil', 'Australia',
+                        ],
+                datasets: [{
+                label: '',
+                data: [50, 4, 2, 
+                        4, 8, 12,  
+                        ],
+                //   backgroundColor: 'rgb(255, 211, 11)',
+                color: "black",
+                barThickness: 10,
+                borderRadius: 10
+                }]
+            },
+            options: {
+                scales: {
+                x: {
+                    display: false 
+                },
+                y: {
+                    display: false 
+                }
+                },
+                plugins: {
+                tooltip: {
+                    backgroundColor: 'black', 
+                    bodyColor: 'white',
+                    yAlign: 'bottom',
+                    titleFont: {
+                        size: 14,
+                    },
+                    titleColor: "white",
+                    bodyFont: {
+                        color: 'red'
+                    },
+                    displayColors: false,
+                    style: {
+                        textAlign: 'center'
+                    }
+                },
+                legend: {
+                    // display: false, 
+                },
+                label: {
+                    display: false
+                },
+                title: {
+                    display: false,
+                    text: "August 10"
+                }
+                }
+            }
+            });
+        }
+    }, [user]);
 
   
 
@@ -321,7 +351,7 @@ const Dashboard = (props) => {
                             <div className="flex flex-row items-center justify-between">
                                 <div className="mt-10 text-start">
                                     <p className="text-sm">My Airspace</p>
-                                    <p className="text-2xl">0</p>
+                                    <p className="text-2xl">{airspaceLength}</p>
                                 </div>
                                 <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
                             </div>
@@ -482,7 +512,8 @@ export async function getServerSideProps() {
     const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
-            uri: "/users"
+            uri: "/users",
+            proxy_to_method: "GET",
         }
     })
 

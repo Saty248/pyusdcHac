@@ -21,7 +21,7 @@ const handler = async (req, res) => {
       fetchOptions.body = requestBody;
     }
 
-    console.log(process.env.SERVER_URL);
+    console.log("This is the server URL", process.env.SERVER_URL);
 
     const fetchRes = await fetch(
       // `${process.env.SERVER_URL}${req.headers.uri}`,
@@ -30,7 +30,7 @@ const handler = async (req, res) => {
     );
 
     const resData = await fetchRes.json();
-    console.log(resData);
+    console.log("This is data from the backend", resData);
 
     if (resData?.data && resData?.data?.statusCode >= 400) {
       throw new Error(resData.data.message);
@@ -39,7 +39,7 @@ const handler = async (req, res) => {
     return res.json(resData);
   } catch (err) {
     // todo: return error from backend server
-    console.error(err.message);
+    console.error("This is error message from the backend", err.message);
     return res.status(500).json({ ok: false, errorMessage: err.message });
   }
 };

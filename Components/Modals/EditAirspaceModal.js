@@ -10,7 +10,7 @@ import Spinner from "../Spinner";
 import Backdrop from "../Backdrop";
 // import TimezoneSelectComponent from "../Timezone";
 
-const AdditionalAispaceInformation = (props) => {
+const EditAispaceModal = (props) => {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -233,7 +233,7 @@ const AdditionalAispaceInformation = (props) => {
             top: "7vh", // This is for live environment
             left: "calc(50% - 370px)", 
             }}>
-            <button onClick={closeModalHandler} className="absolute top-3 right-3">
+            <button onClick={props.onClose} className="absolute top-3 right-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
                     <path d="M12.7279 12.7285L21.2132 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M12.7279 21.2138L21.2132 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -246,18 +246,18 @@ const AdditionalAispaceInformation = (props) => {
                         <p className="font-medium">AirSpace Title</p>
                         <p className="text-xs">Give a unique name to the AirSpace for easy identification</p>
                     </div>
-                    <input ref={airspaceTitleRef} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+                    <input ref={airspaceTitleRef} defaultValue={props.title} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
                 </div>
                 <hr />
                 <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
                     <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
                     <div className="flex flex-row justify-center items-center">
-                        <input type="number" ref={costRef} name="hour" min="1" placeholder="$ 10:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
+                        <input type="number" ref={costRef} defaultValue={props.fee} name="hour" min="1" placeholder="$ 10:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per journey</label>
                     </div>
                     <div>
                         <div className="flex flex-row justify-center items-center gap-2">
-                            <input type="checkbox" onChange={costCheckedHandler} checked={costChecked} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={costCheckedHandler} defaultChecked={props.variable} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={costCheckedHandler} className="text-dark-brown text-sml cursor-pointer">Variable</label>
                         </div>
                         <div style={{width: "110px"}}>
@@ -273,15 +273,15 @@ const AdditionalAispaceInformation = (props) => {
                     </div>
                     <div className="ps-1">
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={deckCheckedHandler} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={deckCheckedHandler}  defaultChecked={props.deck} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={deckCheckedHandler} className="text-dark-brown cursor-pointer text-sml">Landing Deck</label>
                         </div>
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={stationHandler} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={stationHandler} defaultChecked={props.station} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={stationHandler} className="text-dark-brown text-sml cursor-pointer">Charging station</label>
                         </div>
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={storageHandler} checked={storageChecked} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={storageHandler} checked={storageChecked} defaultChecked={props.storage} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={storageHandler} className="text-dark-brown text-sml cursor-pointer">Storage Hub</label>
                         </div>
                     </div>
@@ -448,7 +448,7 @@ const AdditionalAispaceInformation = (props) => {
                     </div>
                 </div>
                 <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                    <button onClick={closeModalHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
+                    <button onClick={props.onClose} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
                     <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
                 </div>
             </form>
@@ -456,4 +456,4 @@ const AdditionalAispaceInformation = (props) => {
     </Fragment>
 }
 
-export default AdditionalAispaceInformation;
+export default EditAispaceModal;

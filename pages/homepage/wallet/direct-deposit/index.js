@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
+import swal from "sweetalert";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -14,6 +15,14 @@ import CopyToClipboard from "react-copy-to-clipboard";
 
 const Wallet = (props) => {
     const { users } = props;
+    const { error } = props;
+
+    if(error) {
+        swal({
+            title: "oops!",
+            text: "something went wrong. kindly try again",
+          });
+    }
 
     const router = useRouter();
     const [addCard, setAddCard] = useState(false);
@@ -27,19 +36,21 @@ const Wallet = (props) => {
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-        const singleUser = users.filter(user => user.email === fetchedEmail);
-        console.log(singleUser)
 
-        // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-        if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-            console.log("false")
-            localStorage.removeItem("openlogin_store")
-            router.push("/auth/join");
-            return;
-        };
+        if(users) {
+            const singleUser = users.filter(user => user.email === fetchedEmail);
 
-        setToken(fetchedToken.sessionId);  
-        setUser(singleUser[0]);
+            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
+            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
+                console.log("false")
+                localStorage.removeItem("openlogin_store")
+                router.push("/auth/join");
+                return;
+            };
+
+            setToken(fetchedToken.sessionId);  
+            setUser(singleUser[0]);
+        }
     }, []);
 
     useEffect(() => {
@@ -198,7 +209,8 @@ export async function getServerSideProps() {
     const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
-            uri: "/users"
+            uri: "/users",
+            proxy_to_method: "GET",
         }
     })
 
