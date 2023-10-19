@@ -108,7 +108,7 @@ const CorporateSignup = () => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/create",
-                proxy_to_method: "POST",
+                // proxy_to_method: "POST",
             }
         }).then(res => {
                 if(!res.ok) {

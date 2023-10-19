@@ -233,7 +233,7 @@ const Airspace = (props) => {
                 headers: {
                     "Content-Type": "application/json",
                     uri: `/properties/user-properties/${user.id}`,
-                    proxy_to_method: "GET",
+                    // proxy_to_method: "GET",
     
                 }
             }).then((res) => {
@@ -542,12 +542,12 @@ const Airspace = (props) => {
 export default Airspace;
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
+    const response = await fetch("http://localhost:3000/api/proxy", {
+    // const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
-            proxy_to_method: "GET",
+            // proxy_to_method: "GET",
         }
     })
 
