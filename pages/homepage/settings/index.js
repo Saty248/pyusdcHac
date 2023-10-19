@@ -225,8 +225,8 @@ const Settings = (props) => {
 export default Settings;
 
 export async function getServerSideProps() {
-    const response = await fetch("http://localhost:3000/api/proxy", {
-    // const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
+    // const response = await fetch("http://localhost:3000/api/proxy", {
+    const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
