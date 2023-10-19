@@ -11,7 +11,7 @@ export const useVerification = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "uri": `/users/find-one/${currentUserId}`,
+                uri: `/users/find-one/${currentUserId}`,
                 proxy_to_method: "GET",
             }
         })

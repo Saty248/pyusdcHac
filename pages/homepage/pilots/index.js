@@ -115,8 +115,7 @@ const UAVs = (props) => {
 export default UAVs;
 
 export async function getServerSideProps() {
-    const response = await fetch(`/api/proxy?${Date.now()}`, {
-        method: "POST",
+    const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
