@@ -228,12 +228,11 @@ const Airspace = (props) => {
 
     useEffect(() => {
         if(user) {
-            fetch(`/api/proxy`, {
-                method: "POST",
+            fetch(`/api/proxy?${Date.now()}`, {
                 headers: {
                     "Content-Type": "application/json",
                     uri: `/properties/user-properties/${user.id}`,
-                    proxy_to_method: "GET",
+                    // proxy_to_method: "GET",
                 }
             }).then((res) => {
                 console.log(res);
@@ -546,7 +545,7 @@ export async function getServerSideProps() {
         headers: {
             "Content-Type": "application/json",
             uri: "/users",
-            proxy_to_method: "GET",
+            // proxy_to_method: "GET",
         }
     })
 
