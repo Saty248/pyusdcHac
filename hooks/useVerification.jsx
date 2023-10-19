@@ -16,10 +16,14 @@ export const useVerification = () => {
             }
         })
         const resp = await userDetails.json();
-        if(resp.KYCStatusId == 2)
+        console.log("This is the user from persona", resp)
+        console.log("And this is the KYC status", resp.KYCStatusId)
+        if(resp.KYCStatusId == 2){
             dispatch(counterActions.confirmOnMapModal());
-        else if(resp.KYCStatusId == 1)
+        }
+        else if(resp.KYCStatusId == 1) {
             alert("KYC is yet to be approved. It might take some time")
+        }
         else {
             // console.log("Please do KYC");
             const client = new Persona.Client({
