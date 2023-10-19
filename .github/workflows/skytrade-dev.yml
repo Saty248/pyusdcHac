@@ -20,4 +20,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: bash ./aws_ps_get_dev_env.sh
+    - run: pm2 stop ecosystem.config.js
     - run: npm i && npm run build
+    - run: pm2 startOrReload ecosystem.config.js --env dev
