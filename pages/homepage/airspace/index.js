@@ -221,11 +221,11 @@ const Airspace = (props) => {
 
     useEffect(() => {
         if(user) {
+            console.log("This is the user Id", user.id);
             // fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
             fetch("/api/proxy", {
                 headers: {
                     "Content-Type": "application/json",
-                    // uri: "/properties"
                     uri: `/properties/user-properties/${user.id}`,
                     api_key: api_key
                 }
