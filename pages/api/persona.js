@@ -29,7 +29,7 @@ const handler = async (req, res) => {
                 "Content-Type": "application/json",
                 // api_key: process.env.FRONTEND_API_KEY,
                 api_key: "XXX",
-                proxy_to_method: "POST",
+                // proxy_to_method: "POST",
               },
               body: JSON.stringify(reqBody)
             };
@@ -39,6 +39,7 @@ const handler = async (req, res) => {
               fetchOptions
             );
             const resData = await fetchRes.json();
+            console.log("This is the response from the fetch call to the backend", resData)
 
               if (resData?.data && resData?.data?.statusCode >= 400) {
                 throw new Error(resData.data.message);

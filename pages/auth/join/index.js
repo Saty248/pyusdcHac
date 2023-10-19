@@ -173,7 +173,7 @@ const Signup = (props) => {
                 // "Content-Type": "application/json",
                 uri: "/users",
                 // api_key: api_key
-                proxy_to_method: "GET",
+                // proxy_to_method: "GET",
             }
         }).then(res => {
             if(!res.ok) {
