@@ -166,13 +166,13 @@ const Signup = (props) => {
             return;
         }
 
-        const api_key = "XXX"
 
-        fetch("/api/proxy", {
-            headers: {
+        fetch(`/api/proxy?${Date.now()}`, {
+                method: "POST",
+                headers: {
                 "Content-Type": "application/json",
                 uri: "/users",
-                api_key: api_key
+                proxy_to_method: "GET",
             }
         }).then(res => {
             if(!res.ok) {
