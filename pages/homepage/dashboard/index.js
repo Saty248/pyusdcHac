@@ -460,7 +460,7 @@ const Dashboard = (props) => {
                                     <div className="border-l-4 w-3/4 border-black ps-2 ms-2">
                                         <h3 className="text-sml mb-5 font-bold">{newsletter.title}</h3>
                                         <p className="text-sm mb-5">{newsletter.text}</p>
-                                        <a className="text-sml text-blue-600 hover:text-blue-400 transition-all duration-500 ease-in-out" href={newsletter.link}>continue reading</a>
+                                        <a className="text-sml text-blue-600 hover:text-blue-400 transition-all duration-500 ease-in-out" target="_blank" href={newsletter.link}>continue reading</a>
                                     </div>
                                 </div>
                             }) 
