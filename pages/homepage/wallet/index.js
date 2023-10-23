@@ -52,10 +52,13 @@ const Wallet = (props) => {
     console.log(pageNumber);
     
     useEffect(() => {
-        if(showStripeModal) {
-            // const apiKey = "sk_test_51MRzIzIVelVZN1eROv5D4liCOoUHOH5UfbI2YUlVT3wGT1rkqeYnSJVfVxnt0g9Zk2nDn2ZOqFPTg0361oDlRJc1009xmc5dXi";
-                
-            fetch('/api/stripe')
+        if(showStripeModal) {        
+            fetch('/api/stripe', {
+                method: "POST",
+                body: JSON.stringify({
+                    wallet: user.blockchainAddress
+                })
+            })
             .then(response => response.json())
             .then(data => {
                 console.log("This is from stripe", data)

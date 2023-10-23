@@ -40,7 +40,7 @@ const NewAirspaceModal = (props) => {
         left: "calc(50% - 357px)", 
         }}>
             <form className="flex flex-col mt-20 justify-center items-center">
-               <h2 className="font-bold text-2xl">Welcome to SkyTrades</h2>
+               <h2 className="font-bold text-2xl">Welcome to SkyTrade</h2>
                <p className="text-light-brown text-sml">Please Select the the category you belong to from the options below.</p>
                <div className="mt-11 flex flex-row gap-5">
                     <div className="flex flex-col items-center gap-4">

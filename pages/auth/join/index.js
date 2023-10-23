@@ -271,7 +271,7 @@ const Signup = (props) => {
                 <p>Back</p>
             </button>
             <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 my-12" />
-            <h2 className="font-bold text-2xl">Welcome to SkyTrades</h2>
+            <h2 className="font-bold text-2xl">Welcome to SkyTrade</h2>
             <p className="text-light-brown text-center text-sml">
                 Please choose an option that best reflects the account's 
                 intended purpose to enhance your personalized experience.
@@ -286,13 +286,17 @@ const Signup = (props) => {
             </div>
             <div className="absolute bottom-2 flex flex-row justify-between w-full px-5">
                 <div>
-                    <p className="">&copy; Skytrades 2023</p>
+                    <p className="">&copy; SkyTrade 2023</p>
                 </div>
-                <div className="flex flex-row items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
-                        <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
-                    </svg>
-                    <p>help@skytrades.io</p>
+                <div className="flex flex-row items-center gap-1 pe-5">
+                    <a className="flex flex-row items-center gap-1" href="mailto:help@sky.trade">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
+                            <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
+                        </svg>
+                        <span>
+                            help@sky.trade
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>}

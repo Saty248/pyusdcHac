@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useState, useEffect, createContext } from 'react';
 
-// ReactContext to simplify access of StripeOnramp object
 const CryptoElementsContext = createContext(null);
 
 export const CryptoElements = ({ stripeOnramp, children }) => {
