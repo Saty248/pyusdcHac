@@ -31,7 +31,6 @@ const DepositConfirm = (props) => {
             const singleUser = users.filter(user => user.email === fetchedEmail);
 
             if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                console.log("false")
                 localStorage.removeItem("openlogin_store")
                 router.push("/auth/join");
                 return;
@@ -45,17 +44,14 @@ const DepositConfirm = (props) => {
     
     useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    user.blockchainAddress,
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -63,7 +59,7 @@ const DepositConfirm = (props) => {
                 ]
               }
    
-            fetch('https://api.testnet.solana.com', {
+            fetch('https://api.devnet.solana.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -81,6 +77,10 @@ const DepositConfirm = (props) => {
                 return response.json()
             })
             .then(result => {
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    return;
+                }
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
             .catch(error => {
@@ -170,8 +170,6 @@ export async function getServerSideProps() {
     }
     
     const data = await response.json();
-   
-    console.log(data)
 
     return {
         props: {

@@ -5,6 +5,12 @@ const WalletModal = (props) => {
             top: "5vh",  // This is for live environment
             left: "calc(50% - 250px)", 
         }}>
+            <button onClick={props.closeModal} className="absolute right-5 top-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
             <div className="mt-24 flex flex-col items-center">
                 <div className="flex flex-row justify-center items-center mb-6" style={{width: "49px", height: "49px", background: "rgba(0, 0, 0, 0.15)", borderRadius: "50%", border: "1px dotted #0653EA"}}>
                     <div className="flex flex-row justify-center items-center" style={{width: "41px", height: "41px", background: "white", borderRadius: "50%"}}> 

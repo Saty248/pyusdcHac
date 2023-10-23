@@ -158,7 +158,7 @@ const Settings = (props) => {
                 <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
                                                 : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
-                <form className="bg-white pt-16 pb-2 px-10 mx-auto" style={{width: "calc(100vw-257px)", minHeight: "600px", height: "calc(100vh - 91px)", borderTop: "2px solid #F0F0FA"}}>
+                <form className="bg-white pt-16 pb-2 px-10 mx-auto" style={{width: "calc(100vw-257px)", borderTop: "2px solid #F0F0FA"}}>
                     <div>
                         <h3 className="text-2xl font-medium">My Profile</h3>
                         <p>Update your account settings</p>
@@ -173,6 +173,36 @@ const Settings = (props) => {
                             <button className="bg-bleach-red text-light-red-100 rounded-md transition-all duration-500 ease-in-out hover:bg-red-200 hover:text-white" style={{width: "101px", height: "39px"}}>Remove</button>
                         </div>
                     </div> */}
+                    {(user.KYCStatusId === 0 || user.KYCStatusId === 3) &&
+                        <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
+                            <div>
+                                <h3 className="text-2xl font-medium">Verify your Account</h3>
+                                <p>Verify your account to have your AirSpace listed for rental on our platform</p>
+                            </div>
+                            <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Verify now</button>
+                        </div>
+                    }
+
+                    {user.KYCStatusId === 2 && 
+                        <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
+                            <div>
+                                <h3 className="text-2xl font-medium">Your Account is verified</h3>
+                                <p>This Account is verified</p>
+                            </div>
+                            <p className="bg-bleach-green font-semibold rounded-md py-1 px-2 text-center text-dark-green">verified</p>
+                        </div>
+                    }
+                    
+                    {user.KYCStatusId === 1 &&
+                        <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
+                            <div>
+                                <h3 className="text-2xl font-medium">Your Account is pending verification</h3>
+                                <p>This Account is under review</p>
+                            </div>
+                            <p className="bg-light-yellow font-semibold rounded-md py-1 px-2 text-center text-dark-yellow">Pending</p>
+                        </div>
+                    }
+
                     <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Personal Information</h3>
@@ -203,14 +233,14 @@ const Settings = (props) => {
                         <button onClick={updateDataHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Save</button>
                     </div>
                     <div className="flex flex-row mt-10 text-sm justify-between items-center">
-                        <p>&copy; Skytrades 2023</p>
+                        <p>&copy; Skytrade 2023</p>
                         <div className="flex flex-row items-center gap-1">
                             <a className="flex flex-row items-center gap-1" href="mailto:help@skytrades.io">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
                                     <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
                                 </svg>
                                 <span>
-                                    help@skytrades.io
+                                    help@skytrade.io
                                 </span>
                             </a>
                         </div>

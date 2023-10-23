@@ -16,8 +16,6 @@ export const useVerification = () => {
             }
         })
         const resp = await userDetails.json();
-        console.log("This is the user from persona", resp)
-        console.log("And this is the KYC status", resp.KYCStatusId)
         if(resp.KYCStatusId == 2){
             dispatch(counterActions.confirmOnMapModal());
         }

@@ -238,7 +238,7 @@ const Signup = (props) => {
             </button>
             <form className="flex flex-col mx-auto pt-20" style={{width: "396px"}}>
                 <Image src={logo} alt="Company's logo" width={164} height={58} className="my-4" />
-                <p className=" text-dark-brown text-xl font-medium mt-12">Sign in/Sign Up</p>
+                <p className=" text-dark-brown text-xl font-medium mt-12">Welcome to SkyTrade</p>
                 <div className="mt-2 relative">
                     <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >E-mail Address<span className="text-red-600">*</span></label> <br />
                     <input type="email" ref={emailRef} onChange={() => setEmailValid(true)} placeholder="E-mail Address" className="bg-light-grey rounded-md focus:outline-blue-200 placeholder:text-light-brown placeholder:font-medium font-sans" style={{width: "396px",  height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />

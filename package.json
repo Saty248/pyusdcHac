@@ -11,6 +11,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@solana/web3.js": "^1.87.0",
+    "@stripe/crypto": "^0.0.4",
+    "@stripe/stripe-js": "^2.1.9",
     "@web3auth/base": "^7.0.1",
     "@web3auth/no-modal": "^7.0.1",
     "@web3auth/openlogin-adapter": "^7.0.1",
@@ -21,6 +23,7 @@
     "maplibre-gl": "^3.2.0",
     "micro": "^10.0.1",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "mongodb": "^5.7.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.5.2",

@@ -20,9 +20,9 @@ const Navbar = (props) => {
             <Image src="/images/user-icon.png" alt="icon" className="ms-6" width={30} height={30} />
             <div onClick={() => router.push("/homepage/settings")} className="me-5 ms-2">
                 <p className="font-base font-medium">{props.name}</p>
-                <div className={`me-1.5 flex flex-row items-center justify-center font-semibold gap-1 ${props.status === "Approved" ? "bg-bleach-green" : "bg-bleach-red"}`} style={{width: "50%", height: "12px", borderRadius:"3px", }}>
+                <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === "Approved" ? "bg-bleach-green" : "bg-bleach-red"}`} style={{width: "70%", height: "12px", borderRadius:"3px", }}>
                     {/* <p className="text-xxs text-light-green">verified</p> */}
-                    <p className={`text-xxs ${props.status === "Approved" ? "text-light-green" : "text-light-red-100"}`}>{props.status}</p>
+                    <p className={`text-xxs text-center ${props.status === "Approved" ? "text-light-green" : "text-light-red-100"}`}>{props.status}</p>
                 </div>
                 {/* <div className="flex flex-row items-center">
                     <div>

@@ -47,9 +47,7 @@ const Dashboard = (props) => {
             if(users) {
                 const singleUser = users.filter(user => user.email === fetchedEmail);
 
-                // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
                 if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                    console.log("false")
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -62,17 +60,14 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    user.blockchainAddress,
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -80,7 +75,7 @@ const Dashboard = (props) => {
                 ]
               }
    
-            fetch('https://api.testnet.solana.com', {
+            fetch('https://api.devnet.solana.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -98,9 +93,14 @@ const Dashboard = (props) => {
                 return response.json()
             })
             .then(result => {
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    return;
+                }
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
             .catch(error => {
+                setTokenBalance("");
                 console.error(error);
             });
         }
@@ -116,7 +116,6 @@ const Dashboard = (props) => {
                     // proxy_to_method: "GET",
                 }
             }).then((res) => {
-                console.log(res);
                 if(!res.ok) {
                     return res.json()
                     .then((err) => {
@@ -125,63 +124,16 @@ const Dashboard = (props) => {
                 }
                 return res.json()
                 .then((data) =>{
-                    console.log(data.length)
                     setAirspaceLength(data.length)
                 })
             })
             .catch((err) => {
+                setAirspaceLength("")
                 console.log(err)
             })
         }
     }, [user])
     
-    // useEffect(() => {
-    //     fetch(`/api/proxy?${Date.now()}`, {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             uri: "/users"
-    //         }
-    //     }).then(res => {
-    //         if(!res.ok) {
-    //             return res.json()
-    //             .then(err => {
-    //                 console.log(err)
-    //                 return;
-    //             })
-    //         }
-    //         return res.json()
-    //     }).then(response => {
-    //         console.log(users)
-    //         console.log(response)
-    //         setUsers(response)
-    //         const fetchedEmail = localStorage.getItem("email");
-    //         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-    //         const singleUser = users.filter(user => user.email === fetchedEmail);
-
-    //         console.log(singleUser);
-
-    //         console.log(fetchedToken.sessionId)
-    //         console.log(fetchedToken.sessionId.length)
-
-    //         if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-    //         // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-    //             console.log("false")
-    //             localStorage.removeItem("openlogin_store")
-    //             router.push("/auth/join");
-    //             return;
-    //         };
-
-    //         setToken(fetchedToken.sessionId);
-
-            
-    //         console.log(singleUser);
-    //         setUser(singleUser[0]);
-    //     }).catch(err => {
-    //         console.log(err)
-    //     })
-    // }, [token]);
-
-
 
     useEffect(() => {
         setNewslettersLoading(true)
@@ -194,7 +146,6 @@ const Dashboard = (props) => {
             }
         })
         .then(res => {
-            console.log(res)
             if(!res.ok) {
                 return res.json()
                 .then(errorData => {
@@ -204,7 +155,6 @@ const Dashboard = (props) => {
             return res.json();
         })
         .then(response => {
-            console.log(response)
             setNewslettersLoading(false);
             if(response.length > 0) { 
                 setNewsletters(response.reverse());
@@ -216,6 +166,7 @@ const Dashboard = (props) => {
     }, []);
 
     useEffect(() => {
+        
         if(user) {
             const ctx = document.getElementById('chart').getContext('2d');
 
@@ -226,18 +177,54 @@ const Dashboard = (props) => {
                     existingChart.destroy();
                 }
             }
+
+            const cData = [
+                {
+                    country: "United States",
+                    percent: 30
+                },
+                {
+                    country: "India",
+                    percent: 4
+                },
+                {
+                    country: "United Kingdom",
+                    percent: 16
+                },
+                {
+                    country: "Canada",
+                    percent: 30
+                },
+                {
+                    country: "Brazil",
+                    percent: 10
+                },
+                {
+                    country: "Australia",
+                    percent: 10
+                },
+            ]
+
+            const chartData = {
+                // labels: [`United States - 30%`, 'India - 4%', 'United Kingdom - 16%', 
+                // 'Canada - 30%', 'Brazil - 10%', 'Australia - 10%',],
+                labels: cData.map(data => {
+                    return [
+                        `${data.country} - ${data.percent}%`,
+                    ]
+                }),
+                data: [30, 4, 16, 
+                        30, 10, 10,  
+                    ]
+            }
+            
             new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['United States', 'India', 'United Kingdom', 
-                            'Canada', 'Brazil', 'Australia',
-                        ],
+                labels: chartData.labels,
                 datasets: [{
                 label: '',
-                data: [50, 4, 2, 
-                        4, 8, 12,  
-                        ],
-                //   backgroundColor: 'rgb(255, 211, 11)',
+                data: chartData.data,
                 color: "black",
                 barThickness: 10,
                 borderRadius: 10
@@ -253,32 +240,29 @@ const Dashboard = (props) => {
                 }
                 },
                 plugins: {
-                tooltip: {
-                    backgroundColor: 'black', 
-                    bodyColor: 'white',
-                    yAlign: 'bottom',
-                    titleFont: {
-                        size: 14,
+                    tooltip: {
+                        backgroundColor: 'black', 
+                        bodyColor: 'transparent',
+                        yAlign: 'bottom',
+                        titleFont: {
+                            size: 14,
+                        },
+                        titleColor: "white",
+                        textAlign: 'left',
+                        bodyFont: {
+                            color: 'red'
+                        },
+                        displayColors: false,
+                        // style: {
+                        //     textAlign: 'right'
+                        // }
                     },
-                    titleColor: "white",
-                    bodyFont: {
-                        color: 'red'
+                    legend: {
+                        // display: false, 
                     },
-                    displayColors: false,
-                    style: {
-                        textAlign: 'center'
-                    }
-                },
-                legend: {
-                    // display: false, 
-                },
-                label: {
-                    display: false
-                },
-                title: {
-                    display: false,
-                    text: "August 10"
-                }
+                    label: {
+                        // display: false
+                    },
                 }
             }
             });
@@ -320,11 +304,6 @@ const Dashboard = (props) => {
                                         <path fillRule="evenodd" clipRule="evenodd" d="M18.3666 3.15119C17.7088 1.60553 16.2554 0.494403 14.5259 0.312405L13.874 0.243809C10.5817 -0.102644 7.26098 -0.0797977 3.97374 0.311922L3.5418 0.363394C1.873 0.562254 0.550751 1.86606 0.328475 3.5319C-0.109491 6.81421 -0.109492 10.1402 0.328475 13.4225C0.550751 15.0883 1.873 16.3921 3.5418 16.591L3.97374 16.6425C7.26098 17.0342 10.5817 17.057 13.874 16.7106L14.5259 16.642C16.2554 16.46 17.7088 15.3488 18.3666 13.8032C19.4058 13.4938 20.199 12.5928 20.3292 11.4796C20.5625 9.48477 20.5625 7.4696 20.3292 5.47481C20.199 4.36159 19.4058 3.46062 18.3666 3.15119ZM13.7171 1.73557C10.536 1.40082 7.32741 1.4229 4.15123 1.80138L3.71929 1.85286C2.73048 1.97069 1.947 2.74323 1.8153 3.73029C1.3949 6.88093 1.3949 10.0734 1.8153 13.2241C1.947 14.2111 2.73048 14.9837 3.71929 15.1015L4.15123 15.153C7.32742 15.5315 10.536 15.5535 13.7171 15.2188L14.3689 15.1502C15.2195 15.0607 15.972 14.6415 16.4936 14.0191C14.9854 14.1071 13.4572 14.0678 11.967 13.9012C10.6976 13.7594 9.67103 12.7598 9.52129 11.4796C9.28799 9.48477 9.28799 7.4696 9.52129 5.47481C9.67103 4.19455 10.6976 3.19501 11.967 3.05314C13.4572 2.88659 14.9854 2.84729 16.4936 2.93524C15.972 2.31292 15.2195 1.89367 14.3689 1.80417L13.7171 1.73557ZM17.2026 4.49188C17.2032 4.49572 17.2038 4.49956 17.2044 4.5034L17.2105 4.54229L17.4091 4.51144C17.5119 4.52161 17.6145 4.53242 17.7169 4.54386C18.3043 4.60951 18.7721 5.07366 18.8394 5.64907C19.0591 7.52807 19.0591 9.4263 18.8394 11.3053C18.7721 11.8807 18.3043 12.3449 17.7169 12.4105C17.6145 12.422 17.5119 12.4328 17.4091 12.4429L17.2105 12.4121L17.2044 12.451C17.2038 12.4548 17.2032 12.4587 17.2026 12.4625C15.524 12.6143 13.8024 12.597 12.1336 12.4105C11.5462 12.3449 11.0784 11.8807 11.0111 11.3053C10.7914 9.4263 10.7914 7.52807 11.0111 5.64907C11.0784 5.07366 11.5462 4.60951 12.1336 4.54386C13.8024 4.35735 15.524 4.34002 17.2026 4.49188Z" fill="#1A572E"/>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">Balance</p>
@@ -340,11 +319,6 @@ const Dashboard = (props) => {
                                         <path fillRule="evenodd" clipRule="evenodd" d="M13.5579 5.53472C12.6873 4.69936 11.3128 4.69936 10.4422 5.53472L5.8158 9.97405C5.70245 10.0828 5.6262 10.2245 5.59787 10.379C5.04373 13.4009 5.00283 16.4945 5.47687 19.53L5.58939 20.2505H8.56585V14.0391C8.56585 13.6249 8.90164 13.2891 9.31585 13.2891H14.6843C15.0985 13.2891 15.4343 13.6249 15.4343 14.0391V20.2505H18.4107L18.5232 19.53C18.9973 16.4945 18.9564 13.4009 18.4023 10.379C18.3739 10.2245 18.2977 10.0828 18.1843 9.97406L13.5579 5.53472ZM9.40369 4.4524C10.8546 3.06014 13.1455 3.06014 14.5964 4.4524L19.2229 8.89174C19.5634 9.21853 19.7925 9.64422 19.8777 10.1085C20.4622 13.2961 20.5053 16.5594 20.0053 19.7614L19.8245 20.9189C19.7498 21.3976 19.3375 21.7505 18.853 21.7505H14.6843C14.2701 21.7505 13.9343 21.4147 13.9343 21.0005V14.7891H10.0659V21.0005C10.0659 21.4147 9.73007 21.7505 9.31585 21.7505H5.14712C4.66264 21.7505 4.25035 21.3976 4.1756 20.9189L3.99484 19.7614C3.49479 16.5594 3.53794 13.2961 4.12247 10.1085C4.2076 9.64422 4.43668 9.21853 4.77725 8.89173L9.40369 4.4524Z" fill="#0653EA"/>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
                             <div className="flex flex-row items-center justify-between">
                                 <div className="mt-10 text-start">
@@ -355,7 +329,7 @@ const Dashboard = (props) => {
                             </div>
                         </div>
                         {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}> */}
-                        <button className="p-5 bg-white cursor-default transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
+                        <button className="p-5 bg-light-blue cursor-default transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#FFF4D1", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -369,20 +343,23 @@ const Dashboard = (props) => {
                                         </defs>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
-                            <div className="mt-10 text-start">
-                                <p className="text-sm">UAVs</p>
-                                <p className="text-2xl">0</p>
+                            <div className="flex flex-row items-center justify-between">
+                                <div className="mt-10 text-start">
+                                    <p className="text-sm">UAVs</p>
+                                    <p className="text-2xl">0</p>
+                                </div>
+                                <div className="mt-14 flex flex-col items-center justify-center font-semibold right-0 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
+                                    <p className="text-sm text-dark-green">Coming Soon</p>
+                                </div>
                             </div>
                         </button>            
                     </div>
-                    <div className="mx-auto mt-5 bg-white pt-10 flex flex-row justify-center rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)", maxHeight: "653px"}}>
-                        <canvas id="chart"></canvas>
+                    <div className="mx-auto mt-5 pb-4 pt-16 bg-white flex flex-col items-center relative rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)", maxHeight: "653px"}}>
+                        <p className="text-xl font-bold absolute top-5 left-5">User Geographies</p>
+                        {/* <div className=""> */}
+                            <canvas id="chart"></canvas>
+                        {/* </div> */}
                     </div>
                 </div>
                 <div className="my-5 me-5 rounded-md" style={{width: "20vw", height: "100vh",}}>
@@ -472,12 +449,18 @@ const Dashboard = (props) => {
                         </div>
                         {(newslettersLoading && newsletters.length < 1) && <p className="text-sm text-center">Loading...</p>}
                         {newsletters.map(newsletter => {
-                            return <div key={newsletter.id} className="flex flex-row items-center mb-3">
-                                    <p className="text-sm w-1/4">{newsletter.date}</p>
+                            const date = new Date(newsletter.date)
+                            const month = date.toLocaleString('default', { month: 'short' })
+                            const day = date.getDate();
+                            const year = date.getFullYear();
+                            const newDate = `${month} ${day} ${year}` 
+
+                            return <div key={newsletter.id} className="flex flex-row items-center mb-8">
+                                    <p className="text-sm text-center w-1/4">{newDate}</p>
                                     <div className="border-l-4 w-3/4 border-black ps-2 ms-2">
-                                        <h3 className="text-sml font-bold">{newsletter.title}</h3>
-                                        <p className="text-sm">{newsletter.text}</p>
-                                        <a className="text-xs text-blue-600" href={newsletter.link}>continue reading</a>
+                                        <h3 className="text-sml mb-5 font-bold">{newsletter.title}</h3>
+                                        <p className="text-sm mb-5">{newsletter.text}</p>
+                                        <a className="text-sml text-blue-600 hover:text-blue-400 transition-all duration-500 ease-in-out" href={newsletter.link}>continue reading</a>
                                     </div>
                                 </div>
                             }) 
@@ -524,8 +507,6 @@ export async function getServerSideProps() {
     }
     
     const data = await response.json();
-   
-    console.log(data)
 
     return {
         props: {

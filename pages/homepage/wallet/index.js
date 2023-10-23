@@ -4,6 +4,9 @@ import { Fragment } from "react";
 import { createPortal } from "react-dom";
 import ReactPaginate from "react-paginate";
 import swal from "sweetalert";
+import { loadStripeOnramp } from "@stripe/crypto";
+import { CryptoElements, OnrampElement } from "@/hooks/stripe";
+const stripeOnrampPromise = loadStripeOnramp("pk_test_51MRzIzIVelVZN1eRHjwBDzNvOb5lc65TvVoMtYFMUlZiyzXNXZE63TtoPspFu22pGAoSdlEeOgn6VWlu3XmKmMSd00LgkRYTfv");
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -22,7 +25,8 @@ const Wallet = (props) => {
           });
     }
 
-    const url = 'https://api.testnet.solana.com';
+    // const url = 'https://api.testnet.solana.com';
+    const url = 'https://api.devnet.solana.com';
 
     const router = useRouter();
 
@@ -32,16 +36,36 @@ const Wallet = (props) => {
     const [tokenAccount, setTokenAccount] = useState("");
     const [transactionHistory, setTransactionHistory] = useState();
     const [transactionData, setTransactionData] = useState([]);
+    const [transactionHistories, setTransactionHistories] = useState([]);
     const [completedTrans, setCompletedTrans] = useState();
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+    const [showStripeModal, setShowStripeModal] = useState(false);
+    const [clientSecret, setClientSecret] = useState("");
     const [pageNumber, setPageNumber] = useState(0);
 
-    const transactionsPerPage = 1;
+    const transactionsPerPage = 5;
     const pagesVisited = pageNumber * transactionsPerPage;
     
     const pageCount = transactionHistory && Math.ceil(transactionHistory.length / transactionsPerPage);
+    console.log(pagesVisited);
+    console.log(pageNumber);
     
+    useEffect(() => {
+        if(showStripeModal) {
+            // const apiKey = "sk_test_51MRzIzIVelVZN1eROv5D4liCOoUHOH5UfbI2YUlVT3wGT1rkqeYnSJVfVxnt0g9Zk2nDn2ZOqFPTg0361oDlRJc1009xmc5dXi";
+                
+            fetch('/api/stripe')
+            .then(response => response.json())
+            .then(data => {
+                console.log("This is from stripe", data)
+                
+                setClientSecret(data.clientSecret)
+            })
+            .catch(error => console.error('Error:', error));
+        }
+      }, [showStripeModal]);
+
     useEffect(() => {
         const fetchedEmail = localStorage.getItem("email");
         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
@@ -70,11 +94,11 @@ const Wallet = (props) => {
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
+                  user.blockchainAddress,
+                // "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
                 // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -101,6 +125,13 @@ const Wallet = (props) => {
             })
             .then(result => {
                 console.log(result)
+                
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    setTokenAccount("");
+                    setTransactionHistory([])
+                    return;
+                }
                 console.log(result.result.value[0].pubkey)
                 setTokenAccount(result.result.value[0].pubkey)
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
@@ -131,6 +162,7 @@ const Wallet = (props) => {
                 body: JSON.stringify(data)
                 })
                 .then(response => {
+                    console.log(response);
                     if(!response.ok) {
                         return response.json()
                         .then(errorData => {
@@ -140,6 +172,7 @@ const Wallet = (props) => {
                     return response.json()
                 })
                 .then(result => {
+                    console.log(result)
                     console.log(result.result)
                     setTransactionHistory(result.result);
                 })
@@ -151,8 +184,12 @@ const Wallet = (props) => {
 
     useEffect(() => {
         let userArray = [];
+        console.log("new page loading...")
         if(transactionHistory && transactionHistory.length > 0) {
-            transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage).map(trans => {
+            const trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage)
+            console.log(trans);
+            console.log(pagesVisited);
+            trans.map(trans => {
                 console.log(trans)
                 userArray.push(trans);
             });   
@@ -161,8 +198,11 @@ const Wallet = (props) => {
         }   
   }, [pagesVisited, transactionHistory]);
 
+    const transactionHistoryArray = [];
+
     useEffect(() => {
         if(completedTrans && completedTrans.length > 0) {
+            console.log(completedTrans);
             setTransactionData([]);
             for(const transaction of completedTrans) {
                 console.log(transaction);
@@ -200,45 +240,51 @@ const Wallet = (props) => {
                 .then((resData) => {
                     console.log(resData.result.meta)
 
-                    const senderPostBalance = resData.result.meta.postTokenBalances.filter(sender => {
-                        // For live
-                        // return sender.owner === user.wallet
-        
-                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    const postBalances = resData.result.meta.postTokenBalances.filter(sender => {
+                        return sender.owner === user.blockchainAddress
                     }) 
 
-                    const senderPreBalance = resData.result.meta.preTokenBalances.filter(sender => {
-                        // For live
-                        // return sender.owner === user.wallet
-
-                        return sender.owner === "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR"
+                    const preBalances = resData.result.meta.preTokenBalances.filter(sender => {
+                        return sender.owner === user.blockchainAddress
                     });
 
-                    let postBalance;
-                    if(senderPostBalance[0].uiTokenAmount) {
-                        postBalance = senderPostBalance[0].uiTokenAmount.uiAmountString
-                    }
-                    
-                    // const postBalance = senderPostBalance[0]
+                    let postBalance;    
                     let preBalance;
-                    if(senderPreBalance[0].uiTokenAmount) {
-                        preBalance = senderPreBalance[0].uiTokenAmount.uiAmountString
+                    let transactionAmount;
+
+                    if(preBalances.length > 0) {
+                        preBalance = preBalances[0].uiTokenAmount.uiAmountString;
+                        postBalance = postBalances[0].uiTokenAmount.uiAmountString;
+                        console.log(preBalance)
+                        console.log(postBalance)
+
+                        transactionAmount = postBalance - preBalance;
+                    } else {
+                        console.log("no pre-token balances")
+                        const senderPreBalances = resData.result.meta.preTokenBalances.filter(sender => {
+                            return sender.owner !== user.blockchainAddress
+                        });
+
+                        const senderPostBalances = resData.result.meta.postTokenBalances.filter(sender => {
+                            return sender.owner !== user.blockchainAddress
+                        }) 
+
+                        console.log(senderPreBalances[0].uiTokenAmount.uiAmountString);
+                        const oldBalance = senderPreBalances[0].uiTokenAmount.uiAmountString;
+                        console.log(senderPostBalances[0].uiTokenAmount.uiAmountString);
+                        const postBalance = senderPostBalances[0].uiTokenAmount.uiAmountString;
+
+                        transactionAmount = +oldBalance - +postBalance;
                     }
-
-                    // const preBalance = senderPreBalance[0]
-
-                    
-                    
-                    const transactionAmount = postBalance - preBalance;
                     
                     transaction.amount = +transactionAmount.toFixed(4);
+                    transactionHistoryArray.push(transaction);
                     setTransactionData(prev => {
                         return [
-                            ...prev,
+                            ...prev, 
                             transaction
                         ]
-                    })
-                    console.log(result.result);
+                    });
                 })
                 .catch(error => {
                     console.error(error);
@@ -247,13 +293,33 @@ const Wallet = (props) => {
         }
     }, [completedTrans]);
 
+    useEffect(() => {
+        if(transactionData.length > 0) {
+            const trans = transactionData.sort((a, b) => b.blockTime - a.blockTime);
+            setTransactionHistories(trans);
+        }
+    }, [transactionHistoryArray]);
+
+    
+
+    const Stripe = (props) => {
+        return  <div style={{width: "400px", height: "70vh", left: "calc(50% - 200px)"}} className="fixed z-50 top-10">
+            <CryptoElements stripeOnramp={stripeOnrampPromise}>
+            <OnrampElement clientSecret={props.clientSecret} />
+            </CryptoElements>
+        </div>
+    }
+
     const changePage = ({selected}) => {
+        console.log("this is the selected page number", selected)
         setPageNumber(selected);
     }
 
     const backdropCloseHandler = () => {
         setShowDepositModal(false);
         setShowWithdrawalModal(false);
+        // setShowStripeModal(false)
+        // setClientSecret("")
     }
 
     const depositRouteHandler = () => {
@@ -272,15 +338,20 @@ const Wallet = (props) => {
         setShowDepositModal(true);
     }
 
+    const StripeHandler = () => {
+        setShowStripeModal(true)
+    }
+
     if(!user || !token) {
         return <Spinner />
     }     
 
     return <Fragment>
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
-        {showDepositModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
-        {showDepositModal && createPortal(<WalletModal method="deposit" form="from" navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
+        {showDepositModal && createPortal(<Backdrop  />, document.getElementById("backdrop-root"))}
+        {(showDepositModal && clientSecret.length < 1) && createPortal(<WalletModal method="deposit" closeModal={() => setShowDepositModal(false)} form="from" stripe={StripeHandler} navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {(showStripeModal && clientSecret) && createPortal(<Stripe clientSecret={clientSecret} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
             <Sidebar />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
@@ -331,25 +402,22 @@ const Wallet = (props) => {
                 <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
                     <p className="w-2/12">Date</p>
                     <p className="w-4/12">Transaction ID</p>
-                    <p className="w-2/12">Amount</p>
+                    <p className="w-2/12">Amount (USDC)</p>
                     <p className="w-1/12">Status</p>
                 </div>
                 {!transactionHistory && 
-                        // <div className="text-center">
                             <p className="mt-5 text-center">Loading...</p>
-                        // </div>
-                        // <Spinner />
                         } 
                 {(transactionHistory && transactionHistory.length < 1) && 
                     <div className="flex flex-row justify-center mt-20">
                         <p>You don't have any transaction at the moment</p>
                     </div>
                 } 
-                {(transactionData && transactionData.length > 0) && transactionData.map(history => {
+                {(transactionHistories && transactionHistories.length > 0) && transactionData.map(history => {
                     return <div key={history.signature} className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
                     <p className="w-2/12">{history.date}</p>
                     {/*remove the cluster before going live  */}
-                    <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=testnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
+                    <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=devnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
                     <p className={`w-2/12 ${history.amount > 0 ? "text-green-500" : "text-red-600"}`}><span>{history.amount ? history.amount : ""}</span></p>
                     <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
@@ -359,17 +427,21 @@ const Wallet = (props) => {
                     </p>
                 </div>
                 })}
-                {(transactionData && transactionData.length > 0) && <ReactPaginate
-                            previousLabel={"Previous"}
-                            nextLabel={"Next"}
-                            pageCount={pageCount}
-                            onPageChange={changePage}
-                            containerClassName={"paginationBttns"}
-                            previousLinkClassName={'previousBttn'}
-                            nextLinkClassName={'nextBttn'}
-                            disabledClassName={'pagination-disabled'}
-                            activeClassName={'paginationActive'}
-                        />}
+                {(transactionHistory && transactionHistory.length > 0) && 
+                        <div className="flex flex-row justify-end pe-10" style={{maxWidth: "1139px"}}>
+                            <ReactPaginate
+                                    previousLabel={"Previous"}
+                                    nextLabel={"Next"}
+                                    pageCount={pageCount}
+                                    onPageChange={changePage}
+                                    containerClassName={"paginationBttns"}
+                                    previousLinkClassName={'previousBttn'}
+                                    nextLinkClassName={'nextBttn'}
+                                    disabledClassName={'pagination-disabled'}
+                                    activeClassName={'paginationActive'}
+                                />
+                        </div>    
+                    }
             </div>
         </div>
     </Fragment>

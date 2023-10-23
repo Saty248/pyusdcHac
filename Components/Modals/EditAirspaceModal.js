@@ -3,23 +3,22 @@ import { Fragment, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
+import moment from "moment-timezone";
 import swal from "sweetalert";
 
 import TimeSelect from "../TimeSelect";
 import Spinner from "../Spinner";
 import Backdrop from "../Backdrop";
-// import TimezoneSelectComponent from "../Timezone";
+import TimezoneSelectComponent from "../Timezone";
 
 const EditAispaceModal = (props) => {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [costChecked, setCostChecked] = useState(true);
-    const [deckChecked, setDeckChecked] = useState(false);
-    const [stationChecked, setStationChecked] = useState(false);
-    const [storageChecked, setStorageChecked] = useState(false);
-    const [rentChecked, setRentChecked] = useState(true);
-    const [sellChecked, setSellChecked] = useState(false);
+    const [costChecked, setCostChecked] = useState(props.variable);
+    const [deckChecked, setDeckChecked] = useState(props.deck);
+    const [stationChecked, setStationChecked] = useState(props.station);
+    const [storageChecked, setStorageChecked] = useState(props.storage);
 
     const [negotiable, setNegotiable] = useState(false);
     const [deck, setDeck] = useState("");
@@ -27,14 +26,14 @@ const EditAispaceModal = (props) => {
     const [storage, setStorage] = useState("");
     const [rentAirspace, setRentAirspace] = useState("");
     const [sellAirspace, setSellAirspace] = useState("");
-    const [airspaceStatus, setAirspaceStatus] = useState("Available")
-    const [monAvailable, setMonAvailable] = useState(true);
-    const [tueAvailable, setTueAvailable] = useState(true);
-    const [wedAvailable, setWedAvailable] = useState(true);
-    const [thuAvailable, setThuAvailable] = useState(true);
-    const [friAvailable, setFriAvailable] = useState(true);
-    const [satAvailable, setSatAvailable] = useState(true);
-    const [sunAvailable, setSunAvailable] = useState(true);
+    const [airspaceStatus, setAirspaceStatus] = useState(props.status)
+    const [monAvailable, setMonAvailable] = useState(props.weeks[0].isAvailable);
+    const [tueAvailable, setTueAvailable] = useState(props.weeks[1].isAvailable);
+    const [wedAvailable, setWedAvailable] = useState(props.weeks[2].isAvailable);
+    const [thuAvailable, setThuAvailable] = useState(props.weeks[3].isAvailable);
+    const [friAvailable, setFriAvailable] = useState(props.weeks[4].isAvailable);
+    const [satAvailable, setSatAvailable] = useState(props.weeks[5].isAvailable);
+    const [sunAvailable, setSunAvailable] = useState(props.weeks[6].isAvailable);
     const [fromMonday, setFromMonday] = useState(7);
     const [toMonday, setToMonday] = useState(22);
     const [fromTuesday, setFromTuesday] = useState(7);
@@ -49,10 +48,14 @@ const EditAispaceModal = (props) => {
     const [toSaturday, setToSaturday] = useState(22);
     const [fromSunday, setFromSunday] = useState(7);
     const [toSunday, setToSunday] = useState(22);
-    const [timezone, setTimezone] = useState();
+    const [timezone, setTimezone] = useState(props.timeZone);
 
     const airspaceTitleRef = useRef();
     const costRef = useRef();
+
+    console.log(monAvailable)
+    console.log(tueAvailable)
+    console.log(props.weeks)
     
 
     const dispatch = useDispatch();
@@ -110,12 +113,11 @@ const EditAispaceModal = (props) => {
 
 
     const airspaceStatusHandler = (e) => {
-        setAirspaceStatus(e.target.value);
+        setAirspaceStatus(!airspaceStatus);
     }
 
     const formSubmitHandler = (e) => {
         e.preventDefault();
-        console.log(deck, negotiable, storage, sellAirspace, rentAirspace);
         const airspaceTitle = airspaceTitleRef.current.value;
         const costValue = costRef.current.value;
 
@@ -124,70 +126,69 @@ const EditAispaceModal = (props) => {
                 weekDayId: 0,
                 fromTime: +fromMonday,
                 toTime: +toMonday,
-                isAvailable: (monAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (monAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 1,
                 fromTime: +fromTuesday,
                 toTime: +toTuesday,
-                isAvailable: (tueAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (tueAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 2,
                 fromTime: +fromWednesday,
                 toTime: +toWednesday,
-                isAvailable: (wedAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (wedAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 3,
                 fromTime: +fromThursday,
                 toTime: +toThursday,
-                isAvailable: (thuAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (thuAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 4,
                 fromTime: +fromFriday,
                 toTime: +toFriday,
-                isAvailable: (friAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (friAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 5,
                 fromTime: +fromSaturday,
                 toTime: +toSaturday,
-                isAvailable: (satAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (satAvailable && !airspaceStatus) ? true : false 
             },
             {
                 weekDayId: 6,
                 fromTime: +fromSunday,
                 toTime: +toSunday,
-                isAvailable: (sunAvailable && airspaceStatus === "Available") ? true : false 
+                isAvailable: (sunAvailable && !airspaceStatus) ? true : false 
             },
         ]
 
         const airspaceInformation = {
-            ...airspaceData,
             ownerId: props.user.id,
+            propertyId: props.id,
             title: airspaceTitle,
             transitFee: +costValue,
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
             hasChargingStation: stationChecked,
-            isRentableAirspace: rentChecked,
             isFixedTransitFee: costChecked,
-            noFlyZone: airspaceStatus === "Available" ? false : true,
+            noFlyZone: !airspaceStatus ? false : true,
             weekDayRanges,
-            timezone: airspaceStatus === "Available" ? timezone : "GMT"
+            timezone: !airspaceStatus ? timezone : "GMT"
         }
 
         setIsLoading(true);
 
         fetch(`/api/proxy?${Date.now()}`, {
-            method: "POST",
+            method: "PATCH",
             body: JSON.stringify(airspaceInformation),
             headers: {
                 "Content-Type": "application/json",
-                URI: "/properties/claim",
-                proxy_to_method: "POST",
+                URI: "/properties/update",
+                // proxy_to_method: "POST",
             }
         })
         .then(res => {
@@ -203,12 +204,13 @@ const EditAispaceModal = (props) => {
                 console.log(response);
                 swal({
                     title: "Submitted",
-                    text: "Airspace registered successfully",
+                    text: "Airspace record updated successfully",
                     icon: "success",
                     button: "Ok"
                   }).then(() => {
-                    dispatch(counterActions.closeAdditionalInfoModal());
-                    setIsLoading(false);
+                    // dispatch(counterActions.closeAdditionalInfoModal());
+                    // props.onClose()
+                    // setIsLoading(false);
                     router.push("/homepage/dashboard")
                   })
             })
@@ -253,11 +255,11 @@ const EditAispaceModal = (props) => {
                     <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
                     <div className="flex flex-row justify-center items-center">
                         <input type="number" ref={costRef} defaultValue={props.fee} name="hour" min="1" placeholder="$ 10:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
-                        <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per journey</label>
+                        <label htmlFor="hour" className="text-dark-brown text-sml ms-2">$/per journey</label>
                     </div>
                     <div>
                         <div className="flex flex-row justify-center items-center gap-2">
-                            <input type="checkbox" onChange={costCheckedHandler} defaultChecked={props.variable} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={costCheckedHandler} checked={costChecked} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={costCheckedHandler} className="text-dark-brown text-sml cursor-pointer">Variable</label>
                         </div>
                         <div style={{width: "110px"}}>
@@ -273,153 +275,160 @@ const EditAispaceModal = (props) => {
                     </div>
                     <div className="ps-1">
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={deckCheckedHandler}  defaultChecked={props.deck} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={deckCheckedHandler} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={deckCheckedHandler} className="text-dark-brown cursor-pointer text-sml">Landing Deck</label>
                         </div>
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={stationHandler} defaultChecked={props.station} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={stationHandler} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={stationHandler} className="text-dark-brown text-sml cursor-pointer">Charging station</label>
                         </div>
                         <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={storageHandler} checked={storageChecked} defaultChecked={props.storage} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                            <input type="checkbox" onChange={storageHandler} checked={storageChecked} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
                             <label htmlFor="hour" onClick={storageHandler} className="text-dark-brown text-sml cursor-pointer">Storage Hub</label>
                         </div>
                     </div>
                 </div>
                 <hr />
+
                 <div className="px-14 pb-2 pt-3 flex flex-row items-start gap-36">
                     <div>
                         <div style={{width: "138px"}} className="">
-                            <p className="font-medium">AirSpace Status</p>
+                            <p className="font-medium">Status</p>
                             <p className="text-xs">Give your AirSpace a Status</p>
                             <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
-                                <option disabled>Status</option>
-                                <option selected>Available</option>
-                                <option>No-fly zone</option>
+                                <option  disabled>Status</option>
+                                <option selected={!airspaceStatus}>Available</option>
+                                <option selected={airspaceStatus}>No-fly zone</option>
                             </select> 
                         </div>
                         {/* <div className="flex flex-row justify-center mt-10 -ms-14 items-center"> */}
                         <div style={{width: "138px"}} className="mt-10">
-                            <p className="font-medium">Select Time Zone</p>
-                            <select onChange={(e) => {
-                                    setTimezone(e.target.value)
-                                    console.log(e.target.value)
-                                    }} disabled={airspaceStatus !== "Available"} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
-                                <option selected disabled>Timezone</option>
-                                <option>UTC</option>
-                                <option>UTC + 1</option>
-                            </select>    
-                            {/* <TimezoneSelectComponent /> */}
+                            <TimezoneSelectComponent onChange={(e) => {
+                                        setTimezone(e.target.value)
+                                        console.log(e.target.value)
+                                    }} 
+                                    timeZone={props.timeZone}
+                                    timezone={timezone}
+                                    disable={airspaceStatus} />
                         </div>   
                     </div>     
                     <div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={monAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setMonAvailable(!monAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Mon</p>
+                                {!airspaceStatus && <input name="monday" checked={monAvailable} onChange={() => setMonAvailable(!monAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="monday" className="text-sml cursor-pointer"  onClick={() => setMonAvailable(!monAvailable)}>Mon</label>
                             </div>
-                            {(monAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect fromChange={(value) => {
-                                        setFromMonday(value)
-                                        console.log(value)
+                            <TimeSelect disable={airspaceStatus || !monAvailable} 
+                                    timeSelect={!airspaceStatus && monAvailable && props.weeks[0].fromTime}
+                                    toTimeSelect={!airspaceStatus && monAvailable && props.weeks[0].toTime}
+                                    fromChange={(value) => {
+                                    setFromMonday(value)
+                                    console.log(value)
                                     }} toChange={(value) => {
                                         setToMonday(value)
                                         console.log(value)
-                                    }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                    }} /> 
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={tueAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setTueAvailable(!tueAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Tue</p>
+                                {!airspaceStatus && <input name="tuesday" checked={tueAvailable} onChange={() => setTueAvailable(!tueAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="tuesday" onClick={() => setTueAvailable(!tueAvailable)} className="text-sml cursor-pointer">Tue</label>
                             </div>
-                            {(tueAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect fromChange={(value) => {
-                                    setFromTuesday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToTuesday(value)
-                                    console.log(value)
-                                }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                            <TimeSelect disable={airspaceStatus || !tueAvailable} 
+                                timeSelect={!airspaceStatus && tueAvailable && props.weeks[1].fromTime} 
+                                toTimeSelect={!airspaceStatus && tueAvailable && props.weeks[1].toTime} 
+                                fromChange={(value) => {
+                                setFromTuesday(value)
+                                console.log(value)
+                            }} toChange={(value) => {
+                                setToTuesday(value)
+                                console.log(value)
+                            }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={wedAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setWedAvailable(!wedAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Wed</p>
+                                {!airspaceStatus && <input checked={wedAvailable} onChange={() => setWedAvailable(!wedAvailable)} name="wednesday" type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="wednesday" onClick={() => setWedAvailable(!wedAvailable)} className="text-sml cursor-pointer">Wed</label>
                             </div>
-                            {(wedAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect  fromChange={(value) => {
+                            <TimeSelect disable={airspaceStatus || !wedAvailable} 
+                                timeSelect={!airspaceStatus && wedAvailable && props.weeks[2].fromTime} 
+                                toTimeSelect={!airspaceStatus && wedAvailable && props.weeks[2].toTime}
+                                fromChange={(value) => {
                                     setFromWednesday(value)
                                     console.log(value)
                                 }} toChange={(value) => {
                                     setToWednesday(value)
                                     console.log(value)
-                                }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={thuAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setThuAvailable(!thuAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Thu</p>
+                                {!airspaceStatus && <input name="thursday" checked={thuAvailable} onChange={() => setThuAvailable(!thuAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="thursday" className="text-sml cursor-pointer" onClick={() => setThuAvailable(!thuAvailable)}>Thu</label>
                             </div>
-                            {(thuAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect  fromChange={(value) => {
+                            <TimeSelect disable={airspaceStatus || !thuAvailable}  
+                                 timeSelect={!airspaceStatus && thuAvailable && props.weeks[3].fromTime} 
+                                 toTimeSelect={!airspaceStatus && thuAvailable && props.weeks[3].toTime}
+                                fromChange={(value) => {
                                     setFromThursday(value)
                                     console.log(value)
                                 }} toChange={(value) => {
                                     setToThursday(value)
                                     console.log(value)
-                                }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={friAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setFriAvailable(!friAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Fri</p>
+                                {!airspaceStatus && <input checked={friAvailable} name="friday" onChange={() => setFriAvailable(!friAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label className="text-sml cursor-pointer" htmlFor="friday" onClick={() => setFriAvailable(!friAvailable)}>Fri</label>
                             </div>
-                            {(friAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect  fromChange={(value) => {
+                            <TimeSelect  disable={airspaceStatus || !friAvailable}  
+                                timeSelect={!airspaceStatus && friAvailable && props.weeks[4].fromTime} 
+                                toTimeSelect={!airspaceStatus && friAvailable && props.weeks[4].toTime}
+                                fromChange={(value) => {
                                     setFromFriday(value)
                                     console.log(value)
                                 }} toChange={(value) => {
                                     setToFriday(value)
                                     console.log(value)
-                                }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={satAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setSatAvailable(!satAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Sat</p>
+                                {!airspaceStatus && <input name="saturday" checked={satAvailable} onChange={() => setSatAvailable(!satAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="saturday" onClick={() => setSatAvailable(!satAvailable)} className="text-sml cursor-pointer">Sat</label>
                             </div>
-                            {(satAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect  fromChange={(value) => {
+                            <TimeSelect  disable={airspaceStatus || !satAvailable}  
+                                timeSelect={!airspaceStatus && satAvailable && props.weeks[5].fromTime} 
+                                toTimeSelect={!airspaceStatus && satAvailable && props.weeks[5].toTime}
+                                fromChange={(value) => {
                                     setFromSaturday(value)
                                     console.log(value)
                                 }} toChange={(value) => {
                                     setToSaturday(value)
                                     console.log(value)
-                                }}/> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                }}/>
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
-                                {airspaceStatus === "Available" && <input checked={sunAvailable} disabled={airspaceStatus !== "Available"} onChange={() => setSunAvailable(!sunAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <p className="text-sml">Sun</p>
+                                {!airspaceStatus && <input checked={sunAvailable} name="sunday" onChange={() => setSunAvailable(!sunAvailable)} type="checkbox" className="cursor-pointer" />}
+                                <label htmlFor="sunday" onClick={() => setSunAvailable(!sunAvailable)} className="text-sml cursor-pointer">Sun</label>
                             </div>
-                            {(sunAvailable && airspaceStatus === "Available") ? 
-                                <TimeSelect  fromChange={(value) => {
+                            <TimeSelect disable={airspaceStatus || !sunAvailable}  
+                                timeSelect={!airspaceStatus && sunAvailable && props.weeks[6].fromTime} 
+                                toTimeSelect={!airspaceStatus && sunAvailable && props.weeks[6].toTime}
+                                fromChange={(value) => {
                                     setFromSunday(value)
                                     console.log(value)
                                 }} toChange={(value) => {
                                     setToSunday(value)
-                                }} /> : 
-                                <p className="text-sm text-dark-brown">unavailable</p>}
+                                }} />
                         </div>
                     </div>
                 </div>
-                <hr />
+
+                
+                {/* <hr /> */}
                 {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-start gap-8">
                     <div style={{width: "138px"}} className="">
                         <p className="font-medium">Restrictions</p>
@@ -430,8 +439,8 @@ const EditAispaceModal = (props) => {
                         <label htmlFor="hour" className="text-dark-brown text-sml">metre landing radius</label>
                     </div>
                 </div> */}
-                <hr />
-                <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
+                {/* <hr /> */}
+                {/* <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                     <div style={{width: "147px"}} className="">
                         <p className="font-medium">Offers</p>
                         <p className="text-xs">Select offers on AirSpace</p>
@@ -441,12 +450,12 @@ const EditAispaceModal = (props) => {
                             <input type="checkbox" onChange={rentHandler} checked={airspaceStatus === "Available" && rentChecked} disabled={airspaceStatus !== "Available"} value={rentAirspace} name="rent airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
                             <label htmlFor="hour" onClick={rentHandler} className="text-dark-brown text-sml cursor-pointer">Rent AirSpace</label>
                         </div>
-                        {/* <div className="flex flex-row justify-start items-center gap-2">
+                        <div className="flex flex-row justify-start items-center gap-2">
                             <input type="checkbox" onChange={sellHandler} checked={sellChecked} value={sellAirspace} name="sell airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
                             <label htmlFor="hour" onClick={sellHandler} className="text-dark-brown text-sml cursor-pointer">Sell AirSpace</label>
-                        </div> */}
+                        </div>
                     </div>
-                </div>
+                </div> */}
                 <div className="flex flex-row justify-center items-center mt-8 gap-5">
                     <button onClick={props.onClose} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
                     <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>

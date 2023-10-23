@@ -2,14 +2,9 @@
 
 // Proxy URL: ${frontendHttp}/api/proxy
 const handler = async (req, res) => {
-  try {
-    console.log(req)
-    console.log("This is the request body", req.body)
-    
-    
+  try {    
     const method = req.method
 
-    console.log("This is the method", method)
 
     const fetchOptions = {
       method,
