@@ -21,13 +21,13 @@ const handler = (req, res) => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("This is from stripe", data)
+            // console.log("This is from stripe", data)
             res.status(200).json({
                 clientSecret: data.client_secret
             })
         })
         .catch(error => {
-            console.error('Error:', error)
+            // console.error('Error:', error)
             res.status(500).json({
                 message: "something went wrong. kindly try again"
             })

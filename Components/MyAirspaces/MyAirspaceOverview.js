@@ -35,7 +35,7 @@ const MyAirspaceOverview = (props) => {
                 </div>
                 <p>(6)</p>
             </div> */}
-            <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">${props.amount}</span>/journey</p>
+            <p className="text-dark-blue me-5 mt-3 text-sml"><span className="font-bold">{props.amount}</span>/transit</p>
         </div>
         <div className="flex flex-row justify-center gap-7 mt-5 pb-2.5 items-center" style={{borderBottom: "0.5px solid rgba(229, 229, 234, 0.7)"}}>
             <button className="relative" onClick={props.viewMyAirspace}>

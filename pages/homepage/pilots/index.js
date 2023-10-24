@@ -67,7 +67,7 @@ const UAVs = (props) => {
         {pilotProfile && createPortal(<PilotProfileModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
         {addPilot && createPortal(<AddPilotModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row mx-auto">
-            <Sidebar />
+            <Sidebar users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
                 <Navbar />
                 <div className="bg-white py-11 px-10 overflow-y-auto" style={{height: "100vh", borderTop: "2px solid #F0F0FA"}}>

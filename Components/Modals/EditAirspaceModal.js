@@ -119,7 +119,6 @@ const EditAispaceModal = (props) => {
     const formSubmitHandler = (e) => {
         e.preventDefault();
         const airspaceTitle = airspaceTitleRef.current.value;
-        const costValue = costRef.current.value;
 
         const weekDayRanges = [
             {
@@ -170,7 +169,8 @@ const EditAispaceModal = (props) => {
             ownerId: props.user.id,
             propertyId: props.id,
             title: airspaceTitle,
-            transitFee: +costValue,
+            // transitFee: +costValue,
+            transitFee: !airspaceStatus ? "$0.01 - $99.00" : "",
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
             hasChargingStation: stationChecked,
@@ -251,7 +251,7 @@ const EditAispaceModal = (props) => {
                     <input ref={airspaceTitleRef} defaultValue={props.title} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
                 </div>
                 <hr />
-                <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
+                {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
                     <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
                     <div className="flex flex-row justify-center items-center">
                         <input type="number" ref={costRef} defaultValue={props.fee} name="hour" min="1" placeholder="$ 10:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
@@ -266,7 +266,31 @@ const EditAispaceModal = (props) => {
                             <p className="text-xs ps-4">Select if your cost can be negotiated</p>
                         </div>
                     </div>
+                </div> */}
+                {/* <div>
+                    <div className="flex flex-row gap-1 items-center">
+                        {!airspaceStatus &&
+                            <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
+                            <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
+                    </div>
+                    <select disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                        <option selected>$0.01 - $99.00</option>
+                    </select>
+                </div> */}
+
+                <div className="px-14 pb-5 flex flex-row items-center pt-5 gap-8">
+                    <div className="flex flex-row gap-1 items-center">
+                        {!airspaceStatus &&
+                            <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
+                            <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
+                    </div>
+                    <select disabled={airspaceStatus || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                        <option selected>$0.01 - $99.00</option>
+                    </select>
                 </div>
+
+                
+
                 <hr />
                 <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                     <div style={{width: "147px"}} className="">

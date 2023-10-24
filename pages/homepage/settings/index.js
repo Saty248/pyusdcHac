@@ -28,6 +28,7 @@ const Settings = (props) => {
     const [nameValid, setNameValid] = useState(true);
     const [emailValid, setEmailValid] = useState(true);
     const [phoneValid, setPhoneValid] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState("");
     const [token, setToken] = useState("");
 
@@ -99,9 +100,9 @@ const Settings = (props) => {
               });
             return;
         }
-
+        setIsLoading(true)
         fetch(`/api/proxy?${Date.now()}`, {
-            method: "POST",
+            method: "PATCH",
             body: JSON.stringify({
                 userId: user.id,
                 name,
@@ -111,37 +112,41 @@ const Settings = (props) => {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users/update",
-                proxy_to_method: "PATCH",
+                // proxy_to_method: "PATCH",
             }
         })
         .then((res) => {
+            console.log(res)
             if(!res.ok) {
                 return res.json()
                 .then(errorData => {
                     console.log(errorData)
-                    swal({
-                        title: "oops!",
-                        text: `${errorData.errorMessage}`,
-                      });
                     throw new Error(errorData.errorMessage);
                 });
             }
-            return res.json();
-        }).then(() => {
-            localStorage.removeItem("email");
-            localStorage.setItem("email", email);
-            swal({
-                title: "Submitted",
-                text: "User's record successfully updated.",
-                icon: "success",
-                button: "Ok"
-              })
+            return res.json()
             .then(() => {
-                router.push("/homepage/dashboard");
+                swal({
+                    title: "Submitted",
+                    text: "User's record successfully updated.",
+                    icon: "success",
+                    button: "Ok"
+                  })
+                .then(() => {
+                    router.push("/homepage/dashboard");
+                    setIsLoading(false);
+                })
             })
         })
         .catch(err => {
             console.log(err);
+            swal({
+                title: "oops!",
+                text: `${err.errorMessage}`,
+              })
+            .then(() => {
+                setIsLoading(false);
+            })
         })
     }
 
@@ -153,7 +158,7 @@ const Settings = (props) => {
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
         {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
         <div className="flex flex-row mx-auto">
-            <Sidebar />
+            <Sidebar users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
                 <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
@@ -173,7 +178,7 @@ const Settings = (props) => {
                             <button className="bg-bleach-red text-light-red-100 rounded-md transition-all duration-500 ease-in-out hover:bg-red-200 hover:text-white" style={{width: "101px", height: "39px"}}>Remove</button>
                         </div>
                     </div> */}
-                    {(user.KYCStatusId === 0 || user.KYCStatusId === 3) &&
+                    {(user.KYCStatusId === 0) &&
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
                                 <h3 className="text-2xl font-medium">Verify your Account</h3>
@@ -183,13 +188,23 @@ const Settings = (props) => {
                         </div>
                     }
 
+                    {(user.KYCStatusId === 3) &&
+                        <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
+                            <div>
+                                <h3 className="text-2xl font-medium">Your Account is not verified</h3>
+                                <p>Sorry. You didn't pass the KYC check</p>
+                            </div>
+                            <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>rejected</button>
+                        </div>
+                    }
+
                     {user.KYCStatusId === 2 && 
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
                                 <h3 className="text-2xl font-medium">Your Account is verified</h3>
                                 <p>This Account is verified</p>
                             </div>
-                            <p className="bg-bleach-green font-semibold rounded-md py-1 px-2 text-center text-dark-green">verified</p>
+                            <p className="bg-bleach-green rounded-md py-1 px-2 text-center text-light-green">Approved</p>
                         </div>
                     }
 
@@ -230,7 +245,7 @@ const Settings = (props) => {
                         </div>
                     </div>
                     <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                        <button onClick={updateDataHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Save</button>
+                        <button onClick={updateDataHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>{isLoading ? "saving..." : "Save"}</button>
                     </div>
                     <div className="flex flex-row mt-10 text-sm justify-between items-center">
                         <p>&copy; Skytrade 2023</p>

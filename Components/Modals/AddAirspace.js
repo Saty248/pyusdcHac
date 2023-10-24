@@ -268,7 +268,7 @@ const AddAirspace = (props) => {
                             <p className="text-xml text-light-green">Verified</p>
                         </div>}
                     </div>
-                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "37px", border: "none"}}>Verify</button>
+                    <button disabled={!address} onClick={mapLoadHandler} className="rounded-md bg-dark-blue mt-2.5 text-white text-sm disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "37px", border: "none"}}>Search</button>
                 </div>
                 {(addresses.length > 0 && address.length > 0) &&
                 <div style={{width: "656px", height: "259px", border: "0.35px solid #0653EA", marginLeft: "52px"}} className={`${(!showOptions || !addresses.length > 1) && "hidden"} bg-white z-10 overflow-y-auto rounded px-3 py-1 absolute`}>

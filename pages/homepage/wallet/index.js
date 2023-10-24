@@ -42,6 +42,7 @@ const Wallet = (props) => {
     const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
     const [showStripeModal, setShowStripeModal] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
+    const [searchValue, setSearchValue] = useState("");
     const [pageNumber, setPageNumber] = useState(0);
 
     const transactionsPerPage = 5;
@@ -186,9 +187,14 @@ const Wallet = (props) => {
     }, [tokenAccount]);
 
     useEffect(() => {
+
+    }, []);
+
+    useEffect(() => {
         let userArray = [];
-        console.log("new page loading...")
+        console.log("new page loading...");
         if(transactionHistory && transactionHistory.length > 0) {
+
             const trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage)
             console.log(trans);
             console.log(pagesVisited);
@@ -308,8 +314,14 @@ const Wallet = (props) => {
     const Stripe = (props) => {
         return  <div style={{width: "400px", height: "70vh", left: "calc(50% - 200px)"}} className="fixed z-50 top-10">
             <CryptoElements stripeOnramp={stripeOnrampPromise}>
-            <OnrampElement clientSecret={props.clientSecret} />
+                <OnrampElement clientSecret={props.clientSecret} />
             </CryptoElements>
+            <button onClick={props.closeModal} className="absolute right-3 top-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
     }
 
@@ -354,9 +366,15 @@ const Wallet = (props) => {
         {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
         {showDepositModal && createPortal(<Backdrop  />, document.getElementById("backdrop-root"))}
         {(showDepositModal && clientSecret.length < 1) && createPortal(<WalletModal method="deposit" closeModal={() => setShowDepositModal(false)} form="from" stripe={StripeHandler} navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
-        {(showStripeModal && clientSecret) && createPortal(<Stripe clientSecret={clientSecret} />, document.getElementById("modal-root"))}
+        {(showStripeModal && clientSecret) && createPortal(<Stripe closeModal={() => 
+                                        {
+                                            setShowStripeModal(false)
+                                            backdropCloseHandler()
+                                            setClientSecret("")
+                                        }
+            } clientSecret={clientSecret} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
-            <Sidebar />
+            <Sidebar users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
                 <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
@@ -392,14 +410,21 @@ const Wallet = (props) => {
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M130.63 103H10C4.47717 103 0 98.5229 0 93V10.0757C13.4341 3.66759 29.0313 0 45.6673 0C96.1093 0 137.001 33.7183 137.001 75.3118C137.001 85.0882 134.742 94.4294 130.63 103Z" fill="#AECCB8"/>
                     </svg>
                 </div>
-                <div className="bg-white mx-auto ps-6 pe-2.5 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
+                <div className="bg-white mx-auto px-6 rounded-md mt-10 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
                     <h3>Transaction History</h3>
                     <form className="flex flex-row justify-center gap-2 items-center">
-                        <input type="text" className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" placeholder="Search Transaction" style={{width: "211px", height: "27px"}} />
-                        <button className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
-                        <select type="text" defaultValue="Last 30 Days" className="bg-light-grey ps-3 text-sm rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" style={{width: "123px", height: "27px"}}>
-                            <option disabled >Last 30 Days</option>
-                        </select>
+                        <input type="text" 
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="bg-light-grey ps-3 rounded placeholder:text-sm placeholder:text-light-brown focus:outline-blue-200" 
+                            placeholder="Search Transaction" 
+                            style={{width: "211px", height: "27px"}} />
+                        <button onClick={(e) => {
+                            e.preventDefault()
+                            transactionData.filter(history => {
+                                console.log(history.amount)
+                            })
+                            console.log(searchValue);
+                        }} className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
                     </form>
                 </div>
                 <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
@@ -431,7 +456,7 @@ const Wallet = (props) => {
                 </div>
                 })}
                 {(transactionHistory && transactionHistory.length > 0) && 
-                        <div className="flex flex-row justify-end pe-10" style={{maxWidth: "1139px"}}>
+                        <div className="flex flex-row justify-end mx-auto" style={{maxWidth: "1139px"}}>
                             <ReactPaginate
                                     previousLabel={"Previous"}
                                     nextLabel={"Next"}

@@ -49,7 +49,8 @@ const AdditionalAispaceInformation = (props) => {
     const [toSaturday, setToSaturday] = useState(22);
     const [fromSunday, setFromSunday] = useState(7);
     const [toSunday, setToSunday] = useState(22);
-    const [timezone, setTimezone] = useState("UTC");
+    const [timezone, setTimezone] = useState("US/Central");
+    const [costValue, setCostValue] = useState();
 
     const airspaceTitleRef = useRef();
     const costRef = useRef();
@@ -116,7 +117,6 @@ const AdditionalAispaceInformation = (props) => {
     const formSubmitHandler = (e) => {
         e.preventDefault();
         const airspaceTitle = airspaceTitleRef.current.value;
-        const costValue = costRef.current.value;
 
         const weekDayRanges = [
             {
@@ -169,7 +169,7 @@ const AdditionalAispaceInformation = (props) => {
             ...airspaceData,
             ownerId: props.user.id,
             title: airspaceTitle,
-            transitFee: +costValue,
+            transitFee: airspaceStatus === "Available" ? "$0.01 - $99.00" : "",
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
             hasChargingStation: stationChecked,
@@ -250,10 +250,20 @@ const AdditionalAispaceInformation = (props) => {
                     <input ref={airspaceTitleRef} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
                 </div>
                 <hr />
-                <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
+                <div className="px-14 pb-5 flex flex-row items-center pt-5 gap-8">
+                    <div className="flex flex-row gap-1 items-center">
+                        {airspaceStatus === "Available" &&
+                            <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
+                            <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
+                    </div>
+                    <select disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                        <option selected>$0.01 - $99.00</option>
+                    </select>
+                </div>
+                {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
                     <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
                     <div className="flex flex-row justify-center items-center">
-                        <input type="number" ref={costRef} name="hour" min="1" placeholder="$ 10:00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
+                        <input type="number" ref={costRef} name="hour" min="1" placeholder="$ 10.00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
                         <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per journey</label>
                     </div>
                     <div>
@@ -265,7 +275,7 @@ const AdditionalAispaceInformation = (props) => {
                             <p className="text-xs ps-4">Select if your cost can be negotiated</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <hr />
                 <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                     <div style={{width: "147px"}} className="">
@@ -310,7 +320,9 @@ const AdditionalAispaceInformation = (props) => {
                             <TimezoneSelectComponent onChange={(e) => {
                                         setTimezone(e.target.value)
                                         console.log(e.target.value)
-                                    }} disable={airspaceStatus !== "Available"} />
+                                    }} 
+                                    timeZone={timezone}
+                                    disable={airspaceStatus !== "Available"} />
                         </div>   
                     </div>     
                     <div>

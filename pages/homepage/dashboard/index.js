@@ -23,6 +23,135 @@ const Dashboard = (props) => {
             text: "something went wrong. kindly try again",
           });
     }
+
+    const cData = [
+        {
+            country: "United States",
+            percent: 50,
+            color: "#0653EA"
+        },
+        {
+            country: "India",
+            percent: 7.91,
+            color: "#C80000"
+        },
+        {
+            country: "United Kingdom",
+            percent: 5.36,
+            color: "#FFD037"
+        },
+        {
+            country: "Canada",
+            percent: 4.69,
+            color: "#78A6FF"
+        },
+        {
+            country: "Brazil",
+            percent: 3.64,
+            color: "#3A951A"
+        },
+        {
+            country: "Australia",
+            percent: 3.39,
+            color: "#722ACF"
+        },
+        {
+            country: "France",
+            percent: 3.39,
+            color: "#1581C1"
+        },
+        {
+            country: "Germany",
+            percent: 2.39,
+            color: "#5B5167"
+        },
+        {
+            country: "Argentina",
+            percent: 1.8,
+            color: "#D87657"
+        },
+        {
+            country: "Poland",
+            percent: 1.8,
+            color: "#6BD3FF"
+        },
+        {
+            country: "Italy",
+            percent: 1.8,
+            color: "#FF4B32"
+        },
+        {
+            country: "Spain",
+            percent: 1.8,
+            color: "#71FF40"
+        },
+        {
+            country: "Sweden",
+            percent: 1.4,
+            color: "#000"
+        },
+        {
+            country: "Finland",
+            percent: 1.4,
+            color: "#DC36F6"
+        },
+        {
+            country: "Nigeria",
+            percent: 1.3,
+            color: "#C89900"
+        },
+        {
+            country: "Kenya",
+            percent: 1.3,
+            color: "#006351"
+        },
+        {
+            country: "Peru",
+            percent: 0.9,
+            color: "#643B60"
+        },
+        {
+            country: "Chile",
+            percent: 0.9,
+            color: "#636C72"
+        },
+        {
+            country: "Paraguay",
+            percent: 0.9,
+            color: "#FC6681"
+        },
+        {
+            country: "Thailand",
+            percent: 0.9,
+            color: "#D4B5FB"
+        },
+        {
+            country: "SouthAfrica",
+            percent: 0.9,
+            color: "#FFAD93"
+        },
+        {
+            country: "Indonesia",
+            percent: 0.9,
+            color: "#00F"
+        },
+        {
+            country: "Algeria",
+            percent: 0.9,
+            color: "#CF1900"
+        },
+        {
+            country: "Norway",
+            percent: 0.9,
+            color: "#5C0000"
+        },
+        {
+            country: "Others",
+            percent: 2.82,
+            color: "#ACACAC"
+        },
+    ];
+
     const dispatch = useDispatch();
 
     const date = new Date()
@@ -178,32 +307,6 @@ const Dashboard = (props) => {
                 }
             }
 
-            const cData = [
-                {
-                    country: "United States",
-                    percent: 30
-                },
-                {
-                    country: "India",
-                    percent: 4
-                },
-                {
-                    country: "United Kingdom",
-                    percent: 16
-                },
-                {
-                    country: "Canada",
-                    percent: 30
-                },
-                {
-                    country: "Brazil",
-                    percent: 10
-                },
-                {
-                    country: "Australia",
-                    percent: 10
-                },
-            ]
 
             const chartData = {
                 // labels: [`United States - 30%`, 'India - 4%', 'United Kingdom - 16%', 
@@ -213,9 +316,8 @@ const Dashboard = (props) => {
                         `${data.country} - ${data.percent}%`,
                     ]
                 }),
-                data: [30, 4, 16, 
-                        30, 10, 10,  
-                    ]
+                data: cData.map(data => data.percent),
+                color: cData.map(data => data.color)
             }
             
             new Chart(ctx, {
@@ -227,7 +329,8 @@ const Dashboard = (props) => {
                 data: chartData.data,
                 color: "black",
                 barThickness: 10,
-                borderRadius: 10
+                borderRadius: 10,
+                backgroundColor: chartData.color,
                 }]
             },
             options: {
@@ -258,7 +361,7 @@ const Dashboard = (props) => {
                         // }
                     },
                     legend: {
-                        // display: false, 
+                        display: false, 
                     },
                     label: {
                         // display: false
@@ -287,7 +390,7 @@ const Dashboard = (props) => {
     } 
 
     return <div className="flex flex-row mx-auto">
-        <Sidebar users={users}/>
+        <Sidebar users={users} />
         <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
             <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
@@ -355,11 +458,25 @@ const Dashboard = (props) => {
                             </div>
                         </button>            
                     </div>
-                    <div className="mx-auto mt-5 pb-4 pt-16 bg-white flex flex-col items-center relative rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)", maxHeight: "653px"}}>
-                        <p className="text-xl font-bold absolute top-5 left-5">User Geographies</p>
-                        {/* <div className=""> */}
-                            <canvas id="chart"></canvas>
-                        {/* </div> */}
+                    <div className="mx-auto mt-5 py-4 px-10 bg-white overflow-y-auto rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)"}}>
+                        <p className="text-xl font-bold mb-10">User Geographies</p>
+                        <div className="flex flex-row justify-center items-center gap- relative rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)"}}>
+                            <div className="w-1/2"> 
+                                {cData.map(data => {
+                                    return <div className="flex flex-row gap-2 items-center text-sm 2xl:text-base" style={{color: data.color,}}>
+                                    <div className="flex flex-row items-center gap-2">
+                                        <div className="rounded" style={{width: "20px", height: "10px", backgroundColor: data.color}}></div>
+                                        <p>{data.country}</p>
+                                    </div>
+                                    <p>{data.percent}%</p>
+                                </div>
+                                })}
+                            </div>
+                            <canvas style={{width: "50%", maxWidth: "500px", maxHeight: "500px"}} id="chart"></canvas>
+                            {/* <div style={{width: "50%", maxWidth: "500px"}}>
+                                
+                            </div> */}
+                        </div>
                     </div>
                 </div>
                 <div className="my-5 me-5 rounded-md" style={{width: "20vw", height: "100vh",}}>
@@ -436,16 +553,11 @@ const Dashboard = (props) => {
 
 
 
-                    <div className="bg-white me-2 py-5 px-4 overflow-y-auto" style={{width: "100%", height: "100%", borderRadius: "10px"}}>
+                    <div className="bg-white me-2 py-5 px-4 overflow-y-auto" style={{width: "100%", height: "100vh", borderRadius: "10px"}}>
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
                             <p className="font-semibold" style={{color: "#722ACF"}}>{month} {day}</p>
-                            <hr style={{width: "11rem"}}></hr>
-                            <div className="flex flex-row ">
-                                <p className="font-bold">.</p>
-                                <p className="font-bold">.</p>
-                                <p className="font-bold">.</p>
-                            </div>
+                            <hr style={{width: "80%"}}></hr>
                         </div>
                         {(newslettersLoading && newsletters.length < 1) && <p className="text-sm text-center">Loading...</p>}
                         {newsletters.map(newsletter => {
