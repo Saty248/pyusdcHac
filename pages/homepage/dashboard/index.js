@@ -3,6 +3,10 @@ import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
 import { useDispatch, } from "react-redux";
 import Image from "next/image";
+import { Web3Auth } from "@web3auth/modal";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import base58 from "bs58";
 
 import { useVerification } from "@/hooks/useVerification";
 import Navbar from "@/Components/Navbar";
@@ -167,6 +171,7 @@ const Dashboard = (props) => {
     const [newslettersLoading, setNewslettersLoading] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
     const [airspaceLength, setAirspaceLength] = useState();
+    const [signature, setSignature] = useState();
     
 
     useEffect(() => {
@@ -237,12 +242,213 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         if(user) {
+            const getSignature = async() => {
+                const signatureObj = {};
+
+                const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+               
+        
+                if(retrievedObj && retrievedObj.sign_issue_at) {
+                    console.log(retrievedObj)
+                    const issuedAt = new Date(retrievedObj.sign_issue_at);
+                    const issuedTime = Math.floor(issuedAt.getTime() / 1000);
+                    console.log(issuedAt);
+                    console.log(issuedTime);
+                    console.log(retrievedObj.sign_issue_at);
+                    const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
+                    const timeDifference = currentTimestampInSeconds - issuedTime;
+                    console.log("This is the time difference", timeDifference);
+        
+                    if(timeDifference > 300) {
+                        console.log("The time has expired")
+                        const chainConfig = {
+                            chainNamespace: "solana",
+                            chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                            rpcTarget: "https://api.testnet.solana.com",
+                            displayName: "Solana Mainnet",
+                            blockExplorer: "https://explorer.solana.com",
+                            ticker: "SOL",
+                            tickerName: "Solana",
+                        };
+                
+                        const web3auth = new Web3Auth({
+                                // For Production
+                                // clientId: "",
+                                clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                        
+                                // For Development
+                                // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                                web3AuthNetwork: "cyan",
+                                chainConfig: chainConfig,
+                            });
+                        
+                        await web3auth.initModal();
+                
+                        const web3authProvider = await web3auth.connect();
+                
+                        const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+                        // console.log(solanaWallet);
+                        const accounts = await solanaWallet.requestAccounts()
+                        console.log(solanaWallet);
+                        console.log(accounts[0]);
+                
+                    
+                
+                        const userInfo = await web3auth.getUserInfo();
+                        console.log(userInfo);
+                    
+                        // const domain = window.location.host;
+                        const domain = 'localhost:3000';
+                        // const origin = window.location.origin;
+                        const origin = 'http://localhost:3000';
+                
+                        console.log("domain", domain);
+                        console.log("origin", origin);
+                
+                
+                        const payload = new SIWPayload();
+                        payload.domain = domain;
+                        payload.uri = origin;
+                        payload.address = accounts[0]
+                        payload.statement = "Sign in with Solana to the app.";
+                        payload.version = "1";
+                        payload.chainId = 1;
+                
+                        const header = { t: "sip99" };
+                        const network = "solana";
+                
+                        console.log(JSON.stringify(payload));
+                
+                        let message = new SIWWeb3({ header, payload, network });
+                        console.log(message)
+                
+                        const messageText = message.prepareMessage();
+                        console.log(messageText);
+                        const msg = new TextEncoder().encode(messageText);
+                        const result = await solanaWallet.signMessage(msg);
+                
+                        const signature = base58.encode(result);
+                        console.log("This is the signature", signature);
+                
+                        signatureObj.sign = signature
+                        signatureObj.sign_nonce = message.payload.nonce
+                        signatureObj.sign_issue_at = message.payload.issuedAt
+                        signatureObj.sign_address = accounts[0]
+                        setSignature(signatureObj);
+                
+                        localStorage.setItem("signature", JSON.stringify({
+                            sign: signature,
+                            "sign_issue_at": message.payload.issuedAt,
+                            "sign_nonce": message.payload.nonce,
+                            "sign_address": accounts[0],
+                        }));
+                    } else {
+                        console.log("I retrieved a valid sigature and used it");
+                        signatureObj.sign = retrievedObj.sign
+                        signatureObj.sign_nonce = retrievedObj.sign_nonce
+                        signatureObj.sign_issue_at = retrievedObj.sign_issue_at
+                        signatureObj.sign_address = retrievedObj.sign_address
+                        setSignature(signatureObj)
+                    }
+                } else {
+                    console.log("I didn't find any signature");
+                    const chainConfig = {
+                        chainNamespace: "solana",
+                        chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                        rpcTarget: "https://api.testnet.solana.com",
+                        displayName: "Solana Mainnet",
+                        blockExplorer: "https://explorer.solana.com",
+                        ticker: "SOL",
+                        tickerName: "Solana",
+                    };
+            
+                    const web3auth = new Web3Auth({
+                            // For Production
+                            // clientId: "",
+                            clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                    
+                            // For Development
+                            // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                            web3AuthNetwork: "cyan",
+                            chainConfig: chainConfig,
+                        });
+                    
+                    await web3auth.initModal();
+            
+                    const web3authProvider = await web3auth.connect();
+            
+                    const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+                    // console.log(solanaWallet);
+                    const accounts = await solanaWallet.requestAccounts()
+                    console.log(solanaWallet);
+                    console.log(accounts[0]);
+            
+                
+            
+                    const userInfo = await web3auth.getUserInfo();
+                    console.log(userInfo);
+                
+                    // const domain = window.location.host;
+                    const domain = 'localhost:3000';
+                    // const origin = window.location.origin;
+                    const origin = 'http://localhost:3000';
+            
+                    console.log("domain", domain);
+                    console.log("origin", origin);
+            
+            
+                    const payload = new SIWPayload();
+                    payload.domain = domain;
+                    payload.uri = origin;
+                    payload.address = accounts[0]
+                    payload.statement = "Sign in with Solana to the app.";
+                    payload.version = "1";
+                    payload.chainId = 1;
+            
+                    const header = { t: "sip99" };
+                    const network = "solana";
+            
+            
+                    let message = new SIWWeb3({ header, payload, network });
+            
+                    const messageText = message.prepareMessage();
+                    const msg = new TextEncoder().encode(messageText);
+                    const result = await solanaWallet.signMessage(msg);
+            
+                    const signature = base58.encode(result);
+            
+                    signatureObj.sign = signature
+                    signatureObj.sign_nonce = message.payload.nonce
+                    signatureObj.sign_issue_at = message.payload.issuedAt
+                    signatureObj.sign_address = accounts[0]
+                    setSignature(signatureObj);
+            
+                    localStorage.setItem("signature", JSON.stringify({
+                        sign: signature,
+                        "sign_issue_at": message.payload.issuedAt,
+                        "sign_nonce": message.payload.nonce,
+                        "sign_address": accounts[0],
+                    }));
+                };
+            }
+
+            getSignature();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if(signature) {
+            console.log("This is the signature", signature);
             fetch(`/api/proxy?${Date.now()}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     uri: `/properties/user-properties/${user.id}`,
                     // proxy_to_method: "GET",
+                    sign: signature.sign,
+                    sign_issue_at:  signature.sign_issue_at,
+                    sign_nonce: signature.sign_nonce,
+                    sign_address: signature.sign_address,
                 }
             }).then((res) => {
                 if(!res.ok) {
@@ -257,45 +463,53 @@ const Dashboard = (props) => {
                 })
             })
             .catch((err) => {
-                setAirspaceLength("")
-                console.log(err)
-            })
-        }
-    }, [user])
-    
-
-    useEffect(() => {
-        setNewslettersLoading(true)
-        fetch(`/api/proxy?${Date.now()}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                uri: "/newsletters",
-                // proxy_to_method: "GET",
-            }
-        })
-        .then(res => {
-            if(!res.ok) {
-                return res.json()
-                .then(errorData => {
-                    throw new Error(errorData.message);
-                });
-            }
-            return res.json();
-        })
-        .then(response => {
-            setNewslettersLoading(false);
-            if(response.length > 0) { 
-                setNewsletters(response.reverse());
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        }) 
-    }, []);
-
-    useEffect(() => {
+                    setAirspaceLength("")
+                    console.log(err)
+                })
+            }     
+    }, [signature])
         
+
+    useEffect(() => {
+        if(signature) {
+            console.log("This is the signature", signature);
+
+            setNewslettersLoading(true);
+
+            fetch(`/api/proxy?${Date.now()}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: "/newsletters",
+                    // proxy_to_method: "GET",
+                    sign: signature.sign,
+                    sign_issue_at:  signature.sign_issue_at,
+                    sign_nonce: signature.sign_nonce,
+                    sign_address: signature.sign_address,
+                }
+            })
+            .then(res => {
+                if(!res.ok) {
+                    return res.json()
+                    .then(errorData => {
+                        throw new Error(errorData.message);
+                    });
+                }
+                return res.json();
+            })
+            .then(response => {
+                setNewslettersLoading(false);
+                if(response.length > 0) { 
+                    setNewsletters(response.reverse());
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })   
+        }
+    }, [signature]);
+
+    useEffect(() => {
         if(user) {
             const ctx = document.getElementById('chart').getContext('2d');
 
@@ -410,7 +624,7 @@ const Dashboard = (props) => {
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">Balance</p>
-                                {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                                {!tokenBalance && <p className="text-light-brown mt-2">Loading...</p>}
                                 {tokenBalance && <p className="text-2xl font-semibold">USDC {tokenBalance}</p>}
                                 {tokenBalance && <p className="-mt-2 text-sml">US$ {tokenBalance}</p>}
                             </div>
@@ -463,7 +677,7 @@ const Dashboard = (props) => {
                         <div className="flex flex-row justify-center items-center gap- relative rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)"}}>
                             <div className="w-1/2"> 
                                 {cData.map(data => {
-                                    return <div className="flex flex-row gap-2 items-center text-sm 2xl:text-base" style={{color: data.color,}}>
+                                    return <div key={data.country} className="flex flex-row gap-2 items-center text-sm 2xl:text-base" style={{color: data.color,}}>
                                     <div className="flex flex-row items-center gap-2">
                                         <div className="rounded" style={{width: "20px", height: "10px", backgroundColor: data.color}}></div>
                                         <p>{data.country}</p>
@@ -601,28 +815,33 @@ export default Dashboard;
 
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            // proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
     }
 }

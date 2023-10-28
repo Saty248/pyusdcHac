@@ -6,7 +6,7 @@ import ReactPaginate from "react-paginate";
 import swal from "sweetalert";
 import { loadStripeOnramp } from "@stripe/crypto";
 import { CryptoElements, OnrampElement } from "@/hooks/stripe";
-const stripeOnrampPromise = loadStripeOnramp("pk_test_51MRzIzIVelVZN1eRHjwBDzNvOb5lc65TvVoMtYFMUlZiyzXNXZE63TtoPspFu22pGAoSdlEeOgn6VWlu3XmKmMSd00LgkRYTfv");
+
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -44,29 +44,40 @@ const Wallet = (props) => {
     const [clientSecret, setClientSecret] = useState("");
     const [searchValue, setSearchValue] = useState("");
     const [pageNumber, setPageNumber] = useState(0);
+    const [stripeOnramp, setStripeOnRamp] = useState()
 
     const transactionsPerPage = 5;
     const pagesVisited = pageNumber * transactionsPerPage;
     
     const pageCount = transactionHistory && Math.ceil(transactionHistory.length / transactionsPerPage);
-    console.log(pagesVisited);
-    console.log(pageNumber);
     
     useEffect(() => {
         if(showStripeModal) {        
-            fetch('/api/stripe', {
+            const stripeOnrampPromise = loadStripeOnramp("pk_test_51MRzIzIVelVZN1eRHjwBDzNvOb5lc65TvVoMtYFMUlZiyzXNXZE63TtoPspFu22pGAoSdlEeOgn6VWlu3XmKmMSd00LgkRYTfv");
+            
+            setStripeOnRamp(stripeOnrampPromise);
+
+            fetch(`/api/proxy?${Date.now()}`, {
+            // fetch('/api/stripe', {
                 method: "POST",
                 body: JSON.stringify({
-                    wallet: user.blockchainAddress
-                })
+                    blockchainAddress: user.blockchainAddress
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: "/stripe/create"
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log("This is from stripe", data)
-                
-                setClientSecret(data.clientSecret)
+            .then(response => {
+                return response.json()
             })
-            .catch(error => console.error('Error:', error));
+            .then(data => {    
+                setClientSecret(data.data.client_secret);
+            })
+            .catch(error => {
+                console.error('Error:', error)
+                setClientSecret("");
+            });
         }
       }, [showStripeModal]);
 
@@ -99,8 +110,6 @@ const Wallet = (props) => {
                 method: "getTokenAccountsByOwner",
                 params: [
                   user.blockchainAddress,
-                // "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                   {
                     mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
@@ -147,7 +156,7 @@ const Wallet = (props) => {
     }, [user]);
 
     useEffect(() => {
-        if(tokenAccount) {
+        if(tokenAccount && searchValue.length < 1) {
             console.log(tokenAccount)
             const data = {
                 jsonrpc: "2.0",
@@ -184,7 +193,7 @@ const Wallet = (props) => {
                     console.error('Error:', error);
                 });
         }
-    }, [tokenAccount]);
+    }, [tokenAccount, searchValue]);
 
     useEffect(() => {
 
@@ -194,9 +203,9 @@ const Wallet = (props) => {
         let userArray = [];
         console.log("new page loading...");
         if(transactionHistory && transactionHistory.length > 0) {
-
+            console.log("This is the amount of pages visited", pagesVisited)
             const trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage)
-            console.log(trans);
+            console.log("This is the processed transaction", trans);
             console.log(pagesVisited);
             trans.map(trans => {
                 console.log(trans)
@@ -207,10 +216,11 @@ const Wallet = (props) => {
         }   
   }, [pagesVisited, transactionHistory]);
 
-    const transactionHistoryArray = [];
+
 
     useEffect(() => {
         if(completedTrans && completedTrans.length > 0) {
+            console.log("completed trans running");
             console.log(completedTrans);
             setTransactionData([]);
             for(const transaction of completedTrans) {
@@ -287,7 +297,7 @@ const Wallet = (props) => {
                     }
                     
                     transaction.amount = +transactionAmount.toFixed(4);
-                    transactionHistoryArray.push(transaction);
+                    // transactionHistoryArray.push(transaction);
                     setTransactionData(prev => {
                         return [
                             ...prev, 
@@ -304,16 +314,18 @@ const Wallet = (props) => {
 
     useEffect(() => {
         if(transactionData.length > 0) {
+            console.log("I ran on filter")
             const trans = transactionData.sort((a, b) => b.blockTime - a.blockTime);
             setTransactionHistories(trans);
+            console.log("This is the final transactions", trans)
         }
-    }, [transactionHistoryArray]);
+    }, [transactionData]);
 
     
 
     const Stripe = (props) => {
         return  <div style={{width: "400px", height: "70vh", left: "calc(50% - 200px)"}} className="fixed z-50 top-10">
-            <CryptoElements stripeOnramp={stripeOnrampPromise}>
+            <CryptoElements stripeOnramp={stripeOnramp}>
                 <OnrampElement clientSecret={props.clientSecret} />
             </CryptoElements>
             <button onClick={props.closeModal} className="absolute right-3 top-8">
@@ -326,7 +338,6 @@ const Wallet = (props) => {
     }
 
     const changePage = ({selected}) => {
-        console.log("this is the selected page number", selected)
         setPageNumber(selected);
     }
 
@@ -354,7 +365,8 @@ const Wallet = (props) => {
     }
 
     const StripeHandler = () => {
-        setShowStripeModal(true)
+        setShowStripeModal(true);
+        setShowDepositModal(false);
     }
 
     if(!user || !token) {
@@ -364,8 +376,8 @@ const Wallet = (props) => {
     return <Fragment>
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
-        {showDepositModal && createPortal(<Backdrop  />, document.getElementById("backdrop-root"))}
-        {(showDepositModal && clientSecret.length < 1) && createPortal(<WalletModal method="deposit" closeModal={() => setShowDepositModal(false)} form="from" stripe={StripeHandler} navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
+        {(showDepositModal || showStripeModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
+        {showDepositModal && createPortal(<WalletModal method="deposit" closeModal={() => setShowDepositModal(false)} form="from" stripe={StripeHandler} navigate={depositRouteHandler} />, document.getElementById("modal-root"))}
         {(showStripeModal && clientSecret) && createPortal(<Stripe closeModal={() => 
                                         {
                                             setShowStripeModal(false)
@@ -420,10 +432,21 @@ const Wallet = (props) => {
                             style={{width: "211px", height: "27px"}} />
                         <button onClick={(e) => {
                             e.preventDefault()
-                            transactionData.filter(history => {
-                                console.log(history.amount)
+                            changePage({selected: 1})
+                            const filteredTransactions = transactionHistory.filter(history => {
+                                return history.signature.includes(searchValue);
                             })
-                            console.log(searchValue);
+                            console.log("This is the search value", searchValue);
+                            console.log(filteredTransactions);
+                            
+                            if(filteredTransactions.length > 0) {
+                                setTransactionHistory(filteredTransactions);
+                            } else {
+                                setTransactionHistories([]);
+                                setTransactionHistory([])
+                                setTransactionData([])
+                            }
+                            
                         }} className="bg-dark-blue text-white rounded px-1 text-sm" style={{width: "73px", height: "27px"}}>SEARCH</button>
                     </form>
                 </div>
@@ -438,10 +461,10 @@ const Wallet = (props) => {
                         } 
                 {(transactionHistory && transactionHistory.length < 1) && 
                     <div className="flex flex-row justify-center mt-20">
-                        <p>You don't have any transaction at the moment</p>
+                        <p>No transaction for your account at the moment</p>
                     </div>
                 } 
-                {(transactionHistories && transactionHistories.length > 0) && transactionData.map(history => {
+                {(transactionHistories && transactionHistories.length > 0) && transactionHistories.map(history => {
                     return <div key={history.signature} className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
                     <p className="w-2/12">{history.date}</p>
                     {/*remove the cluster before going live  */}
@@ -478,30 +501,33 @@ const Wallet = (props) => {
 export default Wallet;
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch("https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy", {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-   
-    console.log(data)
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
     }
 }

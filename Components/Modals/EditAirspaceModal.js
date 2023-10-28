@@ -5,6 +5,10 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import moment from "moment-timezone";
 import swal from "sweetalert";
+import { Web3Auth } from "@web3auth/modal";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import base58 from "bs58";
 
 import TimeSelect from "../TimeSelect";
 import Spinner from "../Spinner";
@@ -116,7 +120,7 @@ const EditAispaceModal = (props) => {
         setAirspaceStatus(!airspaceStatus);
     }
 
-    const formSubmitHandler = (e) => {
+    const formSubmitHandler = async(e) => {
         e.preventDefault();
         const airspaceTitle = airspaceTitleRef.current.value;
 
@@ -165,6 +169,193 @@ const EditAispaceModal = (props) => {
             },
         ]
 
+        const signatureObj = {};
+
+        const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+        setIsLoading(true);
+       
+
+        if(retrievedObj && retrievedObj.sign_issue_at) {
+            console.log(retrievedObj)
+            const issuedAt = new Date(retrievedObj.sign_issue_at);
+            const issuedTime = Math.floor(issuedAt.getTime() / 1000);
+            console.log(issuedAt);
+            console.log(issuedTime);
+            console.log(retrievedObj.sign_issue_at);
+            const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
+            const timeDifference = currentTimestampInSeconds - issuedTime;
+            console.log("This is the time difference", timeDifference);
+
+            if(timeDifference > 300) {
+                console.log("The time has expired")
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
+        
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+                
+                await web3auth.initModal();
+        
+                const web3authProvider = await web3auth.connect();
+        
+                const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+                // console.log(solanaWallet);
+                const accounts = await solanaWallet.requestAccounts()
+                console.log(solanaWallet);
+                console.log(accounts[0]);
+        
+            
+        
+                const userInfo = await web3auth.getUserInfo();
+                console.log(userInfo);
+            
+                // const domain = window.location.host;
+                const domain = 'localhost:3000';
+                // const origin = window.location.origin;
+                const origin = 'http://localhost:3000';
+        
+                console.log("domain", domain);
+                console.log("origin", origin);
+        
+        
+                const payload = new SIWPayload();
+                payload.domain = domain;
+                payload.uri = origin;
+                payload.address = accounts[0]
+                payload.statement = "Sign in with Solana to the app.";
+                payload.version = "1";
+                payload.chainId = 1;
+        
+                const header = { t: "sip99" };
+                const network = "solana";
+        
+                console.log(JSON.stringify(payload));
+        
+                let message = new SIWWeb3({ header, payload, network });
+                console.log(message)
+        
+                const messageText = message.prepareMessage();
+                console.log(messageText);
+                const msg = new TextEncoder().encode(messageText);
+                const result = await solanaWallet.signMessage(msg);
+        
+                const signature = base58.encode(result);
+                console.log("This is the signature", signature);
+        
+                signatureObj.sign = signature
+                signatureObj.sign_nonce = message.payload.nonce
+                signatureObj.sign_issue_at = message.payload.issuedAt
+                signatureObj.sign_address = accounts[0]
+        
+                localStorage.setItem("signature", JSON.stringify({
+                    sign: signature,
+                    "sign_issue_at": message.payload.issuedAt,
+                    "sign_nonce": message.payload.nonce,
+                    "sign_address": accounts[0],
+                }));
+            } else {
+                console.log("I retrieved a valid sigature and used it");
+                signatureObj.sign = retrievedObj.sign
+                signatureObj.sign_nonce = retrievedObj.sign_nonce
+                signatureObj.sign_issue_at = retrievedObj.sign_issue_at
+                signatureObj.sign_address = retrievedObj.sign_address
+            }
+        } else {
+            console.log("I didn't find any signature");
+            const chainConfig = {
+                chainNamespace: "solana",
+                chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                rpcTarget: "https://api.testnet.solana.com",
+                displayName: "Solana Mainnet",
+                blockExplorer: "https://explorer.solana.com",
+                ticker: "SOL",
+                tickerName: "Solana",
+            };
+    
+            const web3auth = new Web3Auth({
+                    // For Production
+                    // clientId: "",
+                    clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+            
+                    // For Development
+                    // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                    web3AuthNetwork: "cyan",
+                    chainConfig: chainConfig,
+                });
+            
+            await web3auth.initModal();
+    
+            const web3authProvider = await web3auth.connect();
+    
+            const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+            // console.log(solanaWallet);
+            const accounts = await solanaWallet.requestAccounts()
+            console.log(solanaWallet);
+            console.log(accounts[0]);
+    
+        
+    
+            const userInfo = await web3auth.getUserInfo();
+            console.log(userInfo);
+        
+            // const domain = window.location.host;
+            const domain = 'localhost:3000';
+            // const origin = window.location.origin;
+            const origin = 'http://localhost:3000';
+    
+            console.log("domain", domain);
+            console.log("origin", origin);
+    
+    
+            const payload = new SIWPayload();
+            payload.domain = domain;
+            payload.uri = origin;
+            payload.address = accounts[0]
+            payload.statement = "Sign in with Solana to the app.";
+            payload.version = "1";
+            payload.chainId = 1;
+    
+            const header = { t: "sip99" };
+            const network = "solana";
+    
+    
+            let message = new SIWWeb3({ header, payload, network });
+    
+            const messageText = message.prepareMessage();
+            const msg = new TextEncoder().encode(messageText);
+            const result = await solanaWallet.signMessage(msg);
+    
+            const signature = base58.encode(result);
+    
+            signatureObj.sign = signature
+            signatureObj.sign_nonce = message.payload.nonce
+            signatureObj.sign_issue_at = message.payload.issuedAt
+            signatureObj.sign_address = accounts[0]
+    
+            localStorage.setItem("signature", JSON.stringify({
+                sign: signature,
+                "sign_issue_at": message.payload.issuedAt,
+                "sign_nonce": message.payload.nonce,
+                "sign_address": accounts[0],
+            }));
+        };
+
+
         const airspaceInformation = {
             ownerId: props.user.id,
             propertyId: props.id,
@@ -180,7 +371,7 @@ const EditAispaceModal = (props) => {
             timezone: !airspaceStatus ? timezone : "GMT"
         }
 
-        setIsLoading(true);
+        
 
         fetch(`/api/proxy?${Date.now()}`, {
             method: "PATCH",
@@ -189,6 +380,10 @@ const EditAispaceModal = (props) => {
                 "Content-Type": "application/json",
                 URI: "/properties/update",
                 // proxy_to_method: "POST",
+                sign: signatureObj.sign,
+                sign_issue_at:  signatureObj.sign_issue_at,
+                sign_nonce: signatureObj.sign_nonce,
+                sign_address: signatureObj.sign_address,
             }
         })
         .then(res => {
@@ -210,7 +405,7 @@ const EditAispaceModal = (props) => {
                   }).then(() => {
                     // dispatch(counterActions.closeAdditionalInfoModal());
                     // props.onClose()
-                    // setIsLoading(false);
+                    setIsLoading(false);
                     router.push("/homepage/dashboard")
                   })
             })
@@ -224,8 +419,6 @@ const EditAispaceModal = (props) => {
               })
             setIsLoading(false)
         })
-
-        console.log(airspaceInformation);
     }
 
     return <Fragment>
@@ -481,8 +674,8 @@ const EditAispaceModal = (props) => {
                     </div>
                 </div> */}
                 <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                    <button onClick={props.onClose} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
-                    <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
+                    <button onClick={props.onClose} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
+                    <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
                 </div>
             </form>
         </div>

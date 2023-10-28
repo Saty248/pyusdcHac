@@ -4,6 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import swal from "sweetalert";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Web3Auth } from "@web3auth/modal";
+import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import base58 from "bs58";
 
 import TimeSelect from "../TimeSelect";
 import Spinner from "../Spinner";
@@ -114,8 +118,9 @@ const AdditionalAispaceInformation = (props) => {
         setAirspaceStatus(e.target.value);
     }
 
-    const formSubmitHandler = (e) => {
+    const formSubmitHandler = async(e) => {
         e.preventDefault();
+        setIsLoading(true);
         const airspaceTitle = airspaceTitleRef.current.value;
 
         const weekDayRanges = [
@@ -161,7 +166,192 @@ const AdditionalAispaceInformation = (props) => {
                 toTime: +toSunday,
                 isAvailable: (sunAvailable && airspaceStatus === "Available") ? true : false 
             },
-        ]
+        ];
+
+        const signatureObj = {};
+
+        const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+       
+
+        if(retrievedObj && retrievedObj.sign_issue_at) {
+            console.log(retrievedObj)
+            const issuedAt = new Date(retrievedObj.sign_issue_at);
+            const issuedTime = Math.floor(issuedAt.getTime() / 1000);
+            console.log(issuedAt);
+            console.log(issuedTime);
+            console.log(retrievedObj.sign_issue_at);
+            const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
+            const timeDifference = currentTimestampInSeconds - issuedTime;
+            console.log("This is the time difference", timeDifference);
+
+            if(timeDifference > 300) {
+                console.log("The time has expired")
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
+        
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+                
+                await web3auth.initModal();
+        
+                const web3authProvider = await web3auth.connect();
+        
+                const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+                // console.log(solanaWallet);
+                const accounts = await solanaWallet.requestAccounts()
+                console.log(solanaWallet);
+                console.log(accounts[0]);
+        
+            
+        
+                const userInfo = await web3auth.getUserInfo();
+                console.log(userInfo);
+            
+                // const domain = window.location.host;
+                const domain = 'localhost:3000';
+                // const origin = window.location.origin;
+                const origin = 'http://localhost:3000';
+        
+                console.log("domain", domain);
+                console.log("origin", origin);
+        
+        
+                const payload = new SIWPayload();
+                payload.domain = domain;
+                payload.uri = origin;
+                payload.address = accounts[0]
+                payload.statement = "Sign in with Solana to the app.";
+                payload.version = "1";
+                payload.chainId = 1;
+        
+                const header = { t: "sip99" };
+                const network = "solana";
+        
+                console.log(JSON.stringify(payload));
+        
+                let message = new SIWWeb3({ header, payload, network });
+                console.log(message)
+        
+                const messageText = message.prepareMessage();
+                console.log(messageText);
+                const msg = new TextEncoder().encode(messageText);
+                const result = await solanaWallet.signMessage(msg);
+        
+                const signature = base58.encode(result);
+                console.log("This is the signature", signature);
+        
+                signatureObj.sign = signature
+                signatureObj.sign_nonce = message.payload.nonce
+                signatureObj.sign_issue_at = message.payload.issuedAt
+                signatureObj.sign_address = accounts[0]
+        
+                localStorage.setItem("signature", JSON.stringify({
+                    sign: signature,
+                    "sign_issue_at": message.payload.issuedAt,
+                    "sign_nonce": message.payload.nonce,
+                    "sign_address": accounts[0],
+                }));
+            } else {
+                console.log("I retrieved a valid sigature and used it");
+                signatureObj.sign = retrievedObj.sign
+                signatureObj.sign_nonce = retrievedObj.sign_nonce
+                signatureObj.sign_issue_at = retrievedObj.sign_issue_at
+                signatureObj.sign_address = retrievedObj.sign_address
+            }
+        } else {
+            console.log("I didn't find any signature");
+            const chainConfig = {
+                chainNamespace: "solana",
+                chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                rpcTarget: "https://api.testnet.solana.com",
+                displayName: "Solana Mainnet",
+                blockExplorer: "https://explorer.solana.com",
+                ticker: "SOL",
+                tickerName: "Solana",
+            };
+    
+            const web3auth = new Web3Auth({
+                    // For Production
+                    // clientId: "",
+                    clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+            
+                    // For Development
+                    // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                    web3AuthNetwork: "cyan",
+                    chainConfig: chainConfig,
+                });
+            
+            await web3auth.initModal();
+    
+            const web3authProvider = await web3auth.connect();
+    
+            const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+            // console.log(solanaWallet);
+            const accounts = await solanaWallet.requestAccounts()
+            console.log(solanaWallet);
+            console.log(accounts[0]);
+    
+        
+    
+            const userInfo = await web3auth.getUserInfo();
+            console.log(userInfo);
+        
+            // const domain = window.location.host;
+            const domain = 'localhost:3000';
+            // const origin = window.location.origin;
+            const origin = 'http://localhost:3000';
+    
+            console.log("domain", domain);
+            console.log("origin", origin);
+    
+    
+            const payload = new SIWPayload();
+            payload.domain = domain;
+            payload.uri = origin;
+            payload.address = accounts[0]
+            payload.statement = "Sign in with Solana to the app.";
+            payload.version = "1";
+            payload.chainId = 1;
+    
+            const header = { t: "sip99" };
+            const network = "solana";
+    
+    
+            let message = new SIWWeb3({ header, payload, network });
+    
+            const messageText = message.prepareMessage();
+            const msg = new TextEncoder().encode(messageText);
+            const result = await solanaWallet.signMessage(msg);
+    
+            const signature = base58.encode(result);
+    
+            signatureObj.sign = signature
+            signatureObj.sign_nonce = message.payload.nonce
+            signatureObj.sign_issue_at = message.payload.issuedAt
+            signatureObj.sign_address = accounts[0]
+    
+            localStorage.setItem("signature", JSON.stringify({
+                sign: signature,
+                "sign_issue_at": message.payload.issuedAt,
+                "sign_nonce": message.payload.nonce,
+                "sign_address": accounts[0],
+            }));
+        };
 
         
 
@@ -180,7 +370,7 @@ const AdditionalAispaceInformation = (props) => {
             timezone: airspaceStatus === "Available" ? timezone : "GMT"
         }
 
-        setIsLoading(true);
+
 
         fetch(`/api/proxy?${Date.now()}`, {
             method: "POST",
@@ -189,6 +379,10 @@ const AdditionalAispaceInformation = (props) => {
                 "Content-Type": "application/json",
                 URI: "/properties/claim",
                 proxy_to_method: "POST",
+                sign: signatureObj.sign,
+                sign_issue_at:  signatureObj.sign_issue_at,
+                sign_nonce: signatureObj.sign_nonce,
+                sign_address: signatureObj.sign_address,
             }
         })
         .then(res => {
@@ -231,7 +425,7 @@ const AdditionalAispaceInformation = (props) => {
 
     return <Fragment>
         <div className="bg-white rounded fixed z-20 py-10 overflow-y-auto" style={{width: "740px", height: "90vh", maxHeight: "908px", 
-            top: "7vh", // This is for live environment
+            top: "7vh", 
             left: "calc(50% - 370px)", 
             }}>
             <button onClick={closeModalHandler} className="absolute top-3 right-3">
@@ -260,22 +454,6 @@ const AdditionalAispaceInformation = (props) => {
                         <option selected>$0.01 - $99.00</option>
                     </select>
                 </div>
-                {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-between gap-8">
-                    <p htmlFor="AirSpace Title" className="font-medium me-10">Transit Fee</p>
-                    <div className="flex flex-row justify-center items-center">
-                        <input type="number" ref={costRef} name="hour" min="1" placeholder="$ 10.00" style={{width: "143px", height: "27px"}} className="bg-light-blue ps-2 focus:outline-blue-200 placeholder:text-sml placeholder:text-light-brown rounded-sm" />
-                        <label htmlFor="hour" className="text-dark-brown text-sml ms-2">per journey</label>
-                    </div>
-                    <div>
-                        <div className="flex flex-row justify-center items-center gap-2">
-                            <input type="checkbox" onChange={costCheckedHandler} checked={costChecked} value={negotiable} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer placeholder:text-sml w-4 checked:bg-blue-500 rounded-sm" />
-                            <label htmlFor="hour" onClick={costCheckedHandler} className="text-dark-brown text-sml cursor-pointer">Variable</label>
-                        </div>
-                        <div style={{width: "110px"}}>
-                            <p className="text-xs ps-4">Select if your cost can be negotiated</p>
-                        </div>
-                    </div>
-                </div> */}
                 <hr />
                 <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                     <div style={{width: "147px"}} className="">
@@ -309,14 +487,7 @@ const AdditionalAispaceInformation = (props) => {
                                 <option>No-fly zone</option>
                             </select> 
                         </div>
-                        {/* <div className="flex flex-row justify-center mt-10 -ms-14 items-center"> */}
                         <div style={{width: "138px"}} className="mt-10">
-                            {/* <p className="font-medium">Select Time Zone</p> */}
-                            {/* <select disabled={airspaceStatus !== "Available"} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
-                                <option selected disabled>Timezone</option>
-                                <option>UTC</option>
-                                <option>UTC + 1</option>
-                            </select>     */}
                             <TimezoneSelectComponent onChange={(e) => {
                                         setTimezone(e.target.value)
                                         console.log(e.target.value)
@@ -419,17 +590,6 @@ const AdditionalAispaceInformation = (props) => {
                     </div>
                 </div>
                 {/* <hr /> */}
-                {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-start gap-8">
-                    <div style={{width: "138px"}} className="">
-                        <p className="font-medium">Restrictions</p>
-                        <p className="text-xs">Restriction on the AirSpace</p>
-                    </div>
-                    <div className="flex flex-row justify-center -ms-2 items-center gap-2">
-                        <input type="number" ref={restrictionRef} name="hour" min="1" placeholder="20" style={{width: "62px", height: "27px"}} className="bg-light-blue ps-2 placeholder:text-sml focus:outline-blue-200 placeholder:text-light-brown rounded-sm" />
-                        <label htmlFor="hour" className="text-dark-brown text-sml">metre landing radius</label>
-                    </div>
-                </div> */}
-                {/* <hr /> */}
                 {/* <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
                     <div style={{width: "147px"}} className="">
                         <p className="font-medium">Offers</p>
@@ -447,8 +607,8 @@ const AdditionalAispaceInformation = (props) => {
                     </div>
                 </div> */}
                 <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                    <button onClick={closeModalHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
-                    <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-not-allowed" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
+                    <button onClick={closeModalHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
+                    <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
                 </div>
             </form>
         </div>

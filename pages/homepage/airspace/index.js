@@ -3,24 +3,23 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import maplibregl from 'maplibre-gl';
+import { Web3Auth } from "@web3auth/modal";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import base58 from "bs58";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
-import AirspaceReviews from "@/Components/AllAirspaces/AirspaceReviews";
 import AboutAirspace from "@/Components/AllAirspaces/AboutAirspace";
 import AllAirspaceOverview from "@/Components/AllAirspaces/AirspaceOverview";
 import MyAirspaceOverview from "@/Components/MyAirspaces/MyAirspaceOverview";
-import AboutMyAirspace from "@/Components/MyAirspaces/AboutAirspace";
-import MyAirspaceReviews from "@/Components/MyAirspaces/MyAirspaceReviews";
 import Airspaces from "@/Components/Airspaces";
 import AddReviewModal from "@/Components/Modals/AddReviewModal";
-import NewAirspaceModal from "@/Components/Modals/NewAirspaceModal";
 import AddAirspace from "@/Components/Modals/AddAirspace";
 import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
 import { counterActions } from "@/store/store";
 import Spinner from "@/Components/Spinner";
-import AirspaceTab from "@/Components/AirspaceTab";
 import MyAirspaceTab from "@/Components/MyAirspaceTab";
 import EditAispaceModal from "@/Components/Modals/EditAirspaceModal";
 
@@ -186,29 +185,117 @@ const Airspace = (props) => {
     }, [flyToAddress]);
 
     useEffect(() => {
-        if(user) {
-            fetch(`/api/proxy?${Date.now()}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    uri: `/properties/user-properties/${user.id}`,
-                    // proxy_to_method: "GET",
-                }
-            }).then((res) => {
-                if(!res.ok) {
-                    return res.json()
-                    .then((err) => {
-                        throw new Error(err.message)
-                    })
-                }
+        const getUserAirspace = async() => {
+            if(user) {
+                const signatureObj = {};
+
+        const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+
+          
+        const chainConfig = {
+            chainNamespace: "solana",
+            chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+            rpcTarget: "https://api.testnet.solana.com",
+            displayName: "Solana Mainnet",
+            blockExplorer: "https://explorer.solana.com",
+            ticker: "SOL",
+            tickerName: "Solana",
+        };
+
+        const web3auth = new Web3Auth({
+                // For Production
+                // clientId: "",
+                clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+        
+                // For Development
+                // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                web3AuthNetwork: "cyan",
+                chainConfig: chainConfig,
+            });
+        
+        await web3auth.initModal();
+
+        const web3authProvider = await web3auth.connect();
+
+        const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+        // console.log(solanaWallet);
+        const accounts = await solanaWallet.requestAccounts()
+        console.log(solanaWallet);
+        console.log(accounts[0])
+
+    
+
+        const userInfo = await web3auth.getUserInfo();
+        console.log(userInfo);
+    
+        // const domain = window.location.host;
+        const domain = 'localhost:3000';
+        // const origin = window.location.origin;
+        const origin = 'http://localhost:3000';
+
+        console.log("domain", domain);
+        console.log("origin", origin);
+
+
+        const payload = new SIWPayload();
+        payload.domain = domain;
+        payload.uri = origin;
+        payload.address = accounts[0]
+        payload.statement = "Sign in with Solana to the app.";
+        payload.version = "1";
+        payload.chainId = 1;
+
+        const header = { t: "sip99" };
+        const network = "solana";
+
+        console.log(JSON.stringify(payload));
+
+        let message = new SIWWeb3({ header, payload, network });
+        console.log(message)
+
+        const messageText = message.prepareMessage();
+        console.log(messageText);
+        const msg = new TextEncoder().encode(messageText);
+        const result = await solanaWallet.signMessage(msg);
+
+        const signature = base58.encode(result);
+        console.log("This is the signature", signature);
+
+        signatureObj.sign = signature
+        signatureObj.sign_nonce = message.payload.nonce
+        signatureObj.sign_issue_at = message.payload.issuedAt
+        signatureObj.sign_address = accounts[0]
+
+
+        fetch(`/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: `/properties/user-properties/${user.id}`,
+                // proxy_to_method: "GET",
+                sign: signatureObj.sign,
+                sign_issue_at:  signatureObj.sign_issue_at,
+                sign_nonce: signatureObj.sign_nonce,
+                sign_address: signatureObj.sign_address,
+            }
+        }).then((res) => {
+            if(!res.ok) {
                 return res.json()
-                .then((data) =>{
-                    setMyAirspaces(data)
+                .then((err) => {
+                    throw new Error(err.message)
                 })
+            }
+            return res.json()
+            .then((data) =>{
+                console.log(data)
+                setMyAirspaces(data)
             })
-            .catch((err) => {
-                console.log(err)
-            })
-        }
+        })
+        .catch((err) => {
+            console.log(err)
+        })}    
+    }
+
+        getUserAirspace();
     }, [user])
 
     const newAirspace = useSelector(state => {
@@ -457,6 +544,8 @@ const Airspace = (props) => {
                                                  storageHub={myFilteredAirspace.hasStorageHub}
                                                  noFlyZone={myFilteredAirspace.noFlyZone}
                                                  editAirspace={editAirspaceHandler}
+                                                 latitude={myFilteredAirspace.latitude}
+                                                 longitute={myFilteredAirspace.longitude.toString()}
                                                  />}
 {/* 
                     {aboutMyAirspace && <AboutMyAirspace 
@@ -481,18 +570,18 @@ const Airspace = (props) => {
                                                 closeDetails={closeAirspaceDetailsHandler} 
                                                 />} */}
 
-                    {viewAirspace && <AllAirspaceOverview 
+                    {/* {viewAirspace && <AllAirspaceOverview 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler} 
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
-                    {aboutAirspace && <AboutAirspace 
+                                                />} */}
+                    {/* {aboutAirspace && <AboutAirspace 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler}
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />}
+                                                />} */}
                 </div>
             </div>
         </div>
@@ -502,28 +591,33 @@ const Airspace = (props) => {
 export default Airspace;
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            // proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
-    };
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
+    }
 }

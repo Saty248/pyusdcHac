@@ -46,6 +46,7 @@ const Sidebar = (props) => {
         setIsLoading(true);
         localStorage.removeItem("openlogin_store");
         localStorage.removeItem("email");
+        localStorage.removeItem("signature");
         router.replace("/auth/join");
     }
 
