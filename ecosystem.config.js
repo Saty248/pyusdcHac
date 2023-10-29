@@ -10,5 +10,24 @@ module.exports = {
     env_prod: {
       NODE_ENV: "prod"
     }
-  }]
+  }],
+  deploy: {
+    prod: {
+      key: "~/.ssh/skytrade_deploy_key.pem",
+      ssh_options: "StrictHostKeyChecking=no",
+      user: "ec2-user",
+      host: [
+        {
+          host: "3.20.183.221",
+          port: "4578",
+        },
+      ],
+      ref: "prod",
+      repo: "git@github.com:SkyTradeLinks/address-claiming.git",
+      path: "/home/ec2-user/pm2-deploy/address-claiming",
+      "post-deploy":
+      "bash aws_ps_get_prod_env.sh && npm install && npm run build && pm2 startOrReload ecosystem.config.js --env prod",
+      "pre-setup": "ssh-keyscan github.com >> ~/.ssh/known_hosts",
+    },
+  },
 }
