@@ -6,7 +6,7 @@ const MyAirspaceOverview = (props) => {
     return  <div className="absolute rounded-md bg-white top-5 z-10" style={{width: "339px", height: "90%", maxHeight: "537px", left: "380px"}}>
         <div className="relative">
             {/* <Image src="/images/airspace-preview.png" alt="icon" className="rounded-t-md" width={339} height={422} /> */}
-            <Image src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${props.longitute},${props.latitude},14,0/300x200?access_token=pk.eyJ1IjoiaGlsYXJ5MDE3IiwiYSI6ImNsa3IzdjJoYjBzbGczcXA2dmN4NWsyZjMifQ.sTcMwA_0gIPig9O_mWQumQ`} alt="icon" className="rounded-t-md" width={339} height={422} />
+            <Image src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${props.longitute},${props.latitude},14,0/300x200?access_token=pk.eyJ1IjoiaGlsYXJ5MDE3IiwiYSI6ImNsb2JsMmY2eDB0ZHkyaW5uY3Z5bHd2N3UifQ.hYtTUYI0t96rw74IgqhcSg`} alt="icon" className="rounded-t-md" width={339} height={422} />
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 34 34" fill="none">
                     <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
