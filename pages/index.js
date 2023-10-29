@@ -1,9 +1,20 @@
 import Head from 'next/head';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useRouter } from "next/router";
  
 export default function Home() {
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+
+    if(fetchedToken) {
+        if(fetchedToken.sessionId) {
+            router.push("/homepage/dashboard");
+            return;
+        };
+    };  
+  }, []);
 
   return (
     <Fragment>

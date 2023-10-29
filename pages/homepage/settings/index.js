@@ -117,7 +117,7 @@ const Settings = (props) => {
         // payload.domain = domain;
         // payload.uri = origin;
         // // payload.address = publicKey!.toString();
-        // payload.address = accounts[0];
+        // payload.address = user.blockchainAddress;
         // payload.statement = "statement";
         // payload.version = "1";
         // payload.chainId = 1;
@@ -213,11 +213,7 @@ const Settings = (props) => {
         
                 const web3authProvider = await web3auth.connect();
         
-                const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-                // console.log(solanaWallet);
-                const accounts = await solanaWallet.requestAccounts()
-                console.log(solanaWallet);
-                console.log(accounts[0]);
+                const solanaWallet = new SolanaWallet(web3authProvider); 
         
             
         
@@ -236,7 +232,7 @@ const Settings = (props) => {
                 const payload = new SIWPayload();
                 payload.domain = domain;
                 payload.uri = origin;
-                payload.address = accounts[0]
+                payload.address = user.blockchainAddress
                 payload.statement = "Sign in with Solana to the app.";
                 payload.version = "1";
                 payload.chainId = 1;
@@ -260,13 +256,13 @@ const Settings = (props) => {
                 signatureObj.sign = signature
                 signatureObj.sign_nonce = message.payload.nonce
                 signatureObj.sign_issue_at = message.payload.issuedAt
-                signatureObj.sign_address = accounts[0]
+                signatureObj.sign_address = user.blockchainAddress
         
                 localStorage.setItem("signature", JSON.stringify({
                     sign: signature,
                     "sign_issue_at": message.payload.issuedAt,
                     "sign_nonce": message.payload.nonce,
-                    "sign_address": accounts[0],
+                    "sign_address": user.blockchainAddress,
                 }));
             } else {
                 console.log("I retrieved a valid sigature and used it");
@@ -302,11 +298,7 @@ const Settings = (props) => {
     
             const web3authProvider = await web3auth.connect();
     
-            const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-            // console.log(solanaWallet);
-            const accounts = await solanaWallet.requestAccounts()
-            console.log(solanaWallet);
-            console.log(accounts[0]);
+            const solanaWallet = new SolanaWallet(web3authProvider); 
     
         
     
@@ -325,7 +317,7 @@ const Settings = (props) => {
             const payload = new SIWPayload();
             payload.domain = domain;
             payload.uri = origin;
-            payload.address = accounts[0]
+            payload.address = user.blockchainAddress
             payload.statement = "Sign in with Solana to the app.";
             payload.version = "1";
             payload.chainId = 1;
@@ -345,13 +337,13 @@ const Settings = (props) => {
             signatureObj.sign = signature
             signatureObj.sign_nonce = message.payload.nonce
             signatureObj.sign_issue_at = message.payload.issuedAt
-            signatureObj.sign_address = accounts[0]
+            signatureObj.sign_address = user.blockchainAddress
     
             localStorage.setItem("signature", JSON.stringify({
                 sign: signature,
                 "sign_issue_at": message.payload.issuedAt,
                 "sign_nonce": message.payload.nonce,
-                "sign_address": accounts[0],
+                "sign_address": user.blockchainAddress,
             }));
         };
 
