@@ -13,7 +13,7 @@ module.exports = {
   }],
   deploy: {
     prod: {
-      key: "~/.ssh/skytrade_deploy_key.pem",
+      key: "~/.ssh/skytrade_deploy_key.key",
       ssh_options: "StrictHostKeyChecking=no",
       user: "ec2-user",
       host: [
