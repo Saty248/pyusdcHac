@@ -128,7 +128,6 @@ const CorporateSignup = () => {
                 icon: "success",
                 button: "Ok"
               }).then(() => {
-                localStorage.setItem("email", category.email);
                 localStorage.setItem("openlogin_store", JSON.stringify({
                     sessionId: token.sessionId
                 }));

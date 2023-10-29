@@ -15,12 +15,22 @@ const MyAirspaceTab = (props) => {
                 </svg>   
                 <p>{props.title}</p> 
             </div> 
-            <div className="mt-5 me-1.5 flex flex-row items-center justify-center font-semibold p-2 gap-1" style={{height: "21px", borderRadius:"3px", background: `${!props.status ? "#BED9C7" : "#FFC7C2"}`, }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
-                    <circle cx="3" cy="3" r="3" fill={`${!props.status ? "#1A572E" : "#C80000"} `}/>
-                </svg>
-                <p style={{color: `${!props.status ? "#1A572E" : "#C80000"}`}} className="text-sm">{props.status ? "No-Fly Zone " : "Available"}</p>
-            </div>
+            {props.propertyStatus !== "NotVerified" &&
+                <div className="mt-5 me-1.5 flex flex-row items-center justify-center font-semibold p-2 gap-1" style={{height: "21px", borderRadius:"3px", background: `${!props.status ? "#BED9C7" : "#FFC7C2"}`, }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
+                        <circle cx="3" cy="3" r="3" fill={`${!props.status ? "#1A572E" : "#C80000"} `}/>
+                    </svg>
+                    <p style={{color: `${!props.status ? "#1A572E" : "#C80000"}`}} className="text-sm">{props.status ? "No-Fly Zone " : "Available"}</p>
+                </div>
+            }
+            {props.propertyStatus === "NotVerified" && 
+                <div className="mt-5 me-1.5 flex flex-row items-center justify-center font-semibold p-1 gap-1" style={{borderRadius:"3px", background: "#FFD037"}}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
+                        <circle cx="3" cy="3" r="3" fill=" #7a6626" />
+                    </svg>
+                    <p style={{color: "#7a6626"}} className="text-xs">Pending review</p>
+                </div>
+            }
         </div>
         {/* <div className="flex flex-row items-center mt-2 text-xs ms-2">
             <p className="text-red-600">4.5</p>

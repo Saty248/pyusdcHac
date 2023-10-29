@@ -61,19 +61,62 @@ const Airspace = (props) => {
 
 
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
         if(users) {
-            const singleUser = users.filter(user => user.email === fetchedEmail);
+            const authUser = async() => {
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                localStorage.removeItem("openlogin_store")
-                router.push("/auth/join");
-                return;
-            };
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+            
+                await web3auth.initModal();
 
-            setToken(fetchedToken.sessionId);  
-            setUser(singleUser[0]);
+                // await web3auth.connect();
+                
+                let userInfo;
+
+                try{
+                    userInfo = await web3auth.getUserInfo();
+                } catch(err) {
+                    localStorage.removeItem("openlogin_store")
+                    swal({
+                        title: "oops!",
+                        text: "Something went wrong. Kindly try again",
+                      })
+                      .then(() => router.push("/auth/join"))
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            
+                const singleUser = users.filter(user => user.email === userInfo.email);
+
+                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                    localStorage.removeItem("openlogin_store")
+                    router.push("/auth/join");
+                    return;
+                };
+
+                setToken(fetchedToken.sessionId);  
+                setUser(singleUser[0]);
+            } 
+
+            authUser();
         }
     }, []);
 
@@ -189,78 +232,77 @@ const Airspace = (props) => {
             if(user) {
                 const signatureObj = {};
 
-        const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+                // const retrievedObj = JSON.parse(localStorage.getItem("signature"));
 
-          
-        const chainConfig = {
-            chainNamespace: "solana",
-            chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
-            displayName: "Solana Mainnet",
-            blockExplorer: "https://explorer.solana.com",
-            ticker: "SOL",
-            tickerName: "Solana",
-        };
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-        const web3auth = new Web3Auth({
-                // For Production
-                // clientId: "",
-                clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
         
-                // For Development
-                // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                web3AuthNetwork: "cyan",
-                chainConfig: chainConfig,
-            });
-        
-        await web3auth.initModal();
+                await web3auth.initModal();
 
-        const web3authProvider = await web3auth.connect();
+                const web3authProvider = await web3auth.connect();
 
-        const solanaWallet = new SolanaWallet(web3authProvider);
+                const solanaWallet = new SolanaWallet(web3authProvider);
 
-    
+            
 
-        const userInfo = await web3auth.getUserInfo();
-        console.log(userInfo);
-    
-        // const domain = window.location.host;
-        const domain = 'localhost:3000';
-        // const origin = window.location.origin;
-        const origin = 'http://localhost:3000';
+                const userInfo = await web3auth.getUserInfo();
+                console.log(userInfo);
+            
+                // const domain = window.location.host;
+                const domain = 'localhost:3000';
+                // const origin = window.location.origin;
+                const origin = 'http://localhost:3000';
 
-        console.log("domain", domain);
-        console.log("origin", origin);
+                console.log("domain", domain);
+                console.log("origin", origin);
 
 
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress
-        payload.statement = "Sign in with Solana to the app.";
-        payload.version = "1";
-        payload.chainId = 1;
+                const payload = new SIWPayload();
+                payload.domain = domain;
+                payload.uri = origin;
+                payload.address = user.blockchainAddress
+                payload.statement = "Sign in with Solana to the app.";
+                payload.version = "1";
+                payload.chainId = 1;
 
-        const header = { t: "sip99" };
-        const network = "solana";
+                const header = { t: "sip99" };
+                const network = "solana";
 
-        console.log(JSON.stringify(payload));
+                console.log(JSON.stringify(payload));
 
-        let message = new SIWWeb3({ header, payload, network });
-        console.log(message)
+                let message = new SIWWeb3({ header, payload, network });
+                console.log(message)
 
-        const messageText = message.prepareMessage();
-        console.log(messageText);
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
+                const messageText = message.prepareMessage();
+                console.log(messageText);
+                const msg = new TextEncoder().encode(messageText);
+                const result = await solanaWallet.signMessage(msg);
 
-        const signature = base58.encode(result);
-        console.log("This is the signature", signature);
+                const signature = base58.encode(result);
+                console.log("This is the signature", signature);
 
-        signatureObj.sign = signature
-        signatureObj.sign_nonce = message.payload.nonce
-        signatureObj.sign_issue_at = message.payload.issuedAt
-        signatureObj.sign_address = user.blockchainAddress
+                signatureObj.sign = signature
+                signatureObj.sign_nonce = message.payload.nonce
+                signatureObj.sign_issue_at = message.payload.issuedAt
+                signatureObj.sign_address = user.blockchainAddress
 
 
         fetch(`/api/proxy?${Date.now()}`, {
@@ -521,6 +563,7 @@ const Airspace = (props) => {
                                     status={airspace.noFlyZone}
                                     viewMyAirspace={showMyAirspaceHandler.bind(null, airspace.id)}
                                     amount={airspace.transitFee}
+                                    propertyStatus={airspace.propertyStatus.type}
                                      />
                         })}
                     </Airspaces>
@@ -541,7 +584,8 @@ const Airspace = (props) => {
                                                  noFlyZone={myFilteredAirspace.noFlyZone}
                                                  editAirspace={editAirspaceHandler}
                                                  latitude={myFilteredAirspace.latitude}
-                                                 longitute={myFilteredAirspace.longitude.toString()}
+                                                 longitute={myFilteredAirspace.longitude}
+                                                 propertyStatus={myFilteredAirspace.propertyStatus.type}
                                                  />}
 {/* 
                     {aboutMyAirspace && <AboutMyAirspace 

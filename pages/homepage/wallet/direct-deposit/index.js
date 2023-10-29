@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import swal from "sweetalert";
+import { Web3Auth } from "@web3auth/modal";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -34,21 +35,62 @@ const Wallet = (props) => {
 
 
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-
         if(users) {
-            const singleUser = users.filter(user => user.email === fetchedEmail);
+            const authUser = async() => {
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                localStorage.removeItem("openlogin_store")
-                router.push("/auth/join");
-                return;
-            };
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+            
+                await web3auth.initModal();
 
-            setToken(fetchedToken.sessionId);  
-            setUser(singleUser[0]);
+                // await web3auth.connect();
+                
+                let userInfo;
+
+                try{
+                    userInfo = await web3auth.getUserInfo();
+                } catch(err) {
+                    localStorage.removeItem("openlogin_store")
+                    swal({
+                        title: "oops!",
+                        text: "Something went wrong. Kindly try again",
+                      })
+                      .then(() => router.push("/auth/join"))
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            
+                const singleUser = users.filter(user => user.email === userInfo.email);
+
+                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                    localStorage.removeItem("openlogin_store")
+                    router.push("/auth/join");
+                    return;
+                };
+
+                setToken(fetchedToken.sessionId);  
+                setUser(singleUser[0]);
+            } 
+
+            authUser();
         }
     }, []);
 

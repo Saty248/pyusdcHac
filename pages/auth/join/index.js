@@ -18,7 +18,6 @@ import logo from "../../../public/images/logo.jpg";
 const Signup = (props) => {
     const [emailValid, setEmailValid] = useState(true);
     const [categorySect, setCategorySect] = useState(false);
-    const [initial, setInitial] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const emailRef = useRef();
@@ -38,16 +37,6 @@ const Signup = (props) => {
     
     const router = useRouter();
     const dispatch = useDispatch();
-
-    // const chainConfig = {
-    //     chainNamespace: "solana",
-    //     chainId: "0x3", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-    //     rpcTarget: "https://api.devnet.solana.com",
-    //     displayName: "Solana Devnet",
-    //     blockExplorer: "https://explorer.solana.com",
-    //     ticker: "SOL",
-    //     tickerName: "Solana",
-    //   }
 
     //   For Live Environment
     
@@ -87,7 +76,7 @@ const Signup = (props) => {
         }
         
         init();
-    }, [initial]);
+    }, []);
 
     const loginHandler = async(provider, e) => {
         e.preventDefault();
@@ -131,7 +120,6 @@ const Signup = (props) => {
                   });
             } catch(err) {
                 localStorage.removeItem("openlogin_store");
-                localStorage.removeItem("email");
                 swal({
                     title: "oops!",
                     text: "Something went wrong. Kindly reload the page",
@@ -204,7 +192,6 @@ const Signup = (props) => {
                     return;
                 }
     
-                localStorage.setItem("email", userInformation.email);
                 router.replace("/homepage/dashboard");
             })
         }).catch(err => {

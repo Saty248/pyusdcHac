@@ -83,7 +83,7 @@ const MyAirspaceOverview = (props) => {
                     </button>
                     <p className="text-center text-dark-blue text-sm">3D Map</p>
                 </div>
-                {!props.noFlyZone &&
+                {!props.noFlyZone && props.propertyStatus !== "NotVerified" &&
                 <div onClick={() => alert("Button clicked")} className="flex flex-col justify-center items-center">
                     <button style={{width: "35px", height: "35px", borderRadius: "50%", border: "1px solid blue"}} className="bg-white p-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">

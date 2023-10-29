@@ -169,190 +169,259 @@ const EditAispaceModal = (props) => {
             },
         ]
 
+        setIsLoading(true);
+
         const signatureObj = {};
 
-        const retrievedObj = JSON.parse(localStorage.getItem("signature"));
-        setIsLoading(true);
+        // const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+        
        
 
-        if(retrievedObj && retrievedObj.sign_issue_at) {
-            console.log(retrievedObj)
-            const issuedAt = new Date(retrievedObj.sign_issue_at);
-            const issuedTime = Math.floor(issuedAt.getTime() / 1000);
-            console.log(issuedAt);
-            console.log(issuedTime);
-            console.log(retrievedObj.sign_issue_at);
-            const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
-            const timeDifference = currentTimestampInSeconds - issuedTime;
-            console.log("This is the time difference", timeDifference);
+        // if(retrievedObj && retrievedObj.sign_issue_at) {
+        //     console.log(retrievedObj)
+        //     const issuedAt = new Date(retrievedObj.sign_issue_at);
+        //     const issuedTime = Math.floor(issuedAt.getTime() / 1000);
+        //     console.log(issuedAt);
+        //     console.log(issuedTime);
+        //     console.log(retrievedObj.sign_issue_at);
+        //     const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
+        //     const timeDifference = currentTimestampInSeconds - issuedTime;
+        //     console.log("This is the time difference", timeDifference);
 
-            if(timeDifference > 300) {
-                console.log("The time has expired")
-                const chainConfig = {
-                    chainNamespace: "solana",
-                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
-                    displayName: "Solana Mainnet",
-                    blockExplorer: "https://explorer.solana.com",
-                    ticker: "SOL",
-                    tickerName: "Solana",
-                };
+        //     if(timeDifference > 300) {
+        //         console.log("The time has expired")
+        //         const chainConfig = {
+        //             chainNamespace: "solana",
+        //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        //             rpcTarget: "https://api.testnet.solana.com",
+        //             displayName: "Solana Mainnet",
+        //             blockExplorer: "https://explorer.solana.com",
+        //             ticker: "SOL",
+        //             tickerName: "Solana",
+        //         };
         
-                const web3auth = new Web3Auth({
-                        // For Production
-                        // clientId: "",
-                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+        //         const web3auth = new Web3Auth({
+        //                 // For Production
+        //                 // clientId: "",
+        //                 clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
-                        // For Development
-                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                        web3AuthNetwork: "cyan",
-                        chainConfig: chainConfig,
-                    });
+        //                 // For Development
+        //                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+        //                 web3AuthNetwork: "cyan",
+        //                 chainConfig: chainConfig,
+        //             });
                 
-                await web3auth.initModal();
+        //         await web3auth.initModal();
         
-                const web3authProvider = await web3auth.connect();
+        //         const web3authProvider = await web3auth.connect();
         
-                const solanaWallet = new SolanaWallet(web3authProvider);
+        //         const solanaWallet = new SolanaWallet(web3authProvider);
         
             
         
-                const userInfo = await web3auth.getUserInfo();
-                console.log(userInfo);
+        //         const userInfo = await web3auth.getUserInfo();
+        //         console.log(userInfo);
             
-                // const domain = window.location.host;
-                const domain = 'localhost:3000';
-                // const origin = window.location.origin;
-                const origin = 'http://localhost:3000';
+        //         // const domain = window.location.host;
+        //         const domain = 'localhost:3000';
+        //         // const origin = window.location.origin;
+        //         const origin = 'http://localhost:3000';
         
-                console.log("domain", domain);
-                console.log("origin", origin);
+        //         console.log("domain", domain);
+        //         console.log("origin", origin);
         
         
-                const payload = new SIWPayload();
-                payload.domain = domain;
-                payload.uri = origin;
-                payload.address = props.user.blockchainAddress
-                payload.statement = "Sign in with Solana to the app.";
-                payload.version = "1";
-                payload.chainId = 1;
+        //         const payload = new SIWPayload();
+        //         payload.domain = domain;
+        //         payload.uri = origin;
+        //         payload.address = props.user.blockchainAddress
+        //         payload.statement = "Sign in with Solana to the app.";
+        //         payload.version = "1";
+        //         payload.chainId = 1;
         
-                const header = { t: "sip99" };
-                const network = "solana";
+        //         const header = { t: "sip99" };
+        //         const network = "solana";
         
-                console.log(JSON.stringify(payload));
+        //         console.log(JSON.stringify(payload));
         
-                let message = new SIWWeb3({ header, payload, network });
-                console.log(message)
+        //         let message = new SIWWeb3({ header, payload, network });
+        //         console.log(message)
         
-                const messageText = message.prepareMessage();
-                console.log(messageText);
-                const msg = new TextEncoder().encode(messageText);
-                const result = await solanaWallet.signMessage(msg);
+        //         const messageText = message.prepareMessage();
+        //         console.log(messageText);
+        //         const msg = new TextEncoder().encode(messageText);
+        //         const result = await solanaWallet.signMessage(msg);
         
-                const signature = base58.encode(result);
-                console.log("This is the signature", signature);
+        //         const signature = base58.encode(result);
+        //         console.log("This is the signature", signature);
         
-                signatureObj.sign = signature
-                signatureObj.sign_nonce = message.payload.nonce
-                signatureObj.sign_issue_at = message.payload.issuedAt
-                signatureObj.sign_address = props.user.blockchainAddress
+        //         signatureObj.sign = signature
+        //         signatureObj.sign_nonce = message.payload.nonce
+        //         signatureObj.sign_issue_at = message.payload.issuedAt
+        //         signatureObj.sign_address = props.user.blockchainAddress
         
-                localStorage.setItem("signature", JSON.stringify({
-                    sign: signature,
-                    "sign_issue_at": message.payload.issuedAt,
-                    "sign_nonce": message.payload.nonce,
-                    "sign_address": props.user.blockchainAddress,
-                }));
-            } else {
-                console.log("I retrieved a valid sigature and used it");
-                signatureObj.sign = retrievedObj.sign
-                signatureObj.sign_nonce = retrievedObj.sign_nonce
-                signatureObj.sign_issue_at = retrievedObj.sign_issue_at
-                signatureObj.sign_address = retrievedObj.sign_address
-            }
-        } else {
-            console.log("I didn't find any signature");
-            const chainConfig = {
-                chainNamespace: "solana",
-                chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                rpcTarget: "https://api.testnet.solana.com",
-                displayName: "Solana Mainnet",
-                blockExplorer: "https://explorer.solana.com",
-                ticker: "SOL",
-                tickerName: "Solana",
-            };
+        //         localStorage.setItem("signature", JSON.stringify({
+        //             sign: signature,
+        //             "sign_issue_at": message.payload.issuedAt,
+        //             "sign_nonce": message.payload.nonce,
+        //             "sign_address": props.user.blockchainAddress,
+        //         }));
+        //     } else {
+        //         console.log("I retrieved a valid sigature and used it");
+        //         signatureObj.sign = retrievedObj.sign
+        //         signatureObj.sign_nonce = retrievedObj.sign_nonce
+        //         signatureObj.sign_issue_at = retrievedObj.sign_issue_at
+        //         signatureObj.sign_address = retrievedObj.sign_address
+        //     }
+        // } else {
+        //     console.log("I didn't find any signature");
+        //     const chainConfig = {
+        //         chainNamespace: "solana",
+        //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        //         rpcTarget: "https://api.testnet.solana.com",
+        //         displayName: "Solana Mainnet",
+        //         blockExplorer: "https://explorer.solana.com",
+        //         ticker: "SOL",
+        //         tickerName: "Solana",
+        //     };
     
-            const web3auth = new Web3Auth({
-                    // For Production
-                    // clientId: "",
-                    clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+        //     const web3auth = new Web3Auth({
+        //             // For Production
+        //             // clientId: "",
+        //             clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
             
-                    // For Development
-                    // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                    web3AuthNetwork: "cyan",
-                    chainConfig: chainConfig,
-                });
+        //             // For Development
+        //             // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+        //             web3AuthNetwork: "cyan",
+        //             chainConfig: chainConfig,
+        //         });
             
-            await web3auth.initModal();
+        //     await web3auth.initModal();
     
-            const web3authProvider = await web3auth.connect();
+        //     const web3authProvider = await web3auth.connect();
     
-            const solanaWallet = new SolanaWallet(web3authProvider); 
+        //     const solanaWallet = new SolanaWallet(web3authProvider); 
     
         
     
-            const userInfo = await web3auth.getUserInfo();
-            console.log(userInfo);
+        //     const userInfo = await web3auth.getUserInfo();
+        //     console.log(userInfo);
         
-            // const domain = window.location.host;
-            const domain = 'localhost:3000';
-            // const origin = window.location.origin;
-            const origin = 'http://localhost:3000';
+        //     // const domain = window.location.host;
+        //     const domain = 'localhost:3000';
+        //     // const origin = window.location.origin;
+        //     const origin = 'http://localhost:3000';
     
-            console.log("domain", domain);
-            console.log("origin", origin);
-    
-    
-            const payload = new SIWPayload();
-            payload.domain = domain;
-            payload.uri = origin;
-            payload.address = props.user.blockchainAddress
-            payload.statement = "Sign in with Solana to the app.";
-            payload.version = "1";
-            payload.chainId = 1;
-    
-            const header = { t: "sip99" };
-            const network = "solana";
+        //     console.log("domain", domain);
+        //     console.log("origin", origin);
     
     
-            let message = new SIWWeb3({ header, payload, network });
+        //     const payload = new SIWPayload();
+        //     payload.domain = domain;
+        //     payload.uri = origin;
+        //     payload.address = props.user.blockchainAddress
+        //     payload.statement = "Sign in with Solana to the app.";
+        //     payload.version = "1";
+        //     payload.chainId = 1;
     
-            const messageText = message.prepareMessage();
-            const msg = new TextEncoder().encode(messageText);
-            const result = await solanaWallet.signMessage(msg);
+        //     const header = { t: "sip99" };
+        //     const network = "solana";
     
-            const signature = base58.encode(result);
     
-            signatureObj.sign = signature
-            signatureObj.sign_nonce = message.payload.nonce
-            signatureObj.sign_issue_at = message.payload.issuedAt
-            signatureObj.sign_address = props.user.blockchainAddress
+        //     let message = new SIWWeb3({ header, payload, network });
     
-            localStorage.setItem("signature", JSON.stringify({
-                sign: signature,
-                "sign_issue_at": message.payload.issuedAt,
-                "sign_nonce": message.payload.nonce,
-                "sign_address": props.user.blockchainAddress,
-            }));
+        //     const messageText = message.prepareMessage();
+        //     const msg = new TextEncoder().encode(messageText);
+        //     const result = await solanaWallet.signMessage(msg);
+    
+        //     const signature = base58.encode(result);
+    
+        //     signatureObj.sign = signature
+        //     signatureObj.sign_nonce = message.payload.nonce
+        //     signatureObj.sign_issue_at = message.payload.issuedAt
+        //     signatureObj.sign_address = props.user.blockchainAddress
+    
+        //     localStorage.setItem("signature", JSON.stringify({
+        //         sign: signature,
+        //         "sign_issue_at": message.payload.issuedAt,
+        //         "sign_nonce": message.payload.nonce,
+        //         "sign_address": props.user.blockchainAddress,
+        //     }));
+        // };
+
+
+
+        const chainConfig = {
+            chainNamespace: "solana",
+            chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+            rpcTarget: "https://api.testnet.solana.com",
+            displayName: "Solana Mainnet",
+            blockExplorer: "https://explorer.solana.com",
+            ticker: "SOL",
+            tickerName: "Solana",
         };
+
+        const web3auth = new Web3Auth({
+                // For Production
+                // clientId: "",
+                clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+        
+                // For Development
+                // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                web3AuthNetwork: "cyan",
+                chainConfig: chainConfig,
+            });
+        
+        await web3auth.initModal();
+
+        const web3authProvider = await web3auth.connect();
+
+        const solanaWallet = new SolanaWallet(web3authProvider); 
+
+    
+
+        const userInfo = await web3auth.getUserInfo();
+        console.log(userInfo);
+    
+        // const domain = window.location.host;
+        const domain = 'localhost:3000';
+        // const origin = window.location.origin;
+        const origin = 'http://localhost:3000';
+
+        console.log("domain", domain);
+        console.log("origin", origin);
+
+
+        const payload = new SIWPayload();
+        payload.domain = domain;
+        payload.uri = origin;
+        payload.address = props.user.blockchainAddress
+        payload.statement = "Sign in with Solana to the app.";
+        payload.version = "1";
+        payload.chainId = 1;
+
+        const header = { t: "sip99" };
+        const network = "solana";
+
+
+        let message = new SIWWeb3({ header, payload, network });
+
+        const messageText = message.prepareMessage();
+        const msg = new TextEncoder().encode(messageText);
+        const result = await solanaWallet.signMessage(msg);
+
+        const signature = base58.encode(result);
+
+        signatureObj.sign = signature
+        signatureObj.sign_nonce = message.payload.nonce
+        signatureObj.sign_issue_at = message.payload.issuedAt
+        signatureObj.sign_address = props.user.blockchainAddress
 
 
         const airspaceInformation = {
             ownerId: props.user.id,
             propertyId: props.id,
             title: airspaceTitle,
-            // transitFee: +costValue,
             transitFee: !airspaceStatus ? "$0.01 - $99.00" : "",
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
