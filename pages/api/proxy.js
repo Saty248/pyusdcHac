@@ -5,6 +5,11 @@ const handler = async (req, res) => {
   try {    
     const method = req.method
     const { sign, sign_issue_at, sign_nonce, sign_address } = req.headers;
+    console.log("This is the headers", req.headers);
+    console.log("This is the signature", sign);
+    console.log("This is the issue time", sign_issue_at);
+    console.log("This is the nonce", sign_issue_at);
+    console.log("This is the sign address", sign_address);
 
 
     const fetchOptions = {

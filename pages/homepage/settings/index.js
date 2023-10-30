@@ -426,6 +426,8 @@ const Settings = (props) => {
         signatureObj.sign_issue_at = formatedDate;
         signatureObj.sign_address = user.blockchainAddress;
 
+        console.log("This is the signature object", signatureObj);
+
 
 
         fetch(`/api/proxy?${Date.now()}`, {
