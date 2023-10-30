@@ -97,7 +97,7 @@ const IndividualSignup = () => {
                 proxy_to_method: "POST",
             }
         }).then(res => {
-                if(!res.ok) {
+                if(!res.ok || res.statusCode === 500) {
                     return res.json()
                     .then(errorData => {
                         
