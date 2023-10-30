@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
-import { useDispatch, } from "react-redux";
-import Image from "next/image";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
+import swal from "sweetalert";
 
 import { useVerification } from "@/hooks/useVerification";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import { counterActions } from "@/store/store";
-import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
-import swal from "sweetalert";
+
 
 const Dashboard = (props) => {
     const { users, error } = props;
@@ -156,8 +153,6 @@ const Dashboard = (props) => {
         },
     ];
 
-    const dispatch = useDispatch();
-
     const date = new Date()
     const month = date.toLocaleString('default', { month: 'short' })
     const day = date.getDate();
@@ -189,7 +184,6 @@ const Dashboard = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -220,7 +214,7 @@ const Dashboard = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -465,8 +459,6 @@ const Dashboard = (props) => {
                 //     }));
                 // };
 
-
-
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
@@ -496,22 +488,19 @@ const Dashboard = (props) => {
         
             
         
-                const userInfo = await web3auth.getUserInfo();
-                console.log(userInfo);
+                // const userInfo = await web3auth.getUserInfo();
             
                 // const domain = window.location.host;
                 const domain = 'localhost:3000';
                 // const origin = window.location.origin;
                 const origin = 'http://localhost:3000';
         
-                console.log("domain", domain);
-                console.log("origin", origin);
         
         
                 const payload = new SIWPayload();
                 payload.domain = domain;
                 payload.uri = origin;
-                // payload.address = user.blockchainAddress
+                payload.address = user.blockchainAddress
                 payload.statement = "Sign in with Solana to the app.";
                 payload.version = "1";
                 payload.chainId = 1;
@@ -541,7 +530,6 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         if(signature) {
-            console.log("This is the signature", signature);
             fetch(`/api/proxy?${Date.now()}`, {
                 method: "GET",
                 headers: {
@@ -575,8 +563,6 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         if(signature) {
-            console.log("This is the signature", signature);
-
             setNewslettersLoading(true);
 
             fetch(`/api/proxy?${Date.now()}`, {
@@ -626,8 +612,6 @@ const Dashboard = (props) => {
 
 
             const chartData = {
-                // labels: [`United States - 30%`, 'India - 4%', 'United Kingdom - 16%', 
-                // 'Canada - 30%', 'Brazil - 10%', 'Australia - 10%',],
                 labels: cData.map(data => {
                     return [
                         `${data.country} - ${data.percent}%`,
@@ -673,9 +657,6 @@ const Dashboard = (props) => {
                             color: 'red'
                         },
                         displayColors: false,
-                        // style: {
-                        //     textAlign: 'right'
-                        // }
                     },
                     legend: {
                         display: false, 
@@ -699,7 +680,6 @@ const Dashboard = (props) => {
         event.stopPropagation();   
         router.push("/homepage/airspace");
         verificationCheck(users);
-        // dispatch(counterActions.newAirspaceModal());
     }
 
     if(!user || !token) {
@@ -713,7 +693,6 @@ const Dashboard = (props) => {
                                                 user.KYCStatusId === 1 ? "pending" 
                                                 : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
             <div className="flex flex-row justify-start w-full">
-                {/* <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}> */}
                 <div className="my-5" style={{width: "100%", height: "100vh"}}>
                     <div className="mx-auto grid grid-cols-3 gap-5" style={{height: "169px", width: "95%"}}>
                         <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px"}}>
@@ -868,8 +847,6 @@ const Dashboard = (props) => {
                         </div>
                     </div> */}
 
-
-
                     <div className="bg-white me-2 py-5 px-4 overflow-y-auto overflow-x-hidden" style={{width: "100%", height: "100vh", borderRadius: "10px"}}>
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
@@ -947,4 +924,4 @@ export async function getServerSideProps() {
                 }
             }
     }
-}
+};

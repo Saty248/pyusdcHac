@@ -241,10 +241,10 @@ const AddAirspace = (props) => {
                 </button>
             </div>
              <div className="flex flex-row items-center mt-10 mb-8 gap-4 justify-center">
-                <h2 className="font-bold">Add New AirSpace</h2>
+                <h2 className="font-bold">Add New Airspace</h2>
             </div>
             <form className="relative">
-                <label className="ms-12 text-light-brown font-medium">AirSpace Address<span className="text-red-500">*</span></label> <br />
+                <label className="ms-12 text-light-brown font-medium">Address<span className="text-red-500">*</span></label> <br />
                 
                 <div className="flex flex-row gap-2.5 justify-end items-center me-12">
                     <div className="relative"> 
