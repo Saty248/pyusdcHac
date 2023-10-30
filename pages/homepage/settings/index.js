@@ -390,10 +390,13 @@ const Settings = (props) => {
     
         // const userInfo = await web3auth.getUserInfo();
     
-        // const domain = window.location.host;
-        const domain = 'localhost:3000';
-        // const origin = window.location.origin;
-        const origin = 'http://localhost:3000';
+        const domain = window.location.host;
+        // const domain = 'localhost:3000';
+        const origin = window.location.origin;
+        // const origin = 'http://localhost:3000';
+
+        console.log("This is the origin", origin);
+        console.log("This is the domain", domain);
 
 
         const payload = new SIWPayload();

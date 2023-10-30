@@ -375,10 +375,10 @@ const EditAispaceModal = (props) => {
 
         // const userInfo = await web3auth.getUserInfo();
     
-        // const domain = window.location.host;
-        const domain = 'localhost:3000';
-        // const origin = window.location.origin;
-        const origin = 'http://localhost:3000';
+        const domain = window.location.host;
+        // const domain = 'localhost:3000';
+        const origin = window.location.origin;
+        // const origin = 'http://localhost:3000';
 
 
         const payload = new SIWPayload();
@@ -431,9 +431,9 @@ const EditAispaceModal = (props) => {
                 URI: "/properties/update",
                 // proxy_to_method: "POST",
                 sign: signatureObj.sign,
-                sign_issue_at:  signatureObj.sign_issue_at,
-                sign_nonce: signatureObj.sign_nonce,
-                sign_address: signatureObj.sign_address,
+                time:  signatureObj.sign_issue_at,
+                nonce: signatureObj.sign_nonce,
+                address: signatureObj.sign_address,
             }
         })
         .then(res => {
