@@ -19,9 +19,9 @@ const handler = async (req, res) => {
         // api_key: process.env.FRONTEND_API_KEY,
         api_key: "XXX",
         sign: sign,
-        sign_issue_at: signIssueAt,
-        sign_nonce: signNonce,
-        sign_address: signAddress,
+        sign_issue_at: time,
+        sign_nonce: nonce,
+        sign_address: address,
       }
     };
 
