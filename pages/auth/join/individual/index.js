@@ -97,35 +97,43 @@ const IndividualSignup = () => {
                 proxy_to_method: "POST",
             }
         }).then(res => {
-                if(!res.ok || res.statusCode === 500) {
+                if(!res.ok) {
                     return res.json()
                     .then(errorData => {
-                        swal({
-                            title: "",
-                            text: `${errorData.errorMessage}`,
-                          });
+                        
                         throw new Error(errorData.errorMessage);
                     });
                 }
-            setError(false);
-            swal({
-                title: "Submitted",
-                text: "User registered successfully. You will now be signed in",
-                icon: "success",
-                button: "Ok"
-              }).then(() => {
-                localStorage.setItem("openlogin_store", JSON.stringify({
-                    sessionId: token.sessionId
-                }));
-                // setIsLoading(false);
-                nameRef.current.value = ""
-                phoneNumberRef.current.value = ""
-                router.replace("/homepage/dashboard");
-              })
-            return res.json();
+                return res.json()
+                .then((response) => {
+                    if(response.statusCode === 500) {
+                        throw new Error("something went wrong");
+                    };
+
+                    setError(false);
+                    swal({
+                        title: "Submitted",
+                        text: "User registered successfully. You will now be signed in",
+                        icon: "success",
+                        button: "Ok"
+                    }).then(() => {
+                        localStorage.setItem("openlogin_store", JSON.stringify({
+                            sessionId: token.sessionId
+                        }));
+                        // setIsLoading(false);
+                        nameRef.current.value = ""
+                        phoneNumberRef.current.value = ""
+                        router.replace("/homepage/dashboard");
+                    })
+                })
         })
         .catch(error => {
+            console.log(error);
             setError(error);
+            swal({
+                title: "oops!",
+                text: error.errorMessage || "something went wrong",
+              });
             setIsLoading(false);
         });
     }

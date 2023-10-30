@@ -101,38 +101,44 @@ const CorporateSignup = () => {
                 proxy_to_method: "POST",
             }
         }).then(res => {
-                if(!res.ok) {
-                    return res.json()
-                    .then(errorData => {
-                        swal({
-                            title: "",
-                            text: `${errorData.errorMessage}`,
-                          });
-                        throw new Error(errorData.errorMessage);
-                    });
-                }
-            setError(false)
-            swal({
-                title: "Submitted",
-                text: "User registered successfully. You will now be signed in",
-                icon: "success",
-                button: "Ok"
-              }).then(() => {
-                localStorage.setItem("openlogin_store", JSON.stringify({
-                    sessionId: token.sessionId
-                }));
-                // setIsLoading(false);
-                nameRef.current.value = ""
-                phoneNumberRef.current.value = ""
-                router.replace("/homepage/dashboard");
-              })
-            return res.json();
+            if(!res.ok) {
+                return res.json()
+                .then(errorData => {
+                    swal({
+                        title: "",
+                        text: `${errorData.errorMessage}`,
+                        });
+                    throw new Error(errorData.errorMessage);
+                });
+            } 
+            return res.json()
+            .then((response) => {
+                if(response.statusCode === 500) {
+                    throw new Error("something went wrong");
+                };
+
+                setError(false);
+                swal({
+                    title: "Submitted",
+                    text: "User registered successfully. You will now be signed in",
+                    icon: "success",
+                    button: "Ok"
+                }).then(() => {
+                    localStorage.setItem("openlogin_store", JSON.stringify({
+                        sessionId: token.sessionId
+                    }));
+                    // setIsLoading(false);
+                    nameRef.current.value = ""
+                    phoneNumberRef.current.value = ""
+                    router.replace("/homepage/dashboard");
+                })
+            })
         })
         .catch(error => {
             setError(error.toString());
             setIsLoading(false)
         });
-    }
+    };
 
     if(pageLoad) {
         return <Spinner />
