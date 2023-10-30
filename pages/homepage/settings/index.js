@@ -453,7 +453,11 @@ const Settings = (props) => {
                 });
             }
             return res.json()
-            .then((response) => {    
+            .then((response) => {  
+                if(response.statusCode === 500) {
+                    throw new Error("something went wrong");
+                };
+                  
                 setIsLoading(false);
                 swal({
                     title: "Submitted",
