@@ -422,6 +422,10 @@ const AdditionalAispaceInformation = (props) => {
             }
             return res.json()
             .then(response => {
+                if(response.statusCode === 500) {
+                    throw new Error("something went wrong");
+                };
+                
                 swal({
                     title: "Submitted",
                     text: "Airspace registered successfully",
