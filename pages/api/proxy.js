@@ -4,12 +4,12 @@
 const handler = async (req, res) => {
   try {    
     const method = req.method
-    const { sign, signIssueAt, signNonce, signAddress } = req.headers;
+    const { sign, time, nonce, address } = req.headers;
     console.log("This is the headers", req.headers);
     console.log("This is the signature", sign);
-    console.log("This is the issue time", signIssueAt);
-    console.log("This is the nonce", signNonce);
-    console.log("This is the sign address", signAddress);
+    console.log("This is the issue time", time);
+    console.log("This is the nonce", nonce);
+    console.log("This is the sign address", address);
 
 
     const fetchOptions = {
@@ -19,9 +19,9 @@ const handler = async (req, res) => {
         // api_key: process.env.FRONTEND_API_KEY,
         api_key: "XXX",
         sign: sign,
-        sign_issue_at: sign_issue_at,
-        sign_nonce: sign_nonce,
-        sign_address: sign_address,
+        sign_issue_at: signIssueAt,
+        sign_nonce: signNonce,
+        sign_address: signAddress,
       }
     };
 

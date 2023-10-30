@@ -442,9 +442,9 @@ const Settings = (props) => {
                 uri: "/users/update",
                 // proxy_to_method: "PATCH",
                 sign: signatureObj.sign,
-                signIssueAt:  signatureObj.sign_issue_at,
-                signNonce: signatureObj.sign_nonce,
-                signAddress: signatureObj.sign_address,
+                time:  signatureObj.sign_issue_at,
+                nonce: signatureObj.sign_nonce,
+                address: signatureObj.sign_address,
             }
         })
         .then((res) => {
