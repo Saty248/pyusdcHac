@@ -68,7 +68,7 @@ const UAVs = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;

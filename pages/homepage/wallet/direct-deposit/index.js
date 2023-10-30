@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import QRCode from "react-qr-code";
 import swal from "sweetalert";
 import { Web3Auth } from "@web3auth/modal";
@@ -15,8 +15,7 @@ import CopyToClipboard from "react-copy-to-clipboard";
 
 
 const Wallet = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
 
     if(error) {
         swal({
@@ -29,7 +28,6 @@ const Wallet = (props) => {
     const [addCard, setAddCard] = useState(false);
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
-    const [copied, setCopied] = useState();
     const [copy, setCopy] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
 
@@ -49,7 +47,6 @@ const Wallet = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -80,7 +77,7 @@ const Wallet = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -196,15 +193,6 @@ const Wallet = (props) => {
                     <h3 className="font-medium text-xl">Deposit</h3>
                 </div>
                 <div className="px-7"> 
-                    {/* <div className="relative mt-8 mx-auto">
-                        <p className="mt-12 text-dark-brown">Amount</p>
-                        <p className="text-sm text-dark-brown">The platform only supports USDC at this time</p> 
-                        <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="amount"  name="amount" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
-                        <p className="absolute text-light-brown top-12 right-4">Min USDC <span>20.00</span></p>
-                    </div>
-                    <div className="flex flex-row justify-center mt-5">
-                        <p>1 USDC = 1 US$</p>
-                    </div> */}
                     <div className="mt-20">
                         <p className="text-dark-brown">Scan code for wallet</p>
                         <p className="text-dark-brown text-sm">Scan code for wallet</p>
@@ -276,4 +264,4 @@ export async function getServerSideProps() {
                 }
             }
     }
-}
+};

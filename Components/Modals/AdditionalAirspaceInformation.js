@@ -2,7 +2,6 @@ import { counterActions } from "@/store/store";
 import { Fragment, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { createPortal } from "react-dom";
 import swal from "sweetalert";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Web3Auth } from "@web3auth/modal";
@@ -10,8 +9,6 @@ import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
 
 import TimeSelect from "../TimeSelect";
-import Spinner from "../Spinner";
-import Backdrop from "../Backdrop";
 import TimezoneSelectComponent from "../Timezone";
 
 const AdditionalAispaceInformation = (props) => {
@@ -23,14 +20,9 @@ const AdditionalAispaceInformation = (props) => {
     const [stationChecked, setStationChecked] = useState(false);
     const [storageChecked, setStorageChecked] = useState(false);
     const [rentChecked, setRentChecked] = useState(true);
-    const [sellChecked, setSellChecked] = useState(false);
 
-    const [negotiable, setNegotiable] = useState(false);
     const [deck, setDeck] = useState("");
-    // const [station, setStation] = useState("");
     const [storage, setStorage] = useState("");
-    const [rentAirspace, setRentAirspace] = useState("");
-    const [sellAirspace, setSellAirspace] = useState("");
     const [airspaceStatus, setAirspaceStatus] = useState("Available")
     const [monAvailable, setMonAvailable] = useState(true);
     const [tueAvailable, setTueAvailable] = useState(true);
@@ -54,10 +46,8 @@ const AdditionalAispaceInformation = (props) => {
     const [fromSunday, setFromSunday] = useState(7);
     const [toSunday, setToSunday] = useState(22);
     const [timezone, setTimezone] = useState("US/Central");
-    const [costValue, setCostValue] = useState();
 
     const airspaceTitleRef = useRef();
-    const costRef = useRef();
     
 
     const dispatch = useDispatch();
@@ -98,21 +88,6 @@ const AdditionalAispaceInformation = (props) => {
             setStorage("");
         }
     }
-
-    const rentHandler = () => {
-        setRentChecked(!rentChecked);
-    }
-
-    const sellHandler = () => {
-        setSellChecked(!sellChecked);
-
-        if(!sellChecked) {
-            setSellAirspace("Sell AirSpace");
-        } else {
-            setSellAirspace("");
-        }
-    }
-
 
     const airspaceStatusHandler = (e) => {
         setAirspaceStatus(e.target.value);
@@ -374,18 +349,12 @@ const AdditionalAispaceInformation = (props) => {
 
         const solanaWallet = new SolanaWallet(web3authProvider); 
 
-    
-
-        const userInfo = await web3auth.getUserInfo();
-        console.log(userInfo);
+        // const userInfo = await web3auth.getUserInfo();
     
         // const domain = window.location.host;
         const domain = 'localhost:3000';
         // const origin = window.location.origin;
         const origin = 'http://localhost:3000';
-
-        console.log("domain", domain);
-        console.log("origin", origin);
 
 
         const payload = new SIWPayload();
@@ -444,7 +413,7 @@ const AdditionalAispaceInformation = (props) => {
             }
         })
         .then(res => {
-            if(!res.ok) {
+            if(!res.ok || res.statusCode === 500) {
                 return res.json()
                 .then((err) => {
                     console.log(err)
@@ -453,7 +422,6 @@ const AdditionalAispaceInformation = (props) => {
             }
             return res.json()
             .then(response => {
-                console.log(response);
                 swal({
                     title: "Submitted",
                     text: "Airspace registered successfully",
@@ -461,99 +429,95 @@ const AdditionalAispaceInformation = (props) => {
                     button: "Ok"
                   }).then(() => {
                     dispatch(counterActions.closeAdditionalInfoModal());
-                    setIsLoading(false);
+                    // setIsLoading(false);
                     router.push("/homepage/dashboard");
                   })
             })
         })
         .catch(error => {
-            console.log(error)
-            const err = error.toString().split(":")
-            console.log(err);
+            console.log(error);
+            const err = error.toString().split(":");
+            setIsLoading(false);
             swal({
                 title: "oops!",
                 // text: "something went wrong. kindly try again",
                 text: err[1] || "something went wrong. kindly try again"
-              })
-            setIsLoading(false)
+              });
         })
-
-        console.log(airspaceInformation);
     }
 
-    return <Fragment>
-        <div className="bg-white rounded fixed z-20 py-10 overflow-y-auto" style={{width: "740px", height: "90vh", maxHeight: "908px", 
-            top: "7vh", 
-            left: "calc(50% - 370px)", 
-            }}>
-            <button onClick={closeModalHandler} className="absolute top-3 right-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                    <path d="M12.7279 12.7285L21.2132 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12.7279 21.2138L21.2132 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            <h3 className="text-center font-semibold pt-6">AirSpace Details</h3>
-            <form className="px-10">
-                <div className="px-14 pb-5 flex flex-row items-center justify-between gap-8">
-                    <div style={{width: "114px"}} className="mt-9">
-                        <p className="font-medium">Title</p>
-                        <p className="text-xs">Give a unique name to the AirSpace for easy identification</p>
-                    </div>
-                    <input ref={airspaceTitleRef} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+    return <div className="bg-white rounded fixed z-20 py-10 overflow-y-auto" style={{width: "740px", height: "90vh", maxHeight: "908px", 
+        top: "7vh", 
+        left: "calc(50% - 370px)", 
+        }}>
+        <button onClick={closeModalHandler} className="absolute top-3 right-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <path d="M12.7279 12.7285L21.2132 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12.7279 21.2138L21.2132 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <h3 className="text-center font-semibold pt-6">AirSpace Details</h3>
+        <form className="px-10">
+            <div className="px-14 pb-5 flex flex-row items-center justify-between gap-8">
+                <div style={{width: "114px"}} className="mt-9">
+                    <p className="font-medium">Title</p>
+                    <p className="text-xs">Give a unique name to the AirSpace for easy identification</p>
                 </div>
-                <hr />
-                <div className="px-14 pb-5 flex flex-row items-center pt-5 gap-8">
-                    <div className="flex flex-row gap-1 items-center">
-                        {airspaceStatus === "Available" &&
-                            <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
-                            <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
-                    </div>
-                    <select disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
-                        <option selected>$0.01 - $99.00</option>
-                    </select>
+                <input ref={airspaceTitleRef} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
+            </div>
+            <hr />
+            <div className="px-14 pb-5 flex flex-row items-center pt-5 gap-8">
+                <div className="flex flex-row gap-1 items-center">
+                    {airspaceStatus === "Available" &&
+                        <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
+                        <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
                 </div>
-                <hr />
-                <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
-                    <div style={{width: "147px"}} className="">
-                        <p className="font-medium">Facilities</p>
-                        <p className="text-xs">Select the extra features your facility provides</p>
+                <select disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                    <option selected>$0.01 - $99.00</option>
+                </select>
+            </div>
+            <hr />
+            <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
+                <div style={{width: "147px"}} className="">
+                    <p className="font-medium">Facilities</p>
+                    <p className="text-xs">Select the extra features your facility provides</p>
+                </div>
+                <div className="ps-1">
+                    <div className="flex flex-row justify-start items-center gap-2">
+                        <input type="checkbox" onChange={deckCheckedHandler} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                        <label htmlFor="hour" onClick={deckCheckedHandler} className="text-dark-brown cursor-pointer text-sml">Landing Deck</label>
                     </div>
-                    <div className="ps-1">
-                        <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={deckCheckedHandler} checked={deckChecked} value={deck} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
-                            <label htmlFor="hour" onClick={deckCheckedHandler} className="text-dark-brown cursor-pointer text-sml">Landing Deck</label>
-                        </div>
-                        <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={stationHandler} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
-                            <label htmlFor="hour" onClick={stationHandler} className="text-dark-brown text-sml cursor-pointer">Charging station</label>
-                        </div>
-                        <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={storageHandler} checked={storageChecked} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
-                            <label htmlFor="hour" onClick={storageHandler} className="text-dark-brown text-sml cursor-pointer">Storage Hub</label>
-                        </div>
+                    <div className="flex flex-row justify-start items-center gap-2">
+                        <input type="checkbox" onChange={stationHandler} checked={stationChecked} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                        <label htmlFor="hour" onClick={stationHandler} className="text-dark-brown text-sml cursor-pointer">Charging station</label>
+                    </div>
+                    <div className="flex flex-row justify-start items-center gap-2">
+                        <input type="checkbox" onChange={storageHandler} checked={storageChecked} value={storage} name="hour" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500 rounded-sm" />
+                        <label htmlFor="hour" onClick={storageHandler} className="text-dark-brown text-sml cursor-pointer">Storage Hub</label>
                     </div>
                 </div>
-                <hr />
-                <div className="px-14 pb-2 pt-3 flex flex-row items-start gap-36">
-                    <div>
-                        <div style={{width: "138px"}} className="">
-                            <p className="font-medium">Status</p>
-                            <p className="text-xs">Give your AirSpace a Status</p>
-                            <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
-                                <option disabled>Status</option>
-                                <option selected>Available</option>
-                                <option>No-fly zone</option>
-                            </select> 
-                        </div>
-                        <div style={{width: "138px"}} className="mt-10">
-                            <TimezoneSelectComponent onChange={(e) => {
-                                        setTimezone(e.target.value)
-                                        console.log(e.target.value)
-                                    }} 
-                                    timeZone={timezone}
-                                    disable={airspaceStatus !== "Available"} />
-                        </div>   
-                    </div>     
+            </div>
+            <hr />
+            <div className="px-14 pb-2 pt-3 flex flex-row items-start gap-36">
+                <div>
+                    <div style={{width: "138px"}} className="">
+                        <p className="font-medium">Status</p>
+                        <p className="text-xs">Give your AirSpace a Status</p>
+                        <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
+                            <option disabled>Status</option>
+                            <option selected>Available</option>
+                            <option>No-fly zone</option>
+                        </select> 
+                    </div>
+                    <div style={{width: "138px"}} className="mt-10">
+                        <TimezoneSelectComponent onChange={(e) => {
+                                    setTimezone(e.target.value)
+                                }} 
+                                timeZone={timezone}
+                                disable={airspaceStatus !== "Available"} />
+                    </div>   
+                </div>  
+                {airspaceStatus === "Available" &&  
                     <div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
                             <div className="flex flex-row gap-1">
@@ -562,10 +526,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!monAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                     setFromMonday(value)
-                                    console.log(value)
                                 }} toChange={(value) => {
                                     setToMonday(value)
-                                    console.log(value)
                                 }} /> 
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -575,10 +537,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!tueAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromTuesday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToTuesday(value)
-                                console.log(value)
                             }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -588,10 +548,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!wedAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromWednesday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToWednesday(value)
-                                console.log(value)
                             }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -601,10 +559,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!thuAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromThursday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToThursday(value)
-                                console.log(value)
                             }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -614,10 +570,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!friAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromFriday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToFriday(value)
-                                console.log(value)
                             }} />
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -627,10 +581,8 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!satAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromSaturday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToSaturday(value)
-                                console.log(value)
                             }}/>
                         </div>
                         <div className="flex flex-row justify-between mb-1 items-center gap-2">
@@ -640,37 +592,36 @@ const AdditionalAispaceInformation = (props) => {
                             </div>
                             <TimeSelect disable={!sunAvailable || airspaceStatus !== "Available"} fromChange={(value) => {
                                 setFromSunday(value)
-                                console.log(value)
                             }} toChange={(value) => {
                                 setToSunday(value)
                             }} />
                         </div>
                     </div>
+                }
+            </div>
+            {/* <hr /> */}
+            {/* <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
+                <div style={{width: "147px"}} className="">
+                    <p className="font-medium">Offers</p>
+                    <p className="text-xs">Select offers on AirSpace</p>
                 </div>
-                {/* <hr /> */}
-                {/* <div className="px-14 pb-5 pt-3 flex flex-row items-center justify-start gap-3">
-                    <div style={{width: "147px"}} className="">
-                        <p className="font-medium">Offers</p>
-                        <p className="text-xs">Select offers on AirSpace</p>
+                <div className="ps-1">
+                    <div className="flex flex-row justify-start items-center gap-2">
+                        <input type="checkbox" onChange={rentHandler} checked={airspaceStatus === "Available" && rentChecked} disabled={airspaceStatus !== "Available"} value={rentAirspace} name="rent airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
+                        <label htmlFor="hour" onClick={rentHandler} className="text-dark-brown text-sml cursor-pointer">Rent AirSpace</label>
                     </div>
-                    <div className="ps-1">
-                        <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={rentHandler} checked={airspaceStatus === "Available" && rentChecked} disabled={airspaceStatus !== "Available"} value={rentAirspace} name="rent airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
-                            <label htmlFor="hour" onClick={rentHandler} className="text-dark-brown text-sml cursor-pointer">Rent AirSpace</label>
-                        </div>
-                        <div className="flex flex-row justify-start items-center gap-2">
-                            <input type="checkbox" onChange={sellHandler} checked={sellChecked} value={sellAirspace} name="sell airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
-                            <label htmlFor="hour" onClick={sellHandler} className="text-dark-brown text-sml cursor-pointer">Sell AirSpace</label>
-                        </div>
+                    <div className="flex flex-row justify-start items-center gap-2">
+                        <input type="checkbox" onChange={sellHandler} checked={sellChecked} value={sellAirspace} name="sell airspace" min="1" style={{height: "27px"}} className="bg-light-blue ps-2 cursor-pointer w-4 checked:bg-blue-500" />
+                        <label htmlFor="hour" onClick={sellHandler} className="text-dark-brown text-sml cursor-pointer">Sell AirSpace</label>
                     </div>
-                </div> */}
-                <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                    <button onClick={closeModalHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
-                    <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
                 </div>
-            </form>
-        </div>
-    </Fragment>
+            </div> */}
+            <div className="flex flex-row justify-center items-center mt-8 gap-5">
+                <button onClick={closeModalHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-md text-dark-blue`} style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
+                <button onClick={formSubmitHandler} disabled={isLoading} className={`${isLoading ? "cursor-wait" : "cursor-pointer"} bg-dark-blue rounded-md text-white`} style={{width: "120px", height: "40px"}}>{isLoading ? "Submiting..." : "Submit"}</button>
+            </div>
+        </form>
+    </div>
 }
 
 export default AdditionalAispaceInformation;

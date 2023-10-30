@@ -26,7 +26,6 @@ const Wallet = (props) => {
           });
     }
 
-    // const url = 'https://api.testnet.solana.com';
     const url = 'https://api.devnet.solana.com';
 
     const router = useRouter();
@@ -67,7 +66,6 @@ const Wallet = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -119,7 +117,6 @@ const Wallet = (props) => {
             setStripeOnRamp(stripeOnrampPromise);
 
             fetch(`/api/proxy?${Date.now()}`, {
-            // fetch('/api/stripe', {
                 method: "POST",
                 body: JSON.stringify({
                     blockchainAddress: user.blockchainAddress
@@ -232,10 +229,6 @@ const Wallet = (props) => {
     }, [tokenAccount, searchValue]);
 
     useEffect(() => {
-
-    }, []);
-
-    useEffect(() => {
         let userArray = [];
         if(transactionHistory && transactionHistory.length > 0) {
             let trans;
@@ -253,8 +246,7 @@ const Wallet = (props) => {
         }   
   }, [pagesVisited, transactionHistory]);
 
-
-
+  
     useEffect(() => {
         if(completedTrans && completedTrans.length > 0) {
             setTransactionData([]);
@@ -263,7 +255,12 @@ const Wallet = (props) => {
                 const month = date.toLocaleString('default', { month: 'short' })
                 const day = date.getDate();
                 const year = date.getFullYear();
-                transaction.date = `${month} ${day} ${year}` 
+                const hour = date.getHours();
+                const minute = date.getMinutes().toString().padStart(2, '0');
+                const second = date.getSeconds().toString().padStart(2, '0');
+
+
+                transaction.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}` 
                 const data =   {
                     jsonrpc: "2.0",
                     id: 1,

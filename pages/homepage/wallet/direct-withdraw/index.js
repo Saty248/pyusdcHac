@@ -1,7 +1,6 @@
-import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, } from "react";
 import swal from "sweetalert";
 import { Web3Auth } from "@web3auth/modal";
 
@@ -13,8 +12,7 @@ import AddCardModal from "@/Components/Modals/AddCardModal";
 import Spinner from "@/Components/Spinner";
 
 const Wallet = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
 
     if(error) {
         swal({
@@ -47,7 +45,6 @@ const Wallet = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -78,7 +75,7 @@ const Wallet = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -139,10 +136,6 @@ const Wallet = (props) => {
         }
     }, [user]);
     
-    const addCardHandler = () => {
-        setAddCard(true);
-    }
-
     const amountChangeHandler = (e) => {
         setAmount(e.target.value);
     }
@@ -164,15 +157,15 @@ const Wallet = (props) => {
 
         console.log(amount, address);
         
-        router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed");
+        // router.push("/homepage/wallet/direct-withdraw/withdrawal-confirmed");
     }
 
     const closeAddCardHandler = () => {
-        setAddCard(false)
+        setAddCard(false);
     }
 
     const returnToWallet = () => {
-        router.push("/homepage/wallet")
+        router.push("/homepage/wallet");
     }
 
     if(!user || !token) {
@@ -271,4 +264,4 @@ export async function getServerSideProps() {
                 }
             }
     }
-}
+};

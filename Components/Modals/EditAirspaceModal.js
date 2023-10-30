@@ -55,16 +55,9 @@ const EditAispaceModal = (props) => {
     const [timezone, setTimezone] = useState(props.timeZone);
 
     const airspaceTitleRef = useRef();
-    const costRef = useRef();
-
-    console.log(monAvailable)
-    console.log(tueAvailable)
-    console.log(props.weeks)
     
 
     const dispatch = useDispatch();
-    
-    const airspaceData = useSelector(state => state.value.airspaceData);
 
     
 
@@ -380,16 +373,12 @@ const EditAispaceModal = (props) => {
 
     
 
-        const userInfo = await web3auth.getUserInfo();
-        console.log(userInfo);
+        // const userInfo = await web3auth.getUserInfo();
     
         // const domain = window.location.host;
         const domain = 'localhost:3000';
         // const origin = window.location.origin;
         const origin = 'http://localhost:3000';
-
-        console.log("domain", domain);
-        console.log("origin", origin);
 
 
         const payload = new SIWPayload();
@@ -448,7 +437,7 @@ const EditAispaceModal = (props) => {
             }
         })
         .then(res => {
-            if(!res.ok) {
+            if(!res.ok || res.statusCode === 500) {
                 return res.json()
                 .then((err) => {
                     console.log(err)
@@ -457,7 +446,6 @@ const EditAispaceModal = (props) => {
             }
             return res.json()
             .then(response => {
-                console.log(response);
                 swal({
                     title: "Submitted",
                     text: "Airspace record updated successfully",
@@ -473,14 +461,13 @@ const EditAispaceModal = (props) => {
         })
         .catch(error => {
             console.log(error)
-            const err = error.toString().split(":")
-            console.log(err);
+            const err = error.toString().split(":");
+            setIsLoading(false)
             swal({
                 title: "oops!",
                 // text: "something went wrong. kindly try again",
                 text: err[1] || "something went wrong. kindly try again"
-              })
-            setIsLoading(false)
+              })    
         })
     }
 
@@ -501,7 +488,7 @@ const EditAispaceModal = (props) => {
             <form className="px-10">
                 <div className="px-14 pb-5 flex flex-row items-center justify-between gap-8">
                     <div style={{width: "114px"}} className="mt-9">
-                        <p className="font-medium">AirSpace Title</p>
+                        <p className="font-medium">Title</p>
                         <p className="text-xs">Give a unique name to the AirSpace for easy identification</p>
                     </div>
                     <input ref={airspaceTitleRef} defaultValue={props.title} type="text" placeholder="AirSpace Title" style={{width: "383px", height: "27px"}} className="bg-light-blue focus:outline-blue-200 ps-2 placeholder:text-sml placeholder:text-light-brown rounded-sm" name="AirSpace Title" />
@@ -585,129 +572,115 @@ const EditAispaceModal = (props) => {
                         <div style={{width: "138px"}} className="mt-10">
                             <TimezoneSelectComponent onChange={(e) => {
                                         setTimezone(e.target.value)
-                                        console.log(e.target.value)
                                     }} 
                                     timeZone={props.timeZone}
                                     timezone={timezone}
                                     disable={airspaceStatus} />
                         </div>   
-                    </div>     
-                    <div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input name="monday" checked={monAvailable} onChange={() => setMonAvailable(!monAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="monday" className="text-sml cursor-pointer"  onClick={() => setMonAvailable(!monAvailable)}>Mon</label>
+                    </div>  
+                    {!airspaceStatus &&    
+                        <div>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input name="monday" checked={monAvailable} onChange={() => setMonAvailable(!monAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="monday" className="text-sml cursor-pointer"  onClick={() => setMonAvailable(!monAvailable)}>Mon</label>
+                                </div>
+                                <TimeSelect disable={airspaceStatus || !monAvailable} 
+                                        timeSelect={!airspaceStatus && monAvailable && props.weeks[0].fromTime}
+                                        toTimeSelect={!airspaceStatus && monAvailable && props.weeks[0].toTime}
+                                        fromChange={(value) => {
+                                        setFromMonday(value)
+                                        }} toChange={(value) => {
+                                            setToMonday(value)
+                                        }} /> 
                             </div>
-                            <TimeSelect disable={airspaceStatus || !monAvailable} 
-                                    timeSelect={!airspaceStatus && monAvailable && props.weeks[0].fromTime}
-                                    toTimeSelect={!airspaceStatus && monAvailable && props.weeks[0].toTime}
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input name="tuesday" checked={tueAvailable} onChange={() => setTueAvailable(!tueAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="tuesday" onClick={() => setTueAvailable(!tueAvailable)} className="text-sml cursor-pointer">Tue</label>
+                                </div>
+                                <TimeSelect disable={airspaceStatus || !tueAvailable} 
+                                    timeSelect={!airspaceStatus && tueAvailable && props.weeks[1].fromTime} 
+                                    toTimeSelect={!airspaceStatus && tueAvailable && props.weeks[1].toTime} 
                                     fromChange={(value) => {
-                                    setFromMonday(value)
-                                    console.log(value)
+                                    setFromTuesday(value)
+                                }} toChange={(value) => {
+                                    setToTuesday(value)
+                                }} />
+                            </div>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input checked={wedAvailable} onChange={() => setWedAvailable(!wedAvailable)} name="wednesday" type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="wednesday" onClick={() => setWedAvailable(!wedAvailable)} className="text-sml cursor-pointer">Wed</label>
+                                </div>
+                                <TimeSelect disable={airspaceStatus || !wedAvailable} 
+                                    timeSelect={!airspaceStatus && wedAvailable && props.weeks[2].fromTime} 
+                                    toTimeSelect={!airspaceStatus && wedAvailable && props.weeks[2].toTime}
+                                    fromChange={(value) => {
+                                        setFromWednesday(value)
                                     }} toChange={(value) => {
-                                        setToMonday(value)
-                                        console.log(value)
-                                    }} /> 
-                        </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input name="tuesday" checked={tueAvailable} onChange={() => setTueAvailable(!tueAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="tuesday" onClick={() => setTueAvailable(!tueAvailable)} className="text-sml cursor-pointer">Tue</label>
+                                        setToWednesday(value)
+                                    }} />
                             </div>
-                            <TimeSelect disable={airspaceStatus || !tueAvailable} 
-                                timeSelect={!airspaceStatus && tueAvailable && props.weeks[1].fromTime} 
-                                toTimeSelect={!airspaceStatus && tueAvailable && props.weeks[1].toTime} 
-                                fromChange={(value) => {
-                                setFromTuesday(value)
-                                console.log(value)
-                            }} toChange={(value) => {
-                                setToTuesday(value)
-                                console.log(value)
-                            }} />
-                        </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input checked={wedAvailable} onChange={() => setWedAvailable(!wedAvailable)} name="wednesday" type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="wednesday" onClick={() => setWedAvailable(!wedAvailable)} className="text-sml cursor-pointer">Wed</label>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input name="thursday" checked={thuAvailable} onChange={() => setThuAvailable(!thuAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="thursday" className="text-sml cursor-pointer" onClick={() => setThuAvailable(!thuAvailable)}>Thu</label>
+                                </div>
+                                <TimeSelect disable={airspaceStatus || !thuAvailable}  
+                                    timeSelect={!airspaceStatus && thuAvailable && props.weeks[3].fromTime} 
+                                    toTimeSelect={!airspaceStatus && thuAvailable && props.weeks[3].toTime}
+                                    fromChange={(value) => {
+                                        setFromThursday(value)
+                                    }} toChange={(value) => {
+                                        setToThursday(value)
+                                    }} />
                             </div>
-                            <TimeSelect disable={airspaceStatus || !wedAvailable} 
-                                timeSelect={!airspaceStatus && wedAvailable && props.weeks[2].fromTime} 
-                                toTimeSelect={!airspaceStatus && wedAvailable && props.weeks[2].toTime}
-                                fromChange={(value) => {
-                                    setFromWednesday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToWednesday(value)
-                                    console.log(value)
-                                }} />
-                        </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input name="thursday" checked={thuAvailable} onChange={() => setThuAvailable(!thuAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="thursday" className="text-sml cursor-pointer" onClick={() => setThuAvailable(!thuAvailable)}>Thu</label>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input checked={friAvailable} name="friday" onChange={() => setFriAvailable(!friAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label className="text-sml cursor-pointer" htmlFor="friday" onClick={() => setFriAvailable(!friAvailable)}>Fri</label>
+                                </div>
+                                <TimeSelect  disable={airspaceStatus || !friAvailable}  
+                                    timeSelect={!airspaceStatus && friAvailable && props.weeks[4].fromTime} 
+                                    toTimeSelect={!airspaceStatus && friAvailable && props.weeks[4].toTime}
+                                    fromChange={(value) => {
+                                        setFromFriday(value)
+                                    }} toChange={(value) => {
+                                        setToFriday(value)
+                                    }} />
                             </div>
-                            <TimeSelect disable={airspaceStatus || !thuAvailable}  
-                                 timeSelect={!airspaceStatus && thuAvailable && props.weeks[3].fromTime} 
-                                 toTimeSelect={!airspaceStatus && thuAvailable && props.weeks[3].toTime}
-                                fromChange={(value) => {
-                                    setFromThursday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToThursday(value)
-                                    console.log(value)
-                                }} />
-                        </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input checked={friAvailable} name="friday" onChange={() => setFriAvailable(!friAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label className="text-sml cursor-pointer" htmlFor="friday" onClick={() => setFriAvailable(!friAvailable)}>Fri</label>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input name="saturday" checked={satAvailable} onChange={() => setSatAvailable(!satAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="saturday" onClick={() => setSatAvailable(!satAvailable)} className="text-sml cursor-pointer">Sat</label>
+                                </div>
+                                <TimeSelect  disable={airspaceStatus || !satAvailable}  
+                                    timeSelect={!airspaceStatus && satAvailable && props.weeks[5].fromTime} 
+                                    toTimeSelect={!airspaceStatus && satAvailable && props.weeks[5].toTime}
+                                    fromChange={(value) => {
+                                        setFromSaturday(value)
+                                    }} toChange={(value) => {
+                                        setToSaturday(value)
+                                    }}/>
                             </div>
-                            <TimeSelect  disable={airspaceStatus || !friAvailable}  
-                                timeSelect={!airspaceStatus && friAvailable && props.weeks[4].fromTime} 
-                                toTimeSelect={!airspaceStatus && friAvailable && props.weeks[4].toTime}
-                                fromChange={(value) => {
-                                    setFromFriday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToFriday(value)
-                                    console.log(value)
-                                }} />
-                        </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input name="saturday" checked={satAvailable} onChange={() => setSatAvailable(!satAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="saturday" onClick={() => setSatAvailable(!satAvailable)} className="text-sml cursor-pointer">Sat</label>
+                            <div className="flex flex-row justify-between mb-1 items-center gap-2">
+                                <div className="flex flex-row gap-1">
+                                    {!airspaceStatus && <input checked={sunAvailable} name="sunday" onChange={() => setSunAvailable(!sunAvailable)} type="checkbox" className="cursor-pointer" />}
+                                    <label htmlFor="sunday" onClick={() => setSunAvailable(!sunAvailable)} className="text-sml cursor-pointer">Sun</label>
+                                </div>
+                                <TimeSelect disable={airspaceStatus || !sunAvailable}  
+                                    timeSelect={!airspaceStatus && sunAvailable && props.weeks[6].fromTime} 
+                                    toTimeSelect={!airspaceStatus && sunAvailable && props.weeks[6].toTime}
+                                    fromChange={(value) => {
+                                        setFromSunday(value)
+                                    }} toChange={(value) => {
+                                        setToSunday(value)
+                                    }} />
                             </div>
-                            <TimeSelect  disable={airspaceStatus || !satAvailable}  
-                                timeSelect={!airspaceStatus && satAvailable && props.weeks[5].fromTime} 
-                                toTimeSelect={!airspaceStatus && satAvailable && props.weeks[5].toTime}
-                                fromChange={(value) => {
-                                    setFromSaturday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToSaturday(value)
-                                    console.log(value)
-                                }}/>
                         </div>
-                        <div className="flex flex-row justify-between mb-1 items-center gap-2">
-                            <div className="flex flex-row gap-1">
-                                {!airspaceStatus && <input checked={sunAvailable} name="sunday" onChange={() => setSunAvailable(!sunAvailable)} type="checkbox" className="cursor-pointer" />}
-                                <label htmlFor="sunday" onClick={() => setSunAvailable(!sunAvailable)} className="text-sml cursor-pointer">Sun</label>
-                            </div>
-                            <TimeSelect disable={airspaceStatus || !sunAvailable}  
-                                timeSelect={!airspaceStatus && sunAvailable && props.weeks[6].fromTime} 
-                                toTimeSelect={!airspaceStatus && sunAvailable && props.weeks[6].toTime}
-                                fromChange={(value) => {
-                                    setFromSunday(value)
-                                    console.log(value)
-                                }} toChange={(value) => {
-                                    setToSunday(value)
-                                }} />
-                        </div>
-                    </div>
+                    }
                 </div>
-
-                
                 {/* <hr /> */}
                 {/* <div className="px-14 pb-5 pt-2 flex flex-row items-center justify-start gap-8">
                     <div style={{width: "138px"}} className="">

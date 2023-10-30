@@ -174,8 +174,9 @@ const Signup = (props) => {
             return res.json()
             .then(response => {
                 console.log("This is the response from the backend on users", response);
-                const filteredUser = response.filter(user => user.email === userInformation.email);
-    
+                const filteredUser = response.filter(user => user.blockchainAddress === accounts[0]);
+                console.log("This is the filtered user", filteredUser);
+
                 if(filteredUser.length < 1) {
                     const token = localStorage.getItem("openlogin_store");
                     dispatch(counterActions.web3({
@@ -257,7 +258,7 @@ const Signup = (props) => {
                 </svg>
                 <p>Back</p>
             </button>
-            <Image src="/images/logo.png" alt="Company's logo" width={164} height={58} className="mt-4 my-12" />
+            <Image src={logo} alt="Company's logo" width={164} height={58} className="mt-4 my-12" />
             <h2 className="font-bold text-2xl">Welcome to SkyTrade</h2>
             <p className="text-light-brown text-center text-sml">
                 Please choose an option that best reflects the account's 

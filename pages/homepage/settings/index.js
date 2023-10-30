@@ -1,6 +1,4 @@
-import Image from "next/image";
-import { Fragment, useEffect, useState, useRef } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
@@ -9,8 +7,6 @@ import base58 from "bs58";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import Backdrop from "@/Components/Backdrop";
-import AddCardModal from "@/Components/Modals/AddCardModal";
 import swal from "sweetalert";
 import Spinner from "@/Components/Spinner";
 
@@ -28,7 +24,6 @@ const Settings = (props) => {
 
     const router = useRouter();
 
-    const [addCard, setAddCard] = useState(false);
     const [nameValid, setNameValid] = useState(true);
     const [emailValid, setEmailValid] = useState(true);
     const [phoneValid, setPhoneValid] = useState(true);
@@ -86,7 +81,7 @@ const Settings = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -100,51 +95,28 @@ const Settings = (props) => {
         }
     }, []);
 
-
-    const closeAddCardHandler = () => {
-        setAddCard(false)
-    }
-
     const updateDataHandler = async(e) => {
         e.preventDefault();
 
-        
-
-
-
         const name = nameRef.current.value;
         const phoneNumber = phoneRef.current.value;
-        const email = emailRef.current.value;
-
-        const regex = /^\S+@\S+\.\S+$/;
-        const emailIsValid = regex.test(email);
 
         if(!name) {
             setNameValid(false);
             swal({
                 title: "oops!",
-                text: "Kindly complete all required fields",
+                text: "Name cannot be empty",
                 timer: 2000
               });
             return;
         }
 
-        if(!phoneNumber) {
+        if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
             setPhoneValid(false);
             swal({
                 title: "oops!",
-                text: "Kindly complete all required fields",
-                timer: 2000
-              });
-            return;
-        }
-
-        if(!emailIsValid) {
-            setEmailValid(false);
-            swal({
-                title: "oops!",
-                text: "Kindly complete all required fields",
-                timer: 2000
+                text: "invalid phone number. ensure to include country code",
+                timer: 3000
               });
             return;
         }
@@ -401,7 +373,6 @@ const Settings = (props) => {
 
         const web3auth = new Web3Auth({
                 // For Production
-                // clientId: "",
                 clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
         
                 // For Development
@@ -417,17 +388,12 @@ const Settings = (props) => {
         const solanaWallet = new SolanaWallet(web3authProvider); 
 
     
-
-        const userInfo = await web3auth.getUserInfo();
-        console.log(userInfo);
+        // const userInfo = await web3auth.getUserInfo();
     
         // const domain = window.location.host;
         const domain = 'localhost:3000';
         // const origin = window.location.origin;
         const origin = 'http://localhost:3000';
-
-        console.log("domain", domain);
-        console.log("origin", origin);
 
 
         const payload = new SIWPayload();
@@ -450,9 +416,14 @@ const Settings = (props) => {
 
         const signature = base58.encode(result);
 
+        const formatedDate = new Date(message.payload.issuedAt).toISOString();
+
+        console.log(formatedDate);
+
         signatureObj.sign = signature;
         signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
+        // signatureObj.sign_issue_at = message.payload.issuedAt;
+        signatureObj.sign_issue_at = formatedDate;
         signatureObj.sign_address = user.blockchainAddress;
 
 
@@ -462,7 +433,6 @@ const Settings = (props) => {
             body: JSON.stringify({
                 userId: user.id,
                 name,
-                email,
                 phoneNumber
             }),
             headers: {
@@ -476,16 +446,14 @@ const Settings = (props) => {
             }
         })
         .then((res) => {
-            console.log(res)
-            if(!res.ok) {
+            if(!res.ok || res.statusCode === 500) {
                 return res.json()
                 .then(errorData => {
-                    console.log(errorData)
                     throw new Error(errorData.errorMessage);
                 });
             }
             return res.json()
-            .then(() => {
+            .then((response) => {    
                 setIsLoading(false);
                 swal({
                     title: "Submitted",
@@ -495,7 +463,6 @@ const Settings = (props) => {
                   })
                 .then(() => {
                     router.push("/homepage/dashboard");
-                    
                 })
             })
         })
@@ -514,10 +481,7 @@ const Settings = (props) => {
         return <Spinner />
     } 
 
-    return <Fragment>
-        {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
-        {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
-        <div className="flex flex-row mx-auto">
+    return <div className="flex flex-row mx-auto">
             <Sidebar users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
                 <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
@@ -538,7 +502,7 @@ const Settings = (props) => {
                             <button className="bg-bleach-red text-light-red-100 rounded-md transition-all duration-500 ease-in-out hover:bg-red-200 hover:text-white" style={{width: "101px", height: "39px"}}>Remove</button>
                         </div>
                     </div> */}
-                    {(user.KYCStatusId === 0) &&
+                    {(user.categoryId === 0 && user.KYCStatusId === 0) &&
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
                                 <h3 className="text-2xl font-medium">Verify your Account</h3>
@@ -548,13 +512,13 @@ const Settings = (props) => {
                         </div>
                     }
 
-                    {(user.KYCStatusId === 3) &&
+                    {user.categoryId === 0 && user.KYCStatusId === 3 &&
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
                                 <h3 className="text-2xl font-medium">Your Account is not verified</h3>
                                 <p>Sorry. You didn't pass the KYC check</p>
                             </div>
-                            <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>rejected</button>
+                            <p className="bg-bleach-red text-light-red-100 rounded-md text-center transition-all duration-500 ease-in-out py-2 px-1">rejected</p>
                         </div>
                     }
 
@@ -568,7 +532,17 @@ const Settings = (props) => {
                         </div>
                     }
 
-                    {user.KYCStatusId === 1 &&
+                    {user.categoryId === 0 && user.KYCStatusId === 1 &&
+                        <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
+                            <div>
+                                <h3 className="text-2xl font-medium">Your Account is pending verification</h3>
+                                <p>This Account is under review</p>
+                            </div>
+                            <p className="bg-light-yellow font-semibold rounded-md py-1 px-2 text-center text-dark-yellow">Pending</p>
+                        </div>
+                    }
+
+                    {user.categoryId === 1 && user.KYCStatusId !== 2 &&
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
                                 <h3 className="text-2xl font-medium">Your Account is pending verification</h3>
@@ -590,17 +564,19 @@ const Settings = (props) => {
                             {!nameValid && <p className="absolute top-1 right-0 text-sm text-red-600">name cannot be empty</p>}
                         </div>
                         <div className="flex mt-6 gap-5">
-                            <div className="relative">
-                                <label className="text-bleach-brown" htmlFor="email">Email</label> <br />
+                            <div className="relative" style={{width: "320px", height: "37px"}}>
+                                <p className="text-bleach-brown">Email</p>
+                                <p className="text-black">{user.email}</p>
+                                {/* <label className="text-bleach-brown" htmlFor="email">Email</label> <br />
                                 <input type="email" disabled ref={emailRef} name="email" defaultValue={user.email} id="email" 
                                     className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                                {!emailValid && <p className="absolute top-1 right-0 text-sm text-red-600">email is invalid</p>}
+                                {!emailValid && <p className="absolute top-1 right-0 text-sm text-red-600">email is invalid</p>} */}
                             </div>
                             <div className="relative">
                                 <label className="text-bleach-brown" htmlFor="number">Phone Number</label> <br />
                                 <input type="text" onChange={() => setPhoneValid(true)} ref={phoneRef} name="number"  defaultValue={user.phoneNumber} id="number" 
                                     className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
-                                {!phoneValid && <p className="absolute top-1 right-0 text-sm text-red-600">invalid phone number</p>}
+                                {!phoneValid && <p className="absolute top-1 right-0 text-xs text-red-600">invalid phone number</p>}
                             </div>
                         </div>
                     </div>
@@ -623,7 +599,6 @@ const Settings = (props) => {
                 </form>
             </div>
         </div>
-    </Fragment>
 }
 
 export default Settings;

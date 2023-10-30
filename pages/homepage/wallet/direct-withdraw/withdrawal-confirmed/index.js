@@ -8,8 +8,7 @@ import Navbar from "@/Components/Navbar";
 import Spinner from "@/Components/Spinner";
 
 const WithdrawalConfirm = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
 
     if(error) {
         swal({
@@ -39,7 +38,6 @@ const WithdrawalConfirm = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -70,7 +68,7 @@ const WithdrawalConfirm = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;

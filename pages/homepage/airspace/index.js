@@ -11,8 +11,6 @@ import base58 from "bs58";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
-import AboutAirspace from "@/Components/AllAirspaces/AboutAirspace";
-import AllAirspaceOverview from "@/Components/AllAirspaces/AirspaceOverview";
 import MyAirspaceOverview from "@/Components/MyAirspaces/MyAirspaceOverview";
 import Airspaces from "@/Components/Airspaces";
 import AddReviewModal from "@/Components/Modals/AddReviewModal";
@@ -25,8 +23,7 @@ import EditAispaceModal from "@/Components/Modals/EditAirspaceModal";
 
 
 const Airspace = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
 
     if(error) {
         swal({
@@ -34,29 +31,23 @@ const Airspace = (props) => {
             text: "something went wrong. kindly try again",
           });
     }
+
     const router = useRouter();
     const dispatch = useDispatch();
     const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
-    const [viewAirspace, setViewAirSpace] = useState(false);
-    const [viewMyAirspace, setViewMyAirSpace] = useState(false);
-    const [airSpaceReviews, setAirSpaceReviews] = useState(false);
-    const [myAirspaceReviews, setMyAirSpaceReviews] = useState(false);
-    const [aboutAirspace, setAboutAirspace] = useState(false);
-    const [aboutMyAirspace, setAboutMyAirspace] = useState(false);
     const [showAddReviewModal, setshowAddReviewModal] = useState(false);
     const [showAddAirspaceModal, setShowAddAirspaceModal] = useState(false);
     const [airspace, setAirspace] = useState("mine");
-    const [airspaceInfo, setAirspaceInfo ] = useState({});
     const [myFilteredAirspace, setMyFilteredAirspace] = useState();
     const [flyToAddress, setFlyToAddress] = useState("");
     const [myAirspaces, setMyAirspaces] = useState();
     const [editAirspace, setEditAirspace] = useState();
+    const [viewMyAirspace, setViewMyAirSpace] = useState(false);
 
     const [user, setUser] = useState();
-
     const [token, setToken] = useState("");
 
 
@@ -75,7 +66,6 @@ const Airspace = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -106,7 +96,7 @@ const Airspace = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
@@ -246,7 +236,6 @@ const Airspace = (props) => {
 
                 const web3auth = new Web3Auth({
                         // For Production
-                        // clientId: "",
                         clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
                 
                         // For Development
@@ -263,16 +252,13 @@ const Airspace = (props) => {
 
             
 
-                const userInfo = await web3auth.getUserInfo();
-                console.log(userInfo);
+                // const userInfo = await web3auth.getUserInfo();
             
                 // const domain = window.location.host;
                 const domain = 'localhost:3000';
                 // const origin = window.location.origin;
                 const origin = 'http://localhost:3000';
 
-                console.log("domain", domain);
-                console.log("origin", origin);
 
 
                 const payload = new SIWPayload();
@@ -286,18 +272,13 @@ const Airspace = (props) => {
                 const header = { t: "sip99" };
                 const network = "solana";
 
-                console.log(JSON.stringify(payload));
-
                 let message = new SIWWeb3({ header, payload, network });
-                console.log(message)
 
                 const messageText = message.prepareMessage();
-                console.log(messageText);
                 const msg = new TextEncoder().encode(messageText);
                 const result = await solanaWallet.signMessage(msg);
 
                 const signature = base58.encode(result);
-                console.log("This is the signature", signature);
 
                 signatureObj.sign = signature
                 signatureObj.sign_nonce = message.payload.nonce
@@ -305,36 +286,36 @@ const Airspace = (props) => {
                 signatureObj.sign_address = user.blockchainAddress
 
 
-        fetch(`/api/proxy?${Date.now()}`, {
-            headers: {
-                "Content-Type": "application/json",
-                uri: `/properties/user-properties/${user.id}`,
-                // proxy_to_method: "GET",
-                sign: signatureObj.sign,
-                sign_issue_at:  signatureObj.sign_issue_at,
-                sign_nonce: signatureObj.sign_nonce,
-                sign_address: signatureObj.sign_address,
-            }
-        }).then((res) => {
-            if(!res.ok) {
-                return res.json()
-                .then((err) => {
-                    throw new Error(err.message)
+                fetch(`/api/proxy?${Date.now()}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        uri: `/properties/user-properties/${user.id}`,
+                        // proxy_to_method: "GET",
+                        sign: signatureObj.sign,
+                        sign_issue_at:  signatureObj.sign_issue_at,
+                        sign_nonce: signatureObj.sign_nonce,
+                        sign_address: signatureObj.sign_address,
+                    }
+                }).then((res) => {
+                    if(!res.ok) {
+                        return res.json()
+                        .then((err) => {
+                            throw new Error(err.message)
+                        })
+                    }
+                    return res.json()
+                    .then((data) =>{
+                        setMyAirspaces(data);
+                    })
                 })
-            }
-            return res.json()
-            .then((data) =>{
-                console.log(data)
-                setMyAirspaces(data)
-            })
-        })
-        .catch((err) => {
-            console.log(err)
-        })}    
-    }
+                .catch((err) => {
+                    console.log(err);
+                })
+            }    
+        }
 
         getUserAirspace();
-    }, [user])
+    }, [user]);
 
     const newAirspace = useSelector(state => {
         return state.value.newAirspace;
@@ -346,10 +327,6 @@ const Airspace = (props) => {
 
     const additionalInfo = useSelector(state => state.value.airspaceAdditionalInfo);
 
-    const showAddReviewModalHandler = () => {
-        setshowAddReviewModal (true);
-    }
-
     const closeAddReviewModalHandler = (e) => {
         e.preventDefault();
         setshowAddReviewModal(false);
@@ -359,10 +336,6 @@ const Airspace = (props) => {
         setShowAddAirspaceModal(true);
     } 
 
-    const closeMapHandler = () => {
-        setShowAddAirspaceModal(false)
-    }
-
     const backdropCloseHandler = () => {
         setShowAddAirspaceModal(false);
         setshowAddReviewModal(false);
@@ -370,7 +343,6 @@ const Airspace = (props) => {
 
         dispatch(counterActions.closeNewAirspaceModal());
         dispatch(counterActions.closeConfirmOnMapModal());
-        // dispatch(counterActions.closeAdditionalInfoModal());
     }
 
     const editAirspaceHandler = () => {
@@ -389,93 +361,17 @@ const Airspace = (props) => {
         setAirspace("mine");
     }
 
-    const showAirspaceHandler = () => {
-        setViewMyAirSpace(false);
-        setMyAirSpaceReviews(false);
-        setAboutMyAirspace(false);
-
-        setViewAirSpace(true);
-        setAboutAirspace(false);
-    }
-
     const showMyAirspaceHandler = (id) => {
         const filteredAirspace = myAirspaces.filter(airspace => airspace.id === id)
         setMyFilteredAirspace(filteredAirspace[0])
         setFlyToAddress(filteredAirspace[0].address);
 
-
-        setViewAirSpace(false);
-        setAirSpaceReviews(false);
-        setAboutAirspace(false);
         setViewMyAirSpace(true);
-        setMyAirSpaceReviews(false);
-        setAboutMyAirspace(false);
     }
-
-    const airspaceOverviewHandler = () => {
-        setViewAirSpace(true);
-        setAirSpaceReviews(false);
-        setAboutAirspace(false);
-    }
-
-    const myAirspaceOverviewHandler = () => {
-        setViewMyAirSpace(true);
-        setMyAirSpaceReviews(false);
-        setAboutMyAirspace(false);
-    }
-
-    const airspaceReviewHandler = () => {
-        setViewAirSpace(false);
-        setAirSpaceReviews(true);
-        setAboutAirspace(false)
-    }
-
-    const myAirspaceReviewHandler = () => {
-        setViewMyAirSpace(false);
-        setMyAirSpaceReviews(true);
-        setAboutMyAirspace(false);
-    }
-
-    const aboutAirspaceHandler = () => {
-        setViewAirSpace(false);
-        setAirSpaceReviews(false);
-        setAboutAirspace(true);
-    }
-
-    const aboutMyAirspaceHandler = () => {
-        setViewMyAirSpace(false);
-        setMyAirSpaceReviews(false);
-        setAboutMyAirspace(true);
-    } 
-
+   
     const closeAirspaceDetailsHandler = () => {
-        setViewAirSpace(false);
-        setAirSpaceReviews(false);
-        setAboutAirspace(false);
-        setViewMyAirSpace(false);
-        setMyAirSpaceReviews(false);
-        setAboutMyAirspace(false);
+        setViewMyAirSpace(false)
     }
-
-    const airspaceCategory = (category) => {
-        setAirspaceInfo(prev => {
-            return {
-                ...prev,
-                category: category
-            }
-        })
-        setShowAddAirspaceModal(false)
-    }
-
-    const addressValueHandler = (value) => {
-        setAirspaceInfo(prev => {
-            return {
-                ...prev,
-                ...value
-            }
-        })
-    }
-
   
 
 
@@ -484,17 +380,14 @@ const Airspace = (props) => {
     }
 
     return <Fragment>
-        {showAddReviewModal &&
+        {/* {showAddReviewModal &&
             createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
-            }
-        {/* {newAirspace && 
-            createPortal(<NewAirspaceModal onClose={closeMapHandler} onAddCategory={airspaceCategory} />, document.getElementById("modal-root"))
             } */}
         {additionalInfo && 
             <AdditionalAispaceInformation user={user} />
             }
         {confirmOnMap && 
-            createPortal(<AddAirspace onConfirm={addressValueHandler} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
+            createPortal(<AddAirspace onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
             }
         
         {editAirspace && createPortal(<EditAispaceModal 
@@ -538,16 +431,7 @@ const Airspace = (props) => {
                             onAddAirspace={showAddAirspaceModalHandler}
                             users={users}
                             >
-                        {/* {allAirspace && airSpaces.map(airspace => {
-                            return <AirspaceTab 
-                                            key={airspace.id}
-                                            id={airspace.id} 
-                                            viewAirspace={showAirspaceHandler} 
-                                            title={airspace.title} 
-                                            status={airspace.status}
-                                        />
-                        })}   */}
-
+                       
                         {!myAirspaces && <p className="mt-10">Loading...</p>}
 
                         {myAirspaces && myAirspaces.length < 0  &&
@@ -570,8 +454,8 @@ const Airspace = (props) => {
                 
                     {viewMyAirspace && <MyAirspaceOverview 
                                                 viewMyAirspace={showMyAirspaceHandler}
-                                                 myAirspaceReview={myAirspaceReviewHandler} 
-                                                 aboutMyAirspace={aboutMyAirspaceHandler} 
+                                                //  myAirspaceReview={myAirspaceReviewHandler} 
+                                                //  aboutMyAirspace={aboutMyAirspaceHandler} 
                                                  closeDetails={closeAirspaceDetailsHandler}
                                                  address={myFilteredAirspace.address}
                                                  title={myFilteredAirspace.title}
@@ -587,41 +471,50 @@ const Airspace = (props) => {
                                                  longitute={myFilteredAirspace.longitude}
                                                  propertyStatus={myFilteredAirspace.propertyStatus.type}
                                                  />}
-{/* 
-                    {aboutMyAirspace && <AboutMyAirspace 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
-                                                myAirspaceReview={myAirspaceReviewHandler} 
-                                                aboutMyAirspace={aboutMyAirspaceHandler} 
-                                                closeDetails={closeAirspaceDetailsHandler}
-                                            />} */}
-                                            
-                    {/* {myAirspaceReviews && <MyAirspaceReviews 
-                                                viewMyAirspace={myAirspaceOverviewHandler}
-                                                myAirspaceReview={myAirspaceReviewHandler} 
-                                                aboutMyAirspace={aboutMyAirspaceHandler} 
-                                                closeDetails={closeAirspaceDetailsHandler}
-                                            />} */}
 
-                    {/* {airSpaceReviews && <AirspaceReviews 
+                    {/* {aboutMyAirspace && <AboutMyAirspace 
+                                                viewMyAirspace={myAirspaceOverviewHandler}
+                                                myAirspaceReview={myAirspaceReviewHandler} 
+                                                aboutMyAirspace={aboutMyAirspaceHandler} 
+                                                closeDetails={closeAirspaceDetailsHandler}
+                                            />}
+                                            
+                    {myAirspaceReviews && <MyAirspaceReviews 
+                                                viewMyAirspace={myAirspaceOverviewHandler}
+                                                myAirspaceReview={myAirspaceReviewHandler} 
+                                                aboutMyAirspace={aboutMyAirspaceHandler} 
+                                                closeDetails={closeAirspaceDetailsHandler}
+                                            />}
+
+                    {airSpaceReviews && <AirspaceReviews 
                                                 onClick={showAddReviewModalHandler} 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler}
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />} */}
+                                                />}
 
-                    {/* {viewAirspace && <AllAirspaceOverview 
+                    {viewAirspace && <AllAirspaceOverview 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler} 
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />} */}
-                    {/* {aboutAirspace && <AboutAirspace 
+                                                />}
+                    {aboutAirspace && <AboutAirspace 
                                                 viewAirspace={airspaceOverviewHandler} 
                                                 viewAirspaceReview={airspaceReviewHandler} 
                                                 aboutAirspace={aboutAirspaceHandler}
                                                 closeDetails={closeAirspaceDetailsHandler} 
-                                                />} */}
+                                                />}
+                    {allAirspace && airSpaces.map(airspace => {
+                        return <AirspaceTab 
+                                        key={airspace.id}
+                                        id={airspace.id} 
+                                        viewAirspace={showAirspaceHandler} 
+                                        title={airspace.title} 
+                                        status={airspace.status}
+                                    />
+                    })}   */}
                 </div>
             </div>
         </div>
@@ -629,6 +522,7 @@ const Airspace = (props) => {
 }
 
 export default Airspace;
+
 
 export async function getServerSideProps() {
     try{
