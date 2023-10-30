@@ -8,7 +8,7 @@ import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
 
-import AddCardModal from "@/Components/Modals/AddCardModal";
+
 import Spinner from "@/Components/Spinner";
 
 const Wallet = (props) => {
@@ -174,7 +174,6 @@ const Wallet = (props) => {
 
     return <div className="flex flex-row mx-auto">
             {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
-            {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
             <Sidebar users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
                 <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
