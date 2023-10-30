@@ -1,21 +1,20 @@
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import QRCode from "react-qr-code";
 import swal from "sweetalert";
+import { Web3Auth } from "@web3auth/modal";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
-import AddCardModal from "@/Components/Modals/AddCardModal";
 import Spinner from "@/Components/Spinner";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 
 
 const Wallet = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
 
     if(error) {
         swal({
@@ -28,44 +27,79 @@ const Wallet = (props) => {
     const [addCard, setAddCard] = useState(false);
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
-    const [copied, setCopied] = useState();
     const [copy, setCopy] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
 
 
     useEffect(() => {
-        const fetchedEmail = localStorage.getItem("email");
-        const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-
         if(users) {
-            const singleUser = users.filter(user => user.email === fetchedEmail);
+            const authUser = async() => {
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-            // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-            if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                console.log("false")
-                localStorage.removeItem("openlogin_store")
-                router.push("/auth/join");
-                return;
-            };
+                const web3auth = new Web3Auth({
+                        // For Production
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+            
+                await web3auth.initModal();
 
-            setToken(fetchedToken.sessionId);  
-            setUser(singleUser[0]);
+                // await web3auth.connect();
+                
+                let userInfo;
+
+                try{
+                    userInfo = await web3auth.getUserInfo();
+                } catch(err) {
+                    localStorage.removeItem("openlogin_store")
+                    swal({
+                        title: "oops!",
+                        text: "Something went wrong. Kindly try again",
+                      })
+                      .then(() => router.push("/auth/join"))
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            
+                const singleUser = users.filter(user => user.email === userInfo.email);
+
+                if(singleUser.length < 1){
+                    localStorage.removeItem("openlogin_store")
+                    router.push("/auth/join");
+                    return;
+                };
+
+                setToken(fetchedToken.sessionId);  
+                setUser(singleUser[0]);
+            } 
+
+            authUser();
         }
     }, []);
 
     useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    user.blockchainAddress,
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -73,7 +107,7 @@ const Wallet = (props) => {
                 ]
               }
    
-            fetch('https://api.testnet.solana.com', {
+            fetch('https://api.devnet.solana.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -91,6 +125,10 @@ const Wallet = (props) => {
                 return response.json()
             })
             .then(result => {
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    return;
+                }
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
             .catch(error => {
@@ -122,8 +160,7 @@ const Wallet = (props) => {
 
     return <div className="flex flex-row mx-auto">
         {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
-        {addCard && createPortal(<AddCardModal onClose={closeAddCardHandler} />, document.getElementById("modal-root"))}
-        <Sidebar />
+        <Sidebar users={users} />
         <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
             <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
@@ -154,15 +191,6 @@ const Wallet = (props) => {
                     <h3 className="font-medium text-xl">Deposit</h3>
                 </div>
                 <div className="px-7"> 
-                    {/* <div className="relative mt-8 mx-auto">
-                        <p className="mt-12 text-dark-brown">Amount</p>
-                        <p className="text-sm text-dark-brown">The platform only supports USDC at this time</p> 
-                        <input className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="number" placeholder="0.00" id="amount"  name="amount" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
-                        <p className="absolute text-light-brown top-12 right-4">Min USDC <span>20.00</span></p>
-                    </div>
-                    <div className="flex flex-row justify-center mt-5">
-                        <p>1 USDC = 1 US$</p>
-                    </div> */}
                     <div className="mt-20">
                         <p className="text-dark-brown">Scan code for wallet</p>
                         <p className="text-dark-brown text-sm">Scan code for wallet</p>
@@ -205,30 +233,33 @@ export default Wallet;
 
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-   
-    console.log(data)
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
     }
-}
+};

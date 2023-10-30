@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chart from "chart.js/auto";
-import { useDispatch, } from "react-redux";
-import Image from "next/image";
+import { Web3Auth } from "@web3auth/modal";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
+import base58 from "bs58";
+import swal from "sweetalert";
 
 import { useVerification } from "@/hooks/useVerification";
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
-import { counterActions } from "@/store/store";
-import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
-import swal from "sweetalert";
+
 
 const Dashboard = (props) => {
-    const { users } = props;
-    const { error } = props;
+    const { users, error } = props;
+
     const { verificationCheck } = useVerification();
 
     if(error) {
@@ -23,7 +24,134 @@ const Dashboard = (props) => {
             text: "something went wrong. kindly try again",
           });
     }
-    const dispatch = useDispatch();
+
+    const cData = [
+        {
+            country: "United States",
+            percent: 50,
+            color: "#0653EA"
+        },
+        {
+            country: "India",
+            percent: 7.91,
+            color: "#C80000"
+        },
+        {
+            country: "United Kingdom",
+            percent: 5.36,
+            color: "#FFD037"
+        },
+        {
+            country: "Canada",
+            percent: 4.69,
+            color: "#78A6FF"
+        },
+        {
+            country: "Brazil",
+            percent: 3.64,
+            color: "#3A951A"
+        },
+        {
+            country: "Australia",
+            percent: 3.39,
+            color: "#722ACF"
+        },
+        {
+            country: "France",
+            percent: 3.39,
+            color: "#1581C1"
+        },
+        {
+            country: "Germany",
+            percent: 2.39,
+            color: "#5B5167"
+        },
+        {
+            country: "Argentina",
+            percent: 1.8,
+            color: "#D87657"
+        },
+        {
+            country: "Poland",
+            percent: 1.8,
+            color: "#6BD3FF"
+        },
+        {
+            country: "Italy",
+            percent: 1.8,
+            color: "#FF4B32"
+        },
+        {
+            country: "Spain",
+            percent: 1.8,
+            color: "#71FF40"
+        },
+        {
+            country: "Sweden",
+            percent: 1.4,
+            color: "#000"
+        },
+        {
+            country: "Finland",
+            percent: 1.4,
+            color: "#DC36F6"
+        },
+        {
+            country: "Nigeria",
+            percent: 1.3,
+            color: "#C89900"
+        },
+        {
+            country: "Kenya",
+            percent: 1.3,
+            color: "#006351"
+        },
+        {
+            country: "Peru",
+            percent: 0.9,
+            color: "#643B60"
+        },
+        {
+            country: "Chile",
+            percent: 0.9,
+            color: "#636C72"
+        },
+        {
+            country: "Paraguay",
+            percent: 0.9,
+            color: "#FC6681"
+        },
+        {
+            country: "Thailand",
+            percent: 0.9,
+            color: "#D4B5FB"
+        },
+        {
+            country: "SouthAfrica",
+            percent: 0.9,
+            color: "#FFAD93"
+        },
+        {
+            country: "Indonesia",
+            percent: 0.9,
+            color: "#00F"
+        },
+        {
+            country: "Algeria",
+            percent: 0.9,
+            color: "#CF1900"
+        },
+        {
+            country: "Norway",
+            percent: 0.9,
+            color: "#5C0000"
+        },
+        {
+            country: "Others",
+            percent: 2.82,
+            color: "#ACACAC"
+        },
+    ];
 
     const date = new Date()
     const month = date.toLocaleString('default', { month: 'short' })
@@ -38,41 +166,78 @@ const Dashboard = (props) => {
     const [newslettersLoading, setNewslettersLoading] = useState(false);
     const [tokenBalance, setTokenBalance] = useState("");
     const [airspaceLength, setAirspaceLength] = useState();
+    const [signature, setSignature] = useState();
     
 
     useEffect(() => {
-            const fetchedEmail = localStorage.getItem("email");
-            const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-        
-            if(users) {
-                const singleUser = users.filter(user => user.email === fetchedEmail);
+        if(users) {
+            const authUser = async() => {
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
 
-                // if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-                if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-                    console.log("false")
+                const web3auth = new Web3Auth({
+                        // For Production
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+            
+                await web3auth.initModal();
+
+                // await web3auth.connect();
+                
+                let userInfo;
+
+                try{
+                    userInfo = await web3auth.getUserInfo();
+                } catch(err) {
+                    localStorage.removeItem("openlogin_store")
+                    swal({
+                        title: "oops!",
+                        text: "Something went wrong. Kindly try again",
+                      })
+                      .then(() => router.push("/auth/join"))
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+            
+                const singleUser = users.filter(user => user.email === userInfo.email);
+
+                if(singleUser.length < 1){
                     localStorage.removeItem("openlogin_store")
                     router.push("/auth/join");
                     return;
                 };
 
-            setToken(fetchedToken.sessionId);  
-            setUser(singleUser[0]);
+                setToken(fetchedToken.sessionId);  
+                setUser(singleUser[0]);
+            } 
+
+            authUser();
         }
     }, []);
 
     useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
                 method: "getTokenAccountsByOwner",
                 params: [
-                //   user.wallet,
-                "F6nrevRwwSG8R3rfR1mi6dBTKy3YMtdUYXAnbgkx3nwR",
-                // "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    user.blockchainAddress,
                   {
-                    mint: "CpMah17kQEL2wqyMKt3mZBdTnZbkbfx4nqmQMFDP5vwp"
+                    mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
                   },
                   {
                     encoding: "jsonParsed"
@@ -80,7 +245,7 @@ const Dashboard = (props) => {
                 ]
               }
    
-            fetch('https://api.testnet.solana.com', {
+            fetch('https://api.devnet.solana.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -98,9 +263,14 @@ const Dashboard = (props) => {
                 return response.json()
             })
             .then(result => {
+                if(result.result.value.length < 1) {
+                    setTokenBalance("0");
+                    return;
+                }
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
             .catch(error => {
+                setTokenBalance("");
                 console.error(error);
             });
         }
@@ -108,15 +278,270 @@ const Dashboard = (props) => {
 
     useEffect(() => {
         if(user) {
+            const getSignature = async() => {
+                const signatureObj = {};
+
+                // const retrievedObj = JSON.parse(localStorage.getItem("signature"));
+               
+        
+                // if(retrievedObj && retrievedObj.sign_issue_at) {
+                //     console.log(retrievedObj)
+                //     const issuedAt = new Date(retrievedObj.sign_issue_at);
+                //     const issuedTime = Math.floor(issuedAt.getTime() / 1000);
+                //     console.log(issuedAt);
+                //     console.log(issuedTime);
+                //     console.log(retrievedObj.sign_issue_at);
+                //     const currentTimestampInSeconds = Math.floor(new Date().getTime() / 1000);
+                //     const timeDifference = currentTimestampInSeconds - issuedTime;
+                //     console.log("This is the time difference", timeDifference);
+        
+                //     if(timeDifference > 300) {
+                //         console.log("The time has expired")
+                //         const chainConfig = {
+                //             chainNamespace: "solana",
+                //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                //             rpcTarget: "https://api.testnet.solana.com",
+                //             displayName: "Solana Mainnet",
+                //             blockExplorer: "https://explorer.solana.com",
+                //             ticker: "SOL",
+                //             tickerName: "Solana",
+                //         };
+                
+                //         const web3auth = new Web3Auth({
+                //                 // For Production
+                //                 // clientId: "",
+                //                 clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                        
+                //                 // For Development
+                //                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                //                 web3AuthNetwork: "cyan",
+                //                 chainConfig: chainConfig,
+                //             });
+                        
+                //         await web3auth.initModal();
+                
+                //         const web3authProvider = await web3auth.connect();
+                
+                //         const solanaWallet = new SolanaWallet(web3authProvider); 
+                
+                    
+                
+                //         const userInfo = await web3auth.getUserInfo();
+                //         console.log(userInfo);
+                    
+                //         // const domain = window.location.host;
+                //         const domain = 'localhost:3000';
+                //         // const origin = window.location.origin;
+                //         const origin = 'http://localhost:3000';
+                
+                //         console.log("domain", domain);
+                //         console.log("origin", origin);
+                
+                
+                //         const payload = new SIWPayload();
+                //         payload.domain = domain;
+                //         payload.uri = origin;
+                //         // payload.address = user.blockchainAddress
+                //         payload.statement = "Sign in with Solana to the app.";
+                //         payload.version = "1";
+                //         payload.chainId = 1;
+                
+                //         const header = { t: "sip99" };
+                //         const network = "solana";
+                
+                //         console.log(JSON.stringify(payload));
+                
+                //         let message = new SIWWeb3({ header, payload, network });
+                //         console.log(message)
+                
+                //         const messageText = message.prepareMessage();
+                //         console.log(messageText);
+                //         const msg = new TextEncoder().encode(messageText);
+                //         const result = await solanaWallet.signMessage(msg);
+                
+                //         const signature = base58.encode(result);
+                //         console.log("This is the signature", signature);
+                
+                //         signatureObj.sign = signature
+                //         signatureObj.sign_nonce = message.payload.nonce
+                //         signatureObj.sign_issue_at = message.payload.issuedAt
+                //         // signatureObj.sign_address = user.blockchainAddress
+                //         setSignature(signatureObj);
+                
+                //         localStorage.setItem("signature", JSON.stringify({
+                //             sign: signature,
+                //             "sign_issue_at": message.payload.issuedAt,
+                //             "sign_nonce": message.payload.nonce,
+                //             // "sign_address": user.blockchainAddress,
+                //         }));
+                //     } else {
+                //         console.log("I retrieved a valid sigature and used it");
+                //         signatureObj.sign = retrievedObj.sign
+                //         signatureObj.sign_nonce = retrievedObj.sign_nonce
+                //         signatureObj.sign_issue_at = retrievedObj.sign_issue_at
+                //         signatureObj.sign_address = retrievedObj.sign_address
+                //         setSignature(signatureObj)
+                //     }
+                // } else {
+                //     console.log("I didn't find any signature");
+                //     const chainConfig = {
+                //         chainNamespace: "solana",
+                //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                //         rpcTarget: "https://api.testnet.solana.com",
+                //         displayName: "Solana Mainnet",
+                //         blockExplorer: "https://explorer.solana.com",
+                //         ticker: "SOL",
+                //         tickerName: "Solana",
+                //     };
+            
+                //     const web3auth = new Web3Auth({
+                //             // For Production
+                //             // clientId: "",
+                //             clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                    
+                //             // For Development
+                //             // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                //             web3AuthNetwork: "cyan",
+                //             chainConfig: chainConfig,
+                //         });
+                    
+                //     await web3auth.initModal();
+            
+                //     const web3authProvider = await web3auth.connect();
+            
+                //     const solanaWallet = new SolanaWallet(web3authProvider);
+            
+                
+            
+                //     const userInfo = await web3auth.getUserInfo();
+                //     console.log(userInfo);
+                
+                //     // const domain = window.location.host;
+                //     const domain = 'localhost:3000';
+                //     // const origin = window.location.origin;
+                //     const origin = 'http://localhost:3000';
+            
+                //     console.log("domain", domain);
+                //     console.log("origin", origin);
+            
+            
+                //     const payload = new SIWPayload();
+                //     payload.domain = domain;
+                //     payload.uri = origin;
+                //     // payload.address = user.blockchainAddress
+                //     payload.statement = "Sign in with Solana to the app.";
+                //     payload.version = "1";
+                //     payload.chainId = 1;
+            
+                //     const header = { t: "sip99" };
+                //     const network = "solana";
+            
+            
+                //     let message = new SIWWeb3({ header, payload, network });
+            
+                //     const messageText = message.prepareMessage();
+                //     const msg = new TextEncoder().encode(messageText);
+                //     const result = await solanaWallet.signMessage(msg);
+            
+                //     const signature = base58.encode(result);
+            
+                //     signatureObj.sign = signature
+                //     signatureObj.sign_nonce = message.payload.nonce
+                //     signatureObj.sign_issue_at = message.payload.issuedAt
+                //     // signatureObj.sign_address = user.blockchainAddress
+                //     setSignature(signatureObj);
+            
+                //     localStorage.setItem("signature", JSON.stringify({
+                //         sign: signature,
+                //         "sign_issue_at": message.payload.issuedAt,
+                //         "sign_nonce": message.payload.nonce,
+                //         // "sign_address": user.blockchainAddress,
+                //     }));
+                // };
+
+                const chainConfig = {
+                    chainNamespace: "solana",
+                    chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: "https://api.testnet.solana.com",
+                    displayName: "Solana Mainnet",
+                    blockExplorer: "https://explorer.solana.com",
+                    ticker: "SOL",
+                    tickerName: "Solana",
+                };
+        
+                const web3auth = new Web3Auth({
+                        // For Production
+                        // clientId: "",
+                        clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+                
+                        // For Development
+                        // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
+                        web3AuthNetwork: "cyan",
+                        chainConfig: chainConfig,
+                    });
+                
+                await web3auth.initModal();
+        
+                const web3authProvider = await web3auth.connect();
+        
+                const solanaWallet = new SolanaWallet(web3authProvider);
+        
+            
+        
+                // const userInfo = await web3auth.getUserInfo();
+            
+                // const domain = window.location.host;
+                const domain = 'localhost:3000';
+                // const origin = window.location.origin;
+                const origin = 'http://localhost:3000';
+        
+        
+        
+                const payload = new SIWPayload();
+                payload.domain = domain;
+                payload.uri = origin;
+                payload.address = user.blockchainAddress
+                payload.statement = "Sign in with Solana to the app.";
+                payload.version = "1";
+                payload.chainId = 1;
+        
+                const header = { t: "sip99" };
+                const network = "solana";
+        
+        
+                let message = new SIWWeb3({ header, payload, network });
+        
+                const messageText = message.prepareMessage();
+                const msg = new TextEncoder().encode(messageText);
+                const result = await solanaWallet.signMessage(msg);
+        
+                const signature = base58.encode(result);
+        
+                signatureObj.sign = signature
+                signatureObj.sign_nonce = message.payload.nonce
+                signatureObj.sign_issue_at = message.payload.issuedAt
+                signatureObj.sign_address = user.blockchainAddress
+                setSignature(signatureObj);
+            }
+
+            getSignature();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if(signature) {
             fetch(`/api/proxy?${Date.now()}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     uri: `/properties/user-properties/${user.id}`,
                     // proxy_to_method: "GET",
+                    sign: signature.sign,
+                    sign_issue_at:  signature.sign_issue_at,
+                    sign_nonce: signature.sign_nonce,
+                    sign_address: signature.sign_address,
                 }
             }).then((res) => {
-                console.log(res);
                 if(!res.ok) {
                     return res.json()
                     .then((err) => {
@@ -125,95 +550,53 @@ const Dashboard = (props) => {
                 }
                 return res.json()
                 .then((data) =>{
-                    console.log(data.length)
                     setAirspaceLength(data.length)
                 })
             })
             .catch((err) => {
-                console.log(err)
-            })
-        }
-    }, [user])
-    
-    // useEffect(() => {
-    //     fetch(`/api/proxy?${Date.now()}`, {
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             uri: "/users"
-    //         }
-    //     }).then(res => {
-    //         if(!res.ok) {
-    //             return res.json()
-    //             .then(err => {
-    //                 console.log(err)
-    //                 return;
-    //             })
-    //         }
-    //         return res.json()
-    //     }).then(response => {
-    //         console.log(users)
-    //         console.log(response)
-    //         setUsers(response)
-    //         const fetchedEmail = localStorage.getItem("email");
-    //         const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-    //         const singleUser = users.filter(user => user.email === fetchedEmail);
-
-    //         console.log(singleUser);
-
-    //         console.log(fetchedToken.sessionId)
-    //         console.log(fetchedToken.sessionId.length)
-
-    //         if(!fetchedEmail || fetchedToken.sessionId.length !== 64){
-    //         // if(singleUser.length < 1 || fetchedToken.sessionId.length !== 64){
-    //             console.log("false")
-    //             localStorage.removeItem("openlogin_store")
-    //             router.push("/auth/join");
-    //             return;
-    //         };
-
-    //         setToken(fetchedToken.sessionId);
-
-            
-    //         console.log(singleUser);
-    //         setUser(singleUser[0]);
-    //     }).catch(err => {
-    //         console.log(err)
-    //     })
-    // }, [token]);
-
-
+                    setAirspaceLength("")
+                    console.log(err)
+                })
+            }     
+    }, [signature])
+        
 
     useEffect(() => {
-        setNewslettersLoading(true)
-        fetch(`/api/proxy?${Date.now()}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                uri: "/newsletters",
-                // proxy_to_method: "GET",
-            }
-        })
-        .then(res => {
-            console.log(res)
-            if(!res.ok) {
-                return res.json()
-                .then(errorData => {
-                    throw new Error(errorData.message);
-                });
-            }
-            return res.json();
-        })
-        .then(response => {
-            console.log(response)
-            setNewslettersLoading(false);
-            if(response.length > 0) { 
-                setNewsletters(response.reverse());
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        }) 
-    }, []);
+        if(signature) {
+            setNewslettersLoading(true);
+
+            fetch(`/api/proxy?${Date.now()}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    uri: "/newsletters",
+                    // proxy_to_method: "GET",
+                    sign: signature.sign,
+                    sign_issue_at:  signature.sign_issue_at,
+                    sign_nonce: signature.sign_nonce,
+                    sign_address: signature.sign_address,
+                }
+            })
+            .then(res => {
+                if(!res.ok) {
+                    return res.json()
+                    .then(errorData => {
+                        throw new Error(errorData.message);
+                    });
+                }
+                return res.json();
+            })
+            .then(response => {
+                setNewslettersLoading(false);
+                if(response.length > 0) { 
+                    setNewsletters(response.reverse());
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })   
+        }
+    }, [signature]);
 
     useEffect(() => {
         if(user) {
@@ -226,21 +609,29 @@ const Dashboard = (props) => {
                     existingChart.destroy();
                 }
             }
+
+
+            const chartData = {
+                labels: cData.map(data => {
+                    return [
+                        `${data.country} - ${data.percent}%`,
+                    ]
+                }),
+                data: cData.map(data => data.percent),
+                color: cData.map(data => data.color)
+            }
+            
             new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['United States', 'India', 'United Kingdom', 
-                            'Canada', 'Brazil', 'Australia',
-                        ],
+                labels: chartData.labels,
                 datasets: [{
                 label: '',
-                data: [50, 4, 2, 
-                        4, 8, 12,  
-                        ],
-                //   backgroundColor: 'rgb(255, 211, 11)',
+                data: chartData.data,
                 color: "black",
                 barThickness: 10,
-                borderRadius: 10
+                borderRadius: 10,
+                backgroundColor: chartData.color,
                 }]
             },
             options: {
@@ -253,32 +644,26 @@ const Dashboard = (props) => {
                 }
                 },
                 plugins: {
-                tooltip: {
-                    backgroundColor: 'black', 
-                    bodyColor: 'white',
-                    yAlign: 'bottom',
-                    titleFont: {
-                        size: 14,
+                    tooltip: {
+                        backgroundColor: 'black', 
+                        bodyColor: 'transparent',
+                        yAlign: 'bottom',
+                        titleFont: {
+                            size: 14,
+                        },
+                        titleColor: "white",
+                        textAlign: 'left',
+                        bodyFont: {
+                            color: 'red'
+                        },
+                        displayColors: false,
                     },
-                    titleColor: "white",
-                    bodyFont: {
-                        color: 'red'
+                    legend: {
+                        display: false, 
                     },
-                    displayColors: false,
-                    style: {
-                        textAlign: 'center'
-                    }
-                },
-                legend: {
-                    // display: false, 
-                },
-                label: {
-                    display: false
-                },
-                title: {
-                    display: false,
-                    text: "August 10"
-                }
+                    label: {
+                        // display: false
+                    },
                 }
             }
             });
@@ -295,7 +680,6 @@ const Dashboard = (props) => {
         event.stopPropagation();   
         router.push("/homepage/airspace");
         verificationCheck(users);
-        // dispatch(counterActions.newAirspaceModal());
     }
 
     if(!user || !token) {
@@ -303,13 +687,12 @@ const Dashboard = (props) => {
     } 
 
     return <div className="flex flex-row mx-auto">
-        <Sidebar users={users}/>
-        <div style={{width: "calc(100vw - 257px)", height: "100vh", overflowY: "scroll"}}>
+        <Sidebar users={users} />
+        <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
             <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
                                                 user.KYCStatusId === 1 ? "pending" 
                                                 : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
             <div className="flex flex-row justify-start w-full">
-                {/* <div className="mx-auto my-5" style={{width: "calc(100vw-569px)", maxWidth: "828px", height: "100vh"}}> */}
                 <div className="my-5" style={{width: "100%", height: "100vh"}}>
                     <div className="mx-auto grid grid-cols-3 gap-5" style={{height: "169px", width: "95%"}}>
                         <button onClick={navigationHandler.bind(null, "/homepage/wallet")} className="p-5 bg-white rounded-md hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px"}}>
@@ -320,15 +703,10 @@ const Dashboard = (props) => {
                                         <path fillRule="evenodd" clipRule="evenodd" d="M18.3666 3.15119C17.7088 1.60553 16.2554 0.494403 14.5259 0.312405L13.874 0.243809C10.5817 -0.102644 7.26098 -0.0797977 3.97374 0.311922L3.5418 0.363394C1.873 0.562254 0.550751 1.86606 0.328475 3.5319C-0.109491 6.81421 -0.109492 10.1402 0.328475 13.4225C0.550751 15.0883 1.873 16.3921 3.5418 16.591L3.97374 16.6425C7.26098 17.0342 10.5817 17.057 13.874 16.7106L14.5259 16.642C16.2554 16.46 17.7088 15.3488 18.3666 13.8032C19.4058 13.4938 20.199 12.5928 20.3292 11.4796C20.5625 9.48477 20.5625 7.4696 20.3292 5.47481C20.199 4.36159 19.4058 3.46062 18.3666 3.15119ZM13.7171 1.73557C10.536 1.40082 7.32741 1.4229 4.15123 1.80138L3.71929 1.85286C2.73048 1.97069 1.947 2.74323 1.8153 3.73029C1.3949 6.88093 1.3949 10.0734 1.8153 13.2241C1.947 14.2111 2.73048 14.9837 3.71929 15.1015L4.15123 15.153C7.32742 15.5315 10.536 15.5535 13.7171 15.2188L14.3689 15.1502C15.2195 15.0607 15.972 14.6415 16.4936 14.0191C14.9854 14.1071 13.4572 14.0678 11.967 13.9012C10.6976 13.7594 9.67103 12.7598 9.52129 11.4796C9.28799 9.48477 9.28799 7.4696 9.52129 5.47481C9.67103 4.19455 10.6976 3.19501 11.967 3.05314C13.4572 2.88659 14.9854 2.84729 16.4936 2.93524C15.972 2.31292 15.2195 1.89367 14.3689 1.80417L13.7171 1.73557ZM17.2026 4.49188C17.2032 4.49572 17.2038 4.49956 17.2044 4.5034L17.2105 4.54229L17.4091 4.51144C17.5119 4.52161 17.6145 4.53242 17.7169 4.54386C18.3043 4.60951 18.7721 5.07366 18.8394 5.64907C19.0591 7.52807 19.0591 9.4263 18.8394 11.3053C18.7721 11.8807 18.3043 12.3449 17.7169 12.4105C17.6145 12.422 17.5119 12.4328 17.4091 12.4429L17.2105 12.4121L17.2044 12.451C17.2038 12.4548 17.2032 12.4587 17.2026 12.4625C15.524 12.6143 13.8024 12.597 12.1336 12.4105C11.5462 12.3449 11.0784 11.8807 11.0111 11.3053C10.7914 9.4263 10.7914 7.52807 11.0111 5.64907C11.0784 5.07366 11.5462 4.60951 12.1336 4.54386C13.8024 4.35735 15.524 4.34002 17.2026 4.49188Z" fill="#1A572E"/>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
                             <div className="mt-10 text-start">
                                 <p className="text-sm">Balance</p>
-                                {!tokenBalance && <p className="text-light-brown font-semibold mt-2">Loading...</p>}
+                                {!tokenBalance && <p className="text-light-brown mt-2">Loading...</p>}
                                 {tokenBalance && <p className="text-2xl font-semibold">USDC {tokenBalance}</p>}
                                 {tokenBalance && <p className="-mt-2 text-sml">US$ {tokenBalance}</p>}
                             </div>
@@ -340,11 +718,6 @@ const Dashboard = (props) => {
                                         <path fillRule="evenodd" clipRule="evenodd" d="M13.5579 5.53472C12.6873 4.69936 11.3128 4.69936 10.4422 5.53472L5.8158 9.97405C5.70245 10.0828 5.6262 10.2245 5.59787 10.379C5.04373 13.4009 5.00283 16.4945 5.47687 19.53L5.58939 20.2505H8.56585V14.0391C8.56585 13.6249 8.90164 13.2891 9.31585 13.2891H14.6843C15.0985 13.2891 15.4343 13.6249 15.4343 14.0391V20.2505H18.4107L18.5232 19.53C18.9973 16.4945 18.9564 13.4009 18.4023 10.379C18.3739 10.2245 18.2977 10.0828 18.1843 9.97406L13.5579 5.53472ZM9.40369 4.4524C10.8546 3.06014 13.1455 3.06014 14.5964 4.4524L19.2229 8.89174C19.5634 9.21853 19.7925 9.64422 19.8777 10.1085C20.4622 13.2961 20.5053 16.5594 20.0053 19.7614L19.8245 20.9189C19.7498 21.3976 19.3375 21.7505 18.853 21.7505H14.6843C14.2701 21.7505 13.9343 21.4147 13.9343 21.0005V14.7891H10.0659V21.0005C10.0659 21.4147 9.73007 21.7505 9.31585 21.7505H5.14712C4.66264 21.7505 4.25035 21.3976 4.1756 20.9189L3.99484 19.7614C3.49479 16.5594 3.53794 13.2961 4.12247 10.1085C4.2076 9.64422 4.43668 9.21853 4.77725 8.89173L9.40369 4.4524Z" fill="#0653EA"/>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
                             <div className="flex flex-row items-center justify-between">
                                 <div className="mt-10 text-start">
@@ -355,7 +728,7 @@ const Dashboard = (props) => {
                             </div>
                         </div>
                         {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}> */}
-                        <button className="p-5 bg-white cursor-default transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
+                        <button className="p-5 bg-light-blue cursor-default transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}>
                             <div className="flex flex-row justify-between items-center">
                                 <div style={{width: "35px", height: "36px", background: "#FFF4D1", borderRadius: "4px"}} className="flex flex-row justify-center items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -369,20 +742,37 @@ const Dashboard = (props) => {
                                         </defs>
                                     </svg>
                                 </div>
-                                <div className="flex flex-row ">
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                    <p className="font-bold">.</p>
-                                </div>
                             </div>
-                            <div className="mt-10 text-start">
-                                <p className="text-sm">UAVs</p>
-                                <p className="text-2xl">0</p>
+                            <div className="flex flex-row items-center justify-between">
+                                <div className="mt-10 text-start">
+                                    <p className="text-sm">UAVs</p>
+                                    <p className="text-2xl">0</p>
+                                </div>
+                                <div className="mt-14 flex flex-col items-center justify-center font-semibold right-0 px-2 py-2.5" style={{height: "16px", borderRadius:"3px", }}>
+                                    <p className="text-sm text-dark-green">Coming Soon</p>
+                                </div>
                             </div>
                         </button>            
                     </div>
-                    <div className="mx-auto mt-5 bg-white pt-10 flex flex-row justify-center rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)", maxHeight: "653px"}}>
-                        <canvas id="chart"></canvas>
+                    <div className="mx-auto mt-5 py-4 px-10 bg-white overflow-y-auto overflow-x-hidden rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)"}}>
+                        <p className="text-xl font-bold mb-10">User Geographies</p>
+                        <div className="flex flex-row justify-center items-center gap- relative rounded-md" style={{width: "95%",  height: "calc(100vh - 189px)"}}>
+                            <div className="w-1/2"> 
+                                {cData.map(data => {
+                                    return <div key={data.country} className="flex flex-row gap-2 items-center text-sm 2xl:text-base" style={{color: data.color,}}>
+                                    <div className="flex flex-row items-center gap-2">
+                                        <div className="rounded" style={{width: "20px", height: "10px", backgroundColor: data.color}}></div>
+                                        <p>{data.country}</p>
+                                    </div>
+                                    <p>{data.percent}%</p>
+                                </div>
+                                })}
+                            </div>
+                            <canvas style={{width: "50%", maxWidth: "500px", maxHeight: "500px"}} id="chart"></canvas>
+                            {/* <div style={{width: "50%", maxWidth: "500px"}}>
+                                
+                            </div> */}
+                        </div>
                     </div>
                 </div>
                 <div className="my-5 me-5 rounded-md" style={{width: "20vw", height: "100vh",}}>
@@ -457,27 +847,26 @@ const Dashboard = (props) => {
                         </div>
                     </div> */}
 
-
-
-                    <div className="bg-white me-2 py-5 px-4 overflow-y-auto" style={{width: "100%", height: "100%", borderRadius: "10px"}}>
+                    <div className="bg-white me-2 py-5 px-4 overflow-y-auto overflow-x-hidden" style={{width: "100%", height: "100vh", borderRadius: "10px"}}>
                             <h2 className="font-bold text-xl mb-3">News Feed</h2>
                         <div className="flex flex-row justify-between mb-5 items-center">
                             <p className="font-semibold" style={{color: "#722ACF"}}>{month} {day}</p>
-                            <hr style={{width: "11rem"}}></hr>
-                            <div className="flex flex-row ">
-                                <p className="font-bold">.</p>
-                                <p className="font-bold">.</p>
-                                <p className="font-bold">.</p>
-                            </div>
+                            <hr style={{width: "80%"}}></hr>
                         </div>
                         {(newslettersLoading && newsletters.length < 1) && <p className="text-sm text-center">Loading...</p>}
                         {newsletters.map(newsletter => {
-                            return <div key={newsletter.id} className="flex flex-row items-center mb-3">
-                                    <p className="text-sm w-1/4">{newsletter.date}</p>
+                            const date = new Date(newsletter.date)
+                            const month = date.toLocaleString('default', { month: 'short' })
+                            const day = date.getDate();
+                            const year = date.getFullYear();
+                            const newDate = `${month} ${day} ${year}` 
+
+                            return <div key={newsletter.id} className="flex flex-row items-center mb-8">
+                                    <p className="text-sm text-center w-1/4">{newDate}</p>
                                     <div className="border-l-4 w-3/4 border-black ps-2 ms-2">
-                                        <h3 className="text-sml font-bold">{newsletter.title}</h3>
-                                        <p className="text-sm">{newsletter.text}</p>
-                                        <a className="text-xs text-blue-600" href={newsletter.link}>continue reading</a>
+                                        <h3 className="text-sml mb-5 font-bold">{newsletter.title}</h3>
+                                        <p className="text-sm mb-5">{newsletter.text}</p>
+                                        <a className="text-sml text-blue-600 hover:text-blue-400 transition-all duration-500 ease-in-out" target="_blank" href={newsletter.link}>continue reading</a>
                                     </div>
                                 </div>
                             }) 
@@ -486,14 +875,14 @@ const Dashboard = (props) => {
                 </div>
             </div>
             <div className="flex flex-row mt-10 justify-between items-center">
-                <p className="ms-5">&copy; Skytrades 2023</p>
+                <p className="ms-5">&copy; SkyTrade 2023</p>
                 <div className="flex flex-row items-center gap-1 pe-5">
-                    <a className="flex flex-row items-center gap-1" href="mailto:help@skytrades.io">
+                    <a className="flex flex-row items-center gap-1" href="mailto:help@sky.trade">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11" fill="none">
                             <path d="M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z" fill="black" fillOpacity="0.5"/>
                         </svg>
                         <span>
-                            help@skytrades.io
+                            help@sky.trade
                         </span>
                     </a>
                 </div>
@@ -506,30 +895,33 @@ export default Dashboard;
 
 
 export async function getServerSideProps() {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
-        headers: {
-            "Content-Type": "application/json",
-            uri: "/users",
-            // proxy_to_method: "GET",
-        }
-    })
+    try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+            headers: {
+                "Content-Type": "application/json",
+                uri: "/users",
+                // proxy_to_method: "GET",
+            }
+        })
 
-    if(!response.ok) {
+        if(!response.ok) {
+            throw new Error()
+        }
+        
+        const data = await response.json();
+
         return {
-            props: { 
-                error: "oops! something went wrong. Kindly try again."
+            props: {
+                users: JSON.parse(JSON.stringify(data))
             }
         }
     }
-    
-    const data = await response.json();
-   
-    console.log(data)
-
-    return {
-        props: {
-            users: JSON.parse(JSON.stringify(data))
-        }
+    catch(err) {
+        return {
+                props: { 
+                    error: "oops! something went wrong. Kindly try again."
+                }
+            }
     }
-}
+};
