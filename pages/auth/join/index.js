@@ -173,6 +173,7 @@ const Signup = (props) => {
             }
             return res.json()
             .then(response => {
+                console.log("This is the response from the backend on users", response);
                 const filteredUser = response.filter(user => user.email === userInformation.email);
     
                 if(filteredUser.length < 1) {
@@ -181,7 +182,6 @@ const Signup = (props) => {
                         token: JSON.parse(token)
                     }));
                     localStorage.removeItem("openlogin_store");
-                    localStorage.removeItem("email");
                     dispatch(counterActions.category({
                         email: userInformation.email,
                         blockchainAddress: accounts[0]

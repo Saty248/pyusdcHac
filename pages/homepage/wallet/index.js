@@ -98,8 +98,8 @@ const Wallet = (props) => {
             
                 const singleUser = users.filter(user => user.email === userInfo.email);
 
-                if(fetchedToken.sessionId.length !== 64 || singleUser.length < 1){
-                    localStorage.removeItem("openlogin_store")
+                if(singleUser.length < 1){
+                    localStorage.removeItem("openlogin_store");
                     router.push("/auth/join");
                     return;
                 };
@@ -146,7 +146,6 @@ const Wallet = (props) => {
 
     useEffect(() => {
         if(user) {
-            console.log("running wallet")
             const data =   {
                 jsonrpc: "2.0",
                 id: 1,
@@ -179,16 +178,14 @@ const Wallet = (props) => {
 
                 return response.json()
             })
-            .then(result => {
-                console.log(result)
-                
+            .then(result => {        
                 if(result.result.value.length < 1) {
                     setTokenBalance("0");
                     setTokenAccount("");
                     setTransactionHistory([])
                     return;
                 }
-                console.log(result.result.value[0].pubkey)
+
                 setTokenAccount(result.result.value[0].pubkey)
                 setTokenBalance(result.result.value[0].account.data.parsed.info.tokenAmount.uiAmountString)
             })
@@ -200,7 +197,6 @@ const Wallet = (props) => {
 
     useEffect(() => {
         if(tokenAccount && searchValue.length < 1) {
-            console.log(tokenAccount)
             const data = {
                 jsonrpc: "2.0",
                 id: 1,
@@ -218,7 +214,6 @@ const Wallet = (props) => {
                 body: JSON.stringify(data)
                 })
                 .then(response => {
-                    console.log(response);
                     if(!response.ok) {
                         return response.json()
                         .then(errorData => {
@@ -228,8 +223,6 @@ const Wallet = (props) => {
                     return response.json()
                 })
                 .then(result => {
-                    console.log(result)
-                    console.log(result.result)
                     setTransactionHistory(result.result);
                 })
                 .catch(error => {
@@ -244,17 +237,18 @@ const Wallet = (props) => {
 
     useEffect(() => {
         let userArray = [];
-        console.log("new page loading...");
         if(transactionHistory && transactionHistory.length > 0) {
-            console.log("This is the amount of pages visited", pagesVisited)
-            const trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage)
-            console.log("This is the processed transaction", trans);
-            console.log(pagesVisited);
+            let trans;
+            if(transactionHistory.length > 4) {
+                trans = transactionHistory.slice(pagesVisited, pagesVisited + transactionsPerPage);
+            } else {
+                trans = transactionHistory;
+            }
+
             trans.map(trans => {
-                console.log(trans)
                 userArray.push(trans);
             });   
-            console.log(userArray);
+        
             setCompletedTrans(userArray);  
         }   
   }, [pagesVisited, transactionHistory]);
@@ -263,11 +257,8 @@ const Wallet = (props) => {
 
     useEffect(() => {
         if(completedTrans && completedTrans.length > 0) {
-            console.log("completed trans running");
-            console.log(completedTrans);
             setTransactionData([]);
             for(const transaction of completedTrans) {
-                console.log(transaction);
                 const date = new Date(transaction.blockTime * 1000)
                 const month = date.toLocaleString('default', { month: 'short' })
                 const day = date.getDate();
@@ -300,8 +291,6 @@ const Wallet = (props) => {
                     return response.json()
                 })
                 .then((resData) => {
-                    console.log(resData.result.meta)
-
                     const postBalances = resData.result.meta.postTokenBalances.filter(sender => {
                         return sender.owner === user.blockchainAddress
                     }) 
@@ -317,12 +306,9 @@ const Wallet = (props) => {
                     if(preBalances.length > 0) {
                         preBalance = preBalances[0].uiTokenAmount.uiAmountString;
                         postBalance = postBalances[0].uiTokenAmount.uiAmountString;
-                        console.log(preBalance)
-                        console.log(postBalance)
 
                         transactionAmount = postBalance - preBalance;
                     } else {
-                        console.log("no pre-token balances")
                         const senderPreBalances = resData.result.meta.preTokenBalances.filter(sender => {
                             return sender.owner !== user.blockchainAddress
                         });
@@ -331,9 +317,7 @@ const Wallet = (props) => {
                             return sender.owner !== user.blockchainAddress
                         }) 
 
-                        console.log(senderPreBalances[0].uiTokenAmount.uiAmountString);
                         const oldBalance = senderPreBalances[0].uiTokenAmount.uiAmountString;
-                        console.log(senderPostBalances[0].uiTokenAmount.uiAmountString);
                         const postBalance = senderPostBalances[0].uiTokenAmount.uiAmountString;
 
                         transactionAmount = +oldBalance - +postBalance;
@@ -357,10 +341,8 @@ const Wallet = (props) => {
 
     useEffect(() => {
         if(transactionData.length > 0) {
-            console.log("I ran on filter")
             const trans = transactionData.sort((a, b) => b.blockTime - a.blockTime);
             setTransactionHistories(trans);
-            console.log("This is the final transactions", trans)
         }
     }, [transactionData]);
 
@@ -478,9 +460,7 @@ const Wallet = (props) => {
                             changePage({selected: 1})
                             const filteredTransactions = transactionHistory.filter(history => {
                                 return history.signature.includes(searchValue);
-                            })
-                            console.log("This is the search value", searchValue);
-                            console.log(filteredTransactions);
+                            });
                             
                             if(filteredTransactions.length > 0) {
                                 setTransactionHistory(filteredTransactions);
