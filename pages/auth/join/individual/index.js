@@ -152,7 +152,7 @@ const IndividualSignup = () => {
                 gtag('config', 'G-C0J4J56QW5');
             `}
         </Script>
-        
+
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "697px", padding: "93px 142px"}}>
@@ -204,7 +204,7 @@ const IndividualSignup = () => {
             </div> */}
             <div className="mt-3.5 text-sm" style={{color: "rgba(0, 0, 0, 0.50)", fontWeight: "400"}}>
                     By clicking Create Account, you acknowledge you have read and agreed 
-                    to our <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
+                    to our <a href="https://sky.trade/terms.pdf" target="_blank"  style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="https://sky.trade/privacy.pdf" target="_blank" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
             </div>
             <button className="bg-dark-blue text-white rounded-md mt-4  transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Create Account</button>
             {/* <div className="relative text-center" style={{marginTop: "20px"}}> 

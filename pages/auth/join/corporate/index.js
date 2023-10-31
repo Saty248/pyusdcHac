@@ -191,7 +191,7 @@ const CorporateSignup = () => {
             </div> */}
             <div className="mt-3.5 text-sm" style={{color: "rgba(0, 0, 0, 0.50)", fontWeight: "400"}}>
                     By clicking Create Account, you acknowledge you have read and agreed 
-                    to our <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
+                    to our <a href="https://sky.trade/terms.pdf" target="_blank" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="https://sky.trade/privacy.pdf" target="_blank" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
             </div>
             <button className="bg-dark-blue text-white rounded-md mt-4  transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Create Account</button>
         </form>
