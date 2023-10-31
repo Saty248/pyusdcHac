@@ -26,7 +26,7 @@ module.exports = {
       repo: "git@github.com:SkyTradeLinks/address-claiming.git",
       path: "/home/ec2-user/pm2-deploy/address-claiming",
       "post-deploy":
-      "bash aws_ps_get_prod_env.sh && npm install && npm run build && pm2 startOrReload ecosystem.config.js --env prod",
+      "bash aws_ps_get_prod_env.sh && yarn && yarn build && pm2 startOrReload ecosystem.config.js --env prod",
       "pre-setup": "ssh-keyscan github.com >> ~/.ssh/known_hosts",
     },
   },
