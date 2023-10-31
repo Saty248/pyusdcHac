@@ -58,10 +58,10 @@ export const useVerification = () => {
         if(resp.KYCStatusId == 2){
             dispatch(counterActions.confirmOnMapModal());
         }
-        else if(resp.KYCStatusId == 1) {
-            alert("KYC is yet to be approved. It might take some time")
+        else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
+            alert("KYC is yet to be approved. It might take some time");
         }
-        else {
+        else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
             // console.log("Please do KYC");
             const client = new Persona.Client({
                 templateId: 'itmpl_mp1885pUwnRvVwEoKxwyUiZz',

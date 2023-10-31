@@ -537,9 +537,9 @@ const Dashboard = (props) => {
                     uri: `/properties/user-properties/${user.id}`,
                     // proxy_to_method: "GET",
                     sign: signature.sign,
-                    sign_issue_at:  signature.sign_issue_at,
-                    sign_nonce: signature.sign_nonce,
-                    sign_address: signature.sign_address,
+                    time:  signature.sign_issue_at,
+                    nonce: signature.sign_nonce,
+                    address: signature.sign_address,
                 }
             }).then((res) => {
                 if(!res.ok) {
@@ -572,9 +572,9 @@ const Dashboard = (props) => {
                     uri: "/newsletters",
                     // proxy_to_method: "GET",
                     sign: signature.sign,
-                    sign_issue_at:  signature.sign_issue_at,
-                    sign_nonce: signature.sign_nonce,
-                    sign_address: signature.sign_address,
+                    time:  signature.sign_issue_at,
+                    nonce: signature.sign_nonce,
+                    address: signature.sign_address,
                 }
             })
             .then(res => {
@@ -678,6 +678,15 @@ const Dashboard = (props) => {
 
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
+        
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        };
+
         router.push("/homepage/airspace");
         verificationCheck(users);
     }
@@ -687,11 +696,9 @@ const Dashboard = (props) => {
     } 
 
     return <div className="flex flex-row mx-auto">
-        <Sidebar users={users} />
+        <Sidebar users={users} user={user} />
         <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
-            <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
+            <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId} />
             <div className="flex flex-row justify-start w-full">
                 <div className="my-5" style={{width: "100%", height: "100vh"}}>
                     <div className="mx-auto grid grid-cols-3 gap-5" style={{height: "169px", width: "95%"}}>

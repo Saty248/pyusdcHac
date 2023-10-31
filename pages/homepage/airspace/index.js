@@ -13,13 +13,13 @@ import Sidebar from "@/Components/Sidebar";
 import Backdrop from "@/Components/Backdrop";
 import MyAirspaceOverview from "@/Components/MyAirspaces/MyAirspaceOverview";
 import Airspaces from "@/Components/Airspaces";
-import AddReviewModal from "@/Components/Modals/AddReviewModal";
 import AddAirspace from "@/Components/Modals/AddAirspace";
 import AdditionalAispaceInformation from "@/Components/Modals/AdditionalAirspaceInformation";
 import { counterActions } from "@/store/store";
 import Spinner from "@/Components/Spinner";
 import MyAirspaceTab from "@/Components/MyAirspaceTab";
 import EditAispaceModal from "@/Components/Modals/EditAirspaceModal";
+import { useVerification } from "@/hooks/useVerification";
 
 
 const Airspace = (props) => {
@@ -32,9 +32,12 @@ const Airspace = (props) => {
           });
     }
 
+    const { verificationCheck } = useVerification();
+
     const router = useRouter();
     const dispatch = useDispatch();
-    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+    // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
 
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
@@ -292,9 +295,9 @@ const Airspace = (props) => {
                         uri: `/properties/user-properties/${user.id}`,
                         // proxy_to_method: "GET",
                         sign: signatureObj.sign,
-                        sign_issue_at:  signatureObj.sign_issue_at,
-                        sign_nonce: signatureObj.sign_nonce,
-                        sign_address: signatureObj.sign_address,
+                        time:  signatureObj.sign_issue_at,
+                        nonce: signatureObj.sign_nonce,
+                        address: signatureObj.sign_address,
                     }
                 }).then((res) => {
                     if(!res.ok) {
@@ -372,6 +375,18 @@ const Airspace = (props) => {
     const closeAirspaceDetailsHandler = () => {
         setViewMyAirSpace(false)
     }
+
+    const airspaceHandler = () => {
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
+
+        verificationCheck(users);
+    };
   
 
 
@@ -409,11 +424,9 @@ const Airspace = (props) => {
 
         {(showAddReviewModal || showAddAirspaceModal || newAirspace || additionalInfo || confirmOnMap || editAirspace) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         <div className="flex flex-row mx-auto">
-            <Sidebar users={users}/>
+            <Sidebar user={user} users={users} />
             <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
-                <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"}>
+                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId}>
                     <div className="relative">
                         <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd" d="M10.7118 11.7481C8.12238 13.822 4.33202 13.6588 1.93164 11.2584C-0.643879 8.6829 -0.643879 4.50716 1.93164 1.93164C4.50716 -0.64388 8.68289 -0.643879 11.2584 1.93164C13.6588 4.33202 13.822 8.12238 11.7481 10.7118L16.7854 15.7491C17.0715 16.0352 17.0715 16.4992 16.7854 16.7854C16.4992 17.0715 16.0352 17.0715 15.7491 16.7854L10.7118 11.7481ZM2.96795 10.2221C0.964766 8.21893 0.964766 4.97113 2.96795 2.96795C4.97113 0.964767 8.21892 0.964767 10.2221 2.96795C12.2238 4.96966 12.2253 8.21416 10.2265 10.2177C10.225 10.2192 10.2236 10.2206 10.2221 10.2221C10.2206 10.2236 10.2192 10.225 10.2177 10.2265C8.21416 12.2253 4.96966 12.2238 2.96795 10.2221Z" fill="#252530" fillOpacity="0.55"/>
@@ -430,6 +443,8 @@ const Airspace = (props) => {
                             myAirspace={myAirspace}
                             onAddAirspace={showAddAirspaceModalHandler}
                             users={users}
+                            checkUser={airspaceHandler}
+                            // checkUser={() => alert("clicked")}
                             >
                        
                         {!myAirspaces && <p className="mt-10">Loading...</p>}

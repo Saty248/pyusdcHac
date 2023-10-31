@@ -1,7 +1,8 @@
 import Image from "next/image";
 
 const MyAirspaceOverview = (props) => {
-    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+    // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
+    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
 
     return  <div className="absolute rounded-md bg-white top-5 z-10" style={{width: "339px", height: "90%", maxHeight: "537px", left: "380px"}}>
         <div className="relative" style={{height: "230px"}}>

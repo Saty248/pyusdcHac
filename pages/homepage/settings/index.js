@@ -9,6 +9,7 @@ import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
 import swal from "sweetalert";
 import Spinner from "@/Components/Spinner";
+import { useVerification } from "@/hooks/useVerification";
 
 
 const Settings = (props) => {
@@ -22,10 +23,11 @@ const Settings = (props) => {
           });
     }
 
+    const { verificationCheck } = useVerification();
     const router = useRouter();
 
     const [nameValid, setNameValid] = useState(true);
-    const [emailValid, setEmailValid] = useState(true);
+    const [verificationLoading, setVerificationLoading] = useState(false);
     const [phoneValid, setPhoneValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState("");
@@ -484,18 +486,25 @@ const Settings = (props) => {
                 text: `${error[1]}`,
               })
         })
-    }
+    };
+
+    const startVerification = async(e) => {
+        e.preventDefault();
+        setVerificationLoading(true);
+
+        await verificationCheck(users);
+
+        setVerificationLoading(false);
+    };
 
     if(!user || !token) {
         return <Spinner />
     } 
 
     return <div className="flex flex-row mx-auto">
-            <Sidebar users={users} />
+            <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
-                <Navbar name={user.name}  status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"} />
+                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId} />
                 <form className="bg-white pt-16 pb-2 px-10 mx-auto" style={{width: "calc(100vw-257px)", borderTop: "2px solid #F0F0FA"}}>
                     <div>
                         <h3 className="text-2xl font-medium">My Profile</h3>
@@ -517,7 +526,7 @@ const Settings = (props) => {
                                 <h3 className="text-2xl font-medium">Verify your Account</h3>
                                 <p>Verify your account to have your AirSpace listed for rental on our platform</p>
                             </div>
-                            <button className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "120px", height: "40px"}}>Verify now</button>
+                            <button onClick={startVerification} disabled={verificationLoading} className={`bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${!verificationLoading ? "cursor-pointer" : "cursor-wait"}`} style={{width: "120px", height: "40px"}}>Verify now</button>
                         </div>
                     }
 
@@ -527,7 +536,10 @@ const Settings = (props) => {
                                 <h3 className="text-2xl font-medium">Your Account is not verified</h3>
                                 <p>Sorry. You didn't pass the KYC check</p>
                             </div>
-                            <p className="bg-bleach-red text-light-red-100 rounded-md text-center transition-all duration-500 ease-in-out py-2 px-1">rejected</p>
+                            <div>
+                                <p className="text-light-red-100 rounded-md text-center text-xs transition-all duration-500 ease-in-out py-2 px-1">rejected</p>
+                                <button onClick={startVerification} disabled={verificationLoading} className={`bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${!verificationLoading ? "cursor-pointer" : "cursor-wait"}`} style={{width: "120px", height: "40px"}}>Try Again</button>
+                            </div>
                         </div>
                     }
 

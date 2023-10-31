@@ -255,12 +255,13 @@ const Wallet = (props) => {
                 const month = date.toLocaleString('default', { month: 'short' })
                 const day = date.getDate();
                 const year = date.getFullYear();
-                const hour = date.getHours();
+                const hour = date.getHours().toString().padStart(2, '0');
                 const minute = date.getMinutes().toString().padStart(2, '0');
                 const second = date.getSeconds().toString().padStart(2, '0');
 
 
-                transaction.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}` 
+                transaction.date = `${month} ${day}, ${year} 
+                                        ${hour}:${minute}:${second}` 
                 const data =   {
                     jsonrpc: "2.0",
                     id: 1,
@@ -408,11 +409,9 @@ const Wallet = (props) => {
                                         }
             } clientSecret={clientSecret} />, document.getElementById("modal-root"))}
         <div className="flex flex-row">
-            <Sidebar users={users} />
+            <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
-                <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"}  />
+                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId}  />
                 <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                     <div className="z-10 text-center">
                         <p className="text-light-brown">My Wallet</p>
@@ -471,7 +470,7 @@ const Wallet = (props) => {
                     </form>
                 </div>
                 <div className="mx-auto ps-6 pe-16 gap-x-6 font-semibold rounded-md mt-2 flex flex-row justify-between items-center" style={{width: "calc(100vw - 257px)", maxWidth: "1139px", height: "47px"}}>
-                    <p className="w-2/12">Date</p>
+                    <p className="w-3/12">Date</p>
                     <p className="w-4/12">Transaction ID</p>
                     <p className="w-2/12">Amount (USDC)</p>
                     <p className="w-1/12">Status</p>
@@ -486,11 +485,11 @@ const Wallet = (props) => {
                 } 
                 {(transactionHistories && transactionHistories.length > 0) && transactionHistories.map(history => {
                     return <div key={history.signature} className="mx-auto bg-white gap-x-6 ps-6 pe-16 rounded-md mt-2 flex flex-row justify-between items-center" style={{height: "47px", width: "calc(100vw - 257px)", maxWidth: "1139px",}}>
-                    <p className="w-2/12">{history.date}</p>
+                    <p className="w-3/12">{history.date}</p>
                     {/*remove the cluster before going live  */}
                     <a href={`https://explorer.solana.com/tx/${history.signature}?cluster=devnet`} target="_blank" className="w-4/12 text-ellipsis text-dark-blue overflow-x-clip">{history.signature}</a>
                     <p className={`w-2/12 ${history.amount > 0 ? "text-green-500" : "text-red-600"}`}><span>{history.amount ? history.amount : ""}</span></p>
-                    <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-2">
+                    <p className="w-1/12 p-0.5 bg-bleach-green rounded-lg text-light-dark text-sml flex flex-row items-center justify-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
                             <circle cx="3" cy="3" r="3" fill="#1A572E"/>
                         </svg>

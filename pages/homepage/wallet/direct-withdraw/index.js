@@ -174,11 +174,9 @@ const Wallet = (props) => {
 
     return <div className="flex flex-row mx-auto">
             {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
-            <Sidebar users={users} />
+            <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
-                <Navbar name={user.name} status={user.KYCStatusId === 0 ? "Notattempted" : 
-                                                user.KYCStatusId === 1 ? "pending" 
-                                                : user.KYCStatusId === 3 ? "Rejected" : "Approved"}  />
+                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId}  />
                 <div className="bg-bleach-green flex flex-col mt-5 mx-auto relative items-center rounded-lg p-7" style={{width: "395px", height: "169px", boxShadow: "0px 2px 20px 0px rgba(0, 0, 0, 0.13)"}}>
                     <div className="z-20 text-center">
                         <p className="text-light-brown">My Wallet</p>
@@ -222,7 +220,8 @@ const Wallet = (props) => {
                             <input onChange={addressChangeHandler} className="rounded ps-4 pt-1 placeholder:font-medium focus:outline-blue-200" type="text" placeholder="Add Your USDC wallet" id="wallet"  name="wallet" style={{width: "570px", height: "37px", border: "0.35px solid #0653EA"}} />
                         </div>
                         <div className="flex flex-row justify-center items-center mt-8 gap-5">
-                            <button onClick={formSubmitHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button>
+                            {/* <button onClick={formSubmitHandler} className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "210px", height: "42px"}}>Proceed</button> */}
+                            <button disabled className="bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600 disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "210px", height: "42px"}}>Proceed</button>
                         </div>
                     </div>
                 </div>
