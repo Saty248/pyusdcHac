@@ -15,8 +15,7 @@ const handler = async (req, res) => {
       method,
       headers: {
         "Content-Type": "application/json",
-        // api_key: process.env.FRONTEND_API_KEY,
-        api_key: "XXX",
+        api_key: process.env.FRONTEND_API_KEY,
       }
     };
 
