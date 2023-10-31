@@ -29,7 +29,7 @@ const handler = async (req, res) => {
     console.log("This is the server URL", process.env.SERVER_URL);
 
     const fetchRes = await fetch(
-      `${process.env.SERVER_URL}/${req.headers.uri}`,
+      `${process.env.SERVER_URL}${req.headers.uri}`,
       fetchOptions
     );
 
