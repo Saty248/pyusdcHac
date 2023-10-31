@@ -27,9 +27,9 @@ export const useVerification = () => {
         else {
             // console.log("Please do KYC");
             const client = new Persona.Client({
-                templateId: 'itmpl_mp1885pUwnRvVwEoKxwyUiZz',
+                templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
                 referenceId: currentUserId,
-                environmentId: 'env_m7beq2gaxaLfWVkYPaGdMHS3',
+                environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {
                 // console.log(`Completed inquiry ${inquiryId} with status ${status}`);
