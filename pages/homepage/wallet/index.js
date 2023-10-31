@@ -408,7 +408,7 @@ const Wallet = (props) => {
                 gtag('config', 'G-C0J4J56QW5');
             `}
         </Script>
-        
+
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
         {(showDepositModal || showStripeModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
@@ -432,13 +432,14 @@ const Wallet = (props) => {
                         {tokenBalance && <p className="text-light-brown font-semibold -mt-2 text-sml">US$ {tokenBalance}</p>}
                     </div>
                     <div style={{zIndex: "10"}} className="flex flex-row justify-center items-center gap-4 absolute -bottom-3">
-                        <button onClick={showDepositModalHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
+                        {/* <button onClick={showDepositModalHandler} className="flex flex-row justify-center gap-2 rounded-lg items-center transition-all duration-500 ease-in-out hover:bg-bleach-blue bg-white" style={{width: "151px", height: "52px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.8848 3.25C10.1944 3.25 9.63478 3.80964 9.63478 4.5L9.63478 9.1126C9.56136 9.11912 9.48795 9.12595 9.41457 9.13308L8.85869 9.18711C8.01058 9.26954 7.50267 10.1701 7.87093 10.9386C8.65413 12.5728 9.82945 14.1514 11.1382 15.4049C11.6229 15.8691 12.3872 15.8691 12.8719 15.4049L12.9755 15.3057C14.2842 14.0522 15.356 12.5728 16.1392 10.9386C16.5074 10.1701 15.9995 9.26954 15.1514 9.18711L14.5955 9.13308C14.5221 9.12595 14.4487 9.11912 14.3753 9.1126L14.3753 4.5C14.3753 3.80964 13.8157 3.25 13.1253 3.25L10.8848 3.25ZM10.4693 10.5532C10.8463 10.5107 11.1348 10.1913 11.1348 9.80797L11.1348 4.75L12.8753 4.75L12.8753 9.80797C12.8753 10.2041 13.1833 10.5319 13.5786 10.5565C13.8695 10.5747 14.1601 10.5978 14.4504 10.626L14.6118 10.6417C13.9393 11.9466 13.0591 13.1342 12.005 14.1577C11.5649 13.7303 11.1552 13.2744 10.7781 12.7932C10.2522 12.122 9.79002 11.4018 9.39834 10.6417L9.55968 10.626C9.84995 10.5978 10.1406 10.5747 10.4315 10.5565C10.4442 10.5557 10.4568 10.5546 10.4693 10.5532Z" fill="black"/>
                             </svg>
                             <p>Deposit</p>
-                        </button>
+                        </button> */}
+
                         {/* <button onClick={showWithdrawalModalHandler} className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out hover:bg-bleach-blue items-center bg-white" style={{width: "151px", height: "52px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
@@ -446,7 +447,8 @@ const Wallet = (props) => {
                             </svg>
                             <p>Withdraw</p>
                         </button> */}
-                        <button className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out items-center cursor-default bg-white" style={{width: "151px", height: "52px"}}>
+                        
+                        {/* <button className="flex flex-row justify-center gap-2 rounded-lg  transition-all duration-500 ease-in-out items-center cursor-default bg-white" style={{width: "151px", height: "52px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M5.75 12C5.75 11.5858 5.41421 11.25 5 11.25C4.58579 11.25 4.25 11.5858 4.25 12L4.25 18C4.25 18.9665 5.0335 19.75 6 19.75L18 19.75C18.9665 19.75 19.75 18.9665 19.75 18L19.75 12C19.75 11.5858 19.4142 11.25 19 11.25C18.5858 11.25 18.25 11.5858 18.25 12L18.25 18C18.25 18.1381 18.1381 18.25 18 18.25L6 18.25C5.86193 18.25 5.75 18.1381 5.75 18L5.75 12Z" fill="black"/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.63478 14.5031C9.63478 15.1934 10.1944 15.7531 10.8848 15.7531L13.1253 15.7531C13.8157 15.7531 14.3753 15.1934 14.3753 14.5031L14.3753 9.89048C14.4487 9.88396 14.5221 9.87713 14.5955 9.86999L15.1514 9.81597C15.9995 9.73354 16.5074 8.83294 16.1392 8.06451C15.356 6.43029 14.2842 4.95085 12.9755 3.69735L12.8719 3.59816C12.3872 3.13395 11.6229 3.13395 11.1382 3.59815L11.0346 3.69735C9.72587 4.95085 8.65413 6.43029 7.87093 8.06451C7.50267 8.83293 8.01058 9.73354 8.85869 9.81597L9.41457 9.87C9.48795 9.87713 9.56136 9.88396 9.63478 9.89048L9.63478 14.5031ZM11.1348 9.19511C11.1348 8.92874 10.9955 8.69326 10.784 8.56008C10.681 8.49523 10.5609 8.45464 10.4315 8.44656C10.1406 8.42842 9.84995 8.40524 9.55968 8.37703L9.39834 8.36135C9.93226 7.3253 10.5972 6.36316 11.3761 5.49838C11.5782 5.27402 11.7879 5.05622 12.005 4.84538C13.0591 5.86892 13.9393 7.05651 14.6118 8.36135L14.4504 8.37703C14.1601 8.40524 13.8695 8.42842 13.5786 8.44656C13.1833 8.47122 12.8753 8.79902 12.8753 9.19511L12.8753 14.2531L11.1348 14.2531L11.1348 9.19511Z" fill="black"/>
@@ -455,7 +457,7 @@ const Wallet = (props) => {
                                 <p className="text-xs text-dark-green">Coming Soon</p>
                                 <p>Withdraw</p>
                             </div>
-                        </button>
+                        </button> */}
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-4 right-6 z-1" width="146" height="121" viewBox="0 0 146 121" fill="none">
                         <path d="M95.5943 60.4999C95.5943 54.5876 100.376 49.7947 106.275 49.7947C112.174 49.7947 116.956 54.5876 116.956 60.4999C116.956 66.4122 112.174 71.2051 106.275 71.2051C100.376 71.2051 95.5943 66.4122 95.5943 60.4999Z" fill="#1A572E" fillOpacity="0.1"/>
