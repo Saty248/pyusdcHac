@@ -4,6 +4,7 @@ import { Fragment, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Web3Auth } from "@web3auth/modal";
 import swal from "sweetalert";
+import Script from "next/script";
 
 import Sidebar from "@/Components/Sidebar";
 import Navbar from "@/Components/Navbar";
@@ -105,6 +106,16 @@ const UAVs = (props) => {
     } 
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
         {(pilotProfile || addPilot) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {pilotProfile && createPortal(<PilotProfileModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}
         {addPilot && createPortal(<AddPilotModal onClose={closeModalHandler} />, document.getElementById("modal-root"))}

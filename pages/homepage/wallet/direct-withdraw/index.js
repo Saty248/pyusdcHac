@@ -1,8 +1,9 @@
 import { createPortal } from "react-dom";
 import { useRouter } from "next/router";
-import { useState, useEffect, } from "react";
+import { useState, useEffect, Fragment, } from "react";
 import swal from "sweetalert";
 import { Web3Auth } from "@web3auth/modal";
+import Script from "next/script";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -172,7 +173,19 @@ const Wallet = (props) => {
         return <Spinner />
     } 
 
-    return <div className="flex flex-row mx-auto">
+    return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+
+        <div className="flex flex-row mx-auto">
             {addCard && createPortal(<Backdrop onClick={closeAddCardHandler} />, document.getElementById("backdrop-root"))}
             <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto">
@@ -227,6 +240,7 @@ const Wallet = (props) => {
                 </div>
             </div>
         </div>
+    </Fragment>    
 }
 
 export default Wallet;

@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import swal from "sweetalert";
+import Script from "next/script";
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
@@ -53,7 +54,6 @@ const IndividualSignup = () => {
 
         const name = nameRef.current.value;
         const phoneNumber = phoneNumberRef.current.value;
-        console.log(phoneNumber);
 
         if(!name) {
             setNameValid(false);
@@ -69,7 +69,7 @@ const IndividualSignup = () => {
             setPhoneNumberValid(false);
             swal({
                 title: "Oops!",
-                text: "Invalid phone number. Ensure to include country code",
+                text: "Invalid phone number. Ensure to include country code starting with +",
                 timer: 3000
               });
             return;
@@ -142,6 +142,17 @@ const IndividualSignup = () => {
     }
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+        
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "697px", padding: "93px 142px"}}>

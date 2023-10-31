@@ -8,6 +8,7 @@ import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
+import Script from "next/script";
 
 import { counterActions } from "@/store/store";
 import Backdrop from "@/Components/Backdrop";
@@ -173,9 +174,7 @@ const Signup = (props) => {
             }
             return res.json()
             .then(response => {
-                console.log("This is the response from the backend on users", response);
                 const filteredUser = response.filter(user => user.blockchainAddress === accounts[0]);
-                console.log("This is the filtered user", filteredUser);
 
                 if(filteredUser.length < 1) {
                     const token = localStorage.getItem("openlogin_store");
@@ -215,6 +214,17 @@ const Signup = (props) => {
 
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+        
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         {!categorySect && <div className="bg-white rounded px-12 mx-auto justify-center items-center relative" style={{width: "680px", height: "90vh", maxHeight: "593px", marginTop: "5vh"}}>

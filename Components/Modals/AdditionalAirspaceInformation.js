@@ -445,7 +445,7 @@ const AdditionalAispaceInformation = (props) => {
             swal({
                 title: "Oops!",
                 // text: "something went wrong. kindly try again",
-                text: err[1] || "Something went wrong. Kindly ry again"
+                text: err[1] || "Something went wrong. Kindly try again"
               });
         })
     }

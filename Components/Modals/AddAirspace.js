@@ -16,8 +16,7 @@ const AddAirspace = (props) => {
     const [addressValid, setAddressValid] = useState(false);
     const [confirmMap, setConfirmMap] = useState(true);
 
-    // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
-    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
+    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
     useEffect(() => {
         const map = new maplibregl.Map({

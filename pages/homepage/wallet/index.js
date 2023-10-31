@@ -7,6 +7,7 @@ import swal from "sweetalert";
 import { loadStripeOnramp } from "@stripe/crypto";
 import { CryptoElements, OnrampElement } from "@/hooks/stripe";
 import { Web3Auth } from "@web3auth/modal";
+import Script from "next/script";
 
 
 import Navbar from "@/Components/Navbar";
@@ -397,6 +398,17 @@ const Wallet = (props) => {
     }     
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+        
         {showWithdrawalModal && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}
         {showWithdrawalModal && createPortal(<WalletModal method="withdrawal" form="to" closeModal={() => setShowWithdrawalModal(false)} navigate={withdrawalRouteHandler} />, document.getElementById("modal-root"))}
         {(showDepositModal || showStripeModal) && createPortal(<Backdrop onClick={backdropCloseHandler} />, document.getElementById("backdrop-root"))}

@@ -7,6 +7,7 @@ import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
+import Script from "next/script";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -36,8 +37,7 @@ const Airspace = (props) => {
 
     const router = useRouter();
     const dispatch = useDispatch();
-    // const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
-    const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
+    const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
     const [allAirspace, setAllAirSpace] = useState(false);
     const [myAirspace, setMyAirSpace] = useState(true);
@@ -380,7 +380,7 @@ const Airspace = (props) => {
         if(user.categoryId === 1 && user.KYCStatusId !== 2) {
             swal({
                 title: "Sorry!",
-                text: "Your KYCB is yet to be completed. A member of our team will be in contact with you soon",
+                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
               })
             return;
         }
@@ -395,6 +395,17 @@ const Airspace = (props) => {
     }
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+
         {/* {showAddReviewModal &&
             createPortal(<AddReviewModal onClose={closeAddReviewModalHandler} />, document.getElementById("modal-root"))
             } */}

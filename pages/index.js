@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { Fragment, useEffect } from 'react';
 import { useRouter } from "next/router";
+import Script from 'next/script';
  
 export default function Home() {
   const router = useRouter();
@@ -18,6 +19,16 @@ export default function Home() {
 
   return (
     <Fragment>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+      <Script id="google-analytics">
+          {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+      
+              gtag('config', 'G-C0J4J56QW5');
+          `}
+      </Script>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
         <title>SkyTrade</title>

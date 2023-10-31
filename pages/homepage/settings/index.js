@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
+import Script from "next/script";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -117,7 +118,7 @@ const Settings = (props) => {
             setPhoneValid(false);
             swal({
                 title: "Oops!",
-                text: "Invalid phone number. Ensure to include country code",
+                text: "Invalid phone number. Ensure to include country code starting with +",
                 timer: 3000
               });
             return;
@@ -423,7 +424,6 @@ const Settings = (props) => {
 
         const formatedDate = new Date(message.payload.issuedAt).toISOString();
 
-        console.log(formatedDate);
 
         signatureObj.sign = signature;
         signatureObj.sign_nonce = message.payload.nonce;
@@ -501,7 +501,19 @@ const Settings = (props) => {
         return <Spinner />
     } 
 
-    return <div className="flex flex-row mx-auto">
+    return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
+
+        <div className="flex flex-row mx-auto">
             <Sidebar user={user} users={users} />
             <div style={{width: "calc(100vw - 257px)", height: "100vh"}} className="overflow-y-auto overflow-x-hidden">
                 <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId} />
@@ -630,6 +642,7 @@ const Settings = (props) => {
                 </form>
             </div>
         </div>
+    </Fragment>
 }
 
 export default Settings;

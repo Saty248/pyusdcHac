@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 import swal from "sweetalert";
 import logo from "../../../../public/images/logo.jpg";
+import Script from "next/script";
 
 
 import Backdrop from "@/Components/Backdrop";
@@ -75,7 +76,7 @@ const CorporateSignup = () => {
             setPhoneNumberValid(false);
             swal({
                 title: "Oops!",
-                text: "Invalid phone number. Ensure to include country code",
+                text: "Invalid phone number. Ensure to include country code starting with +",
                 timer: 3000
               });
             return;
@@ -147,6 +148,16 @@ const CorporateSignup = () => {
     }
 
     return <Fragment>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+        <Script id="google-analytics">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+        </Script>
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "100vh", maxHeight: "607px", padding: "93px 142px"}}>
