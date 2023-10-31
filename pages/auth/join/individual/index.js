@@ -152,7 +152,7 @@ const IndividualSignup = () => {
                 gtag('config', 'G-C0J4J56QW5');
             `}
         </Script>
-
+        
         {isLoading && createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
         {isLoading && createPortal(<Spinner />, document.getElementById("backdrop-root"))}
         <form onSubmit={formSubmitHandler} className="bg-white mx-auto px-auto font-sans relative" style={{width: "680px", height: "697px", padding: "93px 142px"}}>
