@@ -16,8 +16,7 @@ const handler = async (req, res) => {
       method,
       headers: {
         "Content-Type": "application/json",
-        // api_key: process.env.FRONTEND_API_KEY,
-        api_key: "XXX",
+        api_key: process.env.FRONTEND_API_KEY,
         sign: sign,
         sign_issue_at: time,
         sign_nonce: nonce,
@@ -36,8 +35,7 @@ const handler = async (req, res) => {
     console.log("This is the server URL", process.env.SERVER_URL);
 
     const fetchRes = await fetch(
-      // `http://localhost:8888${req.headers.uri}`,
-      `http://ec2-13-53-187-133.eu-north-1.compute.amazonaws.com:8888${req.headers.uri}`,
+      `${process.env.SERVER_URL}${req.headers.uri}`,
       fetchOptions
     );
 

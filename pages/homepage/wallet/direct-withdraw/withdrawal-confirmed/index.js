@@ -204,9 +204,10 @@ export default WithdrawalConfirm;
 
 
 export async function getServerSideProps() {
+
     try{
         // const response = await fetch("http://localhost:3000/api/proxy", {
-        const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+        const response = await fetch("http://localhost:3000/api/proxy", {
             headers: {
                 "Content-Type": "application/json",
                 uri: "/users",
