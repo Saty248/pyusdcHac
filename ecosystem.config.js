@@ -22,7 +22,7 @@ module.exports = {
           port: "4578",
         },
       ],
-      ref: "dev",
+      ref: "main",
       repo: "git@github.com:SkyTradeLinks/address-claiming.git",
       path: "/home/ec2-user/pm2-deploy/address-claiming",
       "post-deploy":
