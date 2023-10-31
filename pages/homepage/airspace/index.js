@@ -27,8 +27,8 @@ const Airspace = (props) => {
 
     if(error) {
         swal({
-            title: "oops!",
-            text: "something went wrong. kindly try again",
+            title: "Oops!",
+            text: "Something went wrong. Kindly try again",
           });
     }
 
@@ -88,7 +88,7 @@ const Airspace = (props) => {
                 } catch(err) {
                     localStorage.removeItem("openlogin_store")
                     swal({
-                        title: "oops!",
+                        title: "Oops!",
                         text: "Something went wrong. Kindly try again",
                       })
                       .then(() => router.push("/auth/join"))
@@ -380,7 +380,7 @@ const Airspace = (props) => {
         if(user.categoryId === 1 && user.KYCStatusId !== 2) {
             swal({
                 title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+                text: "Your KYCB is yet to be completed. A member of our team will be in contact with you soon",
               })
             return;
         }

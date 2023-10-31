@@ -411,7 +411,7 @@ const EditAispaceModal = (props) => {
             ownerId: props.user.id,
             propertyId: props.id,
             title: airspaceTitle,
-            transitFee: !airspaceStatus ? "$0.01 - $99.00" : "",
+            transitFee: "$0.01 - $99.00",
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
             hasChargingStation: stationChecked,
@@ -467,9 +467,9 @@ const EditAispaceModal = (props) => {
             const err = error.toString().split(":");
             setIsLoading(false)
             swal({
-                title: "oops!",
+                title: "Oops!",
                 // text: "something went wrong. kindly try again",
-                text: err[1] || "something went wrong. kindly try again"
+                text: err[1] || "Something went wrong. Kindly try again"
               })    
         })
     }

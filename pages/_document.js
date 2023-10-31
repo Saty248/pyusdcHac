@@ -5,6 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css' rel='stylesheet' />
+        <link rel="shortcut icon" href="folderWithImages/ttt-2.jpg" type="image/x-icon"></link>
       </Head>
       <body>
         <div id="backdrop-root"></div>

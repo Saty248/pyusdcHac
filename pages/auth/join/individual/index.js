@@ -68,8 +68,8 @@ const IndividualSignup = () => {
         if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
             setPhoneNumberValid(false);
             swal({
-                title: "oops!",
-                text: "invalid phone number. ensure to include country code",
+                title: "Oops!",
+                text: "Invalid phone number. Ensure to include country code",
                 timer: 3000
               });
             return;
@@ -100,7 +100,10 @@ const IndividualSignup = () => {
                 if(!res.ok || res.statusCode === 500) {
                     return res.json()
                     .then(errorData => {
-                        
+                        swal({
+                            title: "Sorry!",
+                            text: `${errorData.errorMessage}`,
+                            });
                         throw new Error(errorData.errorMessage);
                     });
                 }
@@ -130,10 +133,6 @@ const IndividualSignup = () => {
         .catch(error => {
             console.log(error);
             setError(error);
-            swal({
-                title: "oops!",
-                text: error.errorMessage || "something went wrong",
-              });
             setIsLoading(false);
         });
     }

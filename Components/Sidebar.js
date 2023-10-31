@@ -40,7 +40,7 @@ const Sidebar = (props) => {
         if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
             swal({
                 title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+                text: "Your KYCB is yet to be completed. A member of our team will be in contact with you soon",
               })
             return;
         }

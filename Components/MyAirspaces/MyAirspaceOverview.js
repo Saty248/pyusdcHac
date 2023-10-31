@@ -5,7 +5,7 @@ const MyAirspaceOverview = (props) => {
     const locationiqKey = "pk.715caf1e4ee375ad5db1db5f9ff277df";
 
     return  <div className="absolute rounded-md bg-white top-5 z-10" style={{width: "339px", height: "90%", maxHeight: "537px", left: "380px"}}>
-        <div className="relative" style={{height: "230px"}}>
+        <div className="relative border-dark-blue border-t-2 rounded-t-md border-x-2" style={{height: "230px"}}>
             {/* <Image src="/images/airspace-preview.png" alt="icon" className="rounded-t-md" width={339} height={422} /> */}
             <Image src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${props.longitute},${props.latitude},14,0/300x200?access_token=pk.eyJ1IjoiaGlsYXJ5MDE3IiwiYSI6ImNsb2JsMmY2eDB0ZHkyaW5uY3Z5bHd2N3UifQ.hYtTUYI0t96rw74IgqhcSg`} alt="icon" className="rounded-t-md" width={339} height={422} />
             {/* <Image src={`https://maps.locationiq.com/v3/staticmap?key=${locationiqKey}&center=${props.longitute},${props.latitude}&zoom=16&size=600x600&markers=icon:large-blue-cutout%7C40.6892532,-74.0445482`} alt="icon" className="rounded-t-md" width={339} height={422} /> */}

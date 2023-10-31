@@ -74,8 +74,8 @@ const CorporateSignup = () => {
         if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
             setPhoneNumberValid(false);
             swal({
-                title: "oops!",
-                text: "invalid phone number. ensure to include country code",
+                title: "Oops!",
+                text: "Invalid phone number. Ensure to include country code",
                 timer: 3000
               });
             return;
@@ -104,6 +104,7 @@ const CorporateSignup = () => {
             if(!res.ok) {
                 return res.json()
                 .then(errorData => {
+                    console.log("This is the errordata", errorData);
                     swal({
                         title: "",
                         text: `${errorData.errorMessage}`,
@@ -135,6 +136,7 @@ const CorporateSignup = () => {
             })
         })
         .catch(error => {
+            console.log(error);
             setError(error.toString());
             setIsLoading(false)
         });

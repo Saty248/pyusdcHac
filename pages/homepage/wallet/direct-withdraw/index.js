@@ -17,7 +17,7 @@ const Wallet = (props) => {
     if(error) {
         swal({
             title: "oops!",
-            text: "something went wrong. kindly try again",
+            text: "Something went wrong. Kindly try again",
           });
     }
 

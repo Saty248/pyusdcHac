@@ -18,8 +18,8 @@ const Settings = (props) => {
 
     if(error) {
         swal({
-            title: "oops!",
-            text: "something went wrong. kindly try again",
+            title: "Oops!",
+            text: "Something went wrong. Kindly try again",
           });
     }
 
@@ -106,7 +106,7 @@ const Settings = (props) => {
         if(!name) {
             setNameValid(false);
             swal({
-                title: "oops!",
+                title: "Oops!",
                 text: "Name cannot be empty",
                 timer: 2000
               });
@@ -116,8 +116,8 @@ const Settings = (props) => {
         if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
             setPhoneValid(false);
             swal({
-                title: "oops!",
-                text: "invalid phone number. ensure to include country code",
+                title: "Oops!",
+                text: "Invalid phone number. Ensure to include country code",
                 timer: 3000
               });
             return;
@@ -468,7 +468,7 @@ const Settings = (props) => {
                 setIsLoading(false);
                 swal({
                     title: "Submitted",
-                    text: "record successfully updated.",
+                    text: "Record Successfully Updated.",
                     icon: "success",
                     button: "Ok"
                   })
@@ -482,7 +482,7 @@ const Settings = (props) => {
             const error = err.toString().split(':')
             setIsLoading(false);
             swal({
-                title: "oops!",
+                title: "Oops!",
                 text: `${error[1]}`,
               })
         })
@@ -573,7 +573,7 @@ const Settings = (props) => {
                         </div>
                     }
 
-                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "297px"}}>
+                    <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "397px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Personal Information</h3>
                             <p>update your personal information</p>
@@ -598,6 +598,16 @@ const Settings = (props) => {
                                 <input type="text" onChange={() => setPhoneValid(true)} ref={phoneRef} name="number"  defaultValue={user.phoneNumber} id="number" 
                                     className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
                                 {!phoneValid && <p className="absolute top-1 right-0 text-xs text-red-600">invalid phone number</p>}
+                            </div>
+                        </div>
+                        <div className="flex mt-6 gap-5">
+                            <div className="relative" style={{width: "320px", height: "37px"}}>
+                                <p className="text-bleach-brown">Type of Account</p>
+                                <p className="text-black">{user.categoryId === 0 ? "Individual" : "Corporate"}</p>
+                                {/* <label className="text-bleach-brown" htmlFor="email">Email</label> <br />
+                                <input type="email" disabled ref={emailRef} name="email" defaultValue={user.email} id="email" 
+                                    className="ps-3 placeholder:font-medium border-2 border-light-blue focus:outline-blue-200 placeholder:text-dark-brown rounded-md" style={{width: "320px", height: "37px"}} />
+                                {!emailValid && <p className="absolute top-1 right-0 text-sm text-red-600">email is invalid</p>} */}
                             </div>
                         </div>
                     </div>

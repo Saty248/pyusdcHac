@@ -134,7 +134,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Couldn't get user info Kindly reload the page",
+                text: "Couldn't get user info. Kindly reload the page",
               });
             return;
         }
@@ -149,7 +149,7 @@ const Signup = (props) => {
         } catch(err) {
             swal({
                 title: "oops!",
-                text: "Solana wallet wasn't created Kindly reload the page",
+                text: "Solana wallet wasn't created. Kindly reload the page",
               });
             return;
         }
@@ -197,8 +197,8 @@ const Signup = (props) => {
             })
         }).catch(err => {
             swal({
-                title: "oops!",
-                text: err.message || "something went wrong. kindly try again",
+                title: "Oops!",
+                text: err.message || "Something went wrong. Kindly try again",
               })
         })     
     }

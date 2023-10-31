@@ -386,7 +386,7 @@ const AdditionalAispaceInformation = (props) => {
             ...airspaceData,
             ownerId: props.user.id,
             title: airspaceTitle,
-            transitFee: airspaceStatus === "Available" ? "$0.01 - $99.00" : "",
+            transitFee: "$0.01 - $99.00",
             hasStorageHub: storageChecked,
             hasLandingDeck: deckChecked,
             hasChargingStation: stationChecked,
@@ -428,7 +428,7 @@ const AdditionalAispaceInformation = (props) => {
                 
                 swal({
                     title: "Submitted",
-                    text: "Airspace registered successfully",
+                    text: "Airspace Registered Successfully",
                     icon: "success",
                     button: "Ok"
                   }).then(() => {
@@ -443,9 +443,9 @@ const AdditionalAispaceInformation = (props) => {
             const err = error.toString().split(":");
             setIsLoading(false);
             swal({
-                title: "oops!",
+                title: "Oops!",
                 // text: "something went wrong. kindly try again",
-                text: err[1] || "something went wrong. kindly try again"
+                text: err[1] || "Something went wrong. Kindly ry again"
               });
         })
     }
