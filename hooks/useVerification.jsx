@@ -45,27 +45,40 @@ export const useVerification = () => {
     
         const currentUser = users.filter(user => user.email === userInfo.email);
 
-        const currentUserId =  currentUser[0]?.id;
-        let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-            // method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                uri: `/users/find-one/${currentUserId}`,
-                // proxy_to_method: "GET",
-            }
-        })
-        const resp = await userDetails.json();
-        if(resp.KYCStatusId == 2){
-            dispatch(counterActions.confirmOnMapModal());
+        // const currentUserId =  currentUser[0]?.id;
+        // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
+        //     // method: "GET",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         uri: `/users/find-one/${currentUserId}`,
+        //         // proxy_to_method: "GET",
+        //     }
+        // })
+        // const resp = await userDetails.json();
+
+        
+
+        // if(resp.KYCStatusId == 2){
+            console.log(currentUser[0].KYCStatusId);
+            console.log(currentUser);
+        if(currentUser[0].KYCStatusId === 2){
+            // dispatch(counterActions.confirmOnMapModal());
+            dispatch(counterActions.additionalInfoModal());
         }
-        else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
+        else if(currentUser[0].categoryId === 0 && currentUser[0].KYCStatusId === 1) {
+        // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
             alert("KYC is yet to be approved. It might take some time");
         }
-        else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
-            // console.log("Please do KYC");
+        // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
+        else if(currentUser[0].categoryId == 0 && (currentUser[0].KYCStatusId == 0 || currentUser[0].KYCStatusId == 3)) {
+            console.log("Please do KYC");
+            console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
+            console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
+
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                referenceId: currentUserId,
+                // referenceId: currentUserId,
+                referenceId: currentUser.Id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {

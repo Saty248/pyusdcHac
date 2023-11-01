@@ -10,8 +10,8 @@ const MyAirspaceOverview = (props) => {
             {/* <Image src={`https://maps.locationiq.com/v3/staticmap?key=${locationiqKey}&center=${props.longitute},${props.latitude}&zoom=16&size=600x600&markers=icon:large-blue-cutout%7C40.6892532,-74.0445482`} alt="icon" className="rounded-t-md" width={339} height={422} /> */}
             <button onClick={props.closeDetails} className="absolute bg-white flex flex-row justify-center items-center top-2 right-2" style={{borderRadius: "50%", width: "24px", height: "24px"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 34 34" fill="none">
-                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12.7578 12.7285L21.2431 21.2138" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12.7569 21.2138L21.2422 12.7285" stroke="#252530" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
             </button>
         </div>
