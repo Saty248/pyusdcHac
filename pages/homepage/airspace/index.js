@@ -413,7 +413,7 @@ const Airspace = (props) => {
             <AdditionalAispaceInformation user={user} />
             }
         {confirmOnMap && 
-            createPortal(<AddAirspace onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
+            createPortal(<AddAirspace users={users} user={user} onClose={backdropCloseHandler} />, document.getElementById("modal-root"))
             }
         
         {editAirspace && createPortal(<EditAispaceModal 

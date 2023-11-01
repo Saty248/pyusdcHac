@@ -19,7 +19,8 @@ import { counterActions } from "@/store/store";
 const Dashboard = (props) => {
     const { users, error } = props;
 
-    const { verificationCheck } = useVerification();
+    // const { verificationCheck } = useVerification();
+    const dispatch = useDispatch();
 
     if(error) {
         swal({
@@ -691,7 +692,8 @@ const Dashboard = (props) => {
         };
 
         router.push("/homepage/airspace");
-        verificationCheck(users);
+        // verificationCheck(users);
+        dispatch(counterActions.confirmOnMapModal());
     }
 
     if(!user || !token) {
