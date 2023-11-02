@@ -90,7 +90,7 @@ export const useVerification = () => {
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
                 // referenceId: currentUserId,
-                referenceId: currentUser.Id,
+                referenceId: currentUser?.Id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {
