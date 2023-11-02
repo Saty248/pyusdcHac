@@ -8,7 +8,7 @@ export const useVerification = () => {
         const chainConfig = {
             chainNamespace: "solana",
             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
             displayName: "Solana Mainnet",
             blockExplorer: "https://explorer.solana.com",
             ticker: "SOL",
@@ -67,13 +67,23 @@ export const useVerification = () => {
         }
         else if(currentUser[0].categoryId === 0 && currentUser[0].KYCStatusId === 1) {
         // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
-            alert("KYC is yet to be approved. It might take some time");
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is pending. kindly check back later.",
+                // timer: 3000
+              })
         }
         // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
         else if(currentUser[0].categoryId == 0 && (currentUser[0].KYCStatusId == 0 || currentUser[0].KYCStatusId == 3)) {
             console.log("Please do KYC");
             console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
             console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
+
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. you will be redirected now to complete it.",
+                timer: 3000
+              })
 
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,

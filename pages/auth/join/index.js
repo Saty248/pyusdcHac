@@ -44,7 +44,7 @@ const Signup = (props) => {
     const chainConfig = {
         chainNamespace: "solana",
         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://api.testnet.solana.com",
+        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         displayName: "Solana Mainnet",
         blockExplorer: "https://explorer.solana.com",
         ticker: "SOL",

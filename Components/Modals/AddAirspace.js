@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useVerification } from '@/hooks/useVerification';
+import swal from 'sweetalert';
 
 
 const AddAirspace = (props) => {
@@ -13,7 +14,7 @@ const AddAirspace = (props) => {
     const [addresses, setAddresses] =  useState([]);
     const [showOptions, setShowOptions] = useState(true);
     const [addressData, setAddressData] = useState();
-    // const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const [addressValid, setAddressValid] = useState(false);
     const [confirmMap, setConfirmMap] = useState(true);
@@ -100,7 +101,6 @@ const AddAirspace = (props) => {
 
     const mapLoadHandler = (e) => {
         e.preventDefault(); 
-        // setIsLoading(true)
 
 
         fetch(`https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${address}&format=json&polygon_geojson=1`)
@@ -117,7 +117,6 @@ const AddAirspace = (props) => {
             if(resData.error) {
                 console.log(resData.error)
                 setError(resData.error);
-                // setIsLoading(false)
                 return;
             }
             
@@ -151,7 +150,6 @@ const AddAirspace = (props) => {
                     .setLngLat(endPoint)
                     .addTo(map);
                 
-                // setIsLoading(false);
                 setConfirmMap(false);
                 return;    
             }
@@ -177,12 +175,10 @@ const AddAirspace = (props) => {
             
             setConfirmMap(false)
             setError("")
-            // setIsLoading(false)
         })
         .catch((err) => {
             console.log(err);
             setError(`${err.message || ""}${err.message ? "." : ""} kindly check your address and try again`);
-            // setIsLoading(false);
         });     
     }
 
@@ -192,6 +188,7 @@ const AddAirspace = (props) => {
 
     const confirmAddressHandler = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
             swal({
@@ -229,6 +226,7 @@ const AddAirspace = (props) => {
 
         dispatch(counterActions.airspaceData(addressValue));
 
+      
         await verificationCheck(props.users);
 
         dispatch(counterActions.closeConfirmOnMapModal());
@@ -292,7 +290,7 @@ const AddAirspace = (props) => {
                     </div>
                     <div className="flex flex-row justify-center items-center mt-5 gap-5">
                         <button onClick={closeModalHandler} className="rounded-md text-dark-blue" style={{border: "1px solid #0653EA", width: "120px", height: "40px"}}>Cancel</button>
-                        <button disabled={!address || confirmMap} onClick={confirmAddressHandler} className="bg-dark-blue rounded-md text-white disabled:bg-light-blue disabled:cursor-not-allowed" style={{width: "120px", height: "40px"}}>Next</button>
+                        <button disabled={!address || confirmMap || isLoading} onClick={confirmAddressHandler} className="bg-dark-blue rounded-md text-white disabled:bg-light-blue disabled:cursor-wait" style={{width: "120px", height: "40px"}}>Next</button>
                     </div>
                 </div>
             </form>

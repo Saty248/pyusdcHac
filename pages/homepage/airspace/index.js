@@ -8,6 +8,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
 import Script from "next/script";
+import Image from "next/image";
 
 import Navbar from "@/Components/Navbar";
 import Sidebar from "@/Components/Sidebar";
@@ -49,6 +50,11 @@ const Airspace = (props) => {
     const [myAirspaces, setMyAirspaces] = useState();
     const [editAirspace, setEditAirspace] = useState();
     const [viewMyAirspace, setViewMyAirSpace] = useState(false);
+    const [address, setAddress] = useState("");
+    const [addresses, setAddresses] = useState([]);
+    const [showOptions, setShowOptions] = useState(true);
+    const [longitude, setLongitude] = useState();
+    const [latitude, setLatitude] = useState();
 
     const [user, setUser] = useState();
     const [token, setToken] = useState("");
@@ -60,7 +66,7 @@ const Airspace = (props) => {
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                     displayName: "Solana Mainnet",
                     blockExplorer: "https://explorer.solana.com",
                     ticker: "SOL",
@@ -174,6 +180,9 @@ const Airspace = (props) => {
                 endPoint.push(resData[0].lon)
                 endPoint.push(resData[0].lat)
 
+                setLongitude(resData[0].lon)
+                setLatitude(resData[0].lat)
+
                 const map = new maplibregl.Map({
                     container: 'map',
                     attributionControl: false, 
@@ -221,6 +230,41 @@ const Airspace = (props) => {
     }, [flyToAddress]);
 
     useEffect(() => {
+        // setConfirmMap(true);
+        // setAddressValid(false);
+        // setError(false);
+        if(address) {    
+            setLongitude("");
+            setLatitude("");    
+
+            const addressHandler = setTimeout(() => {
+                fetch(`https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`)
+                .then(res => {
+                    console.log("This is the result from locationIq API call", res)
+                    if(!res.ok) {
+                        return res.json()
+                        .then(errorData => {
+                            throw new Error(errorData.error);
+                        });
+                    }
+                    return res.json()
+                })
+                .then(resData => {
+                    console.log("This is the main result from locationIq", resData)
+                    setAddresses(resData);
+                })
+                .catch((err) => {
+                    console.log(err)
+                    setAddresses([]);
+                })
+            }, 500)
+            return () => {
+                    clearTimeout(addressHandler);
+                }
+            }
+    }, [address]);
+
+    useEffect(() => {
         const getUserAirspace = async() => {
             if(user) {
                 const signatureObj = {};
@@ -230,7 +274,7 @@ const Airspace = (props) => {
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                     displayName: "Solana Mainnet",
                     blockExplorer: "https://explorer.solana.com",
                     ticker: "SOL",
@@ -376,6 +420,16 @@ const Airspace = (props) => {
         setViewMyAirSpace(false)
     }
 
+    const addressChangeHandler = (e) => {
+        if(!showOptions) {
+            setShowOptions(true);
+        }
+
+        setAddress(e.target.value);
+    }
+
+    
+
     const airspaceHandler = () => {
         // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
         //     swal({
@@ -389,6 +443,66 @@ const Airspace = (props) => {
 
         dispatch(counterActions.confirmOnMapModal());
     };
+
+    const buttonSelectHandler = (e) => {
+        e.preventDefault(), 
+        setAddress(e.target.value), 
+        setShowOptions(false);
+    }
+
+    const confirmAddressHandler = async (e) => {
+        // e.preventDefault();
+        // setIsLoading(true);
+
+        // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+        //     swal({
+        //         title: "Sorry!",
+        //         text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+        //       })
+        //     return;
+        // }
+
+        // const vertexes = []
+
+        // if(addressData.geojson && addressData.geojson.type === "Polygon") {
+        //     for(const address of addressData.geojson.coordinates) {
+        //         for(const val of address) {
+        //             const addValue = {}
+        //             const long = parseFloat(val[0].toFixed(2))
+        //             const lat = parseFloat(val[1].toFixed(2))
+        //             addValue.longitude = +long
+        //             addValue.latitude = +lat
+        //             vertexes.push(addValue)
+        //         }
+        //     }
+        // }
+
+        // const longitude = parseFloat(addressData.lon).toFixed(2);
+        // const latitude = parseFloat(addressData.lat).toFixed(2);
+        
+
+        // const addressValue = {
+        //     address: address,
+        //     longitude: +longitude,
+        //     latitude: +latitude,
+        //     vertexes: vertexes
+        // }
+
+        // dispatch(counterActions.airspaceData(addressValue));
+
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
+      
+        verificationCheck(users);
+
+        // dispatch(counterActions.closeConfirmOnMapModal());
+        // dispatch(counterActions.additionalInfoModal());
+    }
   
 
 
@@ -439,12 +553,32 @@ const Airspace = (props) => {
         <div className="flex flex-row mx-auto">
             <Sidebar user={user} users={users} />
             <div className="overflow-y-auto overflow-x-hidden" style={{width: "calc(100vw - 257px)", height: "100vh"}}>
-                <Navbar name={user.name} categoryId={user.categoryId} status={user.KYCStatusId}>
+                <Navbar name={user.name} onClose={() => setShowOptions(false)} categoryId={user.categoryId} status={user.KYCStatusId}>
                     <div className="relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                        <svg onClick={() => {
+                            setFlyToAddress(address);
+                            setShowOptions(false);
+                        }} xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
                             <path fillRule="evenodd" clipRule="evenodd" d="M10.7118 11.7481C8.12238 13.822 4.33202 13.6588 1.93164 11.2584C-0.643879 8.6829 -0.643879 4.50716 1.93164 1.93164C4.50716 -0.64388 8.68289 -0.643879 11.2584 1.93164C13.6588 4.33202 13.822 8.12238 11.7481 10.7118L16.7854 15.7491C17.0715 16.0352 17.0715 16.4992 16.7854 16.7854C16.4992 17.0715 16.0352 17.0715 15.7491 16.7854L10.7118 11.7481ZM2.96795 10.2221C0.964766 8.21893 0.964766 4.97113 2.96795 2.96795C4.97113 0.964767 8.21892 0.964767 10.2221 2.96795C12.2238 4.96966 12.2253 8.21416 10.2265 10.2177C10.225 10.2192 10.2236 10.2206 10.2221 10.2221C10.2206 10.2236 10.2192 10.225 10.2177 10.2265C8.21416 12.2253 4.96966 12.2238 2.96795 10.2221Z" fill="#252530" fillOpacity="0.55"/>
                         </svg>
-                        <input type="text" placeholder="Search Airspace" className="rounded-md my-7 ps-3 ms-5 focus:outline-blue-200" style={{width: "433px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
+                        <input type="text" value={address} onChange={addressChangeHandler} placeholder="Search Airspace" className="rounded-md text-ellipsis my-7 ps-3 pe-8 ms-5 focus:outline-blue-200" style={{width: "340px", height: "47px", border: "1px solid rgba(37, 37, 48, 0.55)"}} />
+                        
+                        {(addresses.length > 0 && address.length > 0) &&
+                            <div style={{width: "340px", height: "259px", border: "0.35px solid #0653EA"}} className={`${(!showOptions || addresses.length < 1) && "hidden"} bg-white z-50 overflow-y-auto rounded px-3 py-1 absolute ms-5 top-20`}>
+                                <p className="text-xs text-red-500">If any of the addresses listed below matches your address, click on it to select</p>
+                                {addresses.map(address => {
+                                    return <button  key={address.osm_id + Math.random()}
+                                                        value={address.display_address} 
+                                                        onClick={buttonSelectHandler}
+                                                        className="py-2 text-left" 
+                                                        style={{borderBottom: "0.2px solid #0653EA", width: "100%"}}>
+                                                        {address.display_address}
+                                    </button>
+                                })
+
+                                }
+                            </div>
+                            }
                     </div>
                 </Navbar>
                 <div className="relative mt-0" id="map" style={{width: "calc(100vw - 257px)", height: "100vh", marginTop: "0"}}>
@@ -459,25 +593,41 @@ const Airspace = (props) => {
                             checkUser={airspaceHandler}
                             // checkUser={() => alert("clicked")}
                             >
-                       
-                        {!myAirspaces && <p className="mt-10">Loading...</p>}
+                        <div>
+                            {(latitude && longitude && address.length > 0) && 
+                                <p className="mt-3">Search Result</p>
+                            }
+                            {(latitude && longitude && address.length > 0) && 
+                                <div className="bg-white mb-5 mt-3 p-3 flex flex-row gap-5" style={{width: "299px", borderRadius: "3px", border: "1px solid blue"}}>  
+                                    <Image src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${longitude},${latitude},12,0/70x70?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`} alt="a static map" width={70} height={70} />
+                                    <div>
+                                        <p>{address}</p>
+                                        {/* <button onClick={confirmAddressHandler} className="bg-dark-blue rounded-md text-white disabled:bg-light-blue disabled:cursor-wait" style={{width: "120px", height: "40px"}}>Claim Airspace</button> */}
+                                        <button onClick={confirmAddressHandler} className="bg-dark-blue rounded-md mt-2 text-white disabled:bg-light-blue disabled:cursor-wait" style={{width: "129px", height: "29px"}}>Claim Airspace</button>
+                                    </div>
+                                </div>
+                            }
+                            {!myAirspaces && <p className="mt-10">Loading...</p>}
 
-                        {myAirspaces && myAirspaces.length < 0  &&
-                            <p>you currently do not have any airspace</p>
-                        } 
-                        {(myAirspaces && myAirspaces.length > 0) && myAirspaces.map(airspace => {
-                            return  <MyAirspaceTab 
-                                    key={airspace.id}
-                                    title={airspace.title}
-                                    name={user.name}
-                                    address={airspace.address}
-                                    identification={airspace.identification}
-                                    status={airspace.noFlyZone}
-                                    viewMyAirspace={showMyAirspaceHandler.bind(null, airspace.id)}
-                                    amount={airspace.transitFee}
-                                    propertyStatus={airspace.propertyStatus.type}
-                                     />
-                        })}
+                            {(myAirspaces && myAirspaces.length > 0 && latitude && longitude && address.length > 0) && 
+                                <p className=" mt-5 pt-5">My Airspaces</p>
+                            }
+                            {(myAirspaces && myAirspaces.length > 0) && myAirspaces.map(airspace => {
+                                return  <MyAirspaceTab 
+                                            key={airspace.id}
+                                            title={airspace.title}
+                                            name={user.name}
+                                            address={airspace.address}
+                                            identification={airspace.identification}
+                                            status={airspace.noFlyZone}
+                                            viewMyAirspace={showMyAirspaceHandler.bind(null, airspace.id)}
+                                            amount={airspace.transitFee}
+                                            propertyStatus={airspace.propertyStatus.type}
+                                        >
+
+                                        </MyAirspaceTab>
+                            })}
+                        </div>
                     </Airspaces>
                 
                     {viewMyAirspace && <MyAirspaceOverview 

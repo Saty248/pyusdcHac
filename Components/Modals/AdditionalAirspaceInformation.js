@@ -159,17 +159,17 @@ const AdditionalAispaceInformation = (props) => {
         //     const timeDifference = currentTimestampInSeconds - issuedTime;
         //     console.log("This is the time difference", timeDifference);
 
-        //     if(timeDifference > 300) {
-        //         console.log("The time has expired")
-        //         const chainConfig = {
-        //             chainNamespace: "solana",
-        //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //             rpcTarget: "https://api.testnet.solana.com",
-        //             displayName: "Solana Mainnet",
-        //             blockExplorer: "https://explorer.solana.com",
-        //             ticker: "SOL",
-        //             tickerName: "Solana",
-        //         };
+        // if(timeDifference > 300) {
+        //     console.log("The time has expired")
+        //     const chainConfig = {
+        //         chainNamespace: "solana",
+        //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+        //         rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+        //         displayName: "Solana Mainnet",
+        //         blockExplorer: "https://explorer.solana.com",
+        //         ticker: "SOL",
+        //         tickerName: "Solana",
+        //     };
         
         //         const web3auth = new Web3Auth({
         //                 // For Production
@@ -249,7 +249,7 @@ const AdditionalAispaceInformation = (props) => {
         //     const chainConfig = {
         //         chainNamespace: "solana",
         //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //         rpcTarget: "https://api.testnet.solana.com",
+        //         rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         //         displayName: "Solana Mainnet",
         //         blockExplorer: "https://explorer.solana.com",
         //         ticker: "SOL",
@@ -325,7 +325,7 @@ const AdditionalAispaceInformation = (props) => {
         const chainConfig = {
             chainNamespace: "solana",
             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
             displayName: "Solana Mainnet",
             blockExplorer: "https://explorer.solana.com",
             ticker: "SOL",

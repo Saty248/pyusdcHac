@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 const Navbar = (props) => {
     const router = useRouter();
 
-    return  <header style={{width: "calc(100vw - 257px)", height: "91px"}} className="bg-white p-0">
+    return  <header onClick={props.onClose} style={{width: "calc(100vw - 257px)", height: "91px"}} className="bg-white p-0">
     <nav className={`container mx-auto my-0 flex flex-row ${props.children ? "justify-between" : "justify-end"} items-center`}>
         {/* <div className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
