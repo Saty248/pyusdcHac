@@ -72,12 +72,12 @@ const CorporateSignup = () => {
             return;
         }
 
-        if(!phoneNumber || phoneNumber.charAt(0) !== "+") {
+        if(!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== "+") {
             setPhoneNumberValid(false);
             swal({
                 title: "Oops!",
-                text: "Invalid phone number. Ensure to include country code starting with +",
-                timer: 3000
+                text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
+                // timer: 3000
               });
             return;
         }
@@ -178,7 +178,7 @@ const CorporateSignup = () => {
             
             <div className="my-3.5 relative" style={{width: "396px",  height: "43px"}}>
                 <label className="text-sm font-normal" style={{color: "rgba(0, 0, 0, 0.50)"}} >Phone Number<span className="text-red-600">*</span></label> <br />
-                <input ref={phoneNumberRef} onChange={() => setPhoneNumberValid(true)} type="text" min="0" placeholder="Enter your Phone number" className="bg-light-grey rounded-md font-sans placeholder:text-light-brown placeholder:font-medium focus:outline-blue-200" style={{width: "396px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
+                <input ref={phoneNumberRef} onChange={() => setPhoneNumberValid(true)} type="text" min="0" placeholder="+12124567890" className="bg-light-grey rounded-md font-sans placeholder:text-light-brown placeholder:font-medium focus:outline-blue-200" style={{width: "396px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)", paddingLeft: "14px",}} />
                 {!phoneNumberValid && <p className="absolute top-1 right-0 text-sm text-red-600">invalid phone number</p>}
             </div>
             <div className="mt-12 flex flex-row items-center">
@@ -191,7 +191,7 @@ const CorporateSignup = () => {
             </div> */}
             <div className="mt-3.5 text-sm" style={{color: "rgba(0, 0, 0, 0.50)", fontWeight: "400"}}>
                     By clicking Create Account, you acknowledge you have read and agreed 
-                    to our <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="/" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
+                    to our <a href="https://sky.trade/terms.pdf" target="_blank" style={{color: "#0653EA", textDecoration: "underline"}}>Terms of Use</a> and <a href="https://sky.trade/privacy.pdf" target="_blank" style={{color: "#0653EA", textDecoration: "underline"}}>Privacy Policy</a>.
             </div>
             <button className="bg-dark-blue text-white rounded-md mt-4  transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width:"396px", height: "46px",}}>Create Account</button>
         </form>

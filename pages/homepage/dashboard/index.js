@@ -20,6 +20,7 @@ const Dashboard = (props) => {
     const { users, error } = props;
 
     const { verificationCheck } = useVerification();
+    const dispatch = useDispatch();
 
     if(error) {
         swal({
@@ -178,7 +179,7 @@ const Dashboard = (props) => {
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                     displayName: "Solana Mainnet",
                     blockExplorer: "https://explorer.solana.com",
                     ticker: "SOL",
@@ -191,7 +192,7 @@ const Dashboard = (props) => {
                 
                         // For Development
                         // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                        web3AuthNetwork: "cyan",
+                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                         chainConfig: chainConfig,
                     });
             
@@ -303,7 +304,7 @@ const Dashboard = (props) => {
                 //         const chainConfig = {
                 //             chainNamespace: "solana",
                 //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                //             rpcTarget: "https://api.testnet.solana.com",
+                //             rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                 //             displayName: "Solana Mainnet",
                 //             blockExplorer: "https://explorer.solana.com",
                 //             ticker: "SOL",
@@ -317,7 +318,7 @@ const Dashboard = (props) => {
                         
                 //                 // For Development
                 //                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                //                 web3AuthNetwork: "cyan",
+                //                 web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 //                 chainConfig: chainConfig,
                 //             });
                         
@@ -390,7 +391,7 @@ const Dashboard = (props) => {
                 //     const chainConfig = {
                 //         chainNamespace: "solana",
                 //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                //         rpcTarget: "https://api.testnet.solana.com",
+                //         rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                 //         displayName: "Solana Mainnet",
                 //         blockExplorer: "https://explorer.solana.com",
                 //         ticker: "SOL",
@@ -404,7 +405,7 @@ const Dashboard = (props) => {
                     
                 //             // For Development
                 //             // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                //             web3AuthNetwork: "cyan",
+                //             web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 //             chainConfig: chainConfig,
                 //         });
                     
@@ -465,7 +466,7 @@ const Dashboard = (props) => {
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                     displayName: "Solana Mainnet",
                     blockExplorer: "https://explorer.solana.com",
                     ticker: "SOL",
@@ -479,7 +480,7 @@ const Dashboard = (props) => {
                 
                         // For Development
                         // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                        web3AuthNetwork: "cyan",
+                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                         chainConfig: chainConfig,
                     });
                 
@@ -682,16 +683,19 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         
-        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        };
+        // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+        //     swal({
+        //         title: "Sorry!",
+        //         text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+        //       })
+        //     return;
+        // };
+
+        
+        // verificationCheck(users);
 
         router.push("/homepage/airspace");
-        verificationCheck(users);
+        dispatch(counterActions.confirmOnMapModal());
     }
 
     if(!user || !token) {
@@ -746,7 +750,7 @@ const Dashboard = (props) => {
                                         <p className="text-sm">My Airspace</p>
                                         <p className="text-2xl">{airspaceLength}</p>
                                     </div>
-                                    <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
+                                    {/* <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button> */}
                                 </div>
                             </div>
                             {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}> */}

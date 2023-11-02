@@ -57,8 +57,8 @@ const AddPilotModal = (props) => {
                     </div>
                     <div className="mt-7">
                         <label htmlFor="uav" className="text-light-brown font-medium">UAVs</label> <br />
-                        <select className="rounded ps-5 mt-2.5 focus:outline-blue-200 text-dark-brown" style={{width: "383px", height: "37px", border: "0.3px solid rgba(6, 83, 234, 0.4)"}}>
-                            <option selected disabled>Select UAVs</option>
+                        <select defaultValue="Select UAVs" className="rounded ps-5 mt-2.5 focus:outline-blue-200 text-dark-brown" style={{width: "383px", height: "37px", border: "0.3px solid rgba(6, 83, 234, 0.4)"}}>
+                            <option disabled>Select UAVs</option>
                         </select>
                     </div>
                 </div>

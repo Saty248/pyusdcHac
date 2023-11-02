@@ -51,8 +51,8 @@ const EditUavModal = (props) => {
                     </div>
                     <div className=" flex flex-row justify-between ps-4 pe-2 items-center rounded" style={{height: "37px", width: " 383px", border: "0.3px solid rgba(6, 83, 234, 0.4)", marginTop: "61px"}}>
                         <p>UAV Type</p>
-                        <select className="rounded-sm bg-sky-blue-100 border-collapse outline-none outline-0" style={{width: "250px", height: "29px"}}>
-                            <option selected disabled>Select a device type</option>
+                        <select defaultValue="Select a device type" className="rounded-sm bg-sky-blue-100 border-collapse outline-none outline-0" style={{width: "250px", height: "29px"}}>
+                            <option disabled>Select a device type</option>
                         </select>
                     </div>
                 </div>

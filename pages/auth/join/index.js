@@ -44,7 +44,7 @@ const Signup = (props) => {
     const chainConfig = {
         chainNamespace: "solana",
         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        rpcTarget: "https://api.testnet.solana.com",
+        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         displayName: "Solana Mainnet",
         blockExplorer: "https://explorer.solana.com",
         ticker: "SOL",
@@ -59,7 +59,7 @@ const Signup = (props) => {
 
         // For Development
         // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-        web3AuthNetwork: "cyan",
+        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         chainConfig: chainConfig,
     });
 
@@ -139,7 +139,6 @@ const Signup = (props) => {
               });
             return;
         }
-        
 
         const solanaWallet = new SolanaWallet(web3authProvider);
 
@@ -249,14 +248,14 @@ const Signup = (props) => {
                 </div>
                 {/* <p className=" text-dark-brown text-xl font-medium">Sign up using other methods</p> */}
                 <div className="flex flex-row w-full justify-center gap-5">
-                    <button onClick={loginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    <button onClick={loginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "406px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/google-logo.png" alt="Google logo" width={33} height={33} />
                         <p>Google</p>
                     </button>
-                    <button onClick={loginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    {/* <button onClick={loginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/Facebook-logo.png" alt="Facebook logo" width={33} height={33} />
                         <p>Facebook</p>
-                    </button>
+                    </button> */}
                 </div>
             </form>
         </div>}

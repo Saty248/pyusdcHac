@@ -8,7 +8,7 @@ export const useVerification = () => {
         const chainConfig = {
             chainNamespace: "solana",
             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
             displayName: "Solana Mainnet",
             blockExplorer: "https://explorer.solana.com",
             ticker: "SOL",
@@ -22,7 +22,7 @@ export const useVerification = () => {
         
                 // For Development
                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                web3AuthNetwork: "cyan",
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 chainConfig: chainConfig,
             });
     
@@ -45,27 +45,53 @@ export const useVerification = () => {
     
         const currentUser = users.filter(user => user.email === userInfo.email);
 
-        const currentUserId =  currentUser[0]?.id;
-        let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-            // method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                uri: `/users/find-one/${currentUserId}`,
-                // proxy_to_method: "GET",
-            }
-        })
-        const resp = await userDetails.json();
-        if(resp.KYCStatusId == 2){
-            dispatch(counterActions.confirmOnMapModal());
+
+        // const currentUserId =  currentUser?.id;
+        // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
+        //     // method: "GET",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         uri: `/users/find-one/${currentUserId}`,
+        //         // proxy_to_method: "GET",
+        //     }
+        // })
+        // const resp = await userDetails.json();
+
+        // console.log(currentUser);
+
+        
+
+        // if(resp.KYCStatusId == 2){
+            // console.log(currentUser.KYCStatusId);
+            // console.log(currentUser);
+        if(currentUser.KYCStatusId === 2){
+            // dispatch(counterActions.confirmOnMapModal());
+            dispatch(counterActions.additionalInfoModal());
         }
-        else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
-            alert("KYC is yet to be approved. It might take some time");
+        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId === 1) {
+        // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is pending. kindly check back later.",
+                // timer: 3000
+              })
         }
-        else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
+        // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
+        else if(currentUser.categoryId == 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
             // console.log("Please do KYC");
+            // console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
+            // console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
+
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. you will be redirected now to complete it.",
+                timer: 3000
+              })
+
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                referenceId: currentUserId,
+                // referenceId: currentUserId,
+                referenceId: currentUser?.id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {

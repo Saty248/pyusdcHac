@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 const Navbar = (props) => {
     const router = useRouter();
 
-    return  <header style={{width: "calc(100vw - 257px)", height: "91px"}} className="bg-white p-0">
+    return  <header onClick={props.onClose} style={{width: "calc(100vw - 257px)", height: "91px"}} className="bg-white p-0">
     <nav className={`container mx-auto my-0 flex flex-row ${props.children ? "justify-between" : "justify-end"} items-center`}>
         {/* <div className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" className="absolute bottom-11 right-2 cursor-pointer" width="17" height="17" viewBox="0 0 17 17" fill="none">
@@ -21,11 +21,11 @@ const Navbar = (props) => {
             <div onClick={() => router.push("/homepage/settings")} className="me-5 ms-2">
                 <p className="font-base font-medium">{props.name}</p>
                 {props.categoryId === 0 &&
-                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : props.status === 1 ? "bg-light-yellow" : "bg-bleach-red"}`} style={{width: "70px", height: "12px", borderRadius:"3px", }}>
+                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : props.status === 1 ? "bg-light-yellow" : "bg-bleach-red"}`} style={{width: "80px", height: "12px", borderRadius:"3px", }}>
                         {/* <p className="text-xxs text-light-green">verified</p> */}
                         <p className={`text-xxs text-center ${props.status === 2 ? "text-light-green" : props.status === 1 ? "text-dark-yellow" : "text-light-red-100"}`}>
-                            {props.status === 0 ? "NotAttempted" : props.status === 1 ? "Pending" : 
-                                        props.status === 2 ? "Approved" : "rejected"}</p>
+                            {props.status === 0 ? "Not Attempted" : props.status === 1 ? "Pending" : 
+                                        props.status === 2 ? "Approved" : "Rejected"}</p>
                     </div>
                 }
                 {props.categoryId === 1 &&
