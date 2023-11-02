@@ -46,8 +46,7 @@ const Sidebar = (props) => {
         // }
 
         router.push("/homepage/airspace");
-        dispatch(counterActions.confirmOnMapModal());
-        // verificationCheck(props.users);
+        verificationCheck(props.users);
     };
 
     const logoutHandler = () => {
