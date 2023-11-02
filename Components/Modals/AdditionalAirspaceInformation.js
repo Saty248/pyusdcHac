@@ -397,7 +397,7 @@ const AdditionalAispaceInformation = (props) => {
             timezone: airspaceStatus === "Available" ? timezone : "GMT"
         }
 
-
+        // console.log("This is the complete airspace information", airspaceInformation);
 
         fetch(`/api/proxy?${Date.now()}`, {
             method: "POST",
@@ -476,8 +476,8 @@ const AdditionalAispaceInformation = (props) => {
                         <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
                         <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
                 </div>
-                <select disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
-                    <option selected>$0.01 - $99.00</option>
+                <select defaultValue="$0.01 - $99.00" disabled={airspaceStatus !== "Available" || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                    <option>$0.01 - $99.00</option>
                 </select>
             </div>
             <hr />
@@ -507,9 +507,9 @@ const AdditionalAispaceInformation = (props) => {
                     <div style={{width: "138px"}} className="">
                         <p className="font-medium">Status</p>
                         <p className="text-xs">Give your AirSpace a Status</p>
-                        <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
+                        <select defaultValue="Available" onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
                             <option disabled>Status</option>
-                            <option selected>Available</option>
+                            <option>Available</option>
                             <option>No-fly zone</option>
                         </select> 
                     </div>

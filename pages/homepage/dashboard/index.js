@@ -19,11 +19,7 @@ import { counterActions } from "@/store/store";
 const Dashboard = (props) => {
     const { users, error } = props;
 
-<<<<<<< HEAD
     const { verificationCheck } = useVerification();
-=======
-    // const { verificationCheck } = useVerification();
->>>>>>> 6c34ae189082059996890491a75408417679adbc
     const dispatch = useDispatch();
 
     if(error) {
@@ -687,7 +683,6 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         
-<<<<<<< HEAD
         // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
         //     swal({
         //         title: "Sorry!",
@@ -700,18 +695,6 @@ const Dashboard = (props) => {
         // verificationCheck(users);
 
         router.push("/homepage/airspace");
-=======
-        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        };
-
-        router.push("/homepage/airspace");
-        // verificationCheck(users);
->>>>>>> 6c34ae189082059996890491a75408417679adbc
         dispatch(counterActions.confirmOnMapModal());
     }
 
@@ -767,7 +750,7 @@ const Dashboard = (props) => {
                                         <p className="text-sm">My Airspace</p>
                                         <p className="text-2xl">{airspaceLength}</p>
                                     </div>
-                                    <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button>
+                                    {/* <button onClick={addAirspaceHandler} className="bg-dark-blue rounded-md mt-12 text-sm text-white transition-all duration-500 ease-in-out hover:bg-blue-600" style={{width: "113px", height: "29px"}}>Claim AirSpace</button> */}
                                 </div>
                             </div>
                             {/* <button onClick={navigationHandler.bind(null, "/homepage/uavs")} className="p-5 bg-white hover:bg-blue-100 transition-all duration-500 ease-in-out" style={{width: "100%", height: "169px", borderRadius: "10px"}}> */}
@@ -941,10 +924,7 @@ export default Dashboard;
 export async function getServerSideProps() {
 
     try{
-<<<<<<< HEAD
-=======
         // const response = await fetch("http://localhost:3000/api/proxy", {
->>>>>>> 6c34ae189082059996890491a75408417679adbc
         const response = await fetch(`http://localhost:3000/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",

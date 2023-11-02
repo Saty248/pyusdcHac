@@ -530,8 +530,8 @@ const EditAispaceModal = (props) => {
                             <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
                             <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
                     </div>
-                    <select disabled={airspaceStatus || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
-                        <option selected>$0.01 - $99.00</option>
+                    <select defaultValue="$0.01 - $99.00" disabled={airspaceStatus || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                        <option>$0.01 - $99.00</option>
                     </select>
                 </div>
 
@@ -565,10 +565,10 @@ const EditAispaceModal = (props) => {
                         <div style={{width: "138px"}} className="">
                             <p className="font-medium">Status</p>
                             <p className="text-xs">Give your AirSpace a Status</p>
-                            <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
+                            <select defaultValue={airspaceStatus ? "No-fly zone" : "Available"} onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
                                 <option  disabled>Status</option>
-                                <option selected={!airspaceStatus}>Available</option>
-                                <option selected={airspaceStatus}>No-fly zone</option>
+                                <option>Available</option>
+                                <option>No-fly zone</option>
                             </select> 
                         </div>
                         {/* <div className="flex flex-row justify-center mt-10 -ms-14 items-center"> */}

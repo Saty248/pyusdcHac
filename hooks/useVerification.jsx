@@ -45,35 +45,29 @@ export const useVerification = () => {
     
         const currentUser = users.find(user => user.email === userInfo.email);
 
-<<<<<<< HEAD
-        // const currentUserId =  currentUser[0]?.id;
-=======
->>>>>>> 6c34ae189082059996890491a75408417679adbc
+        // const currentUserId =  currentUser?.id;
         // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
         //     // method: "GET",
         //     headers: {
         //         "Content-Type": "application/json",
-<<<<<<< HEAD
         //         uri: `/users/find-one/${currentUserId}`,
-=======
-        //         uri: `/users/find-one/${currentUser?.id}`,
->>>>>>> 6c34ae189082059996890491a75408417679adbc
         //         // proxy_to_method: "GET",
         //     }
         // })
         // const resp = await userDetails.json();
-<<<<<<< HEAD
+
+        // console.log(currentUser);
 
         
 
         // if(resp.KYCStatusId == 2){
-            console.log(currentUser[0].KYCStatusId);
-            console.log(currentUser);
-        if(currentUser[0].KYCStatusId === 2){
+            // console.log(currentUser.KYCStatusId);
+            // console.log(currentUser);
+        if(currentUser.KYCStatusId === 2){
             // dispatch(counterActions.confirmOnMapModal());
             dispatch(counterActions.additionalInfoModal());
         }
-        else if(currentUser[0].categoryId === 0 && currentUser[0].KYCStatusId === 1) {
+        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId === 1) {
         // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
             swal({
                 title: "Sorry!",
@@ -82,10 +76,10 @@ export const useVerification = () => {
               })
         }
         // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
-        else if(currentUser[0].categoryId == 0 && (currentUser[0].KYCStatusId == 0 || currentUser[0].KYCStatusId == 3)) {
-            console.log("Please do KYC");
-            console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
-            console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
+        else if(currentUser.categoryId == 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
+            // console.log("Please do KYC");
+            // console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
+            // console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
 
             swal({
                 title: "Sorry!",
@@ -97,19 +91,6 @@ export const useVerification = () => {
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
                 // referenceId: currentUserId,
                 referenceId: currentUser.Id,
-=======
-        if(currentUser.KYCStatusId == 2){
-            dispatch(counterActions.confirmOnMapModal());
-        }
-        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId == 1) {
-            alert("KYC is yet to be approved. It might take some time");
-        }
-        else if(currentUser.categoryId === 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
-            // console.log("Please do KYC");
-            const client = new Persona.Client({
-                templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                referenceId: currentUser?.id,
->>>>>>> 6c34ae189082059996890491a75408417679adbc
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {

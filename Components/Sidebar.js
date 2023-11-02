@@ -40,11 +40,7 @@ const Sidebar = (props) => {
         // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
         //     swal({
         //         title: "Sorry!",
-<<<<<<< HEAD
         //         text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
-=======
-        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
->>>>>>> 6c34ae189082059996890491a75408417679adbc
         //       })
         //     return;
         // }
@@ -78,7 +74,7 @@ const Sidebar = (props) => {
                     <span className={`${asPath == "/homepage/dashboard" ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Dashboard</span>
                 </NavLink>
                 {/* <NavLink href="/homepage/airspace"> */}
-                <div>
+                {/* <div>
                     <button onClick={airspaceOptionsHandler} className={`${asPath.includes("/homepage/airspace") && "border-s-2 border-dark-blue bg-gradient-to-r from-blue-400 to-white"}   flex flex-row justify-between items-center w-full rounded-md p-2 pe-4 hover:border-s-2 hover:border-dark-blue hover:bg-gradient-to-r hover:from-blue-400 hover:to-white`}>                
                         <div className="flex flex-row items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill={`${asPath == "/homepage/airspace"  ? "#0653EA" : "#252530"}`}>
@@ -89,11 +85,7 @@ const Sidebar = (props) => {
                             <span className={`${asPath == "/homepage/airspace"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Airspaces</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 16 18" fill="none" className={`${airspaceOptions && "rotate-180"} transition-all duration-200 ease-in-out`}>
-<<<<<<< HEAD
                             <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-=======
-                            <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" strokeWidth="1.5" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
->>>>>>> 6c34ae189082059996890491a75408417679adbc
                         </svg>
                     </button>
                     {airspaceOptions &&
@@ -104,12 +96,19 @@ const Sidebar = (props) => {
                             <button onClick={() => router.push("/homepage/airspace")} className="hover:text-dark-blue">
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">Airspaces</span>
                             </button>
-                            {/* <button className="hover:text-dark-blue">
+                            <button className="hover:text-dark-blue">
                                 <span className="text-light-brown text-sml hover:text-dark-blue font-semibold">My Airspace</span>
-                            </button> */}
+                            </button>
                         </div>  
                     }
-                </div>
+                </div> */}
+                
+                <NavLink href="/homepage/airspace">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill={`${asPath == "/homepage/airspace"  ? "#0653EA" : "#252530"}`}>
+                        <path d="M24.2272 12.845L18.5843 10.4163L17.3276 9.88458C17.1343 9.78792 16.9651 9.53417 16.9651 9.31667V5.61917C16.9651 4.45917 16.1072 3.08167 15.068 2.55C14.7055 2.36875 14.2705 2.36875 13.908 2.55C12.8809 3.08167 12.023 4.47125 12.023 5.63125V9.32875C12.023 9.54625 11.8538 9.8 11.6605 9.89667L4.77301 12.8571C4.01176 13.1713 3.39551 14.1258 3.39551 14.9475V16.5425C3.39551 17.5696 4.16884 18.0771 5.12342 17.6663L11.1772 15.0563C11.6484 14.8508 12.0351 15.1046 12.0351 15.6242V16.9654V19.1404C12.0351 19.4183 11.878 19.8171 11.6847 20.0104L8.88134 22.8258C8.59134 23.1158 8.45842 23.6838 8.59134 24.0946L9.13509 25.7379C9.35259 26.4508 10.1622 26.7892 10.8268 26.4508L13.7026 24.0342C14.1376 23.6596 14.8505 23.6596 15.2855 24.0342L18.1613 26.4508C18.8259 26.7771 19.6355 26.4508 19.8772 25.7379L20.4209 24.0946C20.5538 23.6958 20.4209 23.1158 20.1309 22.8258L17.3276 20.0104C17.1222 19.8171 16.9651 19.4183 16.9651 19.1404V15.6242C16.9651 15.1046 17.3397 14.8629 17.823 15.0563L23.8768 17.6663C24.8313 18.0771 25.6047 17.5696 25.6047 16.5425V14.9475C25.6047 14.1258 24.9884 13.1713 24.2272 12.845Z" fill=""/>
+                    </svg>
+                    <span className={`${asPath == "/homepage/airspace"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Airspaces</span>
+                </NavLink>
                 {/* <NavLink href="/homepage/uavs">
                     <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill={`${asPath.includes("/homepage/uavs")  ? "#0653EA" : "#252530"}`}>
                         <path d="M24.2272 12.845L18.5843 10.4163L17.3276 9.88458C17.1343 9.78792 16.9651 9.53417 16.9651 9.31667V5.61917C16.9651 4.45917 16.1072 3.08167 15.068 2.55C14.7055 2.36875 14.2705 2.36875 13.908 2.55C12.8809 3.08167 12.023 4.47125 12.023 5.63125V9.32875C12.023 9.54625 11.8538 9.8 11.6605 9.89667L4.77301 12.8571C4.01176 13.1713 3.39551 14.1258 3.39551 14.9475V16.5425C3.39551 17.5696 4.16884 18.0771 5.12342 17.6663L11.1772 15.0563C11.6484 14.8508 12.0351 15.1046 12.0351 15.6242V16.9654V19.1404C12.0351 19.4183 11.878 19.8171 11.6847 20.0104L8.88134 22.8258C8.59134 23.1158 8.45842 23.6838 8.59134 24.0946L9.13509 25.7379C9.35259 26.4508 10.1622 26.7892 10.8268 26.4508L13.7026 24.0342C14.1376 23.6596 14.8505 23.6596 15.2855 24.0342L18.1613 26.4508C18.8259 26.7771 19.6355 26.4508 19.8772 25.7379L20.4209 24.0946C20.5538 23.6958 20.4209 23.1158 20.1309 22.8258L17.3276 20.0104C17.1222 19.8171 16.9651 19.4183 16.9651 19.1404V15.6242C16.9651 15.1046 17.3397 14.8629 17.823 15.0563L23.8768 17.6663C24.8313 18.0771 25.6047 17.5696 25.6047 16.5425V14.9475C25.6047 14.1258 24.9884 13.1713 24.2272 12.845Z" fill=""/>

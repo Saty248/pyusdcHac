@@ -73,11 +73,7 @@ const Weather = (props) => {
                         </div>
                         <div className="flex flex-col items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-<<<<<<< HEAD
                                 <path d="M10.5084 1.84102C10.2084 1.60768 9.79174 1.60768 9.49174 1.84102C7.90841 3.04935 3.2334 6.99101 3.2584 11.5827C3.2584 15.2993 6.28341 18.3327 10.0084 18.3327C13.7334 18.3327 16.7584 15.3077 16.7584 11.591C16.7667 7.06602 12.0834 3.05768 10.5084 1.84102Z" stroke="#0653EA" strokeWidth="1.5" strokeMiterlimit="10"/>
-=======
-                                <path d="M10.5084 1.84102C10.2084 1.60768 9.79174 1.60768 9.49174 1.84102C7.90841 3.04935 3.2334 6.99101 3.2584 11.5827C3.2584 15.2993 6.28341 18.3327 10.0084 18.3327C13.7334 18.3327 16.7584 15.3077 16.7584 11.591C16.7667 7.06602 12.0834 3.05768 10.5084 1.84102Z" stroke="#0653EA" strokeWidth="1.5" stroke-miterlimit="10"/>
->>>>>>> 6c34ae189082059996890491a75408417679adbc
                             </svg>
                             <p className="text-dark-brown font-semibold">16 %</p>
                             <p className="text-dark-brown text-sm">Humidity</p>

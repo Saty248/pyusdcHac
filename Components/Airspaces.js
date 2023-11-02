@@ -9,7 +9,7 @@ const Airspaces = (props) => {
     const { verificationCheck } = useVerification();
 
     return <>
-        <div className="bg-white absolute top-5 z-10" style={{width: "340px", height: "80%", left: "20px", borderRadius: "5px"}}>
+        <div className={`bg-white absolute top-5 z-10 transition-all duration-500 ease-in-out ${props.transition ? "-translate-x-96" : ""}`} style={{width: "340px", height: "80%", left: "20px", borderRadius: "5px"}}>
         <div className="flex flex-row">
             {/* <button onClick={props.showAllAirspace} className={`${props.airspace == "all" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "170px", height: "40px", borderRadius: "5px 0px 0px 0px"}}>Airspaces</button> */}
             <button onClick={props.showMyAirspace} className={`${props.airspace == "mine" && "bg-dark-blue text-white"} font-bold hover:bg-dark-blue hover:text-white`} style={{width: "100%", height: "40px", borderRadius: "5px 5px 0px 0px"}}>Airspaces</button>

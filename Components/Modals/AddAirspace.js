@@ -3,10 +3,7 @@ import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useVerification } from '@/hooks/useVerification';
-<<<<<<< HEAD
 import swal from 'sweetalert';
-=======
->>>>>>> 6c34ae189082059996890491a75408417679adbc
 
 
 const AddAirspace = (props) => {

@@ -139,7 +139,6 @@ const Signup = (props) => {
               });
             return;
         }
-        
 
         const solanaWallet = new SolanaWallet(web3authProvider);
 
@@ -249,14 +248,14 @@ const Signup = (props) => {
                 </div>
                 {/* <p className=" text-dark-brown text-xl font-medium">Sign up using other methods</p> */}
                 <div className="flex flex-row w-full justify-center gap-5">
-                    <button onClick={loginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    <button onClick={loginHandler.bind(null, "google")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "406px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/google-logo.png" alt="Google logo" width={33} height={33} />
                         <p>Google</p>
                     </button>
-                    <button onClick={loginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
+                    {/* <button onClick={loginHandler.bind(null, "facebook")} className="flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue" style={{width: "188px", height: "43px", border: "0.5px solid rgba(0, 0, 0, 0.50)"}}>
                         <Image src="/images/Facebook-logo.png" alt="Facebook logo" width={33} height={33} />
                         <p>Facebook</p>
-                    </button>
+                    </button> */}
                 </div>
             </form>
         </div>}

@@ -21,11 +21,11 @@ const Navbar = (props) => {
             <div onClick={() => router.push("/homepage/settings")} className="me-5 ms-2">
                 <p className="font-base font-medium">{props.name}</p>
                 {props.categoryId === 0 &&
-                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : props.status === 1 ? "bg-light-yellow" : "bg-bleach-red"}`} style={{width: "70px", height: "12px", borderRadius:"3px", }}>
+                    <div className={`me-1.5 flex flex-row items-center p-2 justify-center font-semibold gap-1 ${props.status === 2 ? "bg-bleach-green" : props.status === 1 ? "bg-light-yellow" : "bg-bleach-red"}`} style={{width: "80px", height: "12px", borderRadius:"3px", }}>
                         {/* <p className="text-xxs text-light-green">verified</p> */}
                         <p className={`text-xxs text-center ${props.status === 2 ? "text-light-green" : props.status === 1 ? "text-dark-yellow" : "text-light-red-100"}`}>
-                            {props.status === 0 ? "NotAttempted" : props.status === 1 ? "Pending" : 
-                                        props.status === 2 ? "Approved" : "rejected"}</p>
+                            {props.status === 0 ? "Not Attempted" : props.status === 1 ? "Pending" : 
+                                        props.status === 2 ? "Approved" : "Rejected"}</p>
                     </div>
                 }
                 {props.categoryId === 1 &&
