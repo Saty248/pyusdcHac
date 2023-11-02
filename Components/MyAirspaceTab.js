@@ -2,9 +2,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const MyAirspaceTab = (props) => {
-   
-
-
     return <button onClick={props.viewMyAirspace} className="bg-white mt-5 pb-2 transition-all duration-500 ease-in-out hover:bg-blue-100" style={{width: "299px", borderRadius: "3px", border: "1px solid blue"}}>
         <div className="flex flex-row items-center justify-between pb-5" style={{borderBottom: "1px solid blue"}}>
             <div className="flex flex-row mt-5 ms-2 items-center gap-2 text-sm font-medium font-sans">

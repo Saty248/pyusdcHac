@@ -186,7 +186,7 @@ const EditAispaceModal = (props) => {
         //         const chainConfig = {
         //             chainNamespace: "solana",
         //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //             rpcTarget: "https://api.testnet.solana.com",
+        //             rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         //             displayName: "Solana Mainnet",
         //             blockExplorer: "https://explorer.solana.com",
         //             ticker: "SOL",
@@ -200,7 +200,7 @@ const EditAispaceModal = (props) => {
                 
         //                 // For Development
         //                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-        //                 web3AuthNetwork: "cyan",
+        //                 web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         //                 chainConfig: chainConfig,
         //             });
                 
@@ -271,7 +271,7 @@ const EditAispaceModal = (props) => {
         //     const chainConfig = {
         //         chainNamespace: "solana",
         //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //         rpcTarget: "https://api.testnet.solana.com",
+        //         rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         //         displayName: "Solana Mainnet",
         //         blockExplorer: "https://explorer.solana.com",
         //         ticker: "SOL",
@@ -285,7 +285,7 @@ const EditAispaceModal = (props) => {
             
         //             // For Development
         //             // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-        //             web3AuthNetwork: "cyan",
+        //             web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         //             chainConfig: chainConfig,
         //         });
             
@@ -347,7 +347,7 @@ const EditAispaceModal = (props) => {
         const chainConfig = {
             chainNamespace: "solana",
             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
             displayName: "Solana Mainnet",
             blockExplorer: "https://explorer.solana.com",
             ticker: "SOL",
@@ -361,7 +361,7 @@ const EditAispaceModal = (props) => {
         
                 // For Development
                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                web3AuthNetwork: "cyan",
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 chainConfig: chainConfig,
             });
         
@@ -530,8 +530,8 @@ const EditAispaceModal = (props) => {
                             <input name="monday" type="checkbox" onChange={costCheckedHandler} checked={costChecked} className="cursor-pointer" />}
                             <label htmlFor="AirSpace Title" onClick={costCheckedHandler} className="font-medium me-10 cursor-pointer">Variable Rental Range (per transit)</label>
                     </div>
-                    <select disabled={airspaceStatus || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
-                        <option selected>$0.01 - $99.00</option>
+                    <select defaultValue="$0.01 - $99.00" disabled={airspaceStatus || !costChecked} className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "180px", height: "27px"}}>
+                        <option>$0.01 - $99.00</option>
                     </select>
                 </div>
 
@@ -565,10 +565,10 @@ const EditAispaceModal = (props) => {
                         <div style={{width: "138px"}} className="">
                             <p className="font-medium">Status</p>
                             <p className="text-xs">Give your AirSpace a Status</p>
-                            <select onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
+                            <select defaultValue={airspaceStatus ? "No-fly zone" : "Available"} onChange={airspaceStatusHandler} className="bg-light-blue mt-2 ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm" style={{width: "143px", height: "27px"}}>
                                 <option  disabled>Status</option>
-                                <option selected={!airspaceStatus}>Available</option>
-                                <option selected={airspaceStatus}>No-fly zone</option>
+                                <option>Available</option>
+                                <option>No-fly zone</option>
                             </select> 
                         </div>
                         {/* <div className="flex flex-row justify-center mt-10 -ms-14 items-center"> */}

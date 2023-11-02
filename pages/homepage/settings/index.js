@@ -44,7 +44,7 @@ const Settings = (props) => {
                 const chainConfig = {
                     chainNamespace: "solana",
                     chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-                    rpcTarget: "https://api.testnet.solana.com",
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
                     displayName: "Solana Mainnet",
                     blockExplorer: "https://explorer.solana.com",
                     ticker: "SOL",
@@ -58,7 +58,7 @@ const Settings = (props) => {
                 
                         // For Development
                         // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                        web3AuthNetwork: "cyan",
+                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                         chainConfig: chainConfig,
                     });
             
@@ -206,7 +206,7 @@ const Settings = (props) => {
         //         const chainConfig = {
         //             chainNamespace: "solana",
         //             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //             rpcTarget: "https://api.testnet.solana.com",
+        //             rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         //             displayName: "Solana Mainnet",
         //             blockExplorer: "https://explorer.solana.com",
         //             ticker: "SOL",
@@ -220,7 +220,7 @@ const Settings = (props) => {
                 
         //                 // For Development
         //                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-        //                 web3AuthNetwork: "cyan",
+        //                 web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         //                 chainConfig: chainConfig,
         //             });
                 
@@ -291,7 +291,7 @@ const Settings = (props) => {
         //     const chainConfig = {
         //         chainNamespace: "solana",
         //         chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-        //         rpcTarget: "https://api.testnet.solana.com",
+        //         rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
         //         displayName: "Solana Mainnet",
         //         blockExplorer: "https://explorer.solana.com",
         //         ticker: "SOL",
@@ -305,7 +305,7 @@ const Settings = (props) => {
             
         //             // For Development
         //             // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-        //             web3AuthNetwork: "cyan",
+        //             web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
         //             chainConfig: chainConfig,
         //         });
             
@@ -367,7 +367,7 @@ const Settings = (props) => {
         const chainConfig = {
             chainNamespace: "solana",
             chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-            rpcTarget: "https://api.testnet.solana.com",
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
             displayName: "Solana Mainnet",
             blockExplorer: "https://explorer.solana.com",
             ticker: "SOL",
@@ -380,7 +380,7 @@ const Settings = (props) => {
         
                 // For Development
                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                web3AuthNetwork: "cyan",
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 chainConfig: chainConfig,
             });
         
@@ -398,8 +398,8 @@ const Settings = (props) => {
         const origin = window.location.origin;
         // const origin = 'http://localhost:3000';
 
-        console.log("This is the origin", origin);
-        console.log("This is the domain", domain);
+        // console.log("This is the origin", origin);
+        // console.log("This is the domain", domain);
 
 
         const payload = new SIWPayload();
@@ -431,7 +431,7 @@ const Settings = (props) => {
         signatureObj.sign_issue_at = formatedDate;
         signatureObj.sign_address = user.blockchainAddress;
 
-        console.log("This is the signature object", signatureObj);
+        // console.log("This is the signature object", signatureObj);
 
 
 
@@ -535,10 +535,12 @@ const Settings = (props) => {
                     {(user.categoryId === 0 && user.KYCStatusId === 0) &&
                         <div className="border-2 mt-10 flex flex-row justify-between items-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "124px"}}>
                             <div>
-                                <h3 className="text-2xl font-medium">Verify your Account</h3>
-                                <p>Verify your account to have your AirSpace listed for rental on our platform</p>
+                                <h3 className="text-2xl font-medium">Your Account is not verified.</h3>
+                                <p>You can begin the KYC process when you try to claim a property.</p>
                             </div>
-                            <button onClick={startVerification} disabled={verificationLoading} className={`bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${!verificationLoading ? "cursor-pointer" : "cursor-wait"}`} style={{width: "120px", height: "40px"}}>Verify now</button>
+                            <div>
+                                <p className="text-light-red-100 bg-bleach-red rounded-md text-center transition-all duration-500 ease-in-out py-2 px-1">Not Attempted</p>
+                            </div>
                         </div>
                     }
 
@@ -549,8 +551,7 @@ const Settings = (props) => {
                                 <p>Sorry. You didn't pass the KYC check</p>
                             </div>
                             <div>
-                                <p className="text-light-red-100 rounded-md text-center text-xs transition-all duration-500 ease-in-out py-2 px-1">rejected</p>
-                                <button onClick={startVerification} disabled={verificationLoading} className={`bg-dark-blue rounded-md text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${!verificationLoading ? "cursor-pointer" : "cursor-wait"}`} style={{width: "120px", height: "40px"}}>Try Again</button>
+                                <p className="text-light-red-100 bg-bleach-red rounded-md text-center transition-all duration-500 ease-in-out py-1 px-2">Rejected</p>
                             </div>
                         </div>
                     }
@@ -588,7 +589,7 @@ const Settings = (props) => {
                     <div className="border-2 mt-10 flex flex-col justify-center px-6 py-5 border-light-blue rounded-md" style={{width: "", height: "397px"}}>
                         <div className="mb-5">
                             <h3 className="text-2xl font-medium">Personal Information</h3>
-                            <p>update your personal information</p>
+                            <p>Update your personal information</p>
                         </div>
                         <div className="relative mb-10"  style={{maxWidth: "660px", height: "37px"}}>
                             <label className="text-bleach-brown" htmlFor="first name">Name</label> <br />
