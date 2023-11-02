@@ -22,7 +22,7 @@ export const useVerification = () => {
         
                 // For Development
                 // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
-                web3AuthNetwork: "cyan",
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
                 chainConfig: chainConfig,
             });
     
