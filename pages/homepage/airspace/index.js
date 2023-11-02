@@ -493,7 +493,7 @@ const Airspace = (props) => {
         if(user.categoryId === 1 && user.KYCStatusId !== 2) {
             swal({
                 title: "Sorry!",
-                text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
               })
             return;
         }
@@ -704,7 +704,11 @@ export default Airspace;
 
 export async function getServerSideProps() {
     try{
+<<<<<<< HEAD
         // const response = await fetch(`https://main.d3a3mji6a9sbq0.amplifyapp.com/api/proxy?${Date.now()}`, {
+=======
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         const response = await fetch(`http://localhost:3000/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",

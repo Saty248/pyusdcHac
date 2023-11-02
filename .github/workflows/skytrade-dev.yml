@@ -2,7 +2,7 @@ name: dev_frontend_skytrade_build_deploy
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev-deploy" ]
 
 jobs:
   build:

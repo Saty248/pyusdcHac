@@ -3,7 +3,10 @@ import maplibregl from 'maplibre-gl';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useVerification } from '@/hooks/useVerification';
+<<<<<<< HEAD
 import swal from 'sweetalert';
+=======
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
 
 
 const AddAirspace = (props) => {
@@ -198,6 +201,14 @@ const AddAirspace = (props) => {
             return;
         }
 
+        if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        }
+
         const vertexes = []
 
         if(addressData.geojson && addressData.geojson.type === "Polygon") {
@@ -227,7 +238,7 @@ const AddAirspace = (props) => {
         dispatch(counterActions.airspaceData(addressValue));
 
       
-        await verificationCheck(props.users);
+        // await verificationCheck(props.users);
 
         dispatch(counterActions.closeConfirmOnMapModal());
         // dispatch(counterActions.additionalInfoModal());

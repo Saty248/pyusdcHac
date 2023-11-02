@@ -40,7 +40,11 @@ const Sidebar = (props) => {
         // if(props.user.categoryId === 1 && props.user.KYCStatusId !== 2) {
         //     swal({
         //         title: "Sorry!",
+<<<<<<< HEAD
         //         text: "Your KYB is yet to be completed. A member of our team will be in contact with you soon",
+=======
+        //         text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         //       })
         //     return;
         // }
@@ -85,7 +89,11 @@ const Sidebar = (props) => {
                             <span className={`${asPath == "/homepage/airspace"  ? "text-dark-blue" : "text-light-brown"} font-semibold`}>Airspaces</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 16 18" fill="none" className={`${airspaceOptions && "rotate-180"} transition-all duration-200 ease-in-out`}>
+<<<<<<< HEAD
                             <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+=======
+                            <path d="M2.72027 6.71203L7.06694 11.602C7.58027 12.1795 8.42027 12.1795 8.93361 11.602L13.2803 6.71203" stroke="#292D32" strokeWidth="1.5" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
                         </svg>
                     </button>
                     {airspaceOptions &&

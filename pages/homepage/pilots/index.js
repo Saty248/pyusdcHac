@@ -168,7 +168,12 @@ const UAVs = (props) => {
 export default UAVs;
 
 export async function getServerSideProps() {
+
     try{
+<<<<<<< HEAD
+=======
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
        const response = await fetch(`http://localhost:3000/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",

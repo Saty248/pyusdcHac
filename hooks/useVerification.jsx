@@ -43,18 +43,26 @@ export const useVerification = () => {
             return;
         }
     
-        const currentUser = users.filter(user => user.email === userInfo.email);
+        const currentUser = users.find(user => user.email === userInfo.email);
 
+<<<<<<< HEAD
         // const currentUserId =  currentUser[0]?.id;
+=======
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
         //     // method: "GET",
         //     headers: {
         //         "Content-Type": "application/json",
+<<<<<<< HEAD
         //         uri: `/users/find-one/${currentUserId}`,
+=======
+        //         uri: `/users/find-one/${currentUser?.id}`,
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         //         // proxy_to_method: "GET",
         //     }
         // })
         // const resp = await userDetails.json();
+<<<<<<< HEAD
 
         
 
@@ -89,6 +97,19 @@ export const useVerification = () => {
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
                 // referenceId: currentUserId,
                 referenceId: currentUser.Id,
+=======
+        if(currentUser.KYCStatusId == 2){
+            dispatch(counterActions.confirmOnMapModal());
+        }
+        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId == 1) {
+            alert("KYC is yet to be approved. It might take some time");
+        }
+        else if(currentUser.categoryId === 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
+            // console.log("Please do KYC");
+            const client = new Persona.Client({
+                templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+                referenceId: currentUser?.id,
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {

@@ -544,7 +544,9 @@ const Wallet = (props) => {
 export default Wallet;
 
 export async function getServerSideProps() {
+
     try{
+        // const response = await fetch("http://localhost:3000/api/proxy", {
         const response = await fetch(`http://localhost:3000/api/proxy`, {
             headers: {
                 "Content-Type": "application/json",

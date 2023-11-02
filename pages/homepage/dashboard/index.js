@@ -19,7 +19,11 @@ import { counterActions } from "@/store/store";
 const Dashboard = (props) => {
     const { users, error } = props;
 
+<<<<<<< HEAD
     const { verificationCheck } = useVerification();
+=======
+    // const { verificationCheck } = useVerification();
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
     const dispatch = useDispatch();
 
     if(error) {
@@ -683,6 +687,7 @@ const Dashboard = (props) => {
     const addAirspaceHandler = (event) => {
         event.stopPropagation();   
         
+<<<<<<< HEAD
         // if(user.categoryId === 1 && user.KYCStatusId !== 2) {
         //     swal({
         //         title: "Sorry!",
@@ -695,6 +700,18 @@ const Dashboard = (props) => {
         // verificationCheck(users);
 
         router.push("/homepage/airspace");
+=======
+        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
+            swal({
+                title: "Sorry!",
+                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
+              })
+            return;
+        };
+
+        router.push("/homepage/airspace");
+        // verificationCheck(users);
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         dispatch(counterActions.confirmOnMapModal());
     }
 
@@ -922,7 +939,12 @@ export default Dashboard;
 
 
 export async function getServerSideProps() {
+
     try{
+<<<<<<< HEAD
+=======
+        // const response = await fetch("http://localhost:3000/api/proxy", {
+>>>>>>> 6c34ae189082059996890491a75408417679adbc
         const response = await fetch(`http://localhost:3000/api/proxy?${Date.now()}`, {
             headers: {
                 "Content-Type": "application/json",
