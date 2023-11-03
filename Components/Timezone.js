@@ -15,13 +15,14 @@ const TimezoneSelectComponent = (props) => {
           id="timezoneSelect"
           value={props.timezone} 
           // onChange={(e) => setTimezone(e.target.value)}
+          defaultValue={props.timeZone}
           className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm"
           style={{width: "143px", height: "27px"}}
           disabled={props.disable}
           onChange={props.onChange}
         >
           {timezones.map(tz => (
-            <option selected={tz.value === props.timeZone} key={tz.value} value={tz.value}>
+            <option key={tz.value} value={tz.value}>
               {tz.label}
             </option>
           ))}

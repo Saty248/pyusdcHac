@@ -467,7 +467,7 @@ const Airspace = (props) => {
         setShowOptions(false);
     }
 
-    const confirmAddressHandler = async (e) => {
+    const confirmAddressHandler = (e) => {
         // e.preventDefault();
         setIsLoading(true);
 
@@ -508,17 +508,10 @@ const Airspace = (props) => {
         }
 
         dispatch(counterActions.airspaceData(addressValue));
-
-        if(user.categoryId === 1 && user.KYCStatusId !== 2) {
-            swal({
-                title: "Sorry!",
-                text: "Your KYC is yet to be completed. A member of our team will be in contact with you soon",
-              })
-            return;
-        }
       
         
-        await verificationCheck(users);
+        verificationCheck(users);
+
         setIsLoading(false);
     };
   
