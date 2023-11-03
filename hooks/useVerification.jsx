@@ -1,6 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { counterActions } from "@/store/store";
 import { Web3Auth } from "@web3auth/modal";
+import swal from "sweetalert";
 
 export const useVerification = () => {
     const dispatch = useDispatch();
@@ -44,54 +45,31 @@ export const useVerification = () => {
         }
     
         const currentUser = users.filter(user => user.email === userInfo.email);
-
-
-        // const currentUserId =  currentUser?.id;
-        // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-        //     // method: "GET",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         uri: `/users/find-one/${currentUserId}`,
-        //         // proxy_to_method: "GET",
-        //     }
-        // })
-        // const resp = await userDetails.json();
-
-        // console.log(currentUser);
+        const user = currentUser[0];
 
         
 
-        // if(resp.KYCStatusId == 2){
-            // console.log(currentUser.KYCStatusId);
-            // console.log(currentUser);
-        if(currentUser.KYCStatusId === 2){
-            // dispatch(counterActions.confirmOnMapModal());
+        if(user.KYCStatusId === 2){
             dispatch(counterActions.additionalInfoModal());
         }
-        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId === 1) {
-        // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
+        else if(user.categoryId === 0 && user.KYCStatusId === 1) {
             swal({
                 title: "Sorry!",
                 text: "Your KYC is pending. kindly check back later.",
                 // timer: 3000
               })
         }
-        // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
-        else if(currentUser.categoryId == 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
-            // console.log("Please do KYC");
-            // console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
-            // console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
-
+        else if(user.categoryId == 0 && (user.KYCStatusId == 0 || user.KYCStatusId == 3)) {
             swal({
                 title: "Sorry!",
-                text: "Your KYC is yet to be completed. you will be redirected now to complete it.",
-                timer: 3000
-              })
+                text: "Your KYC is yet to be completed. You will be redirected now to complete it.",
+                timer: 2000
+              });
+
 
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                // referenceId: currentUserId,
-                referenceId: currentUser?.id,
+                referenceId: user?.id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {
@@ -100,5 +78,6 @@ export const useVerification = () => {
             });
         }
     }
+
     return {verificationCheck}
 }
