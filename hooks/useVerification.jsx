@@ -47,24 +47,6 @@ export const useVerification = () => {
         const currentUser = users.filter(user => user.email === userInfo.email);
         const user = currentUser[0];
 
-        // const currentUserId =  currentUser?.id;
-        // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
-        //     // method: "GET",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         uri: `/users/find-one/${currentUserId}`,
-        //         // proxy_to_method: "GET",
-        //     }
-        // })
-        // const resp = await userDetails.json();
-
-        // console.log(currentUser);
-
-        console.log("This is the returned User", currentUser);
-        console.log("This is the returned User", user);
-        console.log("This are all users", users);
-        console.log("This is the user info from web3", userInfo);
-
         
 
         if(user.KYCStatusId === 2){
@@ -78,20 +60,12 @@ export const useVerification = () => {
               })
         }
         else if(user.categoryId == 0 && (user.KYCStatusId == 0 || user.KYCStatusId == 3)) {
-            // console.log("Please do KYC");
-            // console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
-            // console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
-
             swal({
                 title: "Sorry!",
                 text: "Your KYC is yet to be completed. You will be redirected now to complete it.",
                 timer: 2000
               });
 
-        
-
-            console.log("This is the user Id", user.id)
-            console.log("This is the user Id", user?.id)
 
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
