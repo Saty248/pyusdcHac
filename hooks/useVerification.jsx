@@ -1,6 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { counterActions } from "@/store/store";
 import { Web3Auth } from "@web3auth/modal";
+import swal from "sweetalert";
 
 export const useVerification = () => {
     const dispatch = useDispatch();
@@ -45,7 +46,6 @@ export const useVerification = () => {
     
         const currentUser = users.filter(user => user.email === userInfo.email);
 
-
         // const currentUserId =  currentUser?.id;
         // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
         //     // method: "GET",
@@ -58,6 +58,10 @@ export const useVerification = () => {
         // const resp = await userDetails.json();
 
         // console.log(currentUser);
+
+        console.log("This is the returned User", currentUser);
+        console.log("This are all users", users);
+        console.log("This is the user info from web3", userInfo);
 
         
 
@@ -84,13 +88,18 @@ export const useVerification = () => {
 
             swal({
                 title: "Sorry!",
-                text: "Your KYC is yet to be completed. you will be redirected now to complete it.",
-                timer: 3000
-              })
+                text: "Your KYC is yet to be completed. You will be redirected now to complete it.",
+                timer: 2000
+              });
+
+        
+
+            console.log("This is the user Id", currentUser.id)
+            console.log("This is the user Id", currentUser?.id)
 
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                // referenceId: currentUserId,
+                // referenceId: currentUserid,
                 referenceId: currentUser?.id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
