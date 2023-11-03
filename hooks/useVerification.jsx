@@ -44,7 +44,7 @@ export const useVerification = () => {
             return;
         }
     
-        const currentUser = users.find(user => user.email === userInfo.email);
+        const currentUser = users.filter(user => user.email === userInfo.email);
 
         // const currentUserId =  currentUser?.id;
         // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
