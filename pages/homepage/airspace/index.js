@@ -176,7 +176,7 @@ const Airspace = (props) => {
                     console.log(resData.error);
                     return;
                 }
-
+                console.log("this is the full address info", resData);
                 const endPoint = []
         
                 endPoint.push(resData[0].lon);
@@ -192,44 +192,51 @@ const Airspace = (props) => {
                     container: 'map',
                     attributionControl: false, 
                     style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
-                    zoom: 18,
+                    zoom: 16,
                     center: endPoint
                 });
 
                 let nav = new maplibregl.NavigationControl();
                 map.addControl(nav, 'top-right');
                 
-        
-                if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
-                    let el = document.createElement('div');
-                    el.id = 'markerWithExternalCss';
+                let el = document.createElement('div');
+                el.id = 'markerWithExternalCss';
+                
+                new maplibregl.Marker(el)
+                    .setLngLat(endPoint)
+                    .addTo(map);
+
+
+                // if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
+                //     let el = document.createElement('div');
+                //     el.id = 'markerWithExternalCss';
                     
-                    new maplibregl.Marker(el)
-                        .setLngLat(endPoint)
-                        .addTo(map);
+                //     new maplibregl.Marker(el)
+                //         .setLngLat(endPoint)
+                //         .addTo(map);
                     
-                    return;    
-                }
+                //     return;    
+                // }
 
                 
-                map.on('load', function () {
-                    map.addLayer({
-                        'id': 'maine',
-                        'type': 'fill',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'geometry': resData[0].geojson
-                            }
-                        },
-                        'layout': {},
-                        'paint': {
-                            'fill-color': '#D20C0C',
-                            'fill-opacity': 0.5
-                            }
-                        });
-                    });     
+                // map.on('load', function () {
+                //     map.addLayer({
+                //         'id': 'maine',
+                //         'type': 'fill',
+                //         'source': {
+                //             'type': 'geojson',
+                //             'data': {
+                //                 'type': 'Feature',
+                //                 'geometry': resData[0].geojson
+                //             }
+                //         },
+                //         'layout': {},
+                //         'paint': {
+                //             'fill-color': '#D20C0C',
+                //             'fill-opacity': 0.5
+                //             }
+                //         });
+                //     });     
                     
             })
             .catch((err) => {
@@ -255,10 +262,6 @@ const Airspace = (props) => {
             setLatitude("");    
 
             const addressHandler = setTimeout(() => {
-                `https://api.locationiq.com/v1/autocomplete?
-                    key=Your_API_Access_Token&q=856%2C%20Melrose%20
-                    Street%2C%20 Garland%2C%20Dallas%20County%2C%20
-                    Texas%2C%2075040%2C%20USA&limit=5&dedupe=1&`
                 fetch(`https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`)
                 .then(res => {
                     // console.log("This is the result from locationIq API call", res)
