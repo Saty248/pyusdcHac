@@ -134,9 +134,6 @@ const Airspace = (props) => {
                 center: [-122.42, 37.779]
             });
 
-            var nav = new maplibregl.NavigationControl();
-            map.addControl(nav, 'top-right');
-
 
             map.on('load', function () {
                 map.addLayer({
@@ -159,7 +156,7 @@ const Airspace = (props) => {
                     });
                 });  
         }
-    }, [token, user])
+    }, [token, user]);
 
     useEffect(() => {
         if(flyToAddress) {
@@ -199,6 +196,9 @@ const Airspace = (props) => {
                     center: endPoint
                 });
 
+                let nav = new maplibregl.NavigationControl();
+                map.addControl(nav, 'top-right');
+                
         
                 if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
                     let el = document.createElement('div');
@@ -207,9 +207,10 @@ const Airspace = (props) => {
                     new maplibregl.Marker(el)
                         .setLngLat(endPoint)
                         .addTo(map);
-
+                    
                     return;    
                 }
+
                 
                 map.on('load', function () {
                     map.addLayer({
@@ -266,7 +267,7 @@ const Airspace = (props) => {
                     return res.json()
                 })
                 .then(resData => {
-                    // console.log("This is the main result from locationIq", resData);
+                    console.log("This is the auto complete result from locationIq", resData);
                     setAddresses(resData);
                 })
                 .catch((err) => {
