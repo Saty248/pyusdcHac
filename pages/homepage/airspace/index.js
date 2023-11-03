@@ -255,6 +255,10 @@ const Airspace = (props) => {
             setLatitude("");    
 
             const addressHandler = setTimeout(() => {
+                `https://api.locationiq.com/v1/autocomplete?
+                    key=Your_API_Access_Token&q=856%2C%20Melrose%20
+                    Street%2C%20 Garland%2C%20Dallas%20County%2C%20
+                    Texas%2C%2075040%2C%20USA&limit=5&dedupe=1&`
                 fetch(`https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`)
                 .then(res => {
                     // console.log("This is the result from locationIq API call", res)
@@ -580,11 +584,11 @@ const Airspace = (props) => {
                                 <p className="text-xs text-red-500">If any of the addresses listed below matches your address, click on it to select</p>
                                 {addresses.map(address => {
                                     return <button  key={address.osm_id + Math.random()}
-                                                        value={address.display_address} 
+                                                        value={address.display_name} 
                                                         onClick={buttonSelectHandler}
                                                         className="py-2 text-left" 
                                                         style={{borderBottom: "0.2px solid #0653EA", width: "100%"}}>
-                                                        {address.display_address}
+                                                        {address.display_name}
                                     </button>
                                 })
 
