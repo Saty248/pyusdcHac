@@ -92,9 +92,7 @@ export const useVerification = () => {
                 timer: 2000
               });
 
-            
-            console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
-            console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
+        
 
             console.log("This is the user Id", currentUser.id)
             console.log("This is the user Id", currentUser?.id)
