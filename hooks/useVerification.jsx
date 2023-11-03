@@ -45,6 +45,7 @@ export const useVerification = () => {
         }
     
         const currentUser = users.filter(user => user.email === userInfo.email);
+        const user = currentUser[0];
 
         // const currentUserId =  currentUser?.id;
         // let userDetails = await fetch(`/api/proxy?${Date.now()}`, {
@@ -60,28 +61,23 @@ export const useVerification = () => {
         // console.log(currentUser);
 
         console.log("This is the returned User", currentUser);
+        console.log("This is the returned User", user);
         console.log("This are all users", users);
         console.log("This is the user info from web3", userInfo);
 
         
 
-        // if(resp.KYCStatusId == 2){
-            // console.log(currentUser.KYCStatusId);
-            // console.log(currentUser);
-        if(currentUser.KYCStatusId === 2){
-            // dispatch(counterActions.confirmOnMapModal());
+        if(user.KYCStatusId === 2){
             dispatch(counterActions.additionalInfoModal());
         }
-        else if(currentUser.categoryId === 0 && currentUser.KYCStatusId === 1) {
-        // else if(resp.categoryId === 0 && resp.KYCStatusId == 1) {
+        else if(user.categoryId === 0 && user.KYCStatusId === 1) {
             swal({
                 title: "Sorry!",
                 text: "Your KYC is pending. kindly check back later.",
                 // timer: 3000
               })
         }
-        // else if(resp.categoryId === 0 && (resp.KYCStatusId == 0 || resp.KYCStatusId == 3)) {
-        else if(currentUser.categoryId == 0 && (currentUser.KYCStatusId == 0 || currentUser.KYCStatusId == 3)) {
+        else if(user.categoryId == 0 && (user.KYCStatusId == 0 || user.KYCStatusId == 3)) {
             // console.log("Please do KYC");
             // console.log("This is the environment ID", process.env.NEXT_PUBLIC_ENVIRONMENT_ID)
             // console.log("This is the template ID", process.env.NEXT_PUBLIC_TEMPLATE_ID)
@@ -94,13 +90,12 @@ export const useVerification = () => {
 
         
 
-            console.log("This is the user Id", currentUser.id)
-            console.log("This is the user Id", currentUser?.id)
+            console.log("This is the user Id", user.id)
+            console.log("This is the user Id", user?.id)
 
             const client = new Persona.Client({
                 templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-                // referenceId: currentUserid,
-                referenceId: currentUser?.id,
+                referenceId: user?.id,
                 environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
                 onReady: () => client.open(),
                 onComplete: ({ inquiryId, status, fields }) => {
@@ -109,5 +104,6 @@ export const useVerification = () => {
             });
         }
     }
+
     return {verificationCheck}
 }
