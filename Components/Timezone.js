@@ -13,7 +13,7 @@ const TimezoneSelectComponent = (props) => {
         <label htmlFor="timezoneSelect">Select Timezone:</label>
         <select 
           id="timezoneSelect"
-          value={props.timezone} 
+          // value={props.timezone} 
           // onChange={(e) => setTimezone(e.target.value)}
           defaultValue={props.timeZone}
           className="bg-light-blue ps-2 placeholder:text-sml text-dark-brown text-sml placeholder:text-light-brown rounded-sm"
