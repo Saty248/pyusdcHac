@@ -19,7 +19,7 @@ const Airspaces = (props) => {
                 {props.children}
             </div>}
 
-            {props.myAirspace && <div className="bg-white flex overflow-y-auto flex-col items-center" style={{width: "99%", height: "100%", marginTop: "2px"}}>
+            {props.myAirspace && <div className="bg-white flex overflow-y-auto overflow-x-hidden px-5 flex-col items-center" style={{width: "99%", height: "100%"}}>
                         {/* <button onClick={props.checkUser} className="text-sm bg-milk mx-auto mt-5 flex flex-row justify-center items-center gap-2 font-medium text-light-dark rounded transition-all duration-500 ease-in-out hover:bg-blue-200 py-2" style={{width: "205px"}}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M1.33301 8.00065C1.33301 4.31865 4.31767 1.33398 7.99967 1.33398C11.6817 1.33398 14.6663 4.31865 14.6663 8.00065C14.6663 11.6827 11.6817 14.6673 7.99967 14.6673C4.31767 14.6673 1.33301 11.6827 1.33301 8.00065ZM7.99967 2.66732C6.58519 2.66732 5.22863 3.22922 4.22844 4.22941C3.22824 5.22961 2.66634 6.58616 2.66634 8.00065C2.66634 9.41514 3.22824 10.7717 4.22844 11.7719C5.22863 12.7721 6.58519 13.334 7.99967 13.334C9.41416 13.334 10.7707 12.7721 11.7709 11.7719C12.7711 10.7717 13.333 9.41514 13.333 8.00065C13.333 6.58616 12.7711 5.22961 11.7709 4.22941C10.7707 3.22922 9.41416 2.66732 7.99967 2.66732Z" fill="#1E1E1E"/>
