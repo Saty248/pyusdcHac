@@ -1,9 +1,7 @@
 import { counterActions } from "@/store/store";
 import { Fragment, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { createPortal } from "react-dom";
-import moment from "moment-timezone";
 import swal from "sweetalert";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
@@ -11,8 +9,6 @@ import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
 
 import TimeSelect from "../TimeSelect";
-import Spinner from "../Spinner";
-import Backdrop from "../Backdrop";
 import TimezoneSelectComponent from "../Timezone";
 
 const EditAispaceModal = (props) => {
@@ -577,7 +573,6 @@ const EditAispaceModal = (props) => {
                                         setTimezone(e.target.value)
                                     }} 
                                     timeZone={props.timeZone}
-                                    timezone={timezone}
                                     disable={airspaceStatus} />
                         </div>   
                     </div>  

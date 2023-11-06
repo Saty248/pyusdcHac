@@ -274,7 +274,6 @@ const Airspace = (props) => {
                     return res.json()
                 })
                 .then(resData => {
-                    console.log("This is the auto complete result from locationIq", resData);
                     setAddresses(resData);
                 })
                 .catch((err) => {
