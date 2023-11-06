@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import swal from "sweetalert";
 import logo from "../../../../public/images/logo.jpg";
 import Script from "next/script";
-
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
@@ -51,7 +50,7 @@ const CorporateSignup = () => {
 
     const returnHandler = (e) => {
         e.preventDefault();
-        router.push("/auth/join")
+        router.push("/auth/join");
     }
 
 

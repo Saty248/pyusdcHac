@@ -55,18 +55,6 @@ const IndividualSignup = () => {
         const name = nameRef.current.value;
         const phoneNumber = phoneNumberRef.current.value;
 
-        // if(isNaN(+phoneNumber)) {
-        //     console.log("it is not a number");
-        //     setPhoneNumberValid(false);
-        //     swal({
-        //         title: "Oops!",
-        //         text: "Invalid phone number. Ensure to include country code starting with +",
-        //         // timer: 3000
-        //       });
-        // } else{
-        //     console.log("it is a number");
-        // }
-
 
         if(!name) {
             setNameValid(false);
