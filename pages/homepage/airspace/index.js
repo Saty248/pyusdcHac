@@ -176,7 +176,7 @@ const Airspace = (props) => {
                     console.log(resData.error);
                     return;
                 }
-                console.log("this is the full address info", resData);
+
                 const endPoint = []
         
                 endPoint.push(resData[0].lon);
@@ -192,51 +192,44 @@ const Airspace = (props) => {
                     container: 'map',
                     attributionControl: false, 
                     style: 'https://tiles.locationiq.com/v3/streets/vector.json?key='+locationiqKey,
-                    zoom: 16,
+                    zoom: 18,
                     center: endPoint
                 });
 
                 let nav = new maplibregl.NavigationControl();
                 map.addControl(nav, 'top-right');
                 
-                let el = document.createElement('div');
-                el.id = 'markerWithExternalCss';
-                
-                new maplibregl.Marker(el)
-                    .setLngLat(endPoint)
-                    .addTo(map);
-
-
-                // if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
-                //     let el = document.createElement('div');
-                //     el.id = 'markerWithExternalCss';
+        
+                if(!resData[0].geojson || resData[0].geojson.type !== "Polygon") {  
+                    let el = document.createElement('div');
+                    el.id = 'markerWithExternalCss';
                     
-                //     new maplibregl.Marker(el)
-                //         .setLngLat(endPoint)
-                //         .addTo(map);
+                    new maplibregl.Marker(el)
+                        .setLngLat(endPoint)
+                        .addTo(map);
                     
-                //     return;    
-                // }
+                    return;    
+                }
 
                 
-                // map.on('load', function () {
-                //     map.addLayer({
-                //         'id': 'maine',
-                //         'type': 'fill',
-                //         'source': {
-                //             'type': 'geojson',
-                //             'data': {
-                //                 'type': 'Feature',
-                //                 'geometry': resData[0].geojson
-                //             }
-                //         },
-                //         'layout': {},
-                //         'paint': {
-                //             'fill-color': '#D20C0C',
-                //             'fill-opacity': 0.5
-                //             }
-                //         });
-                //     });     
+                map.on('load', function () {
+                    map.addLayer({
+                        'id': 'maine',
+                        'type': 'fill',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'geometry': resData[0].geojson
+                            }
+                        },
+                        'layout': {},
+                        'paint': {
+                            'fill-color': '#D20C0C',
+                            'fill-opacity': 0.5
+                            }
+                        });
+                    });     
                     
             })
             .catch((err) => {
@@ -587,11 +580,11 @@ const Airspace = (props) => {
                                 <p className="text-xs text-red-500">If any of the addresses listed below matches your address, click on it to select</p>
                                 {addresses.map(address => {
                                     return <button  key={address.osm_id + Math.random()}
-                                                        value={address.display_name} 
+                                                        value={address.display_address} 
                                                         onClick={buttonSelectHandler}
                                                         className="py-2 text-left" 
                                                         style={{borderBottom: "0.2px solid #0653EA", width: "100%"}}>
-                                                        {address.display_name}
+                                                        {address.display_address}
                                     </button>
                                 })
 
