@@ -27,11 +27,11 @@ import { counterActions } from '@/store/store';
 import Spinner from '@/Components/Spinner';
 import MyAirspaceTab from '@/Components/MyAirspaceTab';
 import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
-import { useVerification } from '@/hooks/useVerification';
+// import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 
 const Airspace = () => {
-  const { verificationCheck } = useVerification();
+  // const { verificationCheck } = useVerification();
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -441,7 +441,7 @@ const Airspace = () => {
 
     dispatch(counterActions.airspaceData(addressValue));
 
-    verificationCheck(selectorUser);
+    // verificationCheck(selectorUser);
 
     setIsLoading(false);
   };
