@@ -296,10 +296,10 @@ const Dashboard = () => {
 
         // const userInfo = await web3auth.getUserInfo();
 
-        // const domain = window.location.host;
-        const domain = 'localhost:3000';
-        // const origin = window.location.origin;
-        const origin = 'http://localhost:3000';
+        const domain = window.location.host;
+        // const domain = 'localhost:3000';
+        const origin = window.location.origin;
+        // const origin = 'http://localhost:3000';
 
         const payload = new SIWPayload();
         payload.domain = domain;
