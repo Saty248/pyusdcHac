@@ -443,6 +443,7 @@ const Airspace = () => {
 
     // verificationCheck(selectorUser);
 
+    dispatch(counterActions.additionalInfoModal());
     setIsLoading(false);
   };
 
