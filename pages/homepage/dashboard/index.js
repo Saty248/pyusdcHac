@@ -498,7 +498,7 @@ const Dashboard = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            status={user.KYCStatusId}
+            // status={user.KYCStatusId}
           />
           <div className='flex w-full flex-row justify-start'>
             <div className='my-5' style={{ width: '100%', height: '100vh' }}>

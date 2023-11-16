@@ -404,15 +404,15 @@ const Airspace = () => {
   const confirmAddressHandler = (e) => {
     setIsLoading(true);
 
-    if (user.categoryId === 1 && user.KYCStatusId !== 2) {
-      swal({
-        title: 'Sorry!',
-        text: 'Your KYB is yet to be completed. A member of our team will be in contact with you soon',
-      });
+    // if (user.categoryId === 1 && user.KYCStatusId !== 2) {
+    //   swal({
+    //     title: 'Sorry!',
+    //     text: 'Your KYB is yet to be completed. A member of our team will be in contact with you soon',
+    //   });
 
-      setIsLoading(false);
-      return;
-    }
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     const vertexes = [];
 
@@ -505,7 +505,7 @@ const Airspace = () => {
             name={user.name}
             onClose={() => setShowOptions(false)}
             categoryId={user.categoryId}
-            status={user.KYCStatusId}
+            // status={user.KYCStatusId}
           >
             <div className='relative'>
               <svg
