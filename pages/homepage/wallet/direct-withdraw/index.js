@@ -177,7 +177,7 @@ const Wallet = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            status={user.KYCStatusId}
+            // status={user.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'

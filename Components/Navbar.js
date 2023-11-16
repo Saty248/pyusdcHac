@@ -29,7 +29,7 @@ const Navbar = (props) => {
             className='me-5 ms-2'
           >
             <p className='font-base font-medium'>{props.name}</p>
-            {props.categoryId === 0 && (
+            {/* {props.categoryId === 0 && (
               <div
                 className={`me-1.5 flex flex-row items-center justify-center gap-1 p-2 font-semibold ${
                   props.status === 2
@@ -58,8 +58,8 @@ const Navbar = (props) => {
                     : 'Rejected'}
                 </p>
               </div>
-            )}
-            {props.categoryId === 1 && (
+            )} */}
+            {/* {props.categoryId === 1 && (
               <div
                 className={`me-1.5 flex flex-row items-center justify-center gap-1 p-2 font-semibold ${
                   props.status === 2 ? 'bg-bleach-green' : 'bg-light-yellow'
@@ -74,7 +74,7 @@ const Navbar = (props) => {
                   {props.status !== 2 ? 'Pending' : 'Approved'}
                 </p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </nav>

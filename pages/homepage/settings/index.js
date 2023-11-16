@@ -243,7 +243,7 @@ const Settings = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            status={user.KYCStatusId}
+            // status={user.KYCStatusId}
           />
           <form
             className='mx-auto bg-white px-10 pb-2 pt-16'
@@ -257,7 +257,7 @@ const Settings = () => {
               <p>Update your account settings</p>
             </div>
 
-            {user.categoryId === 0 && user.KYCStatusId === 0 && (
+            {/* {user.categoryId === 0 && user.KYCStatusId === 0 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -277,9 +277,9 @@ const Settings = () => {
                   </p>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {user.categoryId === 0 && user.KYCStatusId === 3 && (
+            {/* {user.categoryId === 0 && user.KYCStatusId === 3 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -347,7 +347,7 @@ const Settings = () => {
                   Pending
                 </p>
               </div>
-            )}
+            )} */}
 
             <div
               className='mt-10 flex flex-col justify-center rounded-md border-2 border-light-blue px-6 py-5'

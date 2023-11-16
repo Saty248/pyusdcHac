@@ -36,30 +36,31 @@ export const useVerification = () => {
       return;
     }
 
-    if (user.KYCStatusId === 2) {
-      dispatch(counterActions.additionalInfoModal());
-    } else if (user.categoryId === 0 && user.KYCStatusId === 1) {
-      swal({
-        title: 'Sorry!',
-        text: 'Your KYC is pending. kindly check back later.',
-      });
-    } else if (
-      user.categoryId == 0 &&
-      (user.KYCStatusId == 0 || user.KYCStatusId == 3)
-    ) {
-      swal({
-        title: 'Sorry!',
-        text: 'Your KYC is yet to be completed. You will be redirected now to complete it.',
-        timer: 4000,
-      });
+    // if (user.KYCStatusId === 2) {
+    //   dispatch(counterActions.additionalInfoModal());
+    // } else if (user.categoryId === 0 && user.KYCStatusId === 1) {
+    //   swal({
+    //     title: 'Sorry!',
+    //     text: 'Your KYC is pending. kindly check back later.',
+    //   });
+    // } else if (
+    //   user.categoryId == 0 &&
+    //   (user.KYCStatusId == 0 || user.KYCStatusId == 3)
+    // ) {
+    //   swal({
+    //     title: 'Sorry!',
+    //     text: 'Your KYC is yet to be completed. You will be redirected now to complete it.',
+    //     timer: 4000,
+    //   });
 
-      const client = new Persona.Client({
-        templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-        referenceId: user?.id,
-        environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
-        onReady: () => client.open(),
-      });
-    }
+    // }
+    dispatch(counterActions.additionalInfoModal());
+    const client = new Persona.Client({
+      templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+      referenceId: user?.id,
+      environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+      onReady: () => client.open(),
+    });
   };
 
   return { verificationCheck };
