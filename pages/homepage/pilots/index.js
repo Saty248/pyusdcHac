@@ -6,6 +6,8 @@ import { Web3Auth } from '@web3auth/modal';
 import swal from 'sweetalert';
 import Script from 'next/script';
 
+import { useAuth } from '@/hooks/useAuth';
+
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Backdrop from '@/Components/Backdrop';
@@ -13,8 +15,7 @@ import PilotProfileModal from '@/Components/Modals/PilotProfileModal';
 import AddPilotModal from '@/Components/Modals/AddPilotModal';
 import Spinner from '@/Components/Spinner';
 
-const UAVs = (props) => {
-  const { users } = props;
+const UAVs = () => {
   const router = useRouter();
 
   const [pilotProfile, setPilotProfile] = useState(false);
@@ -23,8 +24,10 @@ const UAVs = (props) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -37,11 +40,8 @@ const UAVs = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -67,23 +67,19 @@ const UAVs = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   const backdropCloseHandler = () => {
     setPilotProfile(false);
@@ -263,35 +259,3 @@ const UAVs = (props) => {
 };
 
 export default UAVs;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

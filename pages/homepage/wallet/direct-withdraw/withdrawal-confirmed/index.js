@@ -8,24 +8,19 @@ import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Spinner from '@/Components/Spinner';
 
-const WithdrawalConfirm = (props) => {
-  const { users, error } = props;
+import { useAuth } from '@/hooks/useAuth';
 
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const WithdrawalConfirm = () => {
   const router = useRouter();
 
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -38,11 +33,8 @@ const WithdrawalConfirm = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -68,23 +60,19 @@ const WithdrawalConfirm = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {
@@ -103,7 +91,7 @@ const WithdrawalConfirm = (props) => {
         ],
       };
 
-      fetch('https://api.devnet.solana.com', {
+      fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -277,32 +265,3 @@ const WithdrawalConfirm = (props) => {
 };
 
 export default WithdrawalConfirm;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch('http://localhost:3000/api/proxy', {
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/users',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

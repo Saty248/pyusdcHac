@@ -1,33 +1,25 @@
 import { Fragment, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+
 import { useRouter } from 'next/router';
+import Script from 'next/script';
+
 import Chart from 'chart.js/auto';
+
 import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
-import base58 from 'bs58';
-import swal from 'sweetalert';
-import Script from 'next/script';
 
-import { useVerification } from '@/hooks/useVerification';
+import base58 from 'bs58';
+
+import swal from 'sweetalert';
+
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import Spinner from '@/Components/Spinner';
-import { counterActions } from '@/store/store';
 
-const Dashboard = (props) => {
-  const { users, error } = props;
+import { useAuth } from '@/hooks/useAuth';
 
-  const { verificationCheck } = useVerification();
-  const dispatch = useDispatch();
-
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const Dashboard = () => {
   const cData = [
     {
       country: 'United States',
@@ -170,8 +162,10 @@ const Dashboard = (props) => {
   const [airspaceLength, setAirspaceLength] = useState();
   const [signature, setSignature] = useState();
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -182,23 +176,15 @@ const Dashboard = (props) => {
           ticker: 'SOL',
           tickerName: 'Solana',
         };
-
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
-
         await web3auth.initModal();
-
         // await web3auth.connect();
-
         let userInfo;
-
         try {
           userInfo = await web3auth.getUserInfo();
         } catch (err) {
@@ -214,26 +200,24 @@ const Dashboard = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
-
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (user) {
+      console.log({ user });
       const data = {
         jsonrpc: '2.0',
         id: 1,
@@ -249,7 +233,7 @@ const Dashboard = (props) => {
         ],
       };
 
-      fetch('https://api.devnet.solana.com', {
+      fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -298,11 +282,8 @@ const Dashboard = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -324,7 +305,7 @@ const Dashboard = (props) => {
         payload.domain = domain;
         payload.uri = origin;
         payload.address = user.blockchainAddress;
-        payload.statement = 'Sign in with Solana to the app.';
+        payload.statement = 'Sign in to SkyTrade app.';
         payload.version = '1';
         payload.chainId = 1;
 
@@ -356,7 +337,7 @@ const Dashboard = (props) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          uri: `/properties/user-properties/${user.id}`,
+          uri: `/private/properties/user-properties/${user.id}`,
           sign: signature.sign,
           time: signature.sign_issue_at,
           nonce: signature.sign_nonce,
@@ -388,8 +369,7 @@ const Dashboard = (props) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          uri: '/newsletters',
-          // proxy_to_method: "GET",
+          uri: '/public/newsletters',
           sign: signature.sign,
           time: signature.sign_issue_at,
           nonce: signature.sign_nonce,
@@ -418,7 +398,7 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     if (user) {
-      const ctx = document.getElementById('chart').getContext('2d');
+      const ctx = document?.getElementById('chart')?.getContext('2d');
 
       if (ctx) {
         const existingChart = Chart.getChart(ctx);
@@ -491,13 +471,6 @@ const Dashboard = (props) => {
     router.push(route);
   };
 
-  const addAirspaceHandler = (event) => {
-    event.stopPropagation();
-
-    router.push('/homepage/airspace');
-    dispatch(counterActions.confirmOnMapModal());
-  };
-
   if (!user || !token) {
     return <Spinner />;
   }
@@ -516,7 +489,8 @@ const Dashboard = (props) => {
       </Script>
 
       <div className='mx-auto flex flex-row'>
-        <Sidebar users={users} user={user} />
+        <Sidebar user={user} />
+
         <div
           className='overflow-y-auto overflow-x-hidden'
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
@@ -809,35 +783,3 @@ const Dashboard = (props) => {
 };
 
 export default Dashboard;
-
-export async function getServerSideProps() {
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

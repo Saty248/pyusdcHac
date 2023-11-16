@@ -6,29 +6,27 @@ import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import map from '../../../../public/images/map-bg.png';
 import Spinner from '@/Components/Spinner';
-import Backdrop from '@/Components/Backdrop';
-import User from '@/models/User';
 
-const ScheduleFlight = (props) => {
-  const { users } = props;
+import { useAuth } from '@/hooks/useAuth';
+
+const ScheduleFlight = () => {
   const router = useRouter();
 
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    const fetchedEmail = localStorage.getItem('email');
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (!fetchedEmail || fetchedToken.sessionId.length !== 64) {
+    if (fetchedToken.sessionId.length !== 64) {
       router.push('/auth/join');
       return;
     }
 
     setToken(fetchedToken.sessionId);
-
-    const singleUser = users.filter((user) => user.email === fetchedEmail);
-    setUser(singleUser[0]);
+    setUser(selectorUser);
   }, []);
 
   if (!user || !token) {
@@ -301,13 +299,3 @@ const ScheduleFlight = (props) => {
 };
 
 export default ScheduleFlight;
-
-export async function getServerSideProps() {
-  const { slug } = context.query;
-
-  return {
-    props: {
-      slug,
-    },
-  };
-}

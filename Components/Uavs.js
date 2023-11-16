@@ -8,29 +8,27 @@ import Navbar from '@/Components/Navbar';
 import AddUavModal from '@/Components/Modals/AddUavModal';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
-import User from '@/models/User';
 
-const UAVs = (props) => {
-  const { users } = props;
+import { useAuth } from '@/hooks/useAuth';
 
+const UAVs = () => {
   const router = useRouter();
   const [addUav, setAddUav] = useState();
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    const fetchedEmail = localStorage.getItem('email');
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (!fetchedEmail || fetchedToken.sessionId.length !== 64) {
+    if (fetchedToken.sessionId.length !== 64) {
       router.push('/auth/join');
       return;
     }
 
     setToken(fetchedToken.sessionId);
-
-    const singleUser = users.filter((user) => user.email === fetchedEmail);
-    setUser(singleUser[0]);
+    setUser(selectorUser);
   }, []);
 
   const uavProfileHandler = () => {
@@ -259,13 +257,3 @@ const UAVs = (props) => {
 };
 
 export default UAVs;
-
-export async function getServerSideProps() {
-  const users = await User.findAll();
-
-  return {
-    props: {
-      users: JSON.parse(JSON.stringify(users)),
-    },
-  };
-}

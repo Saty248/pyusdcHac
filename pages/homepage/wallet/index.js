@@ -15,18 +15,10 @@ import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import WalletModal from '@/Components/Modals/WalletModal';
 
-const Wallet = (props) => {
-  const { users } = props;
-  const { error } = props;
+import { useAuth } from '@/hooks/useAuth';
 
-  if (error) {
-    swal({
-      title: 'oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
-  const url = 'https://api.devnet.solana.com';
+const Wallet = () => {
+  const url = process.env.NEXT_PUBLIC_SOLANA_API;
 
   const router = useRouter();
 
@@ -53,8 +45,10 @@ const Wallet = (props) => {
     transactionHistory &&
     Math.ceil(transactionHistory.length / transactionsPerPage);
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -65,23 +59,15 @@ const Wallet = (props) => {
           ticker: 'SOL',
           tickerName: 'Solana',
         };
-
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
-
         await web3auth.initModal();
-
         // await web3auth.connect();
-
         let userInfo;
-
         try {
           userInfo = await web3auth.getUserInfo();
         } catch (err) {
@@ -97,23 +83,18 @@ const Wallet = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
-
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   useEffect(() => {
     if (showStripeModal) {
@@ -130,7 +111,7 @@ const Wallet = (props) => {
         }),
         headers: {
           'Content-Type': 'application/json',
-          uri: '/stripe/create',
+          uri: '/public/stripe/create',
         },
       })
         .then((response) => {
@@ -406,14 +387,6 @@ const Wallet = (props) => {
     router.push('/homepage/wallet/direct-withdraw');
   };
 
-  const showWithdrawalModalHandler = () => {
-    setShowWithdrawalModal(true);
-  };
-
-  const showDepositModalHandler = () => {
-    setShowDepositModal(true);
-  };
-
   const StripeHandler = () => {
     setShowStripeModal(true);
     setShowDepositModal(false);
@@ -481,7 +454,7 @@ const Wallet = (props) => {
           document.getElementById('modal-root')
         )}
       <div className='flex flex-row'>
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto overflow-x-hidden'
@@ -690,34 +663,3 @@ const Wallet = (props) => {
 };
 
 export default Wallet;
-
-export async function getServerSideProps() {
-  try {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(`http://localhost:3000/api/proxy`, {
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/users',
-        // proxy_to_method: "GET",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

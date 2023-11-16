@@ -1,43 +1,52 @@
 import { Fragment, useState, useRef, useEffect } from 'react';
+
+import { useDispatch } from 'react-redux';
+import { createPortal } from 'react-dom';
+
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { useDispatch, useSelector } from 'react-redux';
-import { createPortal } from 'react-dom';
+import Script from 'next/script';
+
 import { Web3AuthNoModal } from '@web3auth/no-modal';
 import { SolanaPrivateKeyProvider } from '@web3auth/solana-provider';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { WALLET_ADAPTERS } from '@web3auth/base';
 import { SolanaWallet } from '@web3auth/solana-provider';
-import Script from 'next/script';
 
 import { counterActions } from '@/store/store';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
+
+import { useAuth } from '@/hooks/useAuth';
+
 import swal from 'sweetalert';
+
 import logo from '../../../public/images/logo.jpg';
 
-const Signup = (props) => {
+import { useSignature } from '@/hooks/useSignature';
+
+const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [categorySect, setCategorySect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const emailRef = useRef();
 
+  const { signatureObject } = useSignature();
+
+  const { setTemporaryToken, signIn } = useAuth();
+
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (fetchedToken) {
-      if (fetchedToken.sessionId) {
-        router.push('/homepage/dashboard');
-        return;
-      }
+    if (fetchedToken?.sessionId) {
+      router.push('/homepage/dashboard');
+      return;
     }
   }, []);
 
   const router = useRouter();
   const dispatch = useDispatch();
-
-  //   For Live Environment
 
   const chainConfig = {
     chainNamespace: 'solana',
@@ -50,11 +59,8 @@ const Signup = (props) => {
   };
 
   const web3auth = new Web3AuthNoModal({
-    // For Production
-    clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-    // For Development
-    // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
     web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
     chainConfig: chainConfig,
   });
@@ -63,11 +69,11 @@ const Signup = (props) => {
     config: { chainConfig },
   });
 
-  const openloginAdapter = new OpenloginAdapter({
+  const openLoginAdapter = new OpenloginAdapter({
     privateKeyProvider,
   });
 
-  web3auth.configureAdapter(openloginAdapter);
+  web3auth.configureAdapter(openLoginAdapter);
 
   useEffect(() => {
     const init = async () => {
@@ -126,6 +132,7 @@ const Signup = (props) => {
     }
 
     let userInformation;
+
     try {
       userInformation = await web3auth.getUserInfo();
     } catch (err) {
@@ -150,57 +157,63 @@ const Signup = (props) => {
       return;
     }
 
-    const api_key = 'XXX';
+    const { sign, sign_nonce, sign_issue_at, sign_address } =
+      await signatureObject(accounts[0]);
 
-    fetch(`/api/proxy?${Date.now()}`, {
-      headers: {
-        // "Content-Type": "application/json",
-        uri: '/users',
-        // api_key: api_key
-        // proxy_to_method: "GET",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((err) => {
-            localStorage.removeItem('openlogin_store');
-            throw new Error(err.message);
-          });
-        }
-        return res.json().then((response) => {
-          const filteredUser = response.filter(
-            (user) => user.blockchainAddress === accounts[0]
-          );
-
-          if (filteredUser.length < 1) {
-            const token = localStorage.getItem('openlogin_store');
-            dispatch(
-              counterActions.web3({
-                token: JSON.parse(token),
-              })
-            );
-            localStorage.removeItem('openlogin_store');
-            dispatch(
-              counterActions.category({
-                email: userInformation.email,
-                blockchainAddress: accounts[0],
-              })
-            );
-
-            setIsLoading(false);
-            setCategorySect(true);
-            return;
-          }
-
-          router.replace('/homepage/dashboard');
-        });
-      })
-      .catch((err) => {
-        swal({
-          title: 'Oops!',
-          text: err.message || 'Something went wrong. Kindly try again',
-        });
+    try {
+      const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
+        headers: {
+          uri: '/private/users/session',
+          sign,
+          time: sign_issue_at,
+          nonce: sign_nonce,
+          address: sign_address,
+        },
       });
+
+      const user = await userRequest.json();
+
+      if (user.id) {
+        signIn({ user });
+        // dispatch(counterActions.userAuth(user));
+        // localStorage.setItem('user', JSON.stringify(user));
+        router.push('/homepage/dashboard');
+        return user;
+      }
+
+      if (user.errorMessage === 'UNAUTHORIZED') {
+        setTemporaryToken(JSON.parse(localStorage.getItem('openlogin_store')));
+        // const token = localStorage.getItem('openlogin_store');
+
+        // dispatch(
+        //   counterActions.web3({
+        //     token: JSON.parse(token),
+        //   })
+        // );
+
+        localStorage.removeItem('openlogin_store');
+
+        dispatch(
+          counterActions.category({
+            email: userInformation.email,
+            blockchainAddress: accounts[0],
+          })
+        );
+
+        setIsLoading(false);
+        setCategorySect(true);
+
+        // router.replace('/homepage/dashboard');
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+      swal({
+        title: 'Oops!',
+        text: e.message || 'Something went wrong. Kindly try again',
+      });
+      throw e;
+    }
   };
 
   const formSubmitHandler = (path, e) => {

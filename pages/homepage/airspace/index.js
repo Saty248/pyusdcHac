@@ -1,21 +1,27 @@
 import { Fragment, useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { useRouter } from 'next/router';
+import Script from 'next/script';
+import Image from 'next/image';
+
+import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
+
+import { useAuth } from '@/hooks/useAuth';
+
 import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
-import Script from 'next/script';
-import Image from 'next/image';
 
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import Backdrop from '@/Components/Backdrop';
 import MyAirspaceOverview from '@/Components/MyAirspaces/MyAirspaceOverview';
 import Airspaces from '@/Components/Airspaces';
-import AddAirspace from '@/Components/Modals/AddAirspace';
 import AdditionalAispaceInformation from '@/Components/Modals/AdditionalAirspaceInformation';
 import { counterActions } from '@/store/store';
 import Spinner from '@/Components/Spinner';
@@ -24,21 +30,11 @@ import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
 import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 
-const Airspace = (props) => {
-  const { users, error } = props;
-
-  if (error) {
-    swal({
-      title: 'Oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
+const Airspace = () => {
   const { verificationCheck } = useVerification();
 
   const router = useRouter();
   const dispatch = useDispatch();
-  const locationiqKey = process.env.NEXT_PUBLIC_LOCATIONIQ_KEY;
 
   const [allAirspace, setAllAirSpace] = useState(false);
   const [myAirspace, setMyAirSpace] = useState(true);
@@ -59,11 +55,16 @@ const Airspace = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [transition, setTransition] = useState(false);
 
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
+
   const [user, setUser] = useState();
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState();
+
+  const { user: selectorUser } = useAuth();
 
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -76,11 +77,8 @@ const Airspace = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -96,7 +94,7 @@ const Airspace = (props) => {
         } catch (err) {
           localStorage.removeItem('openlogin_store');
           swal({
-            title: 'Oops!',
+            title: 'oops!',
             text: 'Something went wrong. Kindly try again',
           }).then(() => router.push('/auth/join'));
           return;
@@ -106,18 +104,14 @@ const Airspace = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
@@ -125,19 +119,18 @@ const Airspace = (props) => {
   }, []);
 
   useEffect(() => {
-    if (token && user) {
-      const map = new maplibregl.Map({
+    if (token && user && !map) {
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+
+      const newMap = new mapboxgl.Map({
         container: 'map',
-        attributionControl: false,
-        style:
-          'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-          locationiqKey,
-        zoom: 12,
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [-122.42, 37.779],
+        zoom: 12,
       });
 
-      map.on('load', function () {
-        map.addLayer({
+      newMap.on('load', function () {
+        newMap.addLayer({
           id: 'maine',
           type: 'fill',
           source: {
@@ -156,70 +149,68 @@ const Airspace = (props) => {
           },
         });
       });
+
+      setMap(newMap);
     }
   }, [token, user]);
 
   useEffect(() => {
     if (flyToAddress) {
       setIsLoading(true);
-      fetch(
-        `https://us1.locationiq.com/v1/search?key=${locationiqKey}&q=${flyToAddress}&format=json&polygon_geojson=1`
-      )
+
+      const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+      fetch(mapBoxGeocodingUrl)
         .then((res) => {
           if (!res.ok) {
             return res.json().then((errorData) => {
-              throw new Error(errorData.error);
+              throw new Error(errorData.message);
             });
           }
           return res.json();
         })
         .then((resData) => {
-          if (resData.error) {
-            console.log(resData.error);
-            return;
+          if (resData.features && resData.features.length > 0) {
+            const coordinates = resData.features[0].geometry.coordinates;
+            const endPoint = [coordinates[0], coordinates[1]];
+
+            setLongitude(coordinates[0]);
+            setLatitude(coordinates[1]);
+            setAddressData(resData.features[0].properties);
+
+            setIsLoading(false);
+
+            map.flyTo({
+              center: endPoint,
+              zoom: 16,
+            });
+
+            if (marker) {
+              marker.remove();
+            }
+
+            let el = document.createElement('div');
+            el.id = 'markerWithExternalCss';
+
+            // Add the new marker to the map and update the marker state
+            const newMarker = new maplibregl.Marker(el)
+              .setLngLat(endPoint)
+              .addTo(map);
+            setMarker(newMarker);
+          } else {
+            throw new Error('Address not found');
           }
-          console.log('this is the full address info', resData);
-          const endPoint = [];
-
-          endPoint.push(resData[0].lon);
-          endPoint.push(resData[0].lat);
-
-          setLongitude(resData[0].lon);
-          setLatitude(resData[0].lat);
-          setAddressData(resData[0]);
-
-          setIsLoading(false);
-
-          const map = new maplibregl.Map({
-            container: 'map',
-            attributionControl: false,
-            style:
-              'https://tiles.locationiq.com/v3/streets/vector.json?key=' +
-              locationiqKey,
-            zoom: 16,
-            center: endPoint,
-          });
-
-          let nav = new maplibregl.NavigationControl();
-          map.addControl(nav, 'top-right');
-
-          let el = document.createElement('div');
-          el.id = 'markerWithExternalCss';
-
-          new maplibregl.Marker(el).setLngLat(endPoint).addTo(map);
         })
         .catch((err) => {
-          console.log(err);
-          const error = err.toString().split(':');
-          // console.log(error)
+          console.error(err);
           setIsLoading(false);
           swal({
             title: 'Oops!',
-            text: error[1],
+            text: err.message,
           });
         });
     }
-  }, [flyToAddress]);
+  }, [flyToAddress, map]);
 
   useEffect(() => {
     if (address) {
@@ -227,26 +218,30 @@ const Airspace = (props) => {
       setLatitude('');
 
       const addressHandler = setTimeout(() => {
-        fetch(
-          `https://api.locationiq.com/v1/autocomplete?key=${locationiqKey}&q=${address}`
-        )
+        const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+
+        fetch(mapboxGeocodingUrl)
           .then((res) => {
-            // console.log("This is the result from locationIq API call", res)
             if (!res.ok) {
               return res.json().then((errorData) => {
-                throw new Error(errorData.error);
+                throw new Error(errorData.message);
               });
             }
             return res.json();
           })
           .then((resData) => {
-            setAddresses(resData);
+            if (resData.features && resData.features.length > 0) {
+              setAddresses(resData.features);
+            } else {
+              setAddresses([]);
+            }
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
             setAddresses([]);
           });
       }, 500);
+
       return () => {
         clearTimeout(addressHandler);
       };
@@ -269,11 +264,8 @@ const Airspace = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -295,7 +287,7 @@ const Airspace = (props) => {
         payload.domain = domain;
         payload.uri = origin;
         payload.address = user.blockchainAddress;
-        payload.statement = 'Sign in with Solana to the app.';
+        payload.statement = 'Sign in to SkyTrade app.';
         payload.version = '1';
         payload.chainId = 1;
 
@@ -318,7 +310,7 @@ const Airspace = (props) => {
         fetch(`/api/proxy?${Date.now()}`, {
           headers: {
             'Content-Type': 'application/json',
-            uri: `/properties/user-properties/${user.id}`,
+            uri: `/private/properties/user-properties/${user.id}`,
             sign: signatureObj.sign,
             time: signatureObj.sign_issue_at,
             nonce: signatureObj.sign_nonce,
@@ -348,18 +340,9 @@ const Airspace = (props) => {
     return state.value.newAirspace;
   });
 
-  const confirmOnMap = useSelector((state) => {
-    return state.value.confirmOnMap;
-  });
-
   const additionalInfo = useSelector(
     (state) => state.value.airspaceAdditionalInfo
   );
-
-  const closeAddReviewModalHandler = (e) => {
-    e.preventDefault();
-    setshowAddReviewModal(false);
-  };
 
   const showAddAirspaceModalHandler = (e) => {
     setShowAddAirspaceModal(true);
@@ -370,7 +353,6 @@ const Airspace = (props) => {
     setshowAddReviewModal(false);
 
     dispatch(counterActions.closeNewAirspaceModal());
-    dispatch(counterActions.closeConfirmOnMapModal());
   };
 
   const editAirspaceHandler = () => {
@@ -411,14 +393,11 @@ const Airspace = (props) => {
     setAddress(e.target.value);
   };
 
-  const airspaceHandler = () => {
-    dispatch(counterActions.confirmOnMapModal());
-  };
-
   const buttonSelectHandler = (e) => {
     e.preventDefault(),
       setAddress(e.target.value),
       setFlyToAddress(e.target.value);
+
     setShowOptions(false);
   };
 
@@ -462,7 +441,7 @@ const Airspace = (props) => {
 
     dispatch(counterActions.airspaceData(addressValue));
 
-    verificationCheck(users);
+    verificationCheck(selectorUser);
 
     setIsLoading(false);
   };
@@ -485,12 +464,6 @@ const Airspace = (props) => {
       </Script>
 
       {additionalInfo && <AdditionalAispaceInformation user={user} />}
-      {confirmOnMap &&
-        createPortal(
-          <AddAirspace onClose={backdropCloseHandler} />,
-          document.getElementById('modal-root')
-        )}
-
       {editAirspace &&
         createPortal(
           <EditAispaceModal
@@ -517,14 +490,13 @@ const Airspace = (props) => {
         showAddAirspaceModal ||
         newAirspace ||
         additionalInfo ||
-        confirmOnMap ||
         editAirspace) &&
         createPortal(
           <Backdrop onClick={backdropCloseHandler} />,
           document.getElementById('backdrop-root')
         )}
       <div className='mx-auto flex flex-row'>
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           className='overflow-y-auto overflow-x-hidden'
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
@@ -589,16 +561,17 @@ const Airspace = (props) => {
                   {addresses.map((address) => {
                     return (
                       <button
-                        key={address.osm_id + Math.random()}
-                        value={address.display_name}
+                        key={address.id}
+                        value={address.place_name}
                         onClick={buttonSelectHandler}
-                        className='py-2 text-left'
+                        className='py-2 text-left text-black'
                         style={{
                           borderBottom: '0.2px solid #0653EA',
                           width: '100%',
+                          // height: 'auto',
                         }}
                       >
-                        {address.display_name}
+                        {address.place_name}
                       </button>
                     );
                   })}
@@ -626,7 +599,6 @@ const Airspace = (props) => {
               showAllAirspace={showAllAirspace}
               myAirspace={myAirspace}
               onAddAirspace={showAddAirspaceModalHandler}
-              users={users}
               transition={transition}
             >
               <div>
@@ -725,36 +697,3 @@ const Airspace = (props) => {
 };
 
 export default Airspace;
-
-export async function getServerSideProps() {
-  try {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

@@ -3,11 +3,9 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 const initialState = {
   value: {
     newAirspace: false,
-    confirmOnMap: false,
     airspaceAdditionalInfo: false,
     airspaceData: {},
     category: {},
-    web3: {},
   },
 };
 
@@ -21,14 +19,6 @@ const airspaceSlice = createSlice({
 
     closeNewAirspaceModal(state) {
       state.value.newAirspace = false;
-    },
-
-    confirmOnMapModal(state) {
-      state.value.confirmOnMap = true;
-    },
-
-    closeConfirmOnMapModal(state) {
-      state.value.confirmOnMap = false;
     },
 
     additionalInfoModal(state) {
@@ -48,12 +38,6 @@ const airspaceSlice = createSlice({
     category(state, action) {
       state.value.category = {
         ...state.value.category,
-        ...action.payload,
-      };
-    },
-
-    web3(state, action) {
-      state.value.web3 = {
         ...action.payload,
       };
     },

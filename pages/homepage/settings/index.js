@@ -10,35 +10,25 @@ import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
 import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
-import { useVerification } from '@/hooks/useVerification';
 
-const Settings = (props) => {
-  const { users } = props;
-  const { error } = props;
+import { useAuth } from '@/hooks/useAuth';
 
-  if (error) {
-    swal({
-      title: 'Oops!',
-      text: 'Something went wrong. Kindly try again',
-    });
-  }
-
-  const { verificationCheck } = useVerification();
+const Settings = () => {
   const router = useRouter();
 
   const [nameValid, setNameValid] = useState(true);
-  const [verificationLoading, setVerificationLoading] = useState(false);
   const [phoneValid, setPhoneValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState('');
   const [token, setToken] = useState('');
 
   const nameRef = useRef();
-  const emailRef = useRef();
   const phoneRef = useRef();
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    if (users) {
+    if (selectorUser) {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -51,11 +41,8 @@ const Settings = (props) => {
         };
 
         const web3auth = new Web3Auth({
-          // For Production
-          clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-          // For Development
-          // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           chainConfig: chainConfig,
         });
@@ -81,23 +68,19 @@ const Settings = (props) => {
           localStorage.getItem('openlogin_store')
         );
 
-        const singleUser = users.filter(
-          (user) => user.email === userInfo.email
-        );
-
-        if (singleUser.length < 1) {
+        if (!selectorUser) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(singleUser[0]);
+        setUser(selectorUser);
       };
 
       authUser();
     }
-  }, []);
+  }, [selectorUser]);
 
   const updateDataHandler = async (e) => {
     e.preventDefault();
@@ -140,11 +123,8 @@ const Settings = (props) => {
     };
 
     const web3auth = new Web3Auth({
-      // For Production
-      clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-      // For Development
-      // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
       web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
       chainConfig: chainConfig,
     });
@@ -166,7 +146,7 @@ const Settings = (props) => {
     payload.domain = domain;
     payload.uri = origin;
     payload.address = user.blockchainAddress;
-    payload.statement = 'Sign in with Solana to the app.';
+    payload.statement = 'Sign in to SkyTrade app.';
     payload.version = '1';
     payload.chainId = 1;
 
@@ -197,7 +177,7 @@ const Settings = (props) => {
       }),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/update',
+        uri: '/private/users/update',
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,
         nonce: signatureObj.sign_nonce,
@@ -237,15 +217,6 @@ const Settings = (props) => {
       });
   };
 
-  const startVerification = async (e) => {
-    e.preventDefault();
-    setVerificationLoading(true);
-
-    await verificationCheck(users);
-
-    setVerificationLoading(false);
-  };
-
   if (!user || !token) {
     return <Spinner />;
   }
@@ -264,7 +235,7 @@ const Settings = (props) => {
       </Script>
 
       <div className='mx-auto flex flex-row'>
-        <Sidebar user={user} users={users} />
+        <Sidebar user={user} />
         <div
           style={{ width: 'calc(100vw - 257px)', height: '100vh' }}
           className='overflow-y-auto overflow-x-hidden'
@@ -496,36 +467,3 @@ const Settings = (props) => {
 };
 
 export default Settings;
-
-export async function getServerSideProps() {
-  try {
-    // const response = await fetch("http://localhost:3000/api/proxy", {
-    const response = await fetch(
-      `http://localhost:3000/api/proxy?${Date.now()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/users',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        users: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: 'oops! something went wrong. Kindly try again.',
-      },
-    };
-  }
-}

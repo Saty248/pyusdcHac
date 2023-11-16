@@ -169,12 +169,8 @@ const EditAispaceModal = (props) => {
     };
 
     const web3auth = new Web3Auth({
-      // For Production
-      // clientId: "",
-      clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-      // For Development
-      // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
       web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
       chainConfig: chainConfig,
     });
@@ -196,7 +192,7 @@ const EditAispaceModal = (props) => {
     payload.domain = domain;
     payload.uri = origin;
     payload.address = props.user.blockchainAddress;
-    payload.statement = 'Sign in with Solana to the app.';
+    payload.statement = 'Sign in to SkyTrade app.';
     payload.version = '1';
     payload.chainId = 1;
 
@@ -235,7 +231,7 @@ const EditAispaceModal = (props) => {
       body: JSON.stringify(airspaceInformation),
       headers: {
         'Content-Type': 'application/json',
-        URI: '/properties/update',
+        URI: '/private/properties/update',
         // proxy_to_method: "POST",
         sign: signatureObj.sign,
         time: signatureObj.sign_issue_at,

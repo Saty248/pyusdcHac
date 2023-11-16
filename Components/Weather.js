@@ -7,27 +7,28 @@ import User from '@/models/User';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
-const Weather = (props) => {
-  const { users } = props;
+import { useSelector } from 'react-redux';
 
+import { useAuth } from '@/hooks/useAuth';
+
+const Weather = () => {
   const router = useRouter();
 
   const [user, setUser] = useState();
   const [token, setToken] = useState('');
 
+  const { user: selectorUser } = useAuth();
+
   useEffect(() => {
-    const fetchedEmail = localStorage.getItem('email');
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
-    if (!fetchedEmail || fetchedToken.sessionId.length !== 64) {
+    if (fetchedToken.sessionId.length !== 64) {
       router.push('/auth/join');
       return;
     }
 
     setToken(fetchedToken.sessionId);
-
-    const singleUser = users.filter((user) => user.email === fetchedEmail);
-    setUser(singleUser[0]);
+    setUser(selectorUser);
   }, []);
 
   if (!user && !token) {
@@ -497,13 +498,3 @@ const Weather = (props) => {
 };
 
 export default Weather;
-
-export async function getServerSideProps() {
-  const users = await User.findAll();
-
-  return {
-    props: {
-      users: JSON.parse(JSON.stringify(users)),
-    },
-  };
-}

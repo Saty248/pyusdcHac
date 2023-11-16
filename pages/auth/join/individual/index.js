@@ -11,6 +11,8 @@ import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const IndividualSignup = () => {
   const newsletterRef = useRef();
   const nameRef = useRef();
@@ -19,8 +21,7 @@ const IndividualSignup = () => {
 
   const [nameValid, setNameValid] = useState(true);
   const [phoneNumberValid, setPhoneNumberValid] = useState(true);
-  const [newsletter, setnewsletter] = useState(false);
-  const [error, setError] = useState('');
+  const [newsletter, setNewsletter] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -36,11 +37,11 @@ const IndividualSignup = () => {
   }, []);
 
   const category = useSelector((state) => state.value.category);
-  const web3 = useSelector((state) => state.value.web3);
-  const token = web3.token;
+
+  const { temporaryToken, signIn } = useAuth();
 
   const newsletterHandler = () => {
-    setnewsletter((prev) => !prev);
+    setNewsletter((prev) => !prev);
   };
 
   const returnHandler = (e) => {
@@ -69,7 +70,6 @@ const IndividualSignup = () => {
       swal({
         title: 'Oops!',
         text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
-        // timer: 3000
       });
       return;
     }
@@ -89,7 +89,7 @@ const IndividualSignup = () => {
       body: JSON.stringify(userInfo),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/create',
+        uri: '/public/users/create',
         proxy_to_method: 'POST',
       },
     })
@@ -103,25 +103,23 @@ const IndividualSignup = () => {
             throw new Error(errorData.errorMessage);
           });
         }
+
         return res.json().then((response) => {
           if (response.statusCode === 500) {
             throw new Error('something went wrong');
           }
 
-          setError(false);
           swal({
             title: 'Submitted',
             text: 'User registered successfully. You will now be signed in',
             icon: 'success',
             button: 'Ok',
           }).then(() => {
-            localStorage.setItem(
-              'openlogin_store',
-              JSON.stringify({
-                sessionId: token.sessionId,
-              })
-            );
-            // setIsLoading(false);
+            signIn({
+              token: temporaryToken,
+              user: response,
+            });
+
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
             router.replace('/homepage/dashboard');
@@ -130,7 +128,6 @@ const IndividualSignup = () => {
       })
       .catch((error) => {
         console.log(error);
-        setError(error);
         setIsLoading(false);
       });
   };

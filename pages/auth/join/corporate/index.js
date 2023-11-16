@@ -1,5 +1,4 @@
 import Image from 'next/image';
-// import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -11,16 +10,17 @@ import Script from 'next/script';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
+import { useAuth } from '@/hooks/useAuth';
+
 const CorporateSignup = () => {
   const router = useRouter();
   const newsletterRef = useRef();
   const nameRef = useRef();
   const phoneNumberRef = useRef();
 
-  const [newsletter, setnewsletter] = useState(false);
+  const [newsletter, setNewsletter] = useState(false);
   const [nameValid, setNameValid] = useState(true);
   const [phoneNumberValid, setPhoneNumberValid] = useState(true);
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
@@ -37,11 +37,10 @@ const CorporateSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const web3 = useSelector((state) => state.value.web3);
-  const token = web3.token;
+  const { temporaryToken, signIn } = useAuth();
 
   const newsletterHandler = () => {
-    setnewsletter((prev) => !prev);
+    setNewsletter((prev) => !prev);
   };
 
   const returnHandler = (e) => {
@@ -90,7 +89,7 @@ const CorporateSignup = () => {
       body: JSON.stringify(userInfo),
       headers: {
         'Content-Type': 'application/json',
-        uri: '/users/create',
+        uri: '/public/users/create',
         proxy_to_method: 'POST',
       },
     })
@@ -105,34 +104,43 @@ const CorporateSignup = () => {
             throw new Error(errorData.errorMessage);
           });
         }
+
         return res.json().then((response) => {
           if (response.statusCode === 500) {
             throw new Error('something went wrong');
           }
 
-          setError(false);
           swal({
             title: 'Submitted',
             text: 'User registered successfully. You will now be signed in',
             icon: 'success',
             button: 'Ok',
           }).then(() => {
-            localStorage.setItem(
-              'openlogin_store',
-              JSON.stringify({
-                sessionId: token.sessionId,
-              })
-            );
+            signIn({
+              token: temporaryToken,
+              user: response,
+            });
+
+            // localStorage.setItem(
+            //   'openlogin_store',
+            //   JSON.stringify({
+            //     sessionId: temporaryToken.sessionId,
+            //   })
+            // );
+
+            // localStorage.setItem('user', JSON.stringify(response));
+
+            console.log({ response });
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
+            // dispatch(counterActions.userAuth(response));
             router.replace('/homepage/dashboard');
           });
         });
       })
       .catch((error) => {
         console.log(error);
-        setError(error.toString());
         setIsLoading(false);
       });
   };

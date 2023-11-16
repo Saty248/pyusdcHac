@@ -5,7 +5,7 @@ import swal from 'sweetalert';
 
 export const useVerification = () => {
   const dispatch = useDispatch();
-  const verificationCheck = async (users) => {
+  const verificationCheck = async (user) => {
     const chainConfig = {
       chainNamespace: 'solana',
       chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
@@ -17,24 +17,16 @@ export const useVerification = () => {
     };
 
     const web3auth = new Web3Auth({
-      // For Production
-      // clientId: "",
-      clientId: process.env.NEXT_PUBLIC_PROD_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
 
-      // For Development
-      // clientId: process.env.NEXT_PUBLIC_DEV_CLIENT_ID,
       web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
       chainConfig: chainConfig,
     });
 
     await web3auth.initModal();
 
-    // await web3auth.connect();
-
-    let userInfo;
-
     try {
-      userInfo = await web3auth.getUserInfo();
+      await web3auth.getUserInfo();
     } catch (err) {
       localStorage.removeItem('openlogin_store');
       swal({
@@ -44,16 +36,12 @@ export const useVerification = () => {
       return;
     }
 
-    const currentUser = users.filter((user) => user.email === userInfo.email);
-    const user = currentUser[0];
-
     if (user.KYCStatusId === 2) {
       dispatch(counterActions.additionalInfoModal());
     } else if (user.categoryId === 0 && user.KYCStatusId === 1) {
       swal({
         title: 'Sorry!',
         text: 'Your KYC is pending. kindly check back later.',
-        // timer: 3000
       });
     } else if (
       user.categoryId == 0 &&
@@ -62,7 +50,7 @@ export const useVerification = () => {
       swal({
         title: 'Sorry!',
         text: 'Your KYC is yet to be completed. You will be redirected now to complete it.',
-        timer: 2000,
+        timer: 4000,
       });
 
       const client = new Persona.Client({
@@ -70,9 +58,6 @@ export const useVerification = () => {
         referenceId: user?.id,
         environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
         onReady: () => client.open(),
-        onComplete: ({ inquiryId, status, fields }) => {
-          // console.log(`Completed inquiry ${inquiryId} with status ${status}`);
-        },
       });
     }
   };
