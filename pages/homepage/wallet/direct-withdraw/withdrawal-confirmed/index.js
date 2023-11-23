@@ -83,7 +83,7 @@ const WithdrawalConfirm = () => {
         params: [
           user.blockchainAddress,
           {
-            mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
+            mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
           },
           {
             encoding: 'jsonParsed',
