@@ -130,7 +130,6 @@ const CorporateSignup = () => {
 
             // localStorage.setItem('user', JSON.stringify(response));
 
-            console.log({ response });
             // setIsLoading(false);
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';

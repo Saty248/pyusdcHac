@@ -37,6 +37,15 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('openlogin_store');
   };
 
+  const updateProfile = (updatedUser) => {
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+
+    setData((prev) => ({
+      ...prev,
+      user: updatedUser,
+    }));
+  };
+
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem('openlogin_store'));
     const user = JSON.parse(localStorage.getItem('user'));
@@ -58,6 +67,7 @@ const AuthProvider = ({ children }) => {
         token: data.token,
         signIn,
         signOut,
+        updateProfile,
         temporaryToken,
         setTemporaryToken,
       }}

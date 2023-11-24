@@ -1,9 +1,7 @@
 import { useEffect, useState, useRef, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { Web3Auth } from '@web3auth/modal';
-import { SolanaWallet } from '@web3auth/solana-provider';
-import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
-import base58 from 'bs58';
+
 import Script from 'next/script';
 
 import Navbar from '@/Components/Navbar';
@@ -12,23 +10,172 @@ import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
 
 import { useAuth } from '@/hooks/useAuth';
+import { useSignature } from '@/hooks/useSignature';
 
 const Settings = () => {
   const router = useRouter();
 
+  const { signatureObject } = useSignature();
+
   const [nameValid, setNameValid] = useState(true);
   const [phoneValid, setPhoneValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
   const [user, setUser] = useState('');
   const [token, setToken] = useState('');
 
   const nameRef = useRef();
   const phoneRef = useRef();
+  const referralCodeRef = useRef();
 
-  const { user: selectorUser } = useAuth();
+  const { user: userLoggedIn, updateProfile } = useAuth();
+
+  const updateDataHandler = async (e) => {
+    e.preventDefault();
+
+    const {
+      name: userName,
+      phoneNumber: userPhoneNumber,
+      ownedReferralCode: { code: userCodeId },
+    } = user;
+
+    const name = nameRef.current.value;
+    const phoneNumber = phoneRef.current.value;
+    const referralCode = referralCodeRef?.current?.value ?? userCodeId;
+
+    if (
+      name === userName &&
+      phoneNumber === userPhoneNumber &&
+      referralCode === userCodeId
+    ) {
+      swal({
+        title: 'Oops!',
+        text: 'You need to change at least one field to update your account',
+        timer: 3000,
+      });
+      return;
+    }
+
+    if (!name) {
+      setNameValid(false);
+      swal({
+        title: 'Oops!',
+        text: 'Name cannot be empty',
+        timer: 2000,
+      });
+      return;
+    }
+
+    if (!phoneNumber || phoneNumber.charAt(0) !== '+') {
+      setPhoneValid(false);
+      swal({
+        title: 'Oops!',
+        text: 'Invalid phone number. Ensure to include country code starting with +',
+        timer: 3000,
+      });
+      return;
+    }
+
+    if (!user.ownedReferralCode.codeChanged && userCodeId !== referralCode) {
+      const modalResponse = await swal({
+        title: 'Attention!',
+        text: 'You can only change your referral code once; this action is immutable and irreversible.',
+        buttons: {
+          cancel: 'Cancel',
+          confirm: 'Continue',
+        },
+      });
+
+      if (!modalResponse) {
+        setIsLoading(false);
+        referralCodeRef.current.value = user.ownedReferralCode.code;
+        nameRef.current.value = user.name;
+        phoneRef.current.value = user.phoneNumber;
+        return;
+      }
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { sign, sign_nonce, sign_issue_at, sign_address } =
+        await signatureObject(user.blockchainAddress);
+
+      const res = await fetch(`/api/proxy?${Date.now()}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          userId: user.id,
+          name,
+          phoneNumber,
+          ...(!user.ownedReferralCode.codeChanged &&
+            userCodeId !== referralCode && { referralCode }),
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          uri: '/private/users/update',
+          sign,
+          time: sign_issue_at,
+          nonce: sign_nonce,
+          address: sign_address,
+        },
+      });
+
+      if (!res.ok || res.statusCode === 500) {
+        const errorData = await res.json();
+        throw new Error(errorData.errorMessage);
+      }
+
+      const userJsonResponse = await res.json();
+
+      if (userJsonResponse.statusCode === 500) {
+        throw new Error('something went wrong');
+      }
+
+      setIsLoading(false);
+
+      swal({
+        title: 'Submitted',
+        text: 'Record Successfully Updated.',
+        icon: 'success',
+        button: 'Ok',
+      }).then(() => {
+        //
+        const updatedUser = {
+          ...user,
+          name,
+          phoneNumber,
+          ...(userCodeId !== referralCode && {
+            ownedReferralCode: {
+              id: user.ownedReferralCode.id,
+              code: referralCode,
+              codeChanged: true,
+            },
+          }),
+        };
+
+        updateProfile(updatedUser);
+
+        // router.push('/homepage/dashboard');
+      });
+    } catch (err) {
+      console.log(err);
+      const error = err.toString().split(':');
+      setIsLoading(false);
+      swal({
+        title: 'Oops!',
+        text: `${error[1]}`,
+      });
+
+      referralCodeRef.current.value = user.ownedReferralCode.code;
+      nameRef.current.value = user.name;
+      phoneRef.current.value = user.phoneNumber;
+    }
+  };
 
   useEffect(() => {
-    if (selectorUser) {
+    if (userLoggedIn) {
+      console.log({ userLoggedIn });
+
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
@@ -68,154 +215,19 @@ const Settings = () => {
           localStorage.getItem('openlogin_store')
         );
 
-        if (!selectorUser) {
+        if (!userLoggedIn) {
           localStorage.removeItem('openlogin_store');
           router.push('/auth/join');
           return;
         }
 
         setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
+        setUser(userLoggedIn);
       };
 
       authUser();
     }
-  }, [selectorUser]);
-
-  const updateDataHandler = async (e) => {
-    e.preventDefault();
-
-    const name = nameRef.current.value;
-    const phoneNumber = phoneRef.current.value;
-
-    if (!name) {
-      setNameValid(false);
-      swal({
-        title: 'Oops!',
-        text: 'Name cannot be empty',
-        timer: 2000,
-      });
-      return;
-    }
-
-    if (!phoneNumber || phoneNumber.charAt(0) !== '+') {
-      setPhoneValid(false);
-      swal({
-        title: 'Oops!',
-        text: 'Invalid phone number. Ensure to include country code starting with +',
-        timer: 3000,
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    const signatureObj = {};
-
-    const chainConfig = {
-      chainNamespace: 'solana',
-      chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
-      rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-      displayName: 'Solana Mainnet',
-      blockExplorer: 'https://explorer.solana.com',
-      ticker: 'SOL',
-      tickerName: 'Solana',
-    };
-
-    const web3auth = new Web3Auth({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-      web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-      chainConfig: chainConfig,
-    });
-
-    await web3auth.initModal();
-
-    const web3authProvider = await web3auth.connect();
-
-    const solanaWallet = new SolanaWallet(web3authProvider);
-
-    // const userInfo = await web3auth.getUserInfo();
-
-    const domain = window.location.host;
-    // const domain = 'localhost:3000';
-    const origin = window.location.origin;
-    // const origin = 'http://localhost:3000';
-
-    const payload = new SIWPayload();
-    payload.domain = domain;
-    payload.uri = origin;
-    payload.address = user.blockchainAddress;
-    payload.statement = 'Sign in to SkyTrade app.';
-    payload.version = '1';
-    payload.chainId = 1;
-
-    const header = { t: 'sip99' };
-    const network = 'solana';
-
-    let message = new SIWWeb3({ header, payload, network });
-
-    const messageText = message.prepareMessage();
-    const msg = new TextEncoder().encode(messageText);
-    const result = await solanaWallet.signMessage(msg);
-
-    const signature = base58.encode(result);
-
-    const formatedDate = new Date(message.payload.issuedAt).toISOString();
-
-    signatureObj.sign = signature;
-    signatureObj.sign_nonce = message.payload.nonce;
-    signatureObj.sign_issue_at = formatedDate;
-    signatureObj.sign_address = user.blockchainAddress;
-
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        userId: user.id,
-        name,
-        phoneNumber,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/private/users/update',
-        sign: signatureObj.sign,
-        time: signatureObj.sign_issue_at,
-        nonce: signatureObj.sign_nonce,
-        address: signatureObj.sign_address,
-      },
-    })
-      .then((res) => {
-        if (!res.ok || res.statusCode === 500) {
-          return res.json().then((errorData) => {
-            throw new Error(errorData.errorMessage);
-          });
-        }
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error('something went wrong');
-          }
-
-          setIsLoading(false);
-          swal({
-            title: 'Submitted',
-            text: 'Record Successfully Updated.',
-            icon: 'success',
-            button: 'Ok',
-          }).then(() => {
-            router.push('/homepage/dashboard');
-          });
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        const error = err.toString().split(':');
-        setIsLoading(false);
-        swal({
-          title: 'Oops!',
-          text: `${error[1]}`,
-        });
-      });
-  };
+  }, [userLoggedIn]);
 
   if (!user || !token) {
     return <Spinner />;
@@ -256,6 +268,8 @@ const Settings = () => {
               <h3 className='text-2xl font-medium'>My Profile</h3>
               <p>Update your account settings</p>
             </div>
+
+            {/* KYC LOGIC - DO NOT REMOVE */}
 
             {/* {user.categoryId === 0 && user.KYCStatusId === 0 && (
               <div
@@ -349,6 +363,8 @@ const Settings = () => {
               </div>
             )} */}
 
+            {/* KYC LOGIC - DO NOT REMOVE */}
+
             <div
               className='mt-10 flex flex-col justify-center rounded-md border-2 border-light-blue px-6 py-5'
               style={{ width: '', height: '397px' }}
@@ -357,6 +373,7 @@ const Settings = () => {
                 <h3 className='text-2xl font-medium'>Personal Information</h3>
                 <p>Update your personal information</p>
               </div>
+
               <div
                 className='relative mb-10'
                 style={{ maxWidth: '660px', height: '37px' }}
@@ -381,6 +398,7 @@ const Settings = () => {
                   </p>
                 )}
               </div>
+
               <div className='mt-6 flex gap-5'>
                 <div
                   className='relative'
@@ -389,6 +407,7 @@ const Settings = () => {
                   <p className='text-bleach-brown'>Email</p>
                   <p className='text-black'>{user.email}</p>
                 </div>
+
                 <div className='relative'>
                   <label className='text-bleach-brown' htmlFor='number'>
                     Phone Number
@@ -411,18 +430,49 @@ const Settings = () => {
                   )}
                 </div>
               </div>
+
               <div className='mt-6 flex gap-5'>
-                <div
-                  className='relative'
-                  style={{ width: '320px', height: '37px' }}
-                >
-                  <p className='text-bleach-brown'>Type of Account</p>
-                  <p className='text-black'>
-                    {user.categoryId === 0 ? 'Individual' : 'Corporate'}
-                  </p>
+                <div className='mt-6 flex gap-5'>
+                  <div
+                    className='relative'
+                    style={{ width: '320px', height: '37px' }}
+                  >
+                    <p className='text-bleach-brown'>Type of Account</p>
+                    <p className='text-black'>
+                      {user.categoryId === 0 ? 'Individual' : 'Corporate'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='mt-6 flex gap-5'>
+                  <div
+                    className='relative'
+                    style={{ width: '320px', height: '37px' }}
+                  >
+                    <p className='text-bleach-brown'>Referral Code</p>
+                    <div className='flex gap-5'>
+                      {user.ownedReferralCode.codeChanged ? (
+                        <p className='text-black'>
+                          {user.ownedReferralCode.code}
+                        </p>
+                      ) : (
+                        <input
+                          type='text'
+                          onChange={() => {}}
+                          ref={referralCodeRef}
+                          name='referral-code'
+                          defaultValue={user.ownedReferralCode.code}
+                          id='referral-code'
+                          className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
+                          style={{ width: '320px', height: '37px' }}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+
             <div className='mt-8 flex flex-row items-center justify-center gap-5'>
               <button
                 onClick={updateDataHandler}
@@ -435,6 +485,7 @@ const Settings = () => {
                 {isLoading ? 'saving...' : 'Save'}
               </button>
             </div>
+
             <div className='mt-10 flex flex-row items-center justify-between text-sm'>
               <p>&copy; Skytrade 2023</p>
               <div className='flex flex-row items-center gap-1'>
