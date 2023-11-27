@@ -109,11 +109,7 @@ const Signup = () => {
         });
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        localStorage.removeItem('email');
-        swal({
-          title: 'oops!',
-          text: 'Something went wrong. Kindly reload the page',
-        });
+        router.push("/");
         return;
       }
     } else {
@@ -123,10 +119,7 @@ const Signup = () => {
         });
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        swal({
-          title: 'oops!',
-          text: 'Something went wrong. Kindly reload the page',
-        });
+        router.push("/");
         return;
       }
     }
@@ -136,10 +129,8 @@ const Signup = () => {
     try {
       userInformation = await web3auth.getUserInfo();
     } catch (err) {
-      swal({
-        title: 'oops!',
-        text: "Couldn't get user info. Kindly reload the page",
-      });
+      localStorage.removeItem('openlogin_store');
+      router.push("/");
       return;
     }
 
@@ -150,10 +141,8 @@ const Signup = () => {
     try {
       accounts = await solanaWallet.requestAccounts();
     } catch (err) {
-      swal({
-        title: 'oops!',
-        text: "Solana wallet wasn't created. Kindly reload the page",
-      });
+      localStorage.removeItem('openlogin_store');
+      router.push("/");
       return;
     }
 
