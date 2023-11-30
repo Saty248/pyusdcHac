@@ -17,7 +17,12 @@ const IndividualSignup = () => {
   const newsletterRef = useRef();
   const nameRef = useRef();
   const phoneNumberRef = useRef();
+
+  const referralCodeRef = useRef();
+
   const router = useRouter();
+
+  const [refCode, setRefCode] = useState('');
 
   const [nameValid, setNameValid] = useState(true);
   const [phoneNumberValid, setPhoneNumberValid] = useState(true);
@@ -30,6 +35,16 @@ const IndividualSignup = () => {
       if (!category.categoryId) {
         router.replace('/auth/join');
         return;
+      }
+
+      const lsReferralCode = localStorage.getItem('referralCode');
+
+      console.log({ lsReferralCode });
+
+      if (lsReferralCode) {
+        const cleanedReferralCode = lsReferralCode?.replace(/"/g, '');
+
+        setRefCode(cleanedReferralCode);
       }
     }
 
@@ -54,6 +69,7 @@ const IndividualSignup = () => {
 
     const name = nameRef.current.value;
     const phoneNumber = phoneNumberRef.current.value;
+    const referralCode = referralCodeRef.current?.value;
 
     if (!name) {
       setNameValid(false);
@@ -74,12 +90,25 @@ const IndividualSignup = () => {
       return;
     }
 
+    if (
+      (refCode && refCode.length !== 6) |
+      (!refCode && referralCode && referralCode.length !== 6)
+    ) {
+      swal({
+        title: 'Oops!',
+        text: 'Invalid Referral Code. Every referral code needs to be 6 characters',
+      });
+      return;
+    }
+
     const userInfo = {
       ...category,
       categoryId: +category.categoryId,
       name,
-      phoneNumber: phoneNumber,
+      phoneNumber,
       newsletter,
+      ...(refCode && { referralCode: refCode }),
+      ...(referralCode && { referralCode }),
     };
 
     setIsLoading(true);
@@ -94,7 +123,9 @@ const IndividualSignup = () => {
       },
     })
       .then((res) => {
-        if (!res.ok || res.statusCode === 500) {
+        console.log({ signUpRes: res, ok: res.ok });
+
+        if (!res.ok) {
           return res.json().then((errorData) => {
             swal({
               title: 'Sorry!',
@@ -122,13 +153,24 @@ const IndividualSignup = () => {
 
             nameRef.current.value = '';
             phoneNumberRef.current.value = '';
+
+            localStorage.removeItem('referralCode');
+            // referralCodeRef.current.value = '';
             router.replace('/homepage/dashboard');
           });
         });
       })
       .catch((error) => {
         console.log(error);
+
+        swal({
+          title: 'Sorry!',
+          text: `Something went wrong, please try again.`,
+        });
+
         setIsLoading(false);
+
+        throw new Error(errorData.errorMessage);
       });
   };
 
@@ -220,7 +262,7 @@ const IndividualSignup = () => {
             className='text-sm font-normal'
             style={{ color: 'rgba(0, 0, 0, 0.50)' }}
           >
-            Phone Number<span className='text-red-600'>*</span>
+            Phone Number <span className='text-red-600'>*</span>
           </label>{' '}
           <br />
           <input
@@ -241,6 +283,36 @@ const IndividualSignup = () => {
             <p className='absolute right-0 top-1 text-sm text-red-600'>
               invalid phone number
             </p>
+          )}
+        </div>
+
+        <div
+          className='relative mt-8'
+          style={{ width: '396px', height: '43px' }}
+        >
+          <label
+            className='text-sm font-normal'
+            style={{ color: 'rgba(0, 0, 0, 0.50)' }}
+          >
+            Referral Code
+          </label>{' '}
+          <br />
+          {refCode ? (
+            <p>{refCode}</p>
+          ) : (
+            <input
+              ref={referralCodeRef}
+              type='text'
+              min='0'
+              placeholder='LUKE10'
+              className='rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200'
+              style={{
+                width: '396px',
+                height: '43px',
+                border: '0.5px solid rgba(0, 0, 0, 0.50)',
+                paddingLeft: '14px',
+              }}
+            />
           )}
         </div>
 
