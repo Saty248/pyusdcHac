@@ -11,12 +11,12 @@ export default function App({ Component, pageProps }) {
         <>
           <Script src='https://cdn.withpersona.com/dist/persona-v4.8.0.js' />
           <Script
-              id="hotjar-script"
+              id="show-banner"
               dangerouslySetInnerHTML={{
                 __html: `
                   (function(h,o,t,j,a,r){
                     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                    h._hjSettings={hjid:${process.env.NEXT_PUBLIC_SITEID),hjsv:${process.env.NEXT_PUBLIC_HOTJARVERSION}};
+                    h._hjSettings={hjid:${process.env.NEXT_PUBLIC_SITEID},hjsv:${process.env.NEXT_PUBLIC_HOTJARVERSION}};
                     a=o.getElementsByTagName('head')[0];
                     r=o.createElement('script');r.async=1;
                     r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
