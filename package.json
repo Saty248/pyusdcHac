@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.2",
-    "@hotjar/browser": "^1.0.9",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.77.0",
     "@solana/web3.js": "^1.87.0",
