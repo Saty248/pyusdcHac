@@ -29,6 +29,8 @@ const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [categorySect, setCategorySect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   const emailRef = useRef();
 
@@ -217,6 +219,16 @@ const Signup = () => {
     router.push(`/auth/join/${path}`);
   };
 
+  const handleSwitchingBetweenLoginAndRegister = () => {
+    console.log("click")
+    setIsLogin(prev => !prev);
+    setIsNewsletterChecked(false);
+  }
+
+  const onTermsAndConditionsClicked = () => {}
+
+  const onPrivacyPolicyClicked = () => {}
+
   return (
     <Fragment>
       <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
@@ -236,126 +248,108 @@ const Signup = () => {
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       {!categorySect && (
         <div
-          className='relative mx-auto items-center justify-center rounded bg-white px-12'
-          style={{
-            width: '680px',
-            height: '90vh',
-            maxHeight: '593px',
-            marginTop: '5vh',
-          }}
+          className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
         >
-          <button
-            onClick={() => router.push('/')}
-            className='absolute left-8 top-8 flex flex-row items-center gap-2'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='14'
-              height='8'
-              viewBox='0 0 14 8'
-              fill='none'
-            >
-              <path
-                d='M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4'
-                stroke='#252530'
-                strokeWidth='1.4'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-            <p>Back</p>
-          </button>
           <form
-            className='mx-auto flex flex-col pt-20'
-            style={{ width: '396px' }}
+            className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+            style={{
+              maxWidth: '449px',
+            }}
           >
             <Image
               src={logo}
               alt="Company's logo"
-              width={164}
-              height={58}
-              className='my-4'
+              width={199}
+              height={77}
             />
-            <p className=' mt-12 text-xl font-medium text-dark-brown'>
-              Welcome to SkyTrade
+            <p className='text-xl font-medium text-light-black mt-[25px]'>
+              Welcome{isLogin && ' back'} to SkyTrade
             </p>
-            <div className='relative mt-2'>
+            <p className='text-base text-light-black'>{isLogin ? "Login" : "Register"}</p>
+            {isLogin && <p className='text-sm text-light-grey text-center'>Sign in effortlessly usign the authentication method you chose during sign up.</p>}
+            <div className='relative flex flex-col gap-[5px] w-full'>
               <label
-                className='text-sm font-normal'
-                style={{ color: 'rgba(0, 0, 0, 0.50)' }}
+                className='text-[14px] font-normal'
+                style={{ color: emailValid ? 'rgba(0, 0, 0, 0.50)' : '#E04F64' }}
               >
-                E-mail Address<span className='text-red-600'>*</span>
+                Email<span className='text-[#E04F64]'>*</span>
               </label>{' '}
               <br />
               <input
                 type='email'
                 ref={emailRef}
                 onChange={() => setEmailValid(true)}
-                placeholder='E-mail Address'
-                className='rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200'
+                placeholder='email@mail.com'
+                className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                 style={{
-                  width: '396px',
-                  height: '43px',
-                  border: '0.5px solid rgba(0, 0, 0, 0.50)',
-                  paddingLeft: '14px',
+                  border: emailValid ? '1px solid #87878D' : '1px solid #E04F64',
                 }}
               />
               {!emailValid && (
-                <p className='absolute right-0 top-1 text-sm text-red-600'>
-                  email is invalid
+                <p className='text-[11px] italic text-red-600'>
+                  Invalid email
                 </p>
               )}
             </div>
+            {!isLogin && <label className='flex w-full text-[14px] text-[#87878D] gap-[11px]'>
+              <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="newsletterCheckbox" name="newsletterCheckbox" checked={isNewsletterChecked} onChange={() => setIsNewsletterChecked(prev => !prev)} />
+              Send me newsletter to keep me updated
+            </label>}
             <button
               onClick={loginHandler.bind(null, '')}
-              className='mt-4 rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
-              style={{ width: '396px', height: '46px' }}
+              className='rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full'
             >
-              Continue with Email
+                Get started
             </button>
-            <div className='relative my-8 text-center'>
+            <div className='relative text-center text-[#00000033] flex gap-[15px] w-full items-center align-middle'>
               <div
                 style={{
-                  width: '396px',
-                  height: '0.4px',
-                  background: '#B1B1B1',
+                  width: '100%',
+                  height: '1px',
+                  background: '#00000033',
                 }}
-              ></div>
+              />
               <p
-                className='absolute -top-2'
-                style={{
-                  width: '18px',
-                  fontSize: '10px',
-                  padding: 'auto',
-                  height: '15px',
-                  color: '#B1B1B1',
-                  left: '47.5%',
-                  background: 'white',
-                }}
+              className='text-sm'
               >
-                or
+              or
               </p>
+              <div
+                style={{
+                  width: '100%',
+                  height: '1px',
+                  background: '#00000033',
+                }}
+              />
             </div>
-            {/* <p className=" text-dark-brown text-xl font-medium">Sign up using other methods</p> */}
-            <div className='flex w-full flex-row justify-center gap-5'>
               <button
                 onClick={loginHandler.bind(null, 'google')}
-                className='flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue'
+                className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 w-full justify-between pl-[18px] pr-[42px]'
                 style={{
-                  width: '406px',
-                  height: '43px',
-                  border: '0.5px solid rgba(0, 0, 0, 0.50)',
+                  border: '1px solid #595959',
                 }}
               >
                 <Image
                   src='/images/google-logo.png'
-                  alt='Google logo'
-                  width={33}
-                  height={33}
+                  alt="Google's logo"
+                  width={24}
+                  height={24}
+                  className=''
                 />
-                <p>Google</p>
+                <p className='text-[#595959] mx-auto'>Connect with Google</p>
               </button>
-            </div>
+              <button
+                onClick={loginHandler.bind(null, 'google')}
+                className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 justify-center w-full pl-[18px] text-[#595959]'
+                style={{
+                  border: '1px solid #595959',
+                }}
+              >
+                More Options
+              </button>
+              <p className='text-[#87878D] text-sm text-center'>By creating an account I agree with <span onClick={onTermsAndConditionsClicked} className='text-[#0653EA] cursor-pointer'>Terms and Conditions</span> and <span onClick={onPrivacyPolicyClicked} className='text-[#0653EA] cursor-pointer'>Privacy Policy</span> agreement</p>
+              <div style={{width: '100%', height: '1px', background: '#00000033'}} />
+              <p onClick={handleSwitchingBetweenLoginAndRegister} className='text-[#87878D]'>{isLogin ? "Don't have an account?" : "Already have an account?"} <span className='text-[#0653EA] font-bold cursor-pointer'>{isLogin ? "Register" : "Login"}</span></p>
           </form>
         </div>
       )}
