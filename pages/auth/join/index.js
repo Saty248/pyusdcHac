@@ -31,6 +31,7 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [isVisitYourInboxVisible, setIsVisitYourInboxVisible] = useState(false);
 
   const emailRef = useRef();
 
@@ -97,7 +98,8 @@ const Signup = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
+    setIsVisitYourInboxVisible(true);
 
     let web3authProvider;
 
@@ -191,7 +193,8 @@ const Signup = () => {
           })
         );
 
-        setIsLoading(false);
+        // setIsLoading(false);
+        setIsVisitYourInboxVisible(false);
         setCategorySect(true);
 
         // router.replace('/homepage/dashboard');
@@ -220,7 +223,6 @@ const Signup = () => {
   };
 
   const handleSwitchingBetweenLoginAndRegister = () => {
-    console.log("click")
     setIsLogin(prev => !prev);
     setIsNewsletterChecked(false);
   }
@@ -246,7 +248,7 @@ const Signup = () => {
         createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
       {isLoading &&
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
-      {!categorySect && (
+      {!categorySect && !isVisitYourInboxVisible && (
         <div
           className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
         >
@@ -353,8 +355,7 @@ const Signup = () => {
           </form>
         </div>
       )}
-
-      {categorySect && (
+      {categorySect && !isVisitYourInboxVisible && (
         <div
           className='relative mx-auto flex flex-col items-center justify-center rounded bg-white px-12'
           style={{ width: '680px', height: '475px', marginTop: '10vh' }}
@@ -442,6 +443,19 @@ const Signup = () => {
               </a>
             </div>
           </div>
+        </div>
+      )}
+      {isVisitYourInboxVisible && (
+        <div className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex flex-col items-center justify-center gap-[21.5px] overflow-hidden'>
+          <div className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+          style={{
+            maxWidth: '449px',
+          }}>
+            <Image src={logo} alt="Company's logo" width={199} height={77} />
+            <p className='text-xl font-medium text-light-black mt-[25px]'>Welcome to SkyTrade</p>
+            <p className='text-[14px] text-center font-normal text-light-grey'>Visit your inbox to access the app using the verification code received via email. Click the code link, it will refresh this page, logging you in instantly.</p>
+          </div>
+          <p className='text-light-grey text-[14px]'>Didn't receive the email? <span className='text-[#0653EA] cursor-pointer'>Resend</span></p>
         </div>
       )}
     </Fragment>
