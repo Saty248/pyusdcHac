@@ -50,7 +50,7 @@ const Sidebar = () => {
     const isActive = asPath.includes(href);
 
     return (
-      <Link href={href} className={`py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link href={href} className={`py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='w-5 h-5 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
         </div>
@@ -75,7 +75,7 @@ const Sidebar = () => {
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       <aside
         className='md:flex hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
-        style={{ maxWidth: '253.38px', height: '100vh' }}
+        style={{ width: !isCollapsed ? '297.29px' : "auto", height: '100vh' }}
       >
         <Image
           src={isCollapsed ? logoNoChars : logo}
@@ -86,7 +86,7 @@ const Sidebar = () => {
         />
         <SidebarItem href={'/homepage/dashboard'} text={'Dashboard'} children={<DashboardIcon />} />
         <SidebarItem href={'/homepage/airspace'} text={'Airspaces'} children={<EarthIcon />} />
-        <SidebarItem href={'/404'} text={'Referral Program'} children={<GiftIcon />} />
+        <SidebarItem href={'/homepage/referral'} text={'Referral Program'} children={<GiftIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={'/404'} text={'Buy Airspace'} children={<MapIcon />} />
@@ -103,7 +103,7 @@ const Sidebar = () => {
         <SidebarItemMobile href={'/homepage/airspace'} text={"Airspaces"} children={<EarthIcon />} />
         <SidebarItemMobile href={'/404'} text={"Marketplace"} children={<MapIcon />} />
         <SidebarItemMobile href={'/404'} text={"Portfolio"} children={<ShoppingBagsIcon />} />
-        <SidebarItemMobile href={'/404'} text={"Referral"} children={<GiftIcon />} />
+        <SidebarItemMobile href={'/homepage/referral'} text={"Referral"} children={<GiftIcon />} />
       </nav>
     </Fragment >
   );
