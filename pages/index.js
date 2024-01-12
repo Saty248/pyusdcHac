@@ -11,7 +11,7 @@ export default function Home() {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
     if (fetchedToken?.sessionId) {
-      router.push('/homepage/dashboard');
+      router.push('/homepage/dashboard2');
       return;
     } else {
       router.push("/auth/join");

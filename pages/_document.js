@@ -19,7 +19,7 @@ export default function Document() {
         <div id='modal-root'></div>
         <Main />
         <NextScript />
-        <script
+        {/** TODO: <script
           dangerouslySetInnerHTML={{
             __html: `
                 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -33,7 +33,7 @@ export default function Document() {
                 })();
               `,
           }}
-        />
+        />*/}
       </body>
     </Html>
   );

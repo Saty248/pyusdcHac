@@ -118,6 +118,7 @@ const Airspace = () => {
     }
   }, []);
 
+  // CREATE MAP
   useEffect(() => {
     if (token && user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -154,6 +155,7 @@ const Airspace = () => {
     }
   }, [token, user]);
 
+  // FLY TO ADDRESS
   useEffect(() => {
     if (flyToAddress) {
       setIsLoading(true);
@@ -212,6 +214,7 @@ const Airspace = () => {
     }
   }, [flyToAddress, map]);
 
+  // LOOK FOR ADDRESSES
   useEffect(() => {
     if (address) {
       setLongitude('');
@@ -248,6 +251,7 @@ const Airspace = () => {
     }
   }, [address]);
 
+  // GET USER PROPERTIES / AIRSPACE
   useEffect(() => {
     const getUserAirspace = async () => {
       if (user) {
@@ -506,7 +510,7 @@ const Airspace = () => {
             name={user.name}
             onClose={() => setShowOptions(false)}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           >
             <div className='relative'>
               <svg
@@ -515,9 +519,8 @@ const Airspace = () => {
                   setShowOptions(false);
                 }}
                 xmlns='http://www.w3.org/2000/svg'
-                className={`absolute bottom-11 right-2 ${
-                  isLoading ? 'cursor-wait' : 'cursor-pointer'
-                }`}
+                className={`absolute bottom-11 right-2 ${isLoading ? 'cursor-wait' : 'cursor-pointer'
+                  }`}
                 width='17'
                 height='17'
                 viewBox='0 0 17 17'
@@ -551,9 +554,8 @@ const Airspace = () => {
                     height: '259px',
                     border: '0.35px solid #0653EA',
                   }}
-                  className={`${
-                    (!showOptions || addresses.length < 1) && 'hidden'
-                  } absolute top-20 z-50 ms-5 overflow-y-auto rounded bg-white px-3 py-1`}
+                  className={`${(!showOptions || addresses.length < 1) && 'hidden'
+                    } absolute top-20 z-50 ms-5 overflow-y-auto rounded bg-white px-3 py-1`}
                 >
                   <p className='text-xs text-red-500'>
                     If any of the addresses listed below matches your address,

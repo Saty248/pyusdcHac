@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!token?.sessionId || !user) {
-      router.push('/auth/join');
+      // router.push('/auth/join');
       return;
     }
 

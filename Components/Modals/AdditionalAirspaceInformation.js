@@ -250,7 +250,7 @@ const AdditionalAispaceInformation = (props) => {
           }).then(() => {
             dispatch(counterActions.closeAdditionalInfoModal());
             // setIsLoading(false);
-            router.push('/homepage/dashboard');
+            router.push('/homepage/dashboard2');
           });
         });
       })
@@ -661,9 +661,8 @@ const AdditionalAispaceInformation = (props) => {
           <button
             onClick={closeModalHandler}
             disabled={isLoading}
-            className={`${
-              isLoading ? 'cursor-wait' : 'cursor-pointer'
-            } rounded-md text-dark-blue`}
+            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
+              } rounded-md text-dark-blue`}
             style={{
               border: '1px solid #0653EA',
               width: '120px',
@@ -675,9 +674,8 @@ const AdditionalAispaceInformation = (props) => {
           <button
             onClick={formSubmitHandler}
             disabled={isLoading}
-            className={`${
-              isLoading ? 'cursor-wait' : 'cursor-pointer'
-            } rounded-md bg-dark-blue text-white`}
+            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
+              } rounded-md bg-dark-blue text-white`}
             style={{ width: '120px', height: '40px' }}
           >
             {isLoading ? 'Submiting...' : 'Submit'}

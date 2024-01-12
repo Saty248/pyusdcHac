@@ -8,7 +8,7 @@ const ErrorPage = () => {
       <p>404!</p>
       <p>oops! the page you try to visit does not exist</p>
       <button
-        onClick={() => router.push('/homepage/dashboard')}
+        onClick={() => router.push('/homepage/dashboard2')}
         className='rounded-md bg-bleach-brown p-2 text-white'
       >
         return to homepage

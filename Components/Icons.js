@@ -209,3 +209,77 @@ export const PropertyIcon = () => {
 
     )
 }
+
+export const MagnifyingGlassIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M10.7118 11.7481C8.12238 13.822 4.33202 13.6588 1.93164 11.2584C-0.643879 8.6829 -0.643879 4.50716 1.93164 1.93164C4.50716 -0.64388 8.68289 -0.643879 11.2584 1.93164C13.6588 4.33202 13.822 8.12238 11.7481 10.7118L16.7854 15.7491C17.0715 16.0352 17.0715 16.4992 16.7854 16.7854C16.4992 17.0715 16.0352 17.0715 15.7491 16.7854L10.7118 11.7481ZM2.96795 10.2221C0.964766 8.21893 0.964766 4.97113 2.96795 2.96795C4.97113 0.964767 8.21892 0.964767 10.2221 2.96795C12.2238 4.96966 12.2253 8.21416 10.2265 10.2177C10.225 10.2192 10.2236 10.2206 10.2221 10.2221C10.2206 10.2236 10.2192 10.225 10.2177 10.2265C8.21416 12.2253 4.96966 12.2238 2.96795 10.2221Z" fill="#252530" fillOpacity="0.55" />
+        </svg>
+
+    )
+}
+
+export const WarningIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 24 25" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 7.5V13.5M21 12.5C21 17.4706 16.9706 21.5 12 21.5C7.02944 21.5 3 17.4706 3 12.5C3 7.52944 7.02944 3.5 12 3.5C16.9706 3.5 21 7.52944 21 12.5Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="12" cy="17" r="1" fill="black" />
+        </svg>
+    )
+}
+
+export const LocationPointIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="10" r="3" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M19 9.75C19 15.375 12 21 12 21C12 21 5 15.375 5 9.75C5 6.02208 8.13401 3 12 3C15.866 3 19 6.02208 19 9.75Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    )
+}
+
+export const ChevronRightIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5 1L7.79289 7.29289C8.18342 7.68342 8.18342 8.31658 7.79289 8.70711L1.5 15" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    )
+}
+
+export const CloseIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.3767 0.358305C13.9425 -0.0759428 13.241 -0.0759428 12.8067 0.358305L7.36195 5.79197L1.91714 0.34717C1.4829 -0.0870776 0.781418 -0.0870776 0.34717 0.34717C-0.0870776 0.781418 -0.0870776 1.4829 0.34717 1.91714L5.79197 7.36195L0.34717 12.8067C-0.0870776 13.241 -0.0870776 13.9425 0.34717 14.3767C0.781418 14.811 1.4829 14.811 1.91714 14.3767L7.36195 8.93192L12.8067 14.3767C13.241 14.811 13.9425 14.811 14.3767 14.3767C14.811 13.9425 14.811 13.241 14.3767 12.8067L8.93192 7.36195L14.3767 1.91714C14.7998 1.49403 14.7998 0.781419 14.3767 0.358305Z" fill="#222222" />
+        </svg>
+
+    )
+}
+
+export const ArrowLeftIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 7H1M1 7L7 1M1 7L7 13" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    )
+}
+
+export const ShieldIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.34875 9.50002L7.34875 11.5L11.5 7.34878M7.72528 1.07852L1.72528 2.7928C1.29598 2.91546 1 3.30784 1 3.75432L1 8.85384C1 12.0834 2.55966 15.1141 5.18762 16.9912L7.41876 18.5849C7.76646 18.8332 8.23354 18.8332 8.58124 18.5849L10.8124 16.9912C13.4403 15.1141 15 12.0834 15 8.85384V3.75432C15 3.30784 14.704 2.91546 14.2747 2.7928L8.27472 1.07852C8.09517 1.02721 7.90483 1.02721 7.72528 1.07852Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    )
+}
+
+export const InfoIcon = () => {
+    return (
+        <svg width="100%" height="100%" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 9.16667V13.3333M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="10.0003" cy="6.25008" r="0.833333" fill="#222222" />
+        </svg>
+
+    )
+}

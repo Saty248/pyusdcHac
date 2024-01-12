@@ -1,9 +1,11 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Script from 'next/script';
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import { EarthIcon, GiftIcon, ShareIcon, FacebookIcon, LinkedInIcon, GoogleIcon, XIcon, FriendsIcon, PropertyIcon } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
+import useDatabase from "@/hooks/useDatabase";
+import { useAuth } from "@/hooks/useAuth";
 
 const Item = ({ icon, title, text }) => {
     return (
@@ -53,8 +55,80 @@ const TheProgram = ({ activeSection, section, isMobile }) => {
     )
 }
 
-const Share = ({ activeSection, section, isMobile }) => {
+const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddress, user }) => {
     if (activeSection !== section && isMobile) return;
+    const [isCopied, setIsCopied] = useState({ code: false, link: false });
+    const [temporalReferralCode, setTemporalReferralCode] = useState(referralCode);
+    const { updateReferral } = useDatabase();
+    const { updateProfile } = useAuth();
+
+    useEffect(() => {
+        if (!isCopied.code) return;
+        let timeoutId;
+        (() => {
+            timeoutId = setTimeout(() => {
+                setIsCopied(prev => ({ ...prev, code: false }))
+            }, 2000);
+        })();
+
+        return () => timeoutId && clearTimeout(timeoutId);
+    }, [isCopied.code]);
+
+    useEffect(() => {
+        if (!isCopied.link) return;
+        let timeoutId;
+        (() => {
+            timeoutId = setTimeout(() => {
+                setIsCopied(prev => ({ ...prev, link: false }))
+            }, 2000);
+        })();
+
+        return () => timeoutId && clearTimeout(timeoutId);
+    }, [isCopied.link]);
+
+    useEffect(() => {
+        setTemporalReferralCode(referralCode)
+    }, [referralCode])
+
+    const handleCopy = (e, text, isCode) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(text);
+        setIsCopied(prev => ({ code: isCode ? true : prev.code, link: !isCode ? true : prev.link }));
+    }
+
+    const handleOnChange = (e) => {
+        setTemporalReferralCode(e.target.value)
+    }
+
+    const handleUpdateReferralCode = async () => {
+        try {
+            const { ownedReferralCode: { id } } = user;
+            await updateReferral(blockchainAddress, temporalReferralCode);
+            updateProfile({ ownedReferralCode: { id: id, code: temporalReferralCode, codeChanged: true } })
+        } catch (error) {
+            console.log(error);
+            setTemporalReferralCode(referralCode);
+        }
+    }
+
+    const shareOnGoogle = (textToShare) => {
+        window.open(`https://plus.google.com/share?url=${encodeURIComponent(textToShare)}`, '_blank');
+    };
+
+    const shareOnFacebook = (textToShare) => {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`, '_blank');
+    };
+
+    const shareOnTwitter = (textToShare) => {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(textToShare)}`, '_blank');
+    };
+
+    const shareOnLinkedIn = (textToShare) => {
+        window.open(`https://www.linkedin.com/shareArticle?url=${encodeURIComponent(textToShare)}`, '_blank');
+    };
+
+    const canCopy = referralCode === temporalReferralCode;
+    const canChangeCode = !canCopy && temporalReferralCode.length === 6;
 
     return (
         <div className="flex flex-wrap gap-8">
@@ -64,37 +138,38 @@ const Share = ({ activeSection, section, isMobile }) => {
                 <div className="flex flex-wrap gap-[21px]">
                     <div className="flex gap-[9px] flex-wrap justify-between">
                         <div className="relative w-full md:w-[300px]">
-                            <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
-                            <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy code</p>
+                            <input value={temporalReferralCode} disabled={user.ownedReferralCode.codeChanged} onChange={handleOnChange} maxLength={6} className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
+                            {canCopy && <p onClick={(e) => handleCopy(e, referralCode, true)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.code ? 'Copied ✓' : 'Copy code'}</p>}
+                            {canChangeCode && <p onClick={handleUpdateReferralCode} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{'Update code'}</p>}
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnFacebook(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><FacebookIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnLinkedIn(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><LinkedInIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnGoogle(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><GoogleIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnTwitter(referralCode)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><XIcon /></div>
                         </div>
                     </div>
                     <div className="flex gap-[9px] flex-wrap justify-between">
                         <div className="relative w-full md:w-[300px]">
-                            <input value={'sky.trade/ref=glwadys...'} className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] px-[22px] focus:outline-none" type="text" name="myReferralCode" id="myReferralCode" />
-                            <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy link</p>
+                            <input value={`localhost:3000/r/${referralCode}`} disabled className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] px-[22px] focus:outline-none" type="text" name="myReferralCode" id="myReferralCode" />
+                            <p onClick={(e) => handleCopy(e, `localhost:3000/r/${referralCode}`, false)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.link ? 'Copied ✓' : 'Copy link'}</p>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnFacebook(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><FacebookIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnLinkedIn(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><LinkedInIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnGoogle(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><GoogleIcon /></div>
                         </div>
-                        <div className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnTwitter(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><XIcon /></div>
                         </div>
                     </div>
@@ -137,7 +212,7 @@ const InviteYourFriends = () => {
             <p className="text-[#222222] text-xl font-normal">Invite your friends</p>
             <p className="text-[#87878D] text-[15px] font-normal">Insert your friend’s email address and send them invitations to join us.</p>
             <div className="relative max-w-[522px]">
-                <input className="w-full rounded-lg py-[16px] pr-[5px] pl-[22px]" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
+                <input className="w-full rounded-lg py-[16px] pr-[5px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
                 <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
                     <div className="w-[15px] h-[15px]">
                         <ShareIcon color={'white'} />
@@ -161,8 +236,29 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
 const Referral = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState(0);
-    const sections = ['The Program', 'Share', 'My Referrals'];
+    const [data, setData] = useState({ referralCode: '', registeredFriends: 0, registeredAirspaces: 0, validatedProperties: 0 })
     const { isMobile } = useMobile();
+    const { user } = useAuth()
+    const { getPropertiesByUserId, } = useDatabase();
+    const sections = ['The Program', 'Share', 'My Referrals'];
+
+    useEffect(() => {
+        if (!user) return;
+
+        const { id, blockchainAddress, ownedReferralCode: { code } } = user;
+
+        (async () => {
+            try {
+                const response = await getPropertiesByUserId(blockchainAddress, id);
+                console.log('marcin', user, response)
+                setData(prev => ({ ...prev, validatedProperties: response.length }));
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+
+        setData(prev => ({ ...prev, referralCode: code }))
+    }, [user])
 
     return (
         <Fragment>
@@ -188,8 +284,8 @@ const Referral = () => {
                         <Switcher sections={sections} activeSection={activeSection} setActiveSection={setActiveSection} />
                         <AlertMessage />
                         <TheProgram activeSection={activeSection} isMobile={isMobile} section={0} />
-                        <Share activeSection={activeSection} isMobile={isMobile} section={1} />
-                        <YourReferrals activeSection={activeSection} isMobile={isMobile} section={2} registeredFriends={5} registeredAirspaces={10} validatedProperties={10} />
+                        <Share activeSection={activeSection} isMobile={isMobile} section={1} referralCode={data.referralCode} blockchainAddress={user.blockchainAddress} user={user} />
+                        <YourReferrals activeSection={activeSection} isMobile={isMobile} section={2} registeredFriends={data.registeredFriends} registeredAirspaces={data.registeredAirspaces} validatedProperties={data.validatedProperties} />
                     </section>
                 </div>
             </div>

@@ -189,10 +189,7 @@ const Dashboard = () => {
           userInfo = await web3auth.getUserInfo();
         } catch (err) {
           localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
+          router.push('/auth/join');
           return;
         }
 
@@ -212,8 +209,6 @@ const Dashboard = () => {
       authUser();
     }
   }, [selectorUser]);
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (user) {
@@ -498,7 +493,7 @@ const Dashboard = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           />
           <div className='flex w-full flex-row justify-start'>
             <div className='my-5' style={{ width: '100%', height: '100vh' }}>
