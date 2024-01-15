@@ -14,13 +14,13 @@ let USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const Modal = ({ airspace: { name, address, id, expirationDate, currentPrice }, onCloseModal, isOffer }) => {
+const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice }, onCloseModal, isOffer }) => {
     return (
         <Fragment>
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
                 <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                     <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
-                    <h2 className="text-[#222222] text-center font-medium text-xl">{name || address}</h2>
+                    <h2 className="text-[#222222] text-center font-medium text-xl">{title || address}</h2>
                     <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
                 </div>
                 <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
@@ -96,16 +96,16 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({ name }, index) => (<PortfolioItem airspaceName={name || address} tags={[1, 1, 1, 1]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItem airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
 }
 
-const PortfolioListMobile = ({ title, airspacesList, selectAirspace }) => {
+const PortfolioListMobile = ({ airspacesList, selectAirspace }) => {
     return (
         <div className="flex flex-col gap-[11px] w-full">
-            {airspacesList.map(({ name }, index) => (<PortfolioItemMobile airspaceName={name || address} tags={[1, 1, 0, 0]} selectAirspace={() => selectAirspace(index)} />))}
+            {airspacesList.map(({ title, address, noFlyZone }, index) => (<PortfolioItemMobile airspaceName={title || address} tags={[false, false, noFlyZone, false]} selectAirspace={() => selectAirspace(index)} />))}
         </div>
     )
 }

@@ -155,7 +155,7 @@ const Portfolio = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Account'} username={'John Doe'} />
+                    <PageHeader pageTitle={'Account'} />
                     <section className="relative w-full h-full flex flex-col py-[29px] px-[21px] md:pl-[54.82px] md:pr-[47px] gap-[29px] md:mb-0 mb-[78.22px] overflow-y-auto">
                         <div className="flex flex-col gap-[15px]">
                             <h2 className="text-[#222222] font-normal text-xl">My Profile</h2>

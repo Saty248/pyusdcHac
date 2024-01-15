@@ -184,7 +184,7 @@ const YourReferralsItem = ({ icon, number, text }) => {
     return (
         <div className="flex items-center gap-[17px]">
             <div className="w-[34px] h-[34px]">{icon}</div>
-            <p className="text-[40px] text-[#4285F4] font-semibold">{number}</p>
+            <p className="text-[40px] text-[#4285F4] font-semibold min-w-[25.84px] text-center">{number}</p>
             <p className="text-[15px] text-[#868686] font-normal">{text}</p>
         </div>
     )
@@ -251,7 +251,7 @@ const Referral = () => {
             try {
                 const response = await getPropertiesByUserId(blockchainAddress, id);
                 console.log('marcin', user, response)
-                setData(prev => ({ ...prev, validatedProperties: response.length }));
+                setData(prev => ({ ...prev, validatedProperties: response.filter(i => i.isActive).length, registeredAirspaces: response.length }));
             } catch (error) {
                 console.log(error);
             }
@@ -279,7 +279,7 @@ const Referral = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Referral Program'} username={'John Doe'} />
+                    <PageHeader pageTitle={'Referral Program'} />
                     <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
                         <Switcher sections={sections} activeSection={activeSection} setActiveSection={setActiveSection} />
                         <AlertMessage />

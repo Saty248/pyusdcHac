@@ -1,7 +1,14 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
+import Spinner from "@/Components/Spinner";
+import Backdrop from "@/Components/Backdrop";
+import { useAuth } from "@/hooks/useAuth";
+import { Web3Auth } from '@web3auth/modal';
+import { SolanaWallet } from '@web3auth/solana-provider';
+import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
+import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
 
 let USDollar = new Intl.NumberFormat('en-US', {
@@ -51,7 +58,7 @@ const TransactionHistory = ({ transactions }) => {
                     ))}
                 </tbody>
             </table>
-            <div className="flex items-center justify-end">
+            {false && <div className="flex items-center justify-end">
                 <div className="mx-auto flex gap-[11.71px]">
                     <div className="text-[#4285F4] text-base font-bold cursor-pointer">1</div>
                     <div className="text-[#87878D] text-base font-normal cursor-pointer">2</div>
@@ -61,12 +68,12 @@ const TransactionHistory = ({ transactions }) => {
                     <div className="text-[#0653EA] text-base font-normal cursor-pointer">Next</div>
                 </div>
                 <div className="text-[#87878D] text-[14px] font-normal -tracking-[0.5px]">Page 1 of 5</div>
-            </div>
+            </div>}
         </div>
     )
 }
 
-const DepositAndWithdraw = ({ activeSection, setActiveSection }) => {
+const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
     return (
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
             boxShadow: "0px 12px 34px -10px #3A4DE926"
@@ -84,7 +91,7 @@ const DepositAndWithdraw = ({ activeSection, setActiveSection }) => {
                         <div className="flex flex-col items-start gap-[5px] flex-1">
                             <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
                             <div className="relative w-full">
-                                <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={'bc1q4q4vmmf34ldtrfgferrggmp'} />
+                                <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
                                 <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
                             </div>
                         </div>
@@ -106,8 +113,6 @@ const DepositAndWithdraw = ({ activeSection, setActiveSection }) => {
             <div className="flex flex-col gap-[5px] w-full">
                 <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment source</label>
                 <select name="paymentMethod" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal appearance-none focus:outline-none" style={{ border: "1px solid #87878D" }}>
-                    <option value="coinbase" >Coinbase</option>
-                    <option value="binance">Binance</option>
                     <option value="stripe">Stripe</option>
                 </select>
             </div>
@@ -123,17 +128,177 @@ const DepositAndWithdraw = ({ activeSection, setActiveSection }) => {
 const Funds = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState(0);
+    const transactions = [];
 
-    const transactions = [
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-        { date: 'Feb 13, 2023', transactionId: '1234567890', type: 'Deposit', amount: '$1,000.00', status: 'Settled' },
-    ]
+    const { user: selectorUser } = useAuth();
+    const [user, setUser] = useState();
+    const [token, setToken] = useState('');
+    const [tokenBalance, setTokenBalance] = useState('');
+    const [signature, setSignature] = useState();
+
+    // GET USER AND TOKEN
+    useEffect(() => {
+        if (selectorUser) {
+            const authUser = async () => {
+                const chainConfig = {
+                    chainNamespace: 'solana',
+                    chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                    displayName: 'Solana Mainnet',
+                    blockExplorer: 'https://explorer.solana.com',
+                    ticker: 'SOL',
+                    tickerName: 'Solana',
+                };
+                const web3auth = new Web3Auth({
+                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                    chainConfig: chainConfig,
+                });
+                await web3auth.initModal();
+                // await web3auth.connect();
+                let userInfo;
+                try {
+                    userInfo = await web3auth.getUserInfo();
+                } catch (err) {
+                    localStorage.removeItem('openlogin_store');
+                    router.push('/auth/join');
+                    return;
+                }
+
+                const fetchedToken = JSON.parse(
+                    localStorage.getItem('openlogin_store')
+                );
+
+                if (!selectorUser) {
+                    localStorage.removeItem('openlogin_store');
+                    router.push('/auth/join');
+                    return;
+                }
+
+                setToken(fetchedToken.sessionId);
+                setUser(selectorUser);
+            };
+            authUser();
+        }
+    }, [selectorUser]);
+
+    // GET TOKEN BALANCE
+    useEffect(() => {
+        if (user) {
+            console.log({ user });
+            const data = {
+                jsonrpc: '2.0',
+                id: 1,
+                method: 'getTokenAccountsByOwner',
+                params: [
+                    user.blockchainAddress,
+                    {
+                        mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
+                    },
+                    {
+                        encoding: 'jsonParsed',
+                    },
+                ],
+            };
+
+            fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((errorData) => {
+                            throw new Error(errorData.error);
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then((result) => {
+                    if (result.result.value.length < 1) {
+                        setTokenBalance('0');
+                        return;
+                    }
+                    setTokenBalance(
+                        result.result.value[0].account.data.parsed.info.tokenAmount
+                            .uiAmountString
+                    );
+                })
+                .catch((error) => {
+                    setTokenBalance('');
+                    console.error(error);
+                });
+        }
+    }, [user]);
+
+    // GET SIGNATURE
+    useEffect(() => {
+        if (user) {
+            const getSignature = async () => {
+                const signatureObj = {};
+
+                const chainConfig = {
+                    chainNamespace: 'solana',
+                    chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                    displayName: 'Solana Mainnet',
+                    blockExplorer: 'https://explorer.solana.com',
+                    ticker: 'SOL',
+                    tickerName: 'Solana',
+                };
+
+                const web3auth = new Web3Auth({
+                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                    chainConfig: chainConfig,
+                });
+
+                await web3auth.initModal();
+
+                const web3authProvider = await web3auth.connect();
+
+                const solanaWallet = new SolanaWallet(web3authProvider);
+
+                // const userInfo = await web3auth.getUserInfo();
+
+                const domain = window.location.host;
+                // const domain = 'localhost:3000';
+                const origin = window.location.origin;
+                // const origin = 'http://localhost:3000';
+
+                const payload = new SIWPayload();
+                payload.domain = domain;
+                payload.uri = origin;
+                payload.address = user.blockchainAddress;
+                payload.statement = 'Sign in to SkyTrade app.';
+                payload.version = '1';
+                payload.chainId = 1;
+
+                const header = { t: 'sip99' };
+                const network = 'solana';
+
+                let message = new SIWWeb3({ header, payload, network });
+
+                const messageText = message.prepareMessage();
+                const msg = new TextEncoder().encode(messageText);
+                const result = await solanaWallet.signMessage(msg);
+
+                const signature = base58.encode(result);
+
+                signatureObj.sign = signature;
+                signatureObj.sign_nonce = message.payload.nonce;
+                signatureObj.sign_issue_at = message.payload.issuedAt;
+                signatureObj.sign_address = user.blockchainAddress;
+                setSignature(signatureObj);
+            };
+
+            getSignature();
+        }
+    }, [user]);
 
     return (
         <Fragment>
@@ -154,14 +319,14 @@ const Funds = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Funds'} username={'John Doe'} />
+                    <PageHeader pageTitle={'Funds'} />
                     <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll pl-[68.82px] pr-[55px]">
                         <div className="flex gap-[50px] flex-wrap">
                             <div className="flex flex-col gap-5">
-                                <AvailableBalance balance={1585222.06} />
-                                <DepositAndWithdraw activeSection={activeSection} setActiveSection={setActiveSection} />
+                                <AvailableBalance balance={tokenBalance} />
+                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} />
                             </div>
-                            {<TransactionHistory transactions={transactions} />}
+                            <TransactionHistory transactions={transactions} />
                         </div>
                     </section>
                 </div>

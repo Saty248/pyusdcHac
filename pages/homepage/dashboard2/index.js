@@ -14,6 +14,7 @@ import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
+import useDatabase from "@/hooks/useDatabase";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -57,11 +58,11 @@ const MyAirspaces = ({ airspaces = [] }) => {
                     <WorldMap coloredCountries={['Spain']} />
                 </div>
                 <div className="flex flex-col items-center gap-[7px] w-full">
-                    {airspaces.length && <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">Claim your first piece of sky now!</p>}
-                    {false && airspaces.length && airspaces.slice(0, 3).map((airspace) => (
+                    {airspaces.length === 0 && <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">Claim your first piece of sky now!</p>}
+                    {airspaces.length !== 0 && airspaces.slice(0, 3).map((airspace) => (
                         <div className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]" style={{ border: "1px solid #4285F4" }}>
                             <div className="w-[24px] h-[24px] flex justify-center items-center"><LocationPointIcon /></div>
-                            <p className="flex-1">{airspace.name}</p>
+                            <p className="flex-1">{(airspace.title || airspace.address).substring(0, 15)}</p>
                             <div className="w-[18px] h-[18px] flex items-center justify-center"><ChevronRightIcon /></div>
                         </div>
                     ))}
@@ -107,20 +108,13 @@ const ReferralProgram = () => {
 
 const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
-
-    // TODO: we need data for airspaces and token balance
     const { user: selectorUser } = useAuth();
     const [user, setUser] = useState();
     const [token, setToken] = useState('');
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
-    // TODO: we do not know what is this
-    const [airspaceLength, setAirspaceLength] = useState();
-
-    useEffect(() => {
-        console.log("Dashboard:", { user });
-        console.log("Dashboard:", { tokenBalance });
-    }, [user, tokenBalance])
+    const [airspaces, setAirspaces] = useState([]);
+    const { getPropertiesByUserId } = useDatabase()
 
     // GET USER AND TOKEN
     useEffect(() => {
@@ -288,40 +282,19 @@ const Dashboard = () => {
 
     // GET AIRSPACE LENGTH
     useEffect(() => {
-        if (signature) {
-            fetch(`/api/proxy?${Date.now()}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    uri: `/private/properties/user-properties/${user.id}`,
-                    sign: signature.sign,
-                    time: signature.sign_issue_at,
-                    nonce: signature.sign_nonce,
-                    address: signature.sign_address,
-                },
-            })
-                .then((res) => {
-                    if (!res.ok) {
-                        return res.json().then((err) => {
-                            throw new Error(err.message);
-                        });
-                    }
-                    return res.json().then((data) => {
-                        setAirspaceLength(data.length);
-                    });
-                })
-                .catch((err) => {
-                    setAirspaceLength('');
-                    console.log(err);
-                });
-        }
-    }, [signature]);
+        if (!user) return;
 
-    const airspaces = [
-        { name: 'My Airspace 1', address: '4523 14th Avenue, Sacramento, California, USA' },
-        { name: 'My Airspace 2', address: 'Villa de Santa Brígida, Las Palmas, Spain' },
-        { name: 'My Airspace 3', address: 'Las Palmas de Gran Canaria, Las Palmas, Spain' },
-    ];
+        const getAirspaces = async () => {
+            try {
+                const response = await getPropertiesByUserId(user.blockchainAddress, user.id);
+                setAirspaces(response);
+            } catch (error) {
+                console.log(error)
+            }
+        };
+
+        getAirspaces();
+    }, [user])
 
     if (!user || !token) {
         return <Spinner />;
@@ -346,7 +319,7 @@ const Dashboard = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Dashboard'} username={'John Doe'} />
+                    <PageHeader pageTitle={'Dashboard'} />
                     <section className="hidden md:flex relative w-full h-full px-[53px] pt-[52px]">
                         <div className="flex flex-1 gap-[37px]">
                             <div className="basis-[58%] flex flex-col gap-[48px] h-full overflow-y-auto">
@@ -362,7 +335,7 @@ const Dashboard = () => {
                                     <ReferralProgram />
                                 </div>
                             </div>
-                            <div className="flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] -mr-[53px] pt-[42px] px-[18px] pb-[40px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
+                            <Link href={'/homepage/airspace2'} className="flex-1 flex flex-col items-center justify-between bg-cover bg-no-repeat bg-center -mt-[53px] -mr-[53px] pt-[42px] px-[18px] pb-[40px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
                                 <div className="bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex flex-col items-center gap-[15px] max-w-[362px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                                     <div className="flex gap-[5px] items-center">
                                         <p className="text-xl font-medium text-[#222222]">Claim Airspace</p>
@@ -377,17 +350,17 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">Claim Airspace</div>
-                            </div>
+                            </Link>
                         </div>
                     </section>
                     <section className="flex flex-col gap-[21px] items-center md:hidden relative w-full h-full mb-[78.22px] overflow-y-auto pb-[47px] px-[18px]">
-                        <div className="flex h-[668px] gap-[120px] flex-col items-center justify-between bg-cover bg-no-repeat bg-center py-[23px] px-[16px] -mx-[18px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
+                        <Link href={'/homepage/airspace2'} className="flex h-[668px] gap-[120px] flex-col items-center justify-between bg-cover bg-no-repeat bg-center py-[23px] px-[16px] -mx-[18px]" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
                             <div className="flex flex-col rounded-[30px] gap-[5.71px] bg-white pt-[17.29px] pb-[17px] pl-[27px] pr-[16px]">
                                 <h2 className="font-medium text-xl text-[#222222]">Welcome on SkyTrade!</h2>
                                 <p className="font-normal text-base text-[#87878D]">Claim your airspace on the dashboard to kickstart your passive income journey. Don't forget to share the love—refer friends using your code or link and watch your earnings grow. Welcome to the community, where the future is yours to seize! 🌟🚀</p>
                             </div>
                             <div className="text-white rounded-lg flex items-center justify-center bg-[#0653EA] py-[16px] px-[96px] font-normal text-[15px]">Claim Airspace</div>
-                        </div>
+                        </Link>
                         <MyAirspaces airspaces={airspaces} />
                         <ReferralProgram />
                         <AvailableBalance balance={tokenBalance} />

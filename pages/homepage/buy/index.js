@@ -47,7 +47,7 @@ const Buy = () => {
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v12',
                 center: [-15.498211, 28.035056],
-                zoom: 20,
+                zoom: 15,
             });
 
             newMap.on('load', function () {
@@ -196,8 +196,8 @@ const Buy = () => {
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
-                    <PageHeader pageTitle={'Marketplace: Buy Airspace'} username={'John Doe'} />
-                    <section className="relative w-full h-full overflow-y-scroll py-[39px] px-[36px] flex">
+                    <PageHeader pageTitle={'Marketplace: Buy Airspace'} />
+                    <section className="relative w-full h-full overflow-y-scroll md:py-[39px] md:px-[36px] flex">
                         <div
                             className='absolute top-0 left-0 !w-full !h-full !m-0'
                             id='map'
