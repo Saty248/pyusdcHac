@@ -33,6 +33,31 @@ const AvailableBalance = ({ balance = 0 }) => {
 }
 
 const TransactionHistory = ({ transactions }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const TRANSACTIONS_PER_PAGE = 8;
+    const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
+    const finalIndex = currentPage * TRANSACTIONS_PER_PAGE;
+    const paginatedData = transactions.slice(initialIndex, finalIndex);
+    const totalPages = Math.ceil(transactions.length / TRANSACTIONS_PER_PAGE);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [transactions])
+
+    const changePage = (newPage) => setCurrentPage(newPage);
+    const getPaginationNumbers = () => {
+        const pages = [];
+        const range = 2;
+
+        for (let i = currentPage - range; i <= currentPage + range; i++) {
+            if (i > 0 && i <= totalPages) {
+                pages.push(i);
+            }
+        }
+
+        return pages;
+    }
+
     return (
         <div className="flex flex-col gap-5 flex-1 min-w-[600px]">
             <div className="flex justify-between items-center">
@@ -51,24 +76,28 @@ const TransactionHistory = ({ transactions }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {transactions.map((transaction, index) => (
+                    {paginatedData.map((transaction, index) => (
                         <tr key={transaction.id} className={`${index % 2 === 0 && 'bg-white'}`}>
                             {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })}
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {false && <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end">
                 <div className="mx-auto flex gap-[11.71px]">
-                    <div className="text-[#4285F4] text-base font-bold cursor-pointer">1</div>
-                    <div className="text-[#87878D] text-base font-normal cursor-pointer">2</div>
-                    <div className="text-[#87878D] text-base font-normal cursor-pointer">3</div>
-                    <div className="text-[#87878D] text-base font-normal cursor-pointer">4</div>
-                    <div className="text-[#87878D] text-base font-normal cursor-pointer">5</div>
-                    <div className="text-[#0653EA] text-base font-normal cursor-pointer">Next</div>
+                    {getPaginationNumbers().map((pageNumber) => (
+                        <div
+                            className={`${(currentPage === pageNumber) ? 'text-[#87878D]' : 'text-[#0653EA] cursor-pointer'} text-base font-bold`}
+                            key={pageNumber}
+                            onClick={() => changePage(pageNumber)}
+                        >
+                            {pageNumber}
+                        </div>
+                    ))}
+                    {totalPages > 1 && <div className={`${currentPage === totalPages ? 'text-[#87878D]' : 'text-[#0653EA] cursor-pointer'} text-base font-normal`} onClick={() => { if (currentPage !== totalPages) changePage(currentPage + 1); }}>Next</div>}
                 </div>
-                <div className="text-[#87878D] text-[14px] font-normal -tracking-[0.5px]">Page 1 of 5</div>
-            </div>}
+                {totalPages !== 0 && <div className="text-[#87878D] text-[14px] font-normal -tracking-[0.5px]">Page {currentPage} of {totalPages}</div>}
+            </div>
         </div>
     )
 }
