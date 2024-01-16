@@ -7,14 +7,6 @@ import CookieConsent from '@/Components/CookieConsent'
 
 import { AuthProvider } from '@/hooks/useAuth';
 import { msclaritConfig } from '@/hooks/msclaritConfig';
-// import { Poppins } from "next/font/google";
-
-// const poppins = Poppins({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-poppins',
-//   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
-// });
 
 export default function App({ Component, pageProps }) {
   return (
@@ -26,6 +18,16 @@ export default function App({ Component, pageProps }) {
             id="show-banner"
             dangerouslySetInnerHTML={msclaritConfig}
           />
+          <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
+          <Script id='google-analytics'>
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+          </Script>
           <Component {...pageProps} />
           <CookieConsent />
         </>

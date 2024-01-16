@@ -398,17 +398,6 @@ const Wallet = () => {
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
-
       {showWithdrawalModal &&
         createPortal(
           <Backdrop onClick={backdropCloseHandler} />,
@@ -462,7 +451,7 @@ const Wallet = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'
@@ -617,9 +606,8 @@ const Wallet = () => {
                     {history.signature}
                   </a>
                   <p
-                    className={`w-2/12 ${
-                      history.amount > 0 ? 'text-green-500' : 'text-red-600'
-                    }`}
+                    className={`w-2/12 ${history.amount > 0 ? 'text-green-500' : 'text-red-600'
+                      }`}
                   >
                     <span>{history.amount ? history.amount : ''}</span>
                   </p>

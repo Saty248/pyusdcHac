@@ -150,16 +150,6 @@ const Wallet = () => {
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
       <div className='mx-auto flex flex-row'>
         {addCard &&
           createPortal(
@@ -174,7 +164,7 @@ const Wallet = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'
@@ -320,9 +310,8 @@ const Wallet = () => {
                     onCopy={copyTextHandler}
                   >
                     <button
-                      className={`${
-                        copy ? 'bg-light-green' : 'bg-dark-blue'
-                      } flex flex-row items-center justify-center rounded`}
+                      className={`${copy ? 'bg-light-green' : 'bg-dark-blue'
+                        } flex flex-row items-center justify-center rounded`}
                       style={{ width: '44px', height: '37px' }}
                     >
                       {copy ? (
