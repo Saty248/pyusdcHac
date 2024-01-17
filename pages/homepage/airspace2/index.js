@@ -186,7 +186,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                 </Fragment>
             )}
 
-            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won’t affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
+            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
             <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
                 <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer bg-cover' checked={data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: true }))} style={{ appearance: "none", border: !data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
                 Yes
@@ -338,7 +338,7 @@ const HowToModal = ({ goBack }) => {
                         <p className="text-[15px]"><span className="font-bold">5. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
                         <p className="text-[15px]"><span className="font-bold">6. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
                     </div>
-                    <p className="text-[15px]">Let’s get started on creating the future and receiving passive income from your skies. 🚀✨</p>
+                    <p className="text-[15px]">Let's get started on creating the future and receiving passive income from your skies. 🚀✨</p>
                     <div onClick={goBack} className="bg-[#0653EA] rounded-[8px] py-[16px] w-full text-center text-white cursor-pointer">Claim Airspace</div>
                 </div>
             )}
