@@ -210,7 +210,7 @@ const InviteYourFriends = () => {
     return (
         <div className="flex flex-col gap-[15px] px-[51px]">
             <p className="text-[#222222] text-xl font-normal">Invite your friends</p>
-            <p className="text-[#87878D] text-[15px] font-normal">Insert your friend’s email address and send them invitations to join us.</p>
+            <p className="text-[#87878D] text-[15px] font-normal">Insert your friend's email address and send them invitations to join us.</p>
             <div className="relative max-w-[522px]">
                 <input className="w-full rounded-lg py-[16px] pr-[5px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
                 <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">

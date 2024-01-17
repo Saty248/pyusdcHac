@@ -107,6 +107,7 @@ const ReferralProgram = () => {
 
 
 const Dashboard = () => {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
     const { user: selectorUser } = useAuth();
     const [user, setUser] = useState();
@@ -114,7 +115,8 @@ const Dashboard = () => {
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
     const [airspaces, setAirspaces] = useState([]);
-    const { getPropertiesByUserId } = useDatabase()
+    const { getPropertiesByUserId } = useDatabase();
+
 
     // GET USER AND TOKEN
     useEffect(() => {
