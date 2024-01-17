@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Fragment, useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
@@ -61,16 +61,17 @@ const ReferralCodeRedirect = () => {
 
   const emailRef = useRef();
   const router = useRouter();
+  const { referralCode } = router.query;
   const dispatch = useDispatch();
   const { signatureObject } = useSignature();
   const { setTemporaryToken, signIn } = useAuth();
   const { getReferralByCode } = useDatabase();
 
   useEffect(() => {
-    if (!router.query || !router.query.referralCode) return;
+    if (!referralCode) return;
     (async () => {
       try {
-        const response = await getReferralByCode(router.query.referralCode);
+        const response = await getReferralByCode(referralCode);
         if (!response) setDoesCodeExist(false);
         localStorage.setItem('referralCode', JSON.stringify({ response }));
       } catch (error) {
@@ -79,7 +80,7 @@ const ReferralCodeRedirect = () => {
         setIsLoading(false);
       }
     })();
-  }, [router.query]);
+  }, [referralCode]);
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
