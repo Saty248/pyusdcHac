@@ -15,13 +15,23 @@ export default function App({ Component, pageProps }) {
         <>
           <Script src='https://cdn.withpersona.com/dist/persona-v4.8.0.js' />
           <Script
-              id="show-banner"
-              dangerouslySetInnerHTML={msclaritConfig}
+            id="show-banner"
+            dangerouslySetInnerHTML={msclaritConfig}
           />
+          <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
+          <Script id='google-analytics'>
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+        
+                gtag('config', 'G-C0J4J56QW5');
+            `}
+          </Script>
           <Component {...pageProps} />
-          <CookieConsent /> 
+          <CookieConsent />
         </>
       </Provider>
     </AuthProvider>
   );
-}
+} 

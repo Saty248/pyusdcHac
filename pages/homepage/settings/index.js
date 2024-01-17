@@ -179,7 +179,7 @@ const Settings = () => {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
-          chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
           displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
@@ -235,17 +235,6 @@ const Settings = () => {
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
-
       <div className='mx-auto flex flex-row'>
         <Sidebar user={user} />
         <div
@@ -255,7 +244,7 @@ const Settings = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           />
           <form
             className='mx-auto bg-white px-10 pb-2 pt-16'
@@ -458,7 +447,7 @@ const Settings = () => {
                       ) : (
                         <input
                           type='text'
-                          onChange={() => {}}
+                          onChange={() => { }}
                           ref={referralCodeRef}
                           name='referral-code'
                           defaultValue={user.ownedReferralCode.code}
@@ -477,9 +466,8 @@ const Settings = () => {
               <button
                 onClick={updateDataHandler}
                 disabled={isLoading}
-                className={`rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${
-                  !isLoading ? 'cursor-pointer' : 'cursor-wait'
-                }`}
+                className={`rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 ${!isLoading ? 'cursor-pointer' : 'cursor-wait'
+                  }`}
                 style={{ width: '120px', height: '40px' }}
               >
                 {isLoading ? 'saving...' : 'Save'}

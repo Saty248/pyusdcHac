@@ -29,6 +29,11 @@ const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [categorySect, setCategorySect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isVisitYourInboxVisible, setIsVisitYourInboxVisible] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const emailRef = useRef();
 
@@ -40,17 +45,14 @@ const Signup = () => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
 
     if (fetchedToken?.sessionId) {
-      router.push('/homepage/dashboard');
+      router.push('/homepage/dashboard2');
       return;
     }
   }, []);
 
-  const router = useRouter();
-  const dispatch = useDispatch();
-
   const chainConfig = {
     chainNamespace: 'solana',
-    chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
     rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
     displayName: 'Solana Mainnet',
     blockExplorer: 'https://explorer.solana.com',
@@ -60,7 +62,6 @@ const Signup = () => {
 
   const web3auth = new Web3AuthNoModal({
     clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
     web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
     chainConfig: chainConfig,
   });
@@ -95,7 +96,8 @@ const Signup = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
+    setIsVisitYourInboxVisible(true);
 
     let web3authProvider;
 
@@ -166,7 +168,7 @@ const Signup = () => {
         signIn({ user });
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
-        router.push('/homepage/dashboard');
+        router.push('/homepage/dashboard2');
         return user;
       }
 
@@ -189,8 +191,9 @@ const Signup = () => {
           })
         );
 
-        setIsLoading(false);
-        setCategorySect(true);
+        // setIsLoading(false);
+        setIsVisitYourInboxVisible(false);
+        router.replace(`/auth/join/intro`);
 
         // router.replace('/homepage/dashboard');
         return;
@@ -205,6 +208,136 @@ const Signup = () => {
     }
   };
 
+  const loginHandlerGood = async (e) => {
+    e.preventDefault()
+
+    const email = emailRef.current.value;
+    console.info('Login: email is', email);
+
+    if (!isEmailValid(email)) {
+      console.log('Login: email is not valid', email);
+      return;
+    }
+    console.log('Login: email is valid', email);
+
+    setIsVisitYourInboxVisible(true);
+
+    let provider;
+
+    try {
+      console.log("Login: creating provider...")
+      provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+        loginProvider: 'email_passwordless',
+        extraLoginOptions: {
+          login_hint: email,
+        },
+      });
+    } catch (error) {
+      console.log("Login: ERROR while creating provider...", { error })
+      localStorage.removeItem('openlogin_store');
+      setIsVisitYourInboxVisible(false);
+      return;
+    }
+
+    console.log("Login: provider created")
+
+    let userInformation;
+
+    try {
+      console.log("Login: getting user information...")
+      userInformation = await web3auth.getUserInfo();
+      console.log("Login: user information is", userInformation)
+    } catch (err) {
+      console.log("Login: ERROR while getting user information...", { err })
+      localStorage.removeItem('openlogin_store');
+      setIsVisitYourInboxVisible(false);
+      // router.push("/");
+      return;
+    }
+
+    console.log("Login: creatinng solana wallet...");
+    const solanaWallet = new SolanaWallet(provider);
+    console.log("Login: solana wallet created...");
+    let accounts;
+    console.log("Login: getting accounts of wallet");
+    try {
+      accounts = await solanaWallet.requestAccounts();
+      console.log("Login: accounts", accounts);
+    } catch (err) {
+      console.log("Login: error getting accounts", { err });
+      localStorage.removeItem('openlogin_store');
+      setIsVisitYourInboxVisible(true);
+      // router.push("/");
+      return;
+    }
+
+    console.log("Login: constructing object of signatures...");
+
+    const { sign, sign_nonce, sign_issue_at, sign_address } =
+      await signatureObject(accounts[0]);
+    console.log("Login: signature created", { sign, sign_nonce, sign_issue_at, sign_address });
+
+    try {
+      console.log("Login: fetching...")
+      const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
+        headers: {
+          uri: '/private/users/session',
+          sign,
+          time: sign_issue_at,
+          nonce: sign_nonce,
+          address: sign_address,
+        },
+      });
+
+      console.log("Login: fetched done")
+      const user = await userRequest.json();
+      console.log("Login: json done", user)
+
+      if (user.id) {
+        console.log("Login: user has id and we use the auth hook")
+        signIn({ user });
+        console.log("Login: done!")
+        router.replace("/homepage/dashboard2");
+        // dispatch(counterActions.userAuth(user));
+        // localStorage.setItem('user', JSON.stringify(user));
+        // router.push('/homepage/dashboard');
+        return user;
+      }
+      console.log("Login: user has no ID")
+
+      if (user.errorMessage === 'UNAUTHORIZED') {
+        console.log("Login: UNAUTHORIZED")
+        setTemporaryToken(JSON.parse(localStorage.getItem('openlogin_store')));
+        // const token = localStorage.getItem('openlogin_store');
+
+        // dispatch(
+        //   counterActions.web3({
+        //     token: JSON.parse(token),
+        //   })
+        // );
+
+        localStorage.removeItem('openlogin_store');
+
+        dispatch(
+          counterActions.category({
+            email: userInformation.email,
+            blockchainAddress: accounts[0],
+          })
+        );
+
+        // setIsLoading(false);
+        router.replace(`/auth/join/intro`);
+
+        // router.replace('/homepage/dashboard');
+        return;
+      }
+    } catch (error) {
+      setIsVisitYourInboxVisible(false);
+      console.error(error);
+      throw error;
+    }
+  }
+
   const formSubmitHandler = (path, e) => {
     e.preventDefault();
 
@@ -213,241 +346,166 @@ const Signup = () => {
         categoryId: path === 'individual' ? '0' : '1',
       })
     );
-
-    router.push(`/auth/join/${path}`);
   };
+
+  const handleSwitchingBetweenLoginAndRegister = () => {
+    setIsLogin(prev => !prev);
+    setIsNewsletterChecked(false);
+  }
+
+  const onTermsAndConditionsClicked = () => { }
+
+  const onPrivacyPolicyClicked = () => { }
+
+  const isEmailValid = (email) => {
+    const regex = /^\S+@\S+\.\S+$/;
+    return regex.test(email);
+  }
+
+  const getProvider = async () => {
+    try {
+      console.log("Login: creating provider...")
+      provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+        loginProvider: 'email_passwordless',
+        extraLoginOptions: {
+          login_hint: email,
+        },
+      });
+    } catch (error) {
+      console.log("Login: ERROR while creating provider")
+      localStorage.removeItem('openlogin_store');
+      return;
+    }
+  }
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
-
       {isLoading &&
         createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
       {isLoading &&
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
-      {!categorySect && (
+      {!categorySect && !isVisitYourInboxVisible && (
         <div
-          className='relative mx-auto items-center justify-center rounded bg-white px-12'
-          style={{
-            width: '680px',
-            height: '90vh',
-            maxHeight: '593px',
-            marginTop: '5vh',
-          }}
+          className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
         >
-          <button
-            onClick={() => router.push('/')}
-            className='absolute left-8 top-8 flex flex-row items-center gap-2'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='14'
-              height='8'
-              viewBox='0 0 14 8'
-              fill='none'
-            >
-              <path
-                d='M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4'
-                stroke='#252530'
-                strokeWidth='1.4'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-            <p>Back</p>
-          </button>
           <form
-            className='mx-auto flex flex-col pt-20'
-            style={{ width: '396px' }}
+            className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+            style={{
+              maxWidth: '449px',
+            }}
+            id='login'
+            name='login'
           >
             <Image
               src={logo}
               alt="Company's logo"
-              width={164}
-              height={58}
-              className='my-4'
+              width={199}
+              height={77}
             />
-            <p className=' mt-12 text-xl font-medium text-dark-brown'>
-              Welcome to SkyTrade
+            <p className='text-xl font-medium text-light-black mt-[25px]'>
+              Welcome{isLogin && ' back'} to SkyTrade
             </p>
-            <div className='relative mt-2'>
+            <p className='text-base text-light-black'>{isLogin ? "Login" : "Register"}</p>
+            {isLogin && <p className='text-sm text-light-grey text-center'>Sign in effortlessly usign the authentication method you chose during sign up.</p>}
+            <div className='relative flex flex-col gap-[5px] w-full'>
               <label
-                className='text-sm font-normal'
-                style={{ color: 'rgba(0, 0, 0, 0.50)' }}
+                className='text-[14px] font-normal'
+                style={{ color: emailValid ? 'rgba(0, 0, 0, 0.50)' : '#E04F64' }}
               >
-                E-mail Address<span className='text-red-600'>*</span>
+                Email<span className='text-[#E04F64]'>*</span>
               </label>{' '}
               <br />
               <input
                 type='email'
+                name='email'
+                id='email'
                 ref={emailRef}
                 onChange={() => setEmailValid(true)}
-                placeholder='E-mail Address'
-                className='rounded-md bg-light-grey font-sans placeholder:font-medium placeholder:text-light-brown focus:outline-blue-200'
+                placeholder='email@mail.com'
+                className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                 style={{
-                  width: '396px',
-                  height: '43px',
-                  border: '0.5px solid rgba(0, 0, 0, 0.50)',
-                  paddingLeft: '14px',
+                  border: emailValid ? '1px solid #87878D' : '1px solid #E04F64',
                 }}
               />
               {!emailValid && (
-                <p className='absolute right-0 top-1 text-sm text-red-600'>
-                  email is invalid
+                <p className='text-[11px] italic text-red-600'>
+                  Invalid email
                 </p>
               )}
             </div>
+            {!isLogin && <label className='flex w-full text-[14px] text-[#87878D] gap-[11px]'>
+              <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="newsletterCheckbox" name="newsletterCheckbox" checked={isNewsletterChecked} onChange={() => setIsNewsletterChecked(prev => !prev)} />
+              Send me newsletter to keep me updated
+            </label>}
             <button
-              onClick={loginHandler.bind(null, '')}
-              className='mt-4 rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
-              style={{ width: '396px', height: '46px' }}
+              onClick={(e) => loginHandlerGood(e)}
+              className='rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full'
             >
-              Continue with Email
+              Get started
             </button>
-            <div className='relative my-8 text-center'>
+            <div className='relative text-center text-[#00000033] flex gap-[15px] w-full items-center align-middle'>
               <div
                 style={{
-                  width: '396px',
-                  height: '0.4px',
-                  background: '#B1B1B1',
+                  width: '100%',
+                  height: '1px',
+                  background: '#00000033',
                 }}
-              ></div>
+              />
               <p
-                className='absolute -top-2'
-                style={{
-                  width: '18px',
-                  fontSize: '10px',
-                  padding: 'auto',
-                  height: '15px',
-                  color: '#B1B1B1',
-                  left: '47.5%',
-                  background: 'white',
-                }}
+                className='text-sm'
               >
                 or
               </p>
-            </div>
-            {/* <p className=" text-dark-brown text-xl font-medium">Sign up using other methods</p> */}
-            <div className='flex w-full flex-row justify-center gap-5'>
-              <button
-                onClick={loginHandler.bind(null, 'google')}
-                className='flex flex-row items-center justify-center rounded-md transition-all duration-500 ease-in-out hover:bg-bleach-blue'
+              <div
                 style={{
-                  width: '406px',
-                  height: '43px',
-                  border: '0.5px solid rgba(0, 0, 0, 0.50)',
+                  width: '100%',
+                  height: '1px',
+                  background: '#00000033',
                 }}
-              >
-                <Image
-                  src='/images/google-logo.png'
-                  alt='Google logo'
-                  width={33}
-                  height={33}
-                />
-                <p>Google</p>
-              </button>
+              />
             </div>
+            <button
+              onClick={loginHandler.bind(null, 'google')}
+              className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 w-full justify-between pl-[18px] pr-[42px]'
+              style={{
+                border: '1px solid #595959',
+              }}
+            >
+              <Image
+                src='/images/google-logo.png'
+                alt="Google's logo"
+                width={24}
+                height={24}
+                className=''
+              />
+              <p className='text-[#595959] mx-auto'>Connect with Google</p>
+            </button>
+            <button
+              onClick={loginHandler.bind(null, 'google')}
+              className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 justify-center w-full pl-[18px] text-[#595959]'
+              style={{
+                border: '1px solid #595959',
+              }}
+            >
+              More Options
+            </button>
+            <p className='text-[#87878D] text-sm text-center'>By creating an account I agree with <span onClick={onTermsAndConditionsClicked} className='text-[#0653EA] cursor-pointer'>Terms and Conditions</span> and <span onClick={onPrivacyPolicyClicked} className='text-[#0653EA] cursor-pointer'>Privacy Policy</span> agreement</p>
+            <div style={{ width: '100%', height: '1px', background: '#00000033' }} />
+            <p onClick={handleSwitchingBetweenLoginAndRegister} className='text-[#87878D]'>{isLogin ? "Don't have an account?" : "Already have an account?"} <span className='text-[#0653EA] font-bold cursor-pointer'>{isLogin ? "Register" : "Login"}</span></p>
           </form>
         </div>
       )}
-
-      {categorySect && (
-        <div
-          className='relative mx-auto flex flex-col items-center justify-center rounded bg-white px-12'
-          style={{ width: '680px', height: '475px', marginTop: '10vh' }}
-        >
-          <button
-            onClick={() => router.push('/')}
-            className='absolute left-8 top-8 flex flex-row items-center gap-2'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='14'
-              height='8'
-              viewBox='0 0 14 8'
-              fill='none'
-            >
-              <path
-                d='M0.999999 4L4.33333 7M0.999999 4L4.33333 1M0.999999 4L13 4'
-                stroke='#252530'
-                strokeWidth='1.4'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-            <p>Back</p>
-          </button>
-          <Image
-            src={logo}
-            alt="Company's logo"
-            width={164}
-            height={58}
-            className='my-12 mt-4'
-          />
-          <h2 className='text-2xl font-bold'>Welcome to SkyTrade</h2>
-          <p className='text-center text-sml text-light-brown'>
-            Please choose an option that best reflects the account's intended
-            purpose to enhance your personalized experience.
-          </p>
-          <div className='mt-11 flex flex-row gap-5'>
-            <button
-              onClick={formSubmitHandler.bind(null, 'individual')}
-              className='rounded-md bg-dark-blue text-sml font-medium text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
-              style={{
-                width: '192px',
-                height: '41px',
-                border: '0.35px solid #0653EA',
-              }}
-            >
-              Individual
-            </button>
-            <button
-              onClick={formSubmitHandler.bind(null, 'corporate')}
-              className='rounded-md bg-dark-blue text-sml font-medium text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
-              style={{
-                width: '192px',
-                height: '41px',
-                border: '0.35px solid #0653EA',
-              }}
-            >
-              Corporate Entity
-            </button>
+      {isVisitYourInboxVisible && (
+        <div className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex flex-col items-center justify-center gap-[21.5px] overflow-hidden'>
+          <div className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+            style={{
+              maxWidth: '449px',
+            }}>
+            <Image src={logo} alt="Company's logo" width={199} height={77} />
+            <p className='text-xl font-medium text-light-black mt-[25px]'>Welcome to SkyTrade</p>
+            <p className='text-[14px] text-center font-normal text-light-grey'>Visit your inbox to access the app using the verification code received via email. Click the code link, it will refresh this page, logging you in instantly.</p>
           </div>
-          <div className='absolute bottom-2 flex w-full flex-row justify-between px-5'>
-            <div>
-              <p className=''>&copy; SkyTrade 2023</p>
-            </div>
-            <div className='flex flex-row items-center gap-1 pe-5'>
-              <a
-                className='flex flex-row items-center gap-1'
-                href='mailto:help@sky.trade'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='14'
-                  height='11'
-                  viewBox='0 0 14 11'
-                  fill='none'
-                >
-                  <path
-                    d='M12.6 0H1.4C0.63 0 0 0.61875 0 1.375V9.625C0 10.3813 0.63 11 1.4 11H12.6C13.37 11 14 10.3813 14 9.625V1.375C14 0.61875 13.37 0 12.6 0ZM12.32 2.92188L7.742 5.73375C7.287 6.01562 6.713 6.01562 6.258 5.73375L1.68 2.92188C1.505 2.81188 1.4 2.62625 1.4 2.42688C1.4 1.96625 1.911 1.69125 2.31 1.93187L7 4.8125L11.69 1.93187C12.089 1.69125 12.6 1.96625 12.6 2.42688C12.6 2.62625 12.495 2.81188 12.32 2.92188Z'
-                    fill='black'
-                    fillOpacity='0.5'
-                  />
-                </svg>
-                <span>help@sky.trade</span>
-              </a>
-            </div>
-          </div>
+          <p className='text-light-grey text-[14px]'>Didn't receive the email? <span className='text-[#0653EA] cursor-pointer'>Resend</span></p>
         </div>
       )}
     </Fragment>

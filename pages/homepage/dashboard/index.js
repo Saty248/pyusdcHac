@@ -169,7 +169,7 @@ const Dashboard = () => {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
-          chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
           displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
@@ -189,10 +189,7 @@ const Dashboard = () => {
           userInfo = await web3auth.getUserInfo();
         } catch (err) {
           localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
+          router.push('/auth/join');
           return;
         }
 
@@ -212,8 +209,6 @@ const Dashboard = () => {
       authUser();
     }
   }, [selectorUser]);
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (user) {
@@ -273,7 +268,7 @@ const Dashboard = () => {
 
         const chainConfig = {
           chainNamespace: 'solana',
-          chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
           displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
@@ -477,17 +472,6 @@ const Dashboard = () => {
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
-
       <div className='mx-auto flex flex-row'>
         <Sidebar user={user} />
 
@@ -498,7 +482,7 @@ const Dashboard = () => {
           <Navbar
             name={user.name}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           />
           <div className='flex w-full flex-row justify-start'>
             <div className='my-5' style={{ width: '100%', height: '100vh' }}>

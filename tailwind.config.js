@@ -37,7 +37,9 @@ module.exports = {
         "bleach-green": "#BED9C7",
         "dark-green": "#1A572E",
         "dark-yellow": "#FFC60C",
-        "light-yellow": "#FFF6D8"
+        "light-yellow": "#FFF6D8",
+        "light-black": "#222222",
+        "light-grey": "#87878D",
       },
       fontFamily: {
         "sans": ['poppins', 'sans-serif'] 

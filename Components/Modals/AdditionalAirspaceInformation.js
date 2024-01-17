@@ -151,7 +151,7 @@ const AdditionalAispaceInformation = (props) => {
 
     const chainConfig = {
       chainNamespace: 'solana',
-      chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+      chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
       rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
       displayName: 'Solana Mainnet',
       blockExplorer: 'https://explorer.solana.com',
@@ -250,7 +250,7 @@ const AdditionalAispaceInformation = (props) => {
           }).then(() => {
             dispatch(counterActions.closeAdditionalInfoModal());
             // setIsLoading(false);
-            router.push('/homepage/dashboard');
+            router.push('/homepage/dashboard2');
           });
         });
       })
@@ -661,9 +661,8 @@ const AdditionalAispaceInformation = (props) => {
           <button
             onClick={closeModalHandler}
             disabled={isLoading}
-            className={`${
-              isLoading ? 'cursor-wait' : 'cursor-pointer'
-            } rounded-md text-dark-blue`}
+            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
+              } rounded-md text-dark-blue`}
             style={{
               border: '1px solid #0653EA',
               width: '120px',
@@ -675,9 +674,8 @@ const AdditionalAispaceInformation = (props) => {
           <button
             onClick={formSubmitHandler}
             disabled={isLoading}
-            className={`${
-              isLoading ? 'cursor-wait' : 'cursor-pointer'
-            } rounded-md bg-dark-blue text-white`}
+            className={`${isLoading ? 'cursor-wait' : 'cursor-pointer'
+              } rounded-md bg-dark-blue text-white`}
             style={{ width: '120px', height: '40px' }}
           >
             {isLoading ? 'Submiting...' : 'Submit'}

@@ -68,7 +68,7 @@ const Airspace = () => {
       const authUser = async () => {
         const chainConfig = {
           chainNamespace: 'solana',
-          chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
           displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
@@ -118,6 +118,7 @@ const Airspace = () => {
     }
   }, []);
 
+  // CREATE MAP
   useEffect(() => {
     if (token && user && !map) {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -154,6 +155,7 @@ const Airspace = () => {
     }
   }, [token, user]);
 
+  // FLY TO ADDRESS
   useEffect(() => {
     if (flyToAddress) {
       setIsLoading(true);
@@ -212,6 +214,7 @@ const Airspace = () => {
     }
   }, [flyToAddress, map]);
 
+  // LOOK FOR ADDRESSES
   useEffect(() => {
     if (address) {
       setLongitude('');
@@ -248,6 +251,7 @@ const Airspace = () => {
     }
   }, [address]);
 
+  // GET USER PROPERTIES / AIRSPACE
   useEffect(() => {
     const getUserAirspace = async () => {
       if (user) {
@@ -255,7 +259,7 @@ const Airspace = () => {
 
         const chainConfig = {
           chainNamespace: 'solana',
-          chainId: '0x1', // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
           displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
@@ -453,17 +457,6 @@ const Airspace = () => {
 
   return (
     <Fragment>
-      <Script src='https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5' />
-      <Script id='google-analytics'>
-        {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-      </Script>
-
       {additionalInfo && <AdditionalAispaceInformation user={user} />}
       {editAirspace &&
         createPortal(
@@ -506,7 +499,7 @@ const Airspace = () => {
             name={user.name}
             onClose={() => setShowOptions(false)}
             categoryId={user.categoryId}
-            // status={user.KYCStatusId}
+          // status={user.KYCStatusId}
           >
             <div className='relative'>
               <svg
@@ -515,9 +508,8 @@ const Airspace = () => {
                   setShowOptions(false);
                 }}
                 xmlns='http://www.w3.org/2000/svg'
-                className={`absolute bottom-11 right-2 ${
-                  isLoading ? 'cursor-wait' : 'cursor-pointer'
-                }`}
+                className={`absolute bottom-11 right-2 ${isLoading ? 'cursor-wait' : 'cursor-pointer'
+                  }`}
                 width='17'
                 height='17'
                 viewBox='0 0 17 17'
@@ -551,9 +543,8 @@ const Airspace = () => {
                     height: '259px',
                     border: '0.35px solid #0653EA',
                   }}
-                  className={`${
-                    (!showOptions || addresses.length < 1) && 'hidden'
-                  } absolute top-20 z-50 ms-5 overflow-y-auto rounded bg-white px-3 py-1`}
+                  className={`${(!showOptions || addresses.length < 1) && 'hidden'
+                    } absolute top-20 z-50 ms-5 overflow-y-auto rounded bg-white px-3 py-1`}
                 >
                   <p className='text-xs text-red-500'>
                     If any of the addresses listed below matches your address,
