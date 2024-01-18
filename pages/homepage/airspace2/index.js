@@ -214,8 +214,8 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
             </div>
             <p className="text-[15px] font-normal text-[#222222]">Ready to claim your airspace? No registered airspace yet, but exciting times ahead!</p>
-            <div className="relative pl-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none" />
+            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
+                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>

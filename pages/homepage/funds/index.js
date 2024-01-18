@@ -62,8 +62,8 @@ const TransactionHistory = ({ transactions }) => {
         <div className="flex flex-col gap-5 flex-1 min-w-[600px]">
             <div className="flex justify-between items-center">
                 <p className="font-medium text-xl text-[#222222]">Transaction History</p>
-                <div className="relative pl-[22px] py-[16px] bg-white w-[272px] rounded-lg" style={{ border: "1px solid #87878D" }}>
-                    <input type="text" name="searchTransactions" id="searchTransactions" placeholder="Search Transactions" className="outline-none" />
+                <div className="relative px-[22px] py-[16px] bg-white w-[272px] rounded-lg" style={{ border: "1px solid #87878D" }}>
+                    <input type="text" name="searchTransactions" id="searchTransactions" placeholder="Search Transactions" className="outline-none w-full pr-[20px]" />
                     <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                         <MagnifyingGlassIcon />
                     </div>
