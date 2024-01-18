@@ -278,7 +278,7 @@ const Referral = () => {
                     </section>
                 </div>
             </div>
-        </ Fragment>
+        </Fragment>
     );
 }
 
