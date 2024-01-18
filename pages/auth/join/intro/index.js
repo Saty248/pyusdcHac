@@ -247,7 +247,7 @@ const IndividualSignup = () => {
                                     />
                                     {!isPhoneNumberValid && (
                                         <p className='text-[11px] italic text-red-600'>
-                                            This field is mandatory
+                                            This field is mandatory. Add the country code e.g. '+1'
                                         </p>
                                     )}
                                 </div>

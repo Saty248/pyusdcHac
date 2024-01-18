@@ -88,7 +88,7 @@ const Sidebar = () => {
           alt="Company's logo"
           width={isCollapsed ? 44.62 : 0}
           height={isCollapsed ? 51 : 0}
-          className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 m-0 w-0 h-0'}`}
+          className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 mb-0 w-0 h-0'}`}
           style={{ transition: "all 0.3s ease" }}
         />
         <Image
@@ -96,7 +96,7 @@ const Sidebar = () => {
           alt="Company's logo"
           width={isCollapsed ? 0 : 147}
           height={isCollapsed ? 0 : 58}
-          className={`${isCollapsed ? 'opacity-0 m-0 w-0 h-0' : 'opacity-100 mb-[29.27px] w-[147px] h-[58px]'}`}
+          className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]'}`}
           style={{ transition: "all 0.3s ease" }}
         />
         <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />} />
