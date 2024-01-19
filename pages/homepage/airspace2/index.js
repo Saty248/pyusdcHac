@@ -431,6 +431,7 @@ const Airspaces = () => {
                 style: 'mapbox://styles/mapbox/streets-v12',
                 center: [-15.498211, 28.035056],
                 zoom: 15,
+                // attributionControl: false
             });
 
             newMap.on('load', function () {
@@ -618,12 +619,13 @@ const Airspaces = () => {
                     {!showMobileMap && <PageHeader pageTitle={'Airspaces'} />}
                     {(showMobileMap && isMobile) && <ExplorerMobile onGoBack={() => setShowMobileMap(false)} flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />}
                     {showHowToModal && <HowToModal goBack={() => setShowHowToModal(false)} />}
-                    <section className="flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]">
+                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 ${showMobileMap ? '' : 'mb-[79px]'}`}>
                         <div
-                            className={`${(isMobile && !showMobileMap) ? 'hidden' : ''} absolute top-0 left-0 !w-full !h-full !m-0`}
+                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
                             id='map'
+                            style={{ opacity: (!isMobile) ? '1' : (showMobileMap) ? '1' : '0', zIndex: (!isMobile) ? '20' : (showMobileMap) ? '20' : '-20' }}
                         />
-                        {(isMobile && showMobileMap && flyToAddress) && <div onClick={() => setShowClaimModal(true)} className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-[90%]">Claim Airspace</div>}
+                        {(isMobile && showMobileMap && flyToAddress) && <div onClick={() => setShowClaimModal(true)} className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-[90%] z-[25]">Claim Airspace</div>}
                         {isMobile && (
                             <Fragment>
                                 {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
