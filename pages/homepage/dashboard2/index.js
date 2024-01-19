@@ -114,7 +114,8 @@ const Dashboard = () => {
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
     const [airspaces, setAirspaces] = useState([]);
-    const { getPropertiesByUserId } = useDatabase()
+    const { getPropertiesByUserId } = useDatabase();
+    const router = useRouter();
 
     // GET USER AND TOKEN
     useEffect(() => {
@@ -246,9 +247,7 @@ const Dashboard = () => {
                 // const userInfo = await web3auth.getUserInfo();
 
                 const domain = window.location.host;
-                // const domain = 'localhost:3000';
                 const origin = window.location.origin;
-                // const origin = 'http://localhost:3000';
 
                 const payload = new SIWPayload();
                 payload.domain = domain;

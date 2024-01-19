@@ -10,6 +10,7 @@ import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
+import { useRouter } from "next/router";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -32,13 +33,14 @@ const AvailableBalance = ({ balance = 0 }) => {
     )
 }
 
-const TransactionHistory = ({ transactions }) => {
+const TransactionHistory = ({ transactions, user }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const TRANSACTIONS_PER_PAGE = 8;
     const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
     const finalIndex = currentPage * TRANSACTIONS_PER_PAGE;
     const paginatedData = transactions.slice(initialIndex, finalIndex);
     const totalPages = Math.ceil(transactions.length / TRANSACTIONS_PER_PAGE);
+
 
     useEffect(() => {
         setCurrentPage(1);
@@ -78,7 +80,14 @@ const TransactionHistory = ({ transactions }) => {
                 <tbody>
                     {paginatedData.map((transaction, index) => (
                         <tr key={transaction.id} className={`${index % 2 === 0 && 'bg-white'}`}>
-                            {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })}
+                            {/* {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })} */}
+                            <td className={`py-6 text-[#222222] px-5 w-2/12`}>{transaction.date}</td>
+                            <td className={`py- text-[#222222] text-clip px-5 w-2/12`}>
+                                <a className="" target="_blank" href={`https://explorer.solana.com/tx/${transaction.transHash}`}>{transaction.hash}</a>
+                            </td>
+                            <td className={`py-6 text-[#222222] px-5 w-2/12`}>{transaction.destination !== user.blockchainAddress ? 'withdraw' : 'deposit'}</td>
+                            <td className={`py-6 text-[#222222] px-5 w-2/12`}>${transaction.amount / 1000000}</td>
+                            <td className={`py-6 text-[#222222] px-5 w-2/12`}>{transaction.status}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -157,13 +166,15 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
 const Funds = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState(0);
-    const transactions = [];
+    const [transactions, setTransactions] = useState([]);
+    const [transactionHistory, setTransactionHistory] = useState();
 
     const { user: selectorUser } = useAuth();
     const [user, setUser] = useState();
     const [token, setToken] = useState('');
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
+    const router = useRouter();
 
     // GET USER AND TOKEN
     useEffect(() => {
@@ -215,54 +226,79 @@ const Funds = () => {
     // GET TOKEN BALANCE
     useEffect(() => {
         if (user) {
-            console.log({ user });
-            const data = {
-                jsonrpc: '2.0',
-                id: 1,
-                method: 'getTokenAccountsByOwner',
-                params: [
-                    user.blockchainAddress,
-                    {
-                        mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
-                    },
-                    {
-                        encoding: 'jsonParsed',
-                    },
-                ],
-            };
+            const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS;
+            // const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
 
-            fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        return response.json().then((errorData) => {
-                            throw new Error(errorData.error);
-                        });
+            // fetch(`https://api.solana.fm/v1/addresses/${walletAddress}/tokens`)
+            fetch(`https://api.solana.fm/v1/addresses/${user.blockchainAddress}/tokens`)
+                .then(response => response.json())
+                .then(response => {
+                    for(const key in response.tokens) {      
+                        if(key === mintAddress) {
+                            setTokenBalance(response.tokens[key].balance)
+                        }
                     }
-
-                    return response.json();
                 })
-                .then((result) => {
-                    if (result.result.value.length < 1) {
-                        setTokenBalance('0');
-                        return;
-                    }
-                    setTokenBalance(
-                        result.result.value[0].account.data.parsed.info.tokenAmount
-                            .uiAmountString
-                    );
-                })
-                .catch((error) => {
-                    setTokenBalance('');
-                    console.error(error);
-                });
+                .catch(err => console.error(err));
         }
     }, [user]);
+
+    // GET TRANSACTION HISTORY
+    useEffect(() => {
+        const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
+
+        if (user) {
+        //   fetch(`https://api.solana.fm/v0/accounts/${walletAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
+          fetch(`https://api.solana.fm/v0/accounts/${user.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((errorData) => {
+                  throw new Error(errorData.error);
+                });
+              }
+    
+              return response.json();
+            })
+            .then((result) => {
+              if(result.results) {
+                setTransactionHistory(result.results)
+              }
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+      }, [user]);
+    
+      useEffect(() => {
+        if(transactionHistory) {
+          const collectedTransactions = [];
+    
+          for(const trans of transactionHistory) {
+            for(const key of trans.data) {
+              const date = new Date(key.timestamp * 1000);
+              const month = date.toLocaleString('default', { month: 'short' });
+              const day = date.getDate();
+              const year = date.getFullYear();
+              const hour = date.getHours().toString().padStart(2, '0');
+              const minute = date.getMinutes().toString().padStart(2, '0');
+              const second = date.getSeconds().toString().padStart(2, '0');
+    
+            //   key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
+              key.date = `${month} ${day}, ${year}`;
+    
+              if(key.token && key.amount >= 10000) {
+                key.hash = trans.transactionHash.substring(0, 15) + '...';
+                key.transHash = trans.transactionHash
+                collectedTransactions.push(key);
+              }
+            }
+          }
+    
+          console.log(collectedTransactions);
+          setTransactions(collectedTransactions);
+        }
+      }, [transactionHistory]);
 
     // GET SIGNATURE
     useEffect(() => {
@@ -344,7 +380,7 @@ const Funds = () => {
                                 <AvailableBalance balance={tokenBalance} />
                                 <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} />
                             </div>
-                            <TransactionHistory transactions={transactions} />
+                            <TransactionHistory transactions={transactions} user={user} />
                         </div>
                     </section>
                 </div>
