@@ -44,7 +44,7 @@ const Sidebar = () => {
           !isCollapsed &&
           <>
             <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[14.64px] tracking-[1%]`}>{text}</p>
-            {numberOfUnseenNotifications && <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>{numberOfUnseenNotifications}</div>}
+            {!isCollapsed && numberOfUnseenNotifications && <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>{numberOfUnseenNotifications}</div>}
           </>
         }
       </Link>
@@ -81,14 +81,23 @@ const Sidebar = () => {
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       <aside
         className='md:flex hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
-        style={{ width: !isCollapsed ? '297.29px' : "auto", height: '100vh' }}
+        style={{ width: !isCollapsed ? '297.29px' : "98.2833px", height: '100vh', transition: "width 0.3s ease" }}
       >
         <Image
-          src={isCollapsed ? logoNoChars : logo}
+          src={logoNoChars}
           alt="Company's logo"
-          width={isCollapsed ? 44.62 : 147}
-          height={isCollapsed ? 51 : 58}
-          className='mb-[29.27px]'
+          width={isCollapsed ? 44.62 : 0}
+          height={isCollapsed ? 51 : 0}
+          className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 mb-0 w-0 h-0'}`}
+          style={{ transition: "all 0.3s ease" }}
+        />
+        <Image
+          src={logo}
+          alt="Company's logo"
+          width={isCollapsed ? 0 : 147}
+          height={isCollapsed ? 0 : 58}
+          className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]'}`}
+          style={{ transition: "all 0.3s ease" }}
         />
         <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />} />
         <SidebarItem href={'/homepage/airspace2'} text={'Airspaces'} children={<EarthIcon />} />

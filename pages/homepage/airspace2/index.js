@@ -119,7 +119,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full md:max-h-[700px] overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl">Claim Airspace</h2>
@@ -186,7 +186,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                 </Fragment>
             )}
 
-            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won’t affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
+            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
             <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
                 <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer bg-cover' checked={data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: true }))} style={{ appearance: "none", border: !data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
                 Yes
@@ -214,8 +214,8 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
             </div>
             <p className="text-[15px] font-normal text-[#222222]">Ready to claim your airspace? No registered airspace yet, but exciting times ahead!</p>
-            <div className="relative pl-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none" />
+            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
+                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>
@@ -240,6 +240,40 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 )}
             </div>
             {flyToAddress && <div onClick={onClaimAirspace} className="bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-full">Claim Airspace</div>}
+        </div>
+    )
+}
+
+const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress, onClaimAirspace, flyToAddress, onGoBack }) => {
+
+    return (
+        <div className="flex bg-white items-center gap-[15px] py-[19px] px-[21px] z-[40]">
+            <div onClick={onGoBack} className="flex items-center justify-center w-6 h-6"><ArrowLeftIcon /></div>
+            <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
+                <input autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
+                <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+                    <MagnifyingGlassIcon />
+                </div>
+                {showOptions && (
+                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+                        {addresses.map((item) => {
+                            return (
+                                <div
+                                    key={item.id}
+                                    value={item.place_name}
+                                    onClick={() => handleSelectAddress(item.place_name)}
+                                    className='p-5 text-left text-[#222222] w-full'
+                                    style={{
+                                        borderTop: '0.2px solid #222222',
+                                    }}
+                                >
+                                    {item.place_name}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
@@ -338,7 +372,7 @@ const HowToModal = ({ goBack }) => {
                         <p className="text-[15px]"><span className="font-bold">5. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
                         <p className="text-[15px]"><span className="font-bold">6. Discover Your Address</span><br />Enter your address using the map for accuracy.</p>
                     </div>
-                    <p className="text-[15px]">Let’s get started on creating the future and receiving passive income from your skies. 🚀✨</p>
+                    <p className="text-[15px]">Let's get started on creating the future and receiving passive income from your skies. 🚀✨</p>
                     <div onClick={goBack} className="bg-[#0653EA] rounded-[8px] py-[16px] w-full text-center text-white cursor-pointer">Claim Airspace</div>
                 </div>
             )}
@@ -582,18 +616,25 @@ const Airspaces = () => {
                 {!showMobileMap && <Sidebar />}
                 <div className="w-full h-full flex flex-col">
                     {!showMobileMap && <PageHeader pageTitle={'Airspaces'} />}
+                    {(showMobileMap && isMobile) && <ExplorerMobile onGoBack={() => setShowMobileMap(false)} flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />}
                     {showHowToModal && <HowToModal goBack={() => setShowHowToModal(false)} />}
                     <section className="flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]">
                         <div
                             className={`${(isMobile && !showMobileMap) ? 'hidden' : ''} absolute top-0 left-0 !w-full !h-full !m-0`}
                             id='map'
                         />
-                        <div className="hidden md:flex justify-start items-start">
+                        {(isMobile && showMobileMap && flyToAddress) && <div onClick={() => setShowClaimModal(true)} className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#0653EA] text-white rounded-lg py-[16px] text-center text-[15px] font-normal cursor-pointer w-[90%]">Claim Airspace</div>}
+                        {isMobile && (
+                            <Fragment>
+                                {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
+                            </Fragment>
+                        )}
+                        {!isMobile && <div className="flex justify-start items-start">
                             <Explorer flyToAddress={flyToAddress} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} onClaimAirspace={() => setShowClaimModal(true)} />
                             <Slider />
                             <PopUp isVisible={showSuccessPopUp} />
                             {showClaimModal && <ClaimModal onCloseModal={() => setShowClaimModal(false)} data={data} setData={setData} onClaim={onClaim} />}
-                        </div>
+                        </div>}
                         {!showMobileMap && <div className="flex md:hidden flex-col w-full h-full">
                             <div onClick={() => setShowMobileMap(true)} className="flex flex-col justify-between p-[17px] w-full gap-[184px] bg-no-repeat bg-center bg-cover" style={{ backgroundImage: "url('/images/map-bg.png')" }}>
                                 <div className="font-normal text-base text-white text-center bg-[#222222] w-full p-[12px] rounded-[20px]">Exciting times ahead!<br />Claim your airspace 🚀✨</div>
@@ -616,11 +657,6 @@ const Airspaces = () => {
                                 </div>
                             </div>
                         </div>}
-                        {
-                            showMobileMap && (
-                                <div></div>
-                            )
-                        }
                     </section>
                 </div>
             </div>

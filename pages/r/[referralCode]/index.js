@@ -1,10 +1,11 @@
+'use client';
+
 import { Fragment, useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
 import { useDispatch } from 'react-redux';
-
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router"
 import Image from 'next/image';
-import Script from 'next/script';
 
 import { Web3AuthNoModal } from '@web3auth/no-modal';
 import { SolanaPrivateKeyProvider } from '@web3auth/solana-provider';
@@ -60,16 +61,17 @@ const ReferralCodeRedirect = () => {
 
   const emailRef = useRef();
   const router = useRouter();
+  const { referralCode } = router.query;
   const dispatch = useDispatch();
   const { signatureObject } = useSignature();
   const { setTemporaryToken, signIn } = useAuth();
   const { getReferralByCode } = useDatabase();
 
   useEffect(() => {
-    if (!router.query || !router.query.referralCode) return;
+    if (!referralCode) return;
     (async () => {
       try {
-        const response = await getReferralByCode(router.query.referralCode);
+        const response = await getReferralByCode(referralCode);
         if (!response) setDoesCodeExist(false);
         localStorage.setItem('referralCode', JSON.stringify({ response }));
       } catch (error) {
@@ -78,7 +80,7 @@ const ReferralCodeRedirect = () => {
         setIsLoading(false);
       }
     })();
-  }, [router.query]);
+  }, [referralCode]);
 
   useEffect(() => {
     const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
@@ -104,20 +106,16 @@ const ReferralCodeRedirect = () => {
     e.preventDefault()
 
     const email = emailRef.current.value;
-    console.info('Register: email is', email);
 
     if (!isEmailValid(email)) {
-      console.log('Register: email is not valid', email);
       return;
     }
-    console.log('Register: email is valid', email);
 
     setIsVisitYourInboxVisible(true);
 
     let provider;
 
     try {
-      console.log("Register: creating provider...")
       provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: 'email_passwordless',
         extraLoginOptions: {
@@ -125,20 +123,15 @@ const ReferralCodeRedirect = () => {
         },
       });
     } catch (error) {
-      console.log("Register: ERROR while creating provider...", { error });
       localStorage.removeItem('openlogin_store');
       setIsVisitYourInboxVisible(true);
       return;
     }
 
-    console.log("Register: provider created");
-
     let userInformation;
 
     try {
-      console.log("Register: getting user information...");
       userInformation = await web3auth.getUserInfo();
-      console.log("Register: user information is", userInformation);
     } catch (err) {
       console.log("Register: ERROR while getting user information...", { err });
       localStorage.removeItem('openlogin_store');
@@ -147,14 +140,10 @@ const ReferralCodeRedirect = () => {
       return;
     }
 
-    console.log("Register: creatinng solana wallet...");
     const solanaWallet = new SolanaWallet(provider);
-    console.log("Register: solana wallet created...");
     let accounts;
-    console.log("Register: getting accounts of wallet");
     try {
       accounts = await solanaWallet.requestAccounts();
-      console.log("Register: accounts", accounts);
     } catch (err) {
       console.log("Register: error getting accounts", { err });
       localStorage.removeItem('openlogin_store');
@@ -163,14 +152,10 @@ const ReferralCodeRedirect = () => {
       return;
     }
 
-    console.log("Register: constructing object of signatures...");
-
     const { sign, sign_nonce, sign_issue_at, sign_address } =
       await signatureObject(accounts[0]);
-    console.log("Register: signature created", { sign, sign_nonce, sign_issue_at, sign_address });
 
     try {
-      console.log("Register: fetching...")
       const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
         headers: {
           uri: '/private/users/session',
@@ -181,23 +166,17 @@ const ReferralCodeRedirect = () => {
         },
       });
 
-      console.log("Register: fetched done");
       const user = await userRequest.json();
-      console.log("Register: json done", user);
 
       if (user.id) {
-        console.log("Register: user has id and we use the auth hook");
         signIn({ user });
-        console.log("Register: done!");
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         // router.push('/homepage/dashboard');
         return user;
       }
-      console.log("Register: user has no ID")
 
       if (user.errorMessage === 'UNAUTHORIZED') {
-        console.log("Register: UNAUTHORIZED")
         setTemporaryToken(JSON.parse(localStorage.getItem('openlogin_store')));
         // const token = localStorage.getItem('openlogin_store');
 

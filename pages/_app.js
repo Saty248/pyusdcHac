@@ -7,8 +7,21 @@ import CookieConsent from '@/Components/CookieConsent'
 
 import { AuthProvider } from '@/hooks/useAuth';
 import { msclaritConfig } from '@/hooks/msclaritConfig';
+import { useMobile } from '@/hooks/useMobile';
+import { useEffect } from 'react';
 
 export default function App({ Component, pageProps }) {
+  const { isMobile } = useMobile();
+  useEffect(() => {
+    var Tawk_API = global?.Tawk_API || undefined;
+    if (!Tawk_API) return;
+    if (isMobile) {
+      if (Tawk_API.hideWidget !== undefined) Tawk_API.hideWidget();
+    } else {
+      if (Tawk_API.showWidget !== undefined) Tawk_API.showWidget();
+    }
+  }, [isMobile, global]);
+
   return (
     <AuthProvider>
       <Provider store={store}>

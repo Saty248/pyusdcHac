@@ -107,6 +107,7 @@ const ReferralProgram = () => {
 
 
 const Dashboard = () => {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
     const { user: selectorUser } = useAuth();
     const [user, setUser] = useState();
@@ -115,7 +116,6 @@ const Dashboard = () => {
     const [signature, setSignature] = useState();
     const [airspaces, setAirspaces] = useState([]);
     const { getPropertiesByUserId } = useDatabase();
-    const router = useRouter();
 
     // GET USER AND TOKEN
     useEffect(() => {
@@ -330,8 +330,8 @@ const Dashboard = () => {
                                         <div className="w-5 h-5 items-center justify-center"><InfoIcon /></div>
                                     </div>
                                     <p className="text-[15px] font-normal text-[#222222]">Ready to claim your airspace? No registered airspace yet, but exciting times ahead!</p>
-                                    <div className="relative pl-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
-                                        <input type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none" />
+                                    <div className="relative px-[22px] py-[16px] bg-white rounded-lg w-full" style={{ border: "1px solid #87878D" }}>
+                                        <input type="text" name="searchAirspaces" id="searchAirspaces" placeholder="Search Airspaces" className="outline-none w-full pr-[20px]" />
                                         <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                                             <MagnifyingGlassIcon />
                                         </div>

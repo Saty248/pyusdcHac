@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
@@ -61,13 +63,13 @@ const IndividualSignup = () => {
 
     useEffect(() => {
         setPageLoad(false);
-        if (typeof window !== 'undefined') {
+        if (typeof global?.window !== 'undefined') {
             const codeString = localStorage.getItem('referralCode');
             if (!codeString) return;
             const { id, code } = JSON.parse(codeString).response;
             setReferralCode({ id, code })
         }
-    }, [window]);
+    }, [global?.window]);
 
     const category = useSelector((state) => state.value.category);
 
@@ -245,7 +247,7 @@ const IndividualSignup = () => {
                                     />
                                     {!isPhoneNumberValid && (
                                         <p className='text-[11px] italic text-red-600'>
-                                            This field is mandatory
+                                            This field is mandatory. Add the country code e.g. '+1'
                                         </p>
                                     )}
                                 </div>
