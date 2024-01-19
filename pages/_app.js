@@ -15,7 +15,11 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
-    isMobile ? Tawk_API.hideWidget() : Tawk_API.showWidget?.();
+    if (isMobile) {
+      if (Tawk_API.hideWidget !== undefined) Tawk_API.hideWidget();
+    } else {
+      if (Tawk_API.showWidget !== undefined) Tawk_API.showWidget();
+    }
   }, [isMobile, global]);
 
   return (
