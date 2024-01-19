@@ -12,8 +12,11 @@ import { useEffect } from 'react';
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
-  var Tawk_API = global.Tawk_API || {};
-  useEffect(() => isMobile ? Tawk_API.hideWidget() : Tawk_API.showWidget(), [isMobile]);
+  useEffect(() => {
+    var Tawk_API = global?.Tawk_API || undefined;
+    if (!Tawk_API) return;
+    isMobile ? Tawk_API.hideWidget() : Tawk_API.showWidget?.();
+  }, [isMobile, global]);
 
   return (
     <AuthProvider>
