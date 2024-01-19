@@ -1,3 +1,5 @@
+'use client';
+
 import { Fragment, useEffect, useState } from "react";
 import Script from 'next/script';
 import Sidebar from "@/Components/Sidebar";
@@ -6,6 +8,7 @@ import { EarthIcon, GiftIcon, ShareIcon, FacebookIcon, LinkedInIcon, GoogleIcon,
 import { useMobile } from "@/hooks/useMobile";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
+import useOrigin from "@/hooks/useOrigin";
 
 const Item = ({ icon, title, text }) => {
     return (
@@ -61,6 +64,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
     const [temporalReferralCode, setTemporalReferralCode] = useState(referralCode);
     const { updateReferral } = useDatabase();
     const { updateProfile } = useAuth();
+    const origin = useOrigin();
 
     useEffect(() => {
         if (!isCopied.code) return;
@@ -157,19 +161,19 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
                     </div>
                     <div className="flex gap-[9px] flex-wrap justify-between">
                         <div className="relative w-full md:w-[300px]">
-                            <input value={`localhost:3000/r/${referralCode}`} disabled className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] px-[22px] focus:outline-none" type="text" name="myReferralCode" id="myReferralCode" />
-                            <p onClick={(e) => handleCopy(e, `localhost:3000/r/${referralCode}`, false)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.link ? 'Copied ✓' : 'Copy link'}</p>
+                            <input value={`${origin}/r/${referralCode}`} disabled className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] px-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
+                            <p onClick={(e) => handleCopy(e, `${origin}/r/${referralCode}`, false)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.link ? 'Copied ✓' : 'Copy link'}</p>
                         </div>
-                        <div onClick={() => shareOnFacebook(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnFacebook(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><FacebookIcon /></div>
                         </div>
-                        <div onClick={() => shareOnLinkedIn(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnLinkedIn(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><LinkedInIcon /></div>
                         </div>
-                        <div onClick={() => shareOnGoogle(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnGoogle(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><GoogleIcon /></div>
                         </div>
-                        <div onClick={() => shareOnTwitter(`localhost:3000/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
+                        <div onClick={() => shareOnTwitter(`${origin}/r/${referralCode}`)} className="py-[14px] px-[13.9px] rounded-lg bg-[#DFF1FF] flex items-center justify-center cursor-pointer">
                             <div className="w-5 h-5 flex items-center justify-center"><XIcon /></div>
                         </div>
                     </div>
@@ -212,7 +216,7 @@ const InviteYourFriends = () => {
             <p className="text-[#222222] text-xl font-normal">Invite your friends</p>
             <p className="text-[#87878D] text-[15px] font-normal">Insert your friend's email address and send them invitations to join us.</p>
             <div className="relative max-w-[522px]">
-                <input className="w-full rounded-lg py-[16px] pr-[5px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
+                <input className="w-full rounded-lg py-[16px] pr-[45px] pl-[22px] outline-none" style={{ border: '1px solid #87878D' }} type="email" name="friendEmail" id="friendEmail" placeholder="email address" />
                 <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
                     <div className="w-[15px] h-[15px]">
                         <ShareIcon color={'white'} />
