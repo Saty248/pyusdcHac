@@ -227,9 +227,7 @@ const Funds = () => {
     useEffect(() => {
         if (user) {
             const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS;
-            // const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
-
-            // fetch(`https://api.solana.fm/v1/addresses/${walletAddress}/tokens`)
+        
             fetch(`https://api.solana.fm/v1/addresses/${user.blockchainAddress}/tokens`)
                 .then(response => response.json())
                 .then(response => {
@@ -245,10 +243,7 @@ const Funds = () => {
 
     // GET TRANSACTION HISTORY
     useEffect(() => {
-        const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
-
         if (user) {
-        //   fetch(`https://api.solana.fm/v0/accounts/${walletAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
           fetch(`https://api.solana.fm/v0/accounts/${user.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
             .then((response) => {
               if (!response.ok) {
