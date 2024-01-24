@@ -313,7 +313,7 @@ const Dashboard = () => {
                     <PageHeader pageTitle={'Dashboard'} />
                     <section className="hidden md:flex relative w-full h-full px-[53px] pt-[52px]">
                         <div className="flex flex-1 gap-[37px]">
-                            <div className="basis-[58%] flex flex-col gap-[48px] h-full overflow-y-auto">
+                            <div className="basis-[58%] flex flex-col gap-[48px] h-full overflow-y-auto my-[-53px] py-[53px]">
                                 <div className="flex flex-col gap-2">
                                     <h2 className="font-medium text-xl text-black">Welcome on SkyTrade!</h2>
                                     <p className="font-normal text-base text-[#87878D]">Claim your airspace on the dashboard to kickstart your passive income journey. Don't forget to share the love—refer friends using your code or link and watch your earnings grow. Welcome to the community, where the future is yours to seize! 🌟🚀</p>
