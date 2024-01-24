@@ -15,9 +15,9 @@ const CookieConsent = (props) => {
     setCookie("localConsent", "true", {});
   };
 
-  // if (showConsent) {
-  //   return null;
-  // }
+  if (showConsent) {
+    return null;
+  }
 
   return (
     <div className="fixed z-[20000000000] inset-0 bg-slate-700 bg-opacity-70">
