@@ -173,7 +173,7 @@ const Portfolio = () => {
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
                         <PortfolioList airspacesList={myAirspaces} title={'My airspaces'} selectAirspace={selectAirspace} />
                     </section>
-                    <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden">
+                    <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
                         <PortfolioListMobile airspacesList={myAirspaces} title={'My airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
