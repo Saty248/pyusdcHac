@@ -170,7 +170,7 @@ const Portfolio = () => {
                 <div className="w-full h-full flex flex-col">
                     {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
-                    <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden">
+                    <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
                         <PortfolioList airspacesList={myAirspaces} title={'My airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden">
