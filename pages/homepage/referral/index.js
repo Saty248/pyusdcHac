@@ -142,7 +142,7 @@ const Share = ({ activeSection, section, isMobile, referralCode, blockchainAddre
                 <div className="flex flex-wrap gap-[21px]">
                     <div className="flex gap-[9px] flex-wrap justify-between">
                         <div className="relative w-full md:w-[300px]">
-                            <input value={temporalReferralCode} disabled={user?.ownedReferralCode.codeChanged} onChange={handleOnChange} maxLength={6} className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
+                            <input value={temporalReferralCode} disabled={user?.ownedReferralCode?.codeChanged} onChange={handleOnChange} maxLength={6} className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="myReferralCode" id="myReferralCode" />
                             {canCopy && <p onClick={(e) => handleCopy(e, referralCode, true)} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{isCopied.code ? 'Copied ✓' : 'Copy code'}</p>}
                             {canChangeCode && <p onClick={handleUpdateReferralCode} className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">{'Update code'}</p>}
                         </div>
