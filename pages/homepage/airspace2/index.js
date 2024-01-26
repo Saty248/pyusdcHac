@@ -185,7 +185,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                     <Link href={'https://skytrade.tawk.help'} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</Link>
                     <div className="flex flex-col gap-[5px]">
                         <label className="font-normal text-[#838187] text-[14px]" htmlFor="sellingPrice">Selling Price</label>
-                        <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="text" name="sellingPrice" id="sellingPrice" />
+                        <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="number" name="sellingPrice" id="sellingPrice" />
                     </div>
                 </Fragment>
             )}
