@@ -44,8 +44,6 @@ const Wallet = () => {
   const transactionsPerPage = 5;
   const pagesVisited = pageNumber * transactionsPerPage;
 
-  // const walletAddress = 'J75jd3kjsABQSDrEdywcyhmbq8eHDowfW9xtEWsVALy9';
-  // const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
 
   const pageCount =
     transactionHistory &&
