@@ -45,7 +45,7 @@ const Wallet = () => {
   const pagesVisited = pageNumber * transactionsPerPage;
 
   // const walletAddress = 'J75jd3kjsABQSDrEdywcyhmbq8eHDowfW9xtEWsVALy9';
-  const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
+  // const walletAddress = 'DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg';
 
   const pageCount =
     transactionHistory &&
@@ -137,13 +137,9 @@ const Wallet = () => {
     if (user) {
       const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS
 
-      fetch('https://api.solana.fm/v1/addresses/DRaBWafnZXvcCizVzfSr1KQB77jc2xbmaYhvC3WuycCg/tokens')
+      fetch(`https://api.solana.fm/v1/addresses/${walletAddress}/tokens`)
         .then(response => response.json())
         .then(response => {
-            console.log('response from multiple accounts', response);
-            console.log('response from multiple token', response.tokens.EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v);
-            
-
             for(const key in response.tokens) {      
               if(key === mintAddress) {
                 setTokenBalance(response.tokens[key].balance)
@@ -165,7 +161,6 @@ const Wallet = () => {
           return response.json();
         })
         .then((result) => {
-          console.log('This is the result from Solana FM', result.results);
           setTransactions(result.results)
         })
         .catch((error) => {
