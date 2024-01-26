@@ -146,7 +146,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
             {data.rent && (
                 <Fragment>
                     <h2 className="text-[#222222] font-normal text-[20px]">Rental Details</h2>
-                    <p className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</p>
+                    <Link href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
                     <div className="flex items-center justify-between gap-[15px]">
                         <div className="flex-1">
                             <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
@@ -178,7 +178,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                         <h2 className="text-[#222222] font-normal text-[20px]">Selling Details</h2>
                         <div className="flex items-center justify-center w-[20px] h-[20px]"><InfoIcon /></div>
                     </div>
-                    <p className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</p>
+                    <Link href={'https://skytrade.tawk.help'} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</Link>
                     <div className="flex flex-col gap-[5px]">
                         <label className="font-normal text-[#838187] text-[14px]" htmlFor="sellingPrice">Selling Price</label>
                         <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="text" name="sellingPrice" id="sellingPrice" />
