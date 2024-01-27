@@ -13,6 +13,7 @@ module.exports = {
           port: '',
           pathname: '/v3/**',
         },
+        
       ],
     },
   }

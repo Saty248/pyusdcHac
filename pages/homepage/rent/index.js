@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
-import { MagnifyingGlassIcon } from "@/Components/Icons";
+import { ArrowLeftIcon, CloseIcon, LocationPointIcon, MagnifyingGlassIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -9,8 +9,125 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
+import { Web3Auth } from "@web3auth/modal";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker }) => {
+
+const ClaimModal = ({ setShowClaimModal, rentData}) => {
+    const [owner,setOwner]=useState();
+    const { user: selectorUser } = useAuth();
+    console.log("yo selector user",selectorUser)
+
+    useEffect(() => {
+        const authUser = async () => {
+            const chainConfig = {
+                chainNamespace: 'solana',
+                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                displayName: 'Solana Testnet',
+                blockExplorer: 'https://explorer.solana.com',
+                ticker: 'SOL',
+                tickerName: 'Solana',
+            };
+            const web3auth = new Web3Auth({
+                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                chainConfig: chainConfig,
+            });
+            await web3auth.initModal();
+            // await web3auth.connect();
+            const web3authProvider = await web3auth.connect();
+
+const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+
+const user = await web3auth.getUserInfo(); // web3auth instance
+// Get user's Solana public address
+const accounts = await solanaWallet.requestAccounts();
+const connectionConfig = await solanaWallet.request({
+    method: "solana_provider_config",
+    params: [],
+  });
+  
+  const connection = new Connection(connectionConfig.rpcTarget);
+  
+  // Fetch the balance for the specified public key
+  const balance = await connection.getBalance(new PublicKey(accounts[0]));
+
+console.log("solanaWallet=",balance)// ui info wrong
+        };
+        authUser();
+    
+      
+    }, [selectorUser])
+    
+
+
+
+    useEffect( () => {
+      console.log("and applyed working=",rentData.ownerId)
+      async function getUsersFromBE(){
+        try {
+            let user1= await fetch(`http://localhost:8888/public/users/?userID=${rentData.ownerId}`)
+            user1=await user1.json()
+            setOwner(user1)
+            console.log("user if this land")
+          } catch (error) {
+            console.log(error)
+            
+          }
+      }
+      getUsersFromBE();
+      
+        
+    
+      
+    }, [rentData])
+    
+
+ 
+
+    console.log("am from CLaim modal ,",rentData)
+    return (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
+            <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+                <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
+                <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
+                <div onClick={()=>{setShowClaimModal(false)}} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
+            </div>
+            <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
+                <div className="w-6 h-6"><LocationPointIcon /></div>
+                <p className="font-normal text-[#222222] text-[14px] flex-1">{rentData?rentData.address:''}</p>
+            </div>
+            <div className="gap-[5px]">
+            <span>Owner</span><span>  {owner?owner.name:"grgr"}</span>
+            </div>
+            <div className="flex items-center justify-evenly gap-[20px] text-[14px]">
+            <div className="flex flex-col gap-[5px] w-1/2">
+                <label htmlFor="rentalDate">Rental Date<span className="text-[#E04F64]">*</span></label>
+                <input type="Date" required  className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalDate" id="rentalDate" autoComplete="off" />
+            </div>
+                
+                
+            <div className="flex flex-col gap-[5px] w-1/2">
+                <label htmlFor="rentalTime">Rental Time<span className="text-[#E04F64]">*</span></label>
+                <input type="time" required className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
+            </div>
+            
+            
+            </div>
+           
+                <div className="flex items-center justify-center gap-[20px] text-[14px]">
+                <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
+                <div onClick={()=>{console.log("ggdgdgdg")}} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Claim Airspace</div>
+            </div>
+        </div>
+    )
+}
+
+
+const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData}) => {
     return (
         <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex gap-[5px] items-center">
@@ -45,11 +162,11 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     <div className="absolute top-[55px] left-0 mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
                         {registeredAddress.map((item)=>{
-
+//add popup to black ones
 const rentCLickHandler=()=>{
     let el1 = document.createElement('div');
     
-                console.log("am rrent clickedd")
+                //console.log("am rrent clickedd")
                 
                 
                 el1.id = 'marker2';
@@ -67,6 +184,11 @@ const rentCLickHandler=()=>{
         
     
 }
+const onClickRent=() =>{
+    console.log("hello==",rentData)
+    setRentData(item)
+    setShowClaimModal(true)
+} 
                             return (
                                 <div
                                 key={item.id}
@@ -78,7 +200,7 @@ const rentCLickHandler=()=>{
                                     }}
                                 >
 
-                                    {item.address}<h1 className=" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2">15</h1><span onClick={() => console.log(`am rent = ${item.id} clicked`)} className="bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2">RENT</span>
+                                    {item.address}<h1 className=" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2">15</h1><span onClick={onClickRent} className="bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2">RENT</span>
                                 </div>
                             )
                         })}
@@ -136,23 +258,13 @@ const Rent = () => {
     const [flyToAddress, setFlyToAddress] = useState('');
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
-    const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
-        ]
-    }
+    const [rentData,setRentData]=useState()
+    const [showClaimModal,setShowClaimModal]=useState(false)
+   
     // showing
     const [regAdressShow,setregAdressShow]=useState(false)
     const [showOptions, setShowOptions] = useState(false);
-    const [data, setData] = useState({ ...defaultData });
-
-//map creation and adding event listeners
+    //map creation and adding event listeners
     useEffect(() => {
         if (map) return;
 
@@ -195,10 +307,10 @@ const Rent = () => {
             newMap.on('wheel', async(e) => {
 
                 let el = document.createElement('div');
-                let pl=()=>{return console.log("am clickedd")}
+                
                 if(el){
                     
-                    console.log("el==",el)
+                  // console.log("el==",el)
                 }
                 
                 el.id = 'markerWithExternalCss';
@@ -210,7 +322,7 @@ const Rent = () => {
                 let ans,features1=[];
                  if(res){
                      ans=res.filter((property1)=>{
-                        console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
+                       //console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
                         if(property1.latitude>=crds._sw.lng && property1.latitude<=crds._ne.lng && property1.longitude>=crds._sw.lat && property1.longitude<=crds._ne.lat ){
                             return property1
                         }
@@ -250,7 +362,7 @@ const Rent = () => {
                 });
 
                 newMap.on('click',(e)=>{
-                    console.log(e.point.x,e.point.y)
+                    //console.log(e.point.x,e.point.y)
                 })
 
               
@@ -263,7 +375,7 @@ const Rent = () => {
 
 
     useEffect(()=>{
-        console.log("the registered addressesssss",registeredAddress)
+        //console.log("the registered addressesssss",registeredAddress)
         if(registeredAddress.length>0){
             setregAdressShow(true)
         }else{
@@ -359,7 +471,7 @@ const Rent = () => {
 
     }, [flyToAddress, map]);
 
-    useEffect(()=>{
+/*     useEffect(()=>{
         console.log("USEeFFECT WORKDINGGGGGGG")
 
         if(map){
@@ -367,12 +479,12 @@ const Rent = () => {
         }else{
             console.log("nomap")
         }
-    },[flyToAddress])
+    },[flyToAddress]) */
 
-    useEffect(() => {
+/*     useEffect(() => {
         console.log("map updated")
 
-    }, [map]);
+    }, [map]); */
    
 
     useEffect(() => {
@@ -407,7 +519,9 @@ const Rent = () => {
                             style={{ zIndex: '20' }}
                         />
                          {!isMobile && <div className="flex justify-start items-start">
-                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker}/>
+                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData}/>
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData}/>}
+                        
                         </div>}
                     </section>
                 </div>
