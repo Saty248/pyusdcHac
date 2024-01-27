@@ -1,3 +1,5 @@
+'use client';
+
 import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -11,6 +13,7 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
 import { useRouter } from "next/router";
+import { useQRCode } from 'next-qrcode';
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -112,6 +115,7 @@ const TransactionHistory = ({ transactions, user }) => {
 }
 
 const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
+    const { SVG } = useQRCode();
     return (
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
             boxShadow: "0px 12px 34px -10px #3A4DE926"
@@ -122,7 +126,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
             <div className="flex flex-col gap-[5px] w-full">
                 <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="text" name="amount" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
+                    <input type="number" name="amount" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
@@ -133,7 +137,19 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
                                 <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
                             </div>
                         </div>
-                        <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center" style={{ backgroundImage: "url('/images/QR-code.png')" }}></div>
+                        <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
+                            {walletId && <SVG
+                                text={walletId}
+                                options={{
+                                    margin: 2,
+                                    width: 72,
+                                    color: {
+                                        dark: '#000000',
+                                        light: '#FFFFFF',
+                                    },
+                                }}
+                            />}
+                        </div>
                     </div>
                 }
                 {activeSection === 1 &&

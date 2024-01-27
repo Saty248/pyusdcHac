@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 export const useMobile = () => {
     const [windowWidth, setWindowWidth] = useState();
+    const [alreadySet, setAlreadySet] = useState(false);
 
     useEffect(() => {
         if (windowWidth) return;
@@ -15,9 +16,11 @@ export const useMobile = () => {
 
     useEffect(() => {
         if (!window) return;
+        if (alreadySet) return;
         window.addEventListener('resize', handleResize);
+        setAlreadySet(true);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [global]);
 
     return { isMobile };
 }

@@ -38,13 +38,13 @@ const Sidebar = () => {
       <Link href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
-          {numberOfUnseenNotifications && isCollapsed && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
+          {(numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
         </div>
         {
           !isCollapsed &&
           <>
             <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[14.64px] tracking-[1%]`}>{text}</p>
-            {!isCollapsed && numberOfUnseenNotifications && <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>{numberOfUnseenNotifications}</div>}
+            {(!isCollapsed && numberOfUnseenNotifications >= 1) && <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>{numberOfUnseenNotifications}</div>}
           </>
         }
       </Link>
@@ -106,10 +106,10 @@ const Sidebar = () => {
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={'/homepage/buy'} text={'Buy Airspace'} children={<MapIcon />} />
         <SidebarItem href={'/homepage/rent'} text={'Rent Airspace'} children={<DroneIcon />} />
-        <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={1} />
+        <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
-        {/*<SidebarItem href={'/404'} text={'Help Center'} children={<HelpQuestionIcon />} />*/}
+        <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
         <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
       </aside>
@@ -117,7 +117,7 @@ const Sidebar = () => {
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/airspace2'} text={"Airspaces"} children={<EarthIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/marketplace'} text={"Marketplace"} children={<MapIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/homepage/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={1} />
+        <SidebarItemMobile href={'/homepage/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/referral'} text={"Referral"} children={<GiftIcon />} numberOfUnseenNotifications={0} />
       </nav>
     </Fragment >

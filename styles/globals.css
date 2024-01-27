@@ -3,7 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 * {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
@@ -33,6 +32,26 @@ button {
   width: 100px;
   height: 100px;
   cursor: pointer;
+}
+
+.mapbox-logo {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
+
+.mapbox-improve-map {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-compass {
+  display: none !important;
+}
+
+.mapboxgl-control-container {
+  display: none !important;
 }
 
 .marker {
