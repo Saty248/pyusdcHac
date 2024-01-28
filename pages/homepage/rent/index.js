@@ -14,8 +14,13 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
 
-const ClaimModal = ({ setShowClaimModal, rentData}) => {
-    const [owner,setOwner]=useState();
+const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading}) => {
+    const [owner,setOwner]=useState({});
+    const [landAssetIds,setLandAssetIds]=useState(["3fH494p235UJ2gMjpg8ePiKZjSiqmsddBzKLY4Ua5jwu"])
+    const [date,setDate]=useState('');
+    const [time,setTime]=useState('')
+    //const [solanaWallet,setSolanaWallet]=useState()
+
     const { user: selectorUser } = useAuth();
     console.log("yo selector user",selectorUser)
 
@@ -41,7 +46,7 @@ const ClaimModal = ({ setShowClaimModal, rentData}) => {
             const web3authProvider = await web3auth.connect();
 
 const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
-
+           
 const user = await web3auth.getUserInfo(); // web3auth instance
 // Get user's Solana public address
 const accounts = await solanaWallet.requestAccounts();
@@ -55,6 +60,9 @@ const connectionConfig = await solanaWallet.request({
   // Fetch the balance for the specified public key
   const balance = await connection.getBalance(new PublicKey(accounts[0]));
 
+
+
+  //const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
 console.log("solanaWallet=",balance)// ui info wrong
         };
         authUser();
@@ -69,7 +77,7 @@ console.log("solanaWallet=",balance)// ui info wrong
       console.log("and applyed working=",rentData.ownerId)
       async function getUsersFromBE(){
         try {
-            let user1= await fetch(`http://localhost:8888/public/users/?userID=${rentData.ownerId}`)
+            let user1= await fetch(`${NEXT_PUBLIC_SERVER_URL}/public/users/?userID=${rentData.ownerId}`)
             user1=await user1.json()
             setOwner(user1)
             console.log("user if this land")
@@ -85,12 +93,88 @@ console.log("solanaWallet=",balance)// ui info wrong
       
     }, [rentData])
     
+    const handleRentAirspace=async()=>{
 
- 
+        setIsLoading(true)
+        
+
+        const chainConfig = {
+            chainNamespace: 'solana',
+            chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+            rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+            displayName: 'Solana Testnet',
+            blockExplorer: 'https://explorer.solana.com',
+            ticker: 'SOL',
+            tickerName: 'Solana',
+        };
+        const web3auth = new Web3Auth({
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+
+            web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+            chainConfig: chainConfig,
+        });
+        await web3auth.initModal();
+        // await web3auth.connect();
+        const web3authProvider = await web3auth.connect();
+
+const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
+
+
+
+        console.log("date ansd time")
+        console.log(time)
+        console.log(date)
+        let startDate=new Date(`${date} ${time}`)
+        let endDate = new Date(startDate.getTime()); 
+        endDate.setMinutes(endDate.getMinutes() + 30);
+        console.log("start",startDate)
+        console.log(endDate)
+    
+        let lastId=landAssetIds
+    
+    
+        let req1Body={
+            callerAddress:selectorUser.blockchainAddress,
+            startTime:startDate.toISOString(),
+            endTime:endDate.toISOString(),
+            landAssetIds:landAssetIds
+        }
+        console.log("reqbody",JSON.stringify(req1Body))
+          let res=await  fetch(`${NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req1Body)
+          })
+          res=await res.json()
+          console.log("res body",res)
+          const transaction = Transaction.from(Buffer.from(res, 'base64'));
+          //let partialsignedTx=transaction.partialSign(solanaWallet);
+          //console.log("is solana wallet partial=",partialsignedTx)
+           const signedTx = await solanaWallet.signTransaction(transaction);
+     console.log(signedTx); 
+    let serializedTx=signedTx.serialize({requireAllSignatures:false})
+    let txToString=serializedTx.toString('base64');
+    if(signedTx){
+        let req2body={
+            transaction:txToString,
+            landAssetIds:landAssetIds,
+            startTime:startDate.toISOString(),
+            endTime:endDate.toISOString(),
+        }
+        console.log("final exexution",JSON.stringify(req2body))
+    } 
+
+
+    setIsLoading(false)
+     }
+
 
     console.log("am from CLaim modal ,",rentData)
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
@@ -106,13 +190,15 @@ console.log("solanaWallet=",balance)// ui info wrong
             <div className="flex items-center justify-evenly gap-[20px] text-[14px]">
             <div className="flex flex-col gap-[5px] w-1/2">
                 <label htmlFor="rentalDate">Rental Date<span className="text-[#E04F64]">*</span></label>
-                <input type="Date" required  className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalDate" id="rentalDate" autoComplete="off" />
+                <input type="Date" required value={date} onChange={(e)=>{setDate(e.target.value)
+               
+                }}  className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalDate" id="rentalDate" autoComplete="off" />
             </div>
                 
                 
             <div className="flex flex-col gap-[5px] w-1/2">
                 <label htmlFor="rentalTime">Rental Time<span className="text-[#E04F64]">*</span></label>
-                <input type="time" required className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
+                <input type="time" value={time} onChange={(e)=>{setTime(e.target.value)}} required className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
             </div>
             
             
@@ -120,7 +206,7 @@ console.log("solanaWallet=",balance)// ui info wrong
            
                 <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={()=>{console.log("ggdgdgdg")}} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Claim Airspace</div>
+                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">rent Airspace</div>
             </div>
         </div>
     )
@@ -316,7 +402,7 @@ const Rent = () => {
                 el.id = 'markerWithExternalCss';
                 let crds=e.target.getBounds()
                 // Add the new marker to the map and update the marker state
-                let res=await fetch('http://localhost:8888/public/properties/')
+                let res=await fetch(`${NEXT_PUBLIC_SERVER_URL}/public/properties/`)
                 res=await res.json();
                 //res=res.slice(0,5)
                 let ans,features1=[];
@@ -504,10 +590,16 @@ const Rent = () => {
         <Fragment>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
+            {/* <div className=" bg-black w-screen h-screen ">
 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden">
+
+                </div> */}
+                
+            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden ">
                 <Sidebar />
+                
                 <div className="w-full h-full flex flex-col">
+                
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
                     <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]`}>
@@ -520,7 +612,7 @@ const Rent = () => {
                         />
                          {!isMobile && <div className="flex justify-start items-start">
                             <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData}/>
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData}/>}
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading}/>}
                         
                         </div>}
                     </section>
