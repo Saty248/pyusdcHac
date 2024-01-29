@@ -77,7 +77,7 @@ console.log("solanaWallet=",balance)// ui info wrong
       console.log("and applyed working=",rentData.ownerId)
       async function getUsersFromBE(){
         try {
-            let user1= await fetch(`${NEXT_PUBLIC_SERVER_URL}/public/users/?userID=${rentData.ownerId}`)
+            let user1= await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/users/?userID=${rentData.ownerId}`)
             user1=await user1.json()
             setOwner(user1)
             console.log("user if this land")
@@ -140,7 +140,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
             landAssetIds:landAssetIds
         }
         console.log("reqbody",JSON.stringify(req1Body))
-          let res=await  fetch(`${NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
+          let res=await  fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
             method: 'POST',
             headers: {
               'Accept': 'application/json',
@@ -165,7 +165,21 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
             endTime:endDate.toISOString(),
         }
         console.log("final exexution",JSON.stringify(req2body))
-    } 
+        let ans2=await fetch(
+            `https://6ee8-105-186-146-250.ngrok-free.app/private/airspace-rental/execute-mint-rental-token-ix`,
+            {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(req2body),
+            }
+          );
+          ans2=await ans2.json();
+    console.log("execute result",ans2) 
+    }
+     
 
 
     setIsLoading(false)
@@ -214,6 +228,8 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
 
 
 const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData}) => {
+    const [selectedAddress,setSelectedAddress]=useState()
+    
     return (
         <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex gap-[5px] items-center">
@@ -252,7 +268,8 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
 const rentCLickHandler=()=>{
     let el1 = document.createElement('div');
     
-                //console.log("am rrent clickedd")
+                console.log("am rrent clickedd",item.id)
+                setSelectedAddress(item.id);
                 
                 
                 el1.id = 'marker2';
@@ -263,30 +280,36 @@ const rentCLickHandler=()=>{
     if(marker){
         marker.remove()
     }
-    let marker1=new maplibregl.Marker({ color: 'black' }  )
+    let marker1=new maplibregl.Marker({ color: '#0653EA' }  )
                     .setLngLat(ans2)
                     .addTo(map);
     setMarker(marker1)
+
         
     
 }
+
 const onClickRent=() =>{
     console.log("hello==",rentData)
     setRentData(item)
     setShowClaimModal(true)
+     
+                                    
 } 
+
                             return (
                                 <div
                                 key={item.id}
                                     value={item.address}
                                     onClick={rentCLickHandler}
-                                    className='p-5 text-left text-[#222222] w-full flex justify-between text-[10px]'
+                                    
+                                    className={item.id!=selectedAddress?` p-5 text-left text-[#913636] w-full flex justify-between text-[10px]`:`bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[10px]`}
                                     style={{
                                         borderTop: '5px solid #FFFFFFCC',
                                     }}
                                 >
 
-                                    {item.address}<h1 className=" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2">15</h1><span onClick={onClickRent} className="bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2">RENT</span>
+                                    {item.address}<h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>15</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
                                 </div>
                             )
                         })}
@@ -402,7 +425,7 @@ const Rent = () => {
                 el.id = 'markerWithExternalCss';
                 let crds=e.target.getBounds()
                 // Add the new marker to the map and update the marker state
-                let res=await fetch(`${NEXT_PUBLIC_SERVER_URL}/public/properties/`)
+                let res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/properties/`)
                 res=await res.json();
                 //res=res.slice(0,5)
                 let ans,features1=[];

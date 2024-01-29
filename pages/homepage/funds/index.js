@@ -329,6 +329,8 @@ const Funds = () => {
         }
     }, [user]);
 
+    console.log("envs =",process.env.NEXT_PUBLIC_SERVER_URL)
+
     return (
         <Fragment>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
