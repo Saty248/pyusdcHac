@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
-import { ArrowLeftIcon, CloseIcon, LocationPointIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import { ArrowLeftIcon, CloseIcon, LocationPointIcon, MagnifyingGlassIcon, SuccessIcon } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -13,14 +13,36 @@ import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
+const SuccessModal = ({ setShowSuccess,finalAns}) => {
+
+    const [owner,setOwner]=useState({});
+       return (
+        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status=='Rent SuccessFull'?'bg-green-600':'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
+            
+            <div className="w-[100px] h-[100px]  " >{finalAns.status=='Rent SuccessFull'?<SuccessIcon />:<CloseIcon/>}</div>
+            <div className=" text-xl text-white text-center"> {finalAns.status} </div>
+            <div className=" text-xl text-white text-center"> {finalAns.message}</div>
+            
+            
+           
+                
+               {/*  <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div> */}
+                <div onClick={()=>{setShowSuccess(false)}} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
+            
+        </div>
+    )
+}
+
+
 
 const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading}) => {
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState(["3fH494p235UJ2gMjpg8ePiKZjSiqmsddBzKLY4Ua5jwu"])
     const [date,setDate]=useState('');
-    const [time,setTime]=useState('')
+    const [time,setTime]=useState('');
+    const [showSuccess,setShowSuccess]=useState(false)
     //const [solanaWallet,setSolanaWallet]=useState()
-
+    const [finalAns,setfinalAns]=useState('');
     const { user: selectorUser } = useAuth();
     console.log("yo selector user",selectorUser)
 
@@ -74,13 +96,12 @@ console.log("solanaWallet=",balance)// ui info wrong
 
 
     useEffect( () => {
-      console.log("and applyed working=",rentData.ownerId)
+      
       async function getUsersFromBE(){
         try {
-            let user1= await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/users/?userID=${rentData.ownerId}`)
-            user1=await user1.json()
-            setOwner(user1)
-            console.log("user if this land")
+           
+            setOwner(rentData.owner)
+            console.log("user if this land",owner)
           } catch (error) {
             console.log(error)
             
@@ -129,64 +150,104 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
         endDate.setMinutes(endDate.getMinutes() + 30);
         console.log("start",startDate)
         console.log(endDate)
+        if(startDate.getMinutes()%30!=0){
+            setfinalAns({status:'Rent failed',
+                message:'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.'
+        })
+        setShowSuccess(true)
+        setIsLoading(false)
+        }else{
+            let landASSTId
+                //testing purpose land asset
+                if(rentData?.layers.length==0){
+                    landASSTId=landAssetIds;
+
+                }else{
+                    landASSTId=rentData?.layers
+
+                }
+
+            
     
-        let lastId=landAssetIds
     
-    
-        let req1Body={
-            callerAddress:selectorUser.blockchainAddress,
-            startTime:startDate.toISOString(),
-            endTime:endDate.toISOString(),
-            landAssetIds:landAssetIds
-        }
-        console.log("reqbody",JSON.stringify(req1Body))
-          let res=await  fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(req1Body)
-          })
-          res=await res.json()
-          console.log("res body",res)
-          const transaction = Transaction.from(Buffer.from(res, 'base64'));
-          //let partialsignedTx=transaction.partialSign(solanaWallet);
-          //console.log("is solana wallet partial=",partialsignedTx)
-           const signedTx = await solanaWallet.signTransaction(transaction);
-     console.log(signedTx); 
-    let serializedTx=signedTx.serialize({requireAllSignatures:false})
-    let txToString=serializedTx.toString('base64');
-    if(signedTx){
-        let req2body={
-            transaction:txToString,
-            landAssetIds:landAssetIds,
-            startTime:startDate.toISOString(),
-            endTime:endDate.toISOString(),
-        }
-        console.log("final exexution",JSON.stringify(req2body))
-        let ans2=await fetch(
-            `https://6ee8-105-186-146-250.ngrok-free.app/private/airspace-rental/execute-mint-rental-token-ix`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(req2body),
+            let req1Body={
+                callerAddress:selectorUser.blockchainAddress,
+                startTime:startDate.toISOString(),
+                endTime:endDate.toISOString(),
+                landAssetIds:landASSTId
             }
-          );
-          ans2=await ans2.json();
-    console.log("execute result",ans2) 
-    }
-     
-
-
-    setIsLoading(false)
+            console.log("reqbody",JSON.stringify(req1Body))
+              let res=await  fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(req1Body)
+              })
+              res=await res.json()
+              console.log("res body",res)
+              const transaction = Transaction.from(Buffer.from(res, 'base64'));
+              //let partialsignedTx=transaction.partialSign(solanaWallet);
+              //console.log("is solana wallet partial=",partialsignedTx)
+               const signedTx = await solanaWallet.signTransaction(transaction);
+         console.log(signedTx); 
+        let serializedTx=signedTx.serialize({requireAllSignatures:false})
+        let txToString=serializedTx.toString('base64');
+        if(signedTx){
+            let req2body={
+                transaction:txToString,
+                landAssetIds:landASSTId,
+                startTime:startDate.toISOString(),
+                endTime:endDate.toISOString(),
+            }
+            console.log("final exexution",JSON.stringify(req2body))
+            let ans2=await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/execute-mint-rental-token-ix`,
+                {
+                  method: 'POST',
+                  headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(req2body),
+                }
+              );
+              ans2=await ans2.json();
+        console.log("execute result",ans2)
+        if(ans2) {
+            if(ans2.data.status=='success'){
+                setfinalAns({status:'Rent SuccessFull',
+                    message:ans2.data.message
+            })
+            }else{
+                setfinalAns({status:'Rent failed',
+                    message:ans2.data.message
+            })
+            }
+    
+            setShowSuccess(true)
+    
+    
+        }
+        }
+         
+    
+    
+        setIsLoading(false)
+        }
+       
      }
 
 
     console.log("am from CLaim modal ,",rentData)
+    if(showSuccess){
+        return(
+            <>
+                {finalAns.status=='Rent SuccessFull'?<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/>:<SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns}/> }
+            </>
+        )
+    }
     return (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
@@ -211,8 +272,9 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 
                 
             <div className="flex flex-col gap-[5px] w-1/2">
+            
                 <label htmlFor="rentalTime">Rental Time<span className="text-[#E04F64]">*</span></label>
-                <input type="time" value={time} onChange={(e)=>{setTime(e.target.value)}} required className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
+                <input type="time" value={time} onChange={(e)=>{setTime(e.target.value)}} required={true} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }}  name="rentalTime" id="rentalTime" autoComplete="off" />
             </div>
             
             
@@ -354,6 +416,7 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
 }
 
 const Rent = () => {
+    
     const [isLoading, setIsLoading] = useState(false);
     // map
     const [map, setMap] = useState(null);
@@ -580,20 +643,6 @@ const Rent = () => {
 
     }, [flyToAddress, map]);
 
-/*     useEffect(()=>{
-        console.log("USEeFFECT WORKDINGGGGGGG")
-
-        if(map){
-            console.log("map",map.getBounds())
-        }else{
-            console.log("nomap")
-        }
-    },[flyToAddress]) */
-
-/*     useEffect(() => {
-        console.log("map updated")
-
-    }, [map]); */
    
 
     useEffect(() => {
@@ -607,7 +656,7 @@ const Rent = () => {
         setShowOptions(false);
     }
 
-
+   
 
     return (
         <Fragment>
@@ -635,7 +684,7 @@ const Rent = () => {
                         />
                          {!isMobile && <div className="flex justify-start items-start">
                             <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData}/>
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading}/>}
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress}/>}
                         
                         </div>}
                     </section>
