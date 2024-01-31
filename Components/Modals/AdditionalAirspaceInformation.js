@@ -178,7 +178,7 @@ const AdditionalAispaceInformation = (props) => {
     // const domain = 'localhost:3000';
     const origin = window.location.origin;
     // const origin = 'http://localhost:3000';
-
+    
     const payload = new SIWPayload();
     payload.domain = domain;
     payload.uri = origin;

@@ -38,8 +38,12 @@ const Wallet = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const [stripeOnramp, setStripeOnRamp] = useState();
 
+  const [transactions, setTransactions] = useState();
+  const [completedTransactions, setCompletedTransactions] = useState([]);
+
   const transactionsPerPage = 5;
   const pagesVisited = pageNumber * transactionsPerPage;
+
 
   const pageCount =
     transactionHistory &&
@@ -126,6 +130,70 @@ const Wallet = () => {
         });
     }
   }, [showStripeModal]);
+
+  useEffect(() => {
+    if (user) {
+      const mintAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS
+
+      fetch(`https://api.solana.fm/v1/addresses/${walletAddress}/tokens`)
+        .then(response => response.json())
+        .then(response => {
+            for(const key in response.tokens) {      
+              if(key === mintAddress) {
+                setTokenBalance(response.tokens[key].balance)
+              }
+          }
+            console.log(balanceArray);
+          })
+        .catch(err => console.error(err));
+
+      fetch(`https://api.solana.fm/v0/accounts/${walletAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`)
+      // fetch(`https://api.solana.fm/v0/accounts/${walletAddress}/transfers?inflow=true&outflow=true&page=1`)
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((errorData) => {
+              throw new Error(errorData.error);
+            });
+          }
+
+          return response.json();
+        })
+        .then((result) => {
+          setTransactions(result.results)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if(transactions) {
+      const collectedTransactions = [];
+
+      for(const trans of transactions) {
+        for(const key of trans.data) {
+          const date = new Date(key.timestamp * 1000);
+          const month = date.toLocaleString('default', { month: 'short' });
+          const day = date.getDate();
+          const year = date.getFullYear();
+          const hour = date.getHours().toString().padStart(2, '0');
+          const minute = date.getMinutes().toString().padStart(2, '0');
+          const second = date.getSeconds().toString().padStart(2, '0');
+
+          key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
+
+          if(key.token && key.amount >= 10000) {
+            key.hash = trans.transactionHash
+            collectedTransactions.push(key);
+          }
+        }
+      }
+
+      console.log(collectedTransactions);
+      setCompletedTransactions(collectedTransactions);
+    }
+  }, [transactions]);
 
   useEffect(() => {
     if (user) {
@@ -575,20 +643,22 @@ const Wallet = () => {
             <p className='w-2/12'>Amount (USDC)</p>
             <p className='w-1/12'>Status</p>
           </div>
-          {!transactionHistory && (
+          {!transactions && (
             <p className='mt-5 text-center'>Loading...</p>
           )}
-          {transactionHistory && transactionHistory.length < 1 && (
+          {transactions && transactions.length < 1 && (
             <div className='mt-20 flex flex-row justify-center'>
               <p>No transaction for your account at the moment</p>
             </div>
           )}
-          {transactionHistories &&
-            transactionHistories.length > 0 &&
-            transactionHistories.map((history) => {
+
+  
+          
+          {transactions && transactions.length > 0 &&
+            completedTransactions.map((history) => {
               return (
                 <div
-                  key={history.signature}
+                  key={history.hash}
                   className='mx-auto mt-2 flex flex-row items-center justify-between gap-x-6 rounded-md bg-white pe-16 ps-6'
                   style={{
                     height: '47px',
@@ -603,13 +673,14 @@ const Wallet = () => {
                     target='_blank'
                     className='w-4/12 overflow-x-clip text-ellipsis text-dark-blue'
                   >
-                    {history.signature}
+                    {history.hash}
                   </a>
+                  
                   <p
-                    className={`w-2/12 ${history.amount > 0 ? 'text-green-500' : 'text-red-600'
+                    className={`w-2/12 ${!history.destination ? 'text-green-500' : 'text-red-600'
                       }`}
                   >
-                    <span>{history.amount ? history.amount : ''}</span>
+                    <span>{history.amount ? history.amount / 1000000 : ''}</span>
                   </p>
                   <p className='flex w-1/12 flex-row items-center justify-center gap-1 rounded-lg bg-bleach-green p-0.5 text-sml text-light-dark'>
                     <svg
@@ -621,7 +692,7 @@ const Wallet = () => {
                     >
                       <circle cx='3' cy='3' r='3' fill='#1A572E' />
                     </svg>
-                    {history.confirmationStatus}
+                    {history.status}
                   </p>
                 </div>
               );
