@@ -37,7 +37,7 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
 const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading}) => {
     const [owner,setOwner]=useState({});
-    const [landAssetIds,setLandAssetIds]=useState(["3fH494p235UJ2gMjpg8ePiKZjSiqmsddBzKLY4Ua5jwu"])
+    const [landAssetIds,setLandAssetIds]=useState([])
     const [date,setDate]=useState('');
     const [time,setTime]=useState('');
     const [showSuccess,setShowSuccess]=useState(false)
@@ -157,14 +157,16 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
         setShowSuccess(true)
         setIsLoading(false)
         }else{
-            let landASSTId
+            
                 //testing purpose land asset
                 if(rentData?.layers.length==0){
-                    landASSTId=landAssetIds;
+                    setLandAssetIds(["3fH494p235UJ2gMjpg8ePiKZjSiqmsddBzKLY4Ua5jwu"])
+                    console.log("landASSTIdTest==",landAssetIds)
 
                 }else{
-                    landASSTId=rentData?.layers
-
+                    setLandAssetIds([rentData?.layers[0].tokenId]);
+                    console.log("landASSTId==",landAssetIds)
+                    console.log("res resll",rentData.layers[0].tokenId)
                 }
 
             
@@ -174,19 +176,30 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 callerAddress:selectorUser.blockchainAddress,
                 startTime:startDate.toISOString(),
                 endTime:endDate.toISOString(),
-                landAssetIds:landASSTId
+                landAssetIds:[rentData?.layers[0].tokenId]
             }
             console.log("reqbody",JSON.stringify(req1Body))
               let res=await  fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
                 method: 'POST',
                 headers: {
                   'Accept': 'application/json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
+
                 },
                 body: JSON.stringify(req1Body)
               })
               res=await res.json()
               console.log("res body",res)
+              if(res.statusCode==400){
+                setShowSuccess(true)
+                setfinalAns({status:'Rent failed',
+                message:res.data.message
+                
+        })
+        setIsLoading(false)
+        return
+              }
               const transaction = Transaction.from(Buffer.from(res, 'base64'));
               //let partialsignedTx=transaction.partialSign(solanaWallet);
               //console.log("is solana wallet partial=",partialsignedTx)
@@ -197,7 +210,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
         if(signedTx){
             let req2body={
                 transaction:txToString,
-                landAssetIds:landASSTId,
+                landAssetIds:[rentData?.layers[0].tokenId],
                 startTime:startDate.toISOString(),
                 endTime:endDate.toISOString(),
             }
@@ -209,6 +222,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                   headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
+                    api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
                   },
                   body: JSON.stringify(req2body),
                 }
@@ -335,8 +349,8 @@ const rentCLickHandler=()=>{
                 
                 
                 el1.id = 'marker2';
-    let lng1=item.latitude;
-    let lat1=item.longitude;
+    let lat1=item.latitude;
+    let lng1=item.longitude;
     let ans2=new mapboxgl.LngLat(lng1,lat1);
     let newMap=map
     if(marker){
@@ -432,7 +446,22 @@ const Rent = () => {
     const [marker, setMarker] = useState();
     const [rentData,setRentData]=useState()
     const [showClaimModal,setShowClaimModal]=useState(false)
+    console.log("front")
+    const defaultData = {
+        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
+        ]
+    }
+    // showing
    
+    const [data, setData] = useState({ ...defaultData });
+
     // showing
     const [regAdressShow,setregAdressShow]=useState(false)
     const [showOptions, setShowOptions] = useState(false);
@@ -446,7 +475,7 @@ const Rent = () => {
             const newMap = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [ -104.710745, 38.899224],
+                center: [ -104.718243, 40.413869],
                 zoom: 15,
                 // attributionControl: false
             });
@@ -488,7 +517,14 @@ const Rent = () => {
                 el.id = 'markerWithExternalCss';
                 let crds=e.target.getBounds()
                 // Add the new marker to the map and update the marker state
-                let res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/properties/`)
+                let res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/properties/`,{
+                    method: 'GET',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                      api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
+                    }
+                })
                 res=await res.json();
                 //res=res.slice(0,5)
                 let ans,features1=[];
@@ -521,7 +557,16 @@ const Rent = () => {
                    
                 }
 
-                //console.log("new bounds",crds)
+                
+
+
+                
+
+
+
+
+                  
+               //console.log("new bounds",crds)
                 });
 
                 newMap.on('click',(e)=>{
