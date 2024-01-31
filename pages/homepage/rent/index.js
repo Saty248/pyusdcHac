@@ -495,7 +495,7 @@ const Rent = () => {
                  if(res){
                      ans=res.filter((property1)=>{
                        //console.log(`p1Lon= ${property1.latitude} crdsswLon= ${crds._sw.lng}   crdsnelng= ${crds._ne.lng}  p1lat= ${property1.longitude} crdsswlat= ${crds._sw.lat}  crdsnelat= ${crds._ne.lat}` );
-                        if(property1.latitude>=crds._sw.lng && property1.latitude<=crds._ne.lng && property1.longitude>=crds._sw.lat && property1.longitude<=crds._ne.lat ){
+                        if(property1.longitude>=crds._sw.lng && property1.longitude<=crds._ne.lng && property1.latitude>=crds._sw.lat && property1.latitude<=crds._ne.lat ){
                             return property1
                         }
                     }) 
@@ -504,8 +504,8 @@ const Rent = () => {
                 setRegisteredAddress(ans)
                 if(ans.length>0){
                     for(let i=0;i<ans.length;i++){
-                        let lng1=ans[i].latitude;
-                        let lat1=ans[i].longitude;
+                        let lng1=ans[i].longitude;
+                        let lat1=ans[i].latitude;
                         //console.log("ansarray==",lng1,lat1)
                         let ans2=new mapboxgl.LngLat(lng1,lat1);
                         
@@ -521,16 +521,7 @@ const Rent = () => {
                    
                 }
 
-                
-
-
-                
-
-
-
-
-                  
-               //console.log("new bounds",crds)
+                //console.log("new bounds",crds)
                 });
 
                 newMap.on('click',(e)=>{
