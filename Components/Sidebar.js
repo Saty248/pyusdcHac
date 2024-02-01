@@ -109,7 +109,7 @@ const Sidebar = () => {
         <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
-        {/*<SidebarItem href={'/404'} text={'Help Center'} children={<HelpQuestionIcon />} />*/}
+        <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
         <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
       </aside>

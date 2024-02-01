@@ -118,6 +118,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 }
 
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
+    const [isInfoVisible, setIsInfoVisible] = useState(false)
     return (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
@@ -146,7 +147,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
             {data.rent && (
                 <Fragment>
                     <h2 className="text-[#222222] font-normal text-[20px]">Rental Details</h2>
-                    <p className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</p>
+                    <Link href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
                     <div className="flex items-center justify-between gap-[15px]">
                         <div className="flex-1">
                             <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
@@ -176,12 +177,15 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                 <Fragment>
                     <div className="flex items-center gap-[7.5px]">
                         <h2 className="text-[#222222] font-normal text-[20px]">Selling Details</h2>
-                        <div className="flex items-center justify-center w-[20px] h-[20px]"><InfoIcon /></div>
+                        <div onClick={() => setIsInfoVisible(prev => !prev)} className="relative w-[20px] h-[20px] flex justify-center items-center">
+                            <InfoIcon />
+                            {isInfoVisible && <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">Note that rental availability are not applicable to your selling</div>}
+                        </div>
                     </div>
-                    <p className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</p>
+                    <Link href={'https://skytrade.tawk.help'} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</Link>
                     <div className="flex flex-col gap-[5px]">
                         <label className="font-normal text-[#838187] text-[14px]" htmlFor="sellingPrice">Selling Price</label>
-                        <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="text" name="sellingPrice" id="sellingPrice" />
+                        <input className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} autoComplete="off" type="number" name="sellingPrice" id="sellingPrice" />
                     </div>
                 </Fragment>
             )}

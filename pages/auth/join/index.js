@@ -164,6 +164,7 @@ const Signup = () => {
 
       const user = await userRequest.json();
 
+
       if (user.id) {
         signIn({ user });
         // dispatch(counterActions.userAuth(user));
