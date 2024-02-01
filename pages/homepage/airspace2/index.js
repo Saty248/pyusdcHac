@@ -545,7 +545,7 @@ const Airspaces = () => {
                     .addTo(map);
                 setMarker(newMarker);
             } catch (error) {
-                setIsLoading(false);setShowClaimModal
+                setIsLoading(false);
                 console.error(err);
             }
         }

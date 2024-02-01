@@ -42,13 +42,7 @@ button {
   cursor: pointer;
   z-index: 40;
 }
-#popupWithExternalCss {
-  background-image: url('https://maps.locationiq.com/v3/samples/marker50px.png');
-  background-size: cover;
-  width: 10px;
-  height: 10px;
-  cursor: pointer;
-}
+
 .mapboxgl-popup {
   max-width: 200px;
   background-color: #0653ea;

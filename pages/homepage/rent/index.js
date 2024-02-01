@@ -13,6 +13,8 @@ import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
+import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
+import base58 from 'bs58';
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
     const [owner,setOwner]=useState({});
@@ -35,7 +37,7 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
 
 
-const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading}) => {
+const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState([])
     const [date,setDate]=useState('');
@@ -123,7 +125,7 @@ console.log("solanaWallet=",balance)// ui info wrong
             chainNamespace: 'solana',
             chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
             rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-            displayName: 'Solana Testnet',
+            displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME} `,
             blockExplorer: 'https://explorer.solana.com',
             ticker: 'SOL',
             tickerName: 'Solana',
@@ -160,7 +162,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
             
                 //testing purpose land asset
                 if(rentData?.layers.length==0){
-                    setLandAssetIds(["3fH494p235UJ2gMjpg8ePiKZjSiqmsddBzKLY4Ua5jwu"])
+                    setLandAssetIds([`${process.env.NEXT_PUBLIC_SOLANA_TESTLANDASSETID}`])
                     console.log("landASSTIdTest==",landAssetIds)
 
                 }else{
@@ -176,18 +178,85 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 callerAddress:selectorUser.blockchainAddress,
                 startTime:startDate.toISOString(),
                 endTime:endDate.toISOString(),
-                landAssetIds:[rentData?.layers[0].tokenId]
+                landAssetIds:[rentData.layers[0].tokenId]
             }
             console.log("reqbody",JSON.stringify(req1Body))
-              let res=await  fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/create-mint-rental-token-ix`,{
+
+            if(user1){
+                const chainConfig = {
+                    chainNamespace: 'solana',
+                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                    displayName: 'Solana Mainnet',
+                    blockExplorer: 'https://explorer.solana.com',
+                    ticker: 'SOL',
+                    tickerName: 'Solana',
+                  };
+          
+                  const web3auth = new Web3Auth({
+                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+          
+                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                    chainConfig: chainConfig,
+                  });
+          
+                  await web3auth.initModal();
+          
+                  const web3authProvider = await web3auth.connect();
+          
+                  const solanaWallet = new SolanaWallet(web3authProvider);
+          
+                  // const userInfo = await web3auth.getUserInfo();
+          
+                  const domain = window.location.host;
+                  // const domain = 'localhost:3000';
+                  const origin = window.location.origin;
+                  // const origin = 'http://localhost:3000';
+          
+                  const payload = new SIWPayload();
+                  payload.domain = domain;
+                  payload.uri = origin;
+                  payload.address = user1.blockchainAddress;
+                  payload.statement = 'Sign in to SkyTrade app.';
+                  payload.version = '1';
+                  payload.chainId = 1;
+          
+                  const header = { t: 'sip99' };
+                  const network = 'solana';
+          
+                  let message = new SIWWeb3({ header, payload, network });
+          
+                  const messageText = message.prepareMessage();
+                  const msg = new TextEncoder().encode(messageText);
+                  const result = await solanaWallet.signMessage(msg);
+          
+                  const signature = base58.encode(result);
+          
+                  signatureObj.sign = signature;
+                  signatureObj.sign_nonce = message.payload.nonce;
+                  signatureObj.sign_issue_at = message.payload.issuedAt;
+                  signatureObj.sign_address = user1.blockchainAddress;
+  
+  
+
+            } 
+
+
+
+              let res=await  fetch(`/api/proxy?${Date.now()}`,{
                 method: 'POST',
                 headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json',
-                  api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
+                  
+                  uri: `/private/airspace-rental/create-mint-rental-token-ix`,
+                  sign: signatureObj.sign,
+                  time: signatureObj.sign_issue_at,
+                  nonce: signatureObj.sign_nonce,
+                  address: signatureObj.sign_address,
 
                 },
-                body: JSON.stringify(req1Body)
+                body:req1Body
               })
               res=await res.json()
               console.log("res body",res)
@@ -215,16 +284,80 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 endTime:endDate.toISOString(),
             }
             console.log("final exexution",JSON.stringify(req2body))
+
+            if(user1){
+                const chainConfig = {
+                    chainNamespace: 'solana',
+                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                    displayName: 'Solana Mainnet',
+                    blockExplorer: 'https://explorer.solana.com',
+                    ticker: 'SOL',
+                    tickerName: 'Solana',
+                  };
+          
+                  const web3auth = new Web3Auth({
+                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+          
+                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                    chainConfig: chainConfig,
+                  });
+          
+                  await web3auth.initModal();
+          
+                  const web3authProvider = await web3auth.connect();
+          
+                  const solanaWallet = new SolanaWallet(web3authProvider);
+          
+                  // const userInfo = await web3auth.getUserInfo();
+          
+                  const domain = window.location.host;
+                  // const domain = 'localhost:3000';
+                  const origin = window.location.origin;
+                  // const origin = 'http://localhost:3000';
+          
+                  const payload = new SIWPayload();
+                  payload.domain = domain;
+                  payload.uri = origin;
+                  payload.address = user1.blockchainAddress;
+                  payload.statement = 'Sign in to SkyTrade app.';
+                  payload.version = '1';
+                  payload.chainId = 1;
+          
+                  const header = { t: 'sip99' };
+                  const network = 'solana';
+          
+                  let message = new SIWWeb3({ header, payload, network });
+          
+                  const messageText = message.prepareMessage();
+                  const msg = new TextEncoder().encode(messageText);
+                  const result = await solanaWallet.signMessage(msg);
+          
+                  const signature = base58.encode(result);
+          
+                  signatureObj.sign = signature;
+                  signatureObj.sign_nonce = message.payload.nonce;
+                  signatureObj.sign_issue_at = message.payload.issuedAt;
+                  signatureObj.sign_address = user1.blockchainAddress;
+  
+  
+
+            } 
             let ans2=await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/private/airspace-rental/execute-mint-rental-token-ix`,
+                `/api/proxy?${Date.now()}`,
                 {
                   method: 'POST',
                   headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
+                    
+                    uri: `/private/airspace-rental/execute-mint-rental-token-ix`,
+                    sign: signatureObj.sign,
+                    time: signatureObj.sign_issue_at,
+                    nonce: signatureObj.sign_nonce,
+                    address: signatureObj.sign_address,
                   },
-                  body: JSON.stringify(req2body),
+                  body: req2body,
                 }
               );
               ans2=await ans2.json();
@@ -303,7 +436,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
 }
 
 
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData}) => {
+const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData, user1}) => {
     const [selectedAddress,setSelectedAddress]=useState()
     
     return (
@@ -443,6 +576,8 @@ const Rent = () => {
     const [addresses, setAddresses] = useState([]);
     const [flyToAddress, setFlyToAddress] = useState('');
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
+
+    const [token, setToken] = useState();
     const [marker, setMarker] = useState();
     const [rentData,setRentData]=useState()
     const [showClaimModal,setShowClaimModal]=useState(false)
@@ -459,14 +594,74 @@ const Rent = () => {
         ]
     }
     // showing
-   
+    const { user: selectorUser } = useAuth();
+    const [user1, setUser1] = useState();
     const [data, setData] = useState({ ...defaultData });
-
+    console.log(selectorUser)
     // showing
     const [regAdressShow,setregAdressShow]=useState(false)
     const [showOptions, setShowOptions] = useState(false);
+
+//setting user
+    useEffect(() => {
+        if (selectorUser) {
+          const authUser = async () => {
+            const chainConfig = {
+              chainNamespace: 'solana',
+              chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+              rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+              displayName: 'Solana Mainnet',
+              blockExplorer: 'https://explorer.solana.com',
+              ticker: 'SOL',
+              tickerName: 'Solana',
+            };
+    
+            const web3auth = new Web3Auth({
+              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+    
+              web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+              chainConfig: chainConfig,
+            });
+    
+            await web3auth.initModal();
+    
+            // await web3auth.connect();
+    
+            let userInfo;
+    
+            try {
+              userInfo = await web3auth.getUserInfo();
+            } catch (err) {
+              localStorage.removeItem('openlogin_store');
+              swal({
+                title: 'oops!',
+                text: 'Something went wrong. Kindly try again',
+              }).then(() => router.push('/auth/join'));
+              return;
+            }
+    
+            const fetchedToken = JSON.parse(
+              localStorage.getItem('openlogin_store')
+            );
+    
+            if (!selectorUser) {
+              localStorage.removeItem('openlogin_store');
+              router.push('/auth/join');
+              return;
+            }
+    
+            setToken(fetchedToken.sessionId);
+            setUser1(selectorUser);
+          };
+    
+          authUser();
+        }
+      }, []);
+
+
     //map creation and adding event listeners
     useEffect(() => {
+       
         if (map) return;
 
         const createMap = () => {
@@ -518,13 +713,79 @@ const Rent = () => {
                 let crds=e.target.getBounds()
                 // todo: make it server side
 
+                const signatureObj = {};
+                
+                if(user1){
+                    const chainConfig = {
+                        chainNamespace: 'solana',
+                        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                        displayName: 'Solana Mainnet',
+                        blockExplorer: 'https://explorer.solana.com',
+                        ticker: 'SOL',
+                        tickerName: 'Solana',
+                      };
+              
+                      const web3auth = new Web3Auth({
+                        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+              
+                        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                        chainConfig: chainConfig,
+                      });
+              
+                      await web3auth.initModal();
+              
+                      const web3authProvider = await web3auth.connect();
+              
+                      const solanaWallet = new SolanaWallet(web3authProvider);
+              
+                      // const userInfo = await web3auth.getUserInfo();
+              
+                      const domain = window.location.host;
+                      // const domain = 'localhost:3000';
+                      const origin = window.location.origin;
+                      // const origin = 'http://localhost:3000';
+              
+                      const payload = new SIWPayload();
+                      payload.domain = domain;
+                      payload.uri = origin;
+                      payload.address = user1.blockchainAddress;
+                      payload.statement = 'Sign in to SkyTrade app.';
+                      payload.version = '1';
+                      payload.chainId = 1;
+              
+                      const header = { t: 'sip99' };
+                      const network = 'solana';
+              
+                      let message = new SIWWeb3({ header, payload, network });
+              
+                      const messageText = message.prepareMessage();
+                      const msg = new TextEncoder().encode(messageText);
+                      const result = await solanaWallet.signMessage(msg);
+              
+                      const signature = base58.encode(result);
+              
+                      signatureObj.sign = signature;
+                      signatureObj.sign_nonce = message.payload.nonce;
+                      signatureObj.sign_issue_at = message.payload.issuedAt;
+                      signatureObj.sign_address = user1.blockchainAddress;
+      
+      
+
+                }                
                 // Add the new marker to the map and update the marker state
-                let res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/properties/`,{
+                let res=await fetch(`/api/proxy?${Date.now()}`,{
                     method: 'GET',
                     headers: {
                       Accept: 'application/json',
                       'Content-Type': 'application/json',
-                      api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY
+                      
+
+                      uri: `/public/properties/`,
+            sign: signatureObj.sign,
+            time: signatureObj.sign_issue_at,
+            nonce: signatureObj.sign_nonce,
+            address: signatureObj.sign_address,
                     }
                 })
                 res=await res.json();
@@ -721,8 +982,8 @@ const Rent = () => {
                             style={{ zIndex: '20' }}
                         />
                          {!isMobile && <div className="flex justify-start items-start">
-                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData}/>
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress}/>}
+                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
                         
                         </div>}
                     </section>
