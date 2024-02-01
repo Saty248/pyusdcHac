@@ -516,6 +516,8 @@ const Rent = () => {
                 
                 el.id = 'markerWithExternalCss';
                 let crds=e.target.getBounds()
+                // todo: make it server side
+
                 // Add the new marker to the map and update the marker state
                 let res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/public/properties/`,{
                     method: 'GET',
