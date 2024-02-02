@@ -58,7 +58,7 @@ const Wallet = () => {
           chainNamespace: 'solana',
           chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: 'Solana Mainnet',
+          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
           blockExplorer: 'https://explorer.solana.com',
           ticker: 'SOL',
           tickerName: 'Solana',
@@ -103,7 +103,7 @@ const Wallet = () => {
   useEffect(() => {
     if (showStripeModal) {
       const stripeOnrampPromise = loadStripeOnramp(
-        'pk_test_51MRzIzIVelVZN1eRHjwBDzNvOb5lc65TvVoMtYFMUlZiyzXNXZE63TtoPspFu22pGAoSdlEeOgn6VWlu3XmKmMSd00LgkRYTfv'
+        `${process.env.STRIPEONRAMP_APIKEY}`
       );
 
       setStripeOnRamp(stripeOnrampPromise);
