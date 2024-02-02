@@ -160,16 +160,16 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
         setIsLoading(false)
         }else{
             
-                //testing purpose land asset
+                /* //testing purpose land asset
                 if(rentData?.layers.length==0){
                     setLandAssetIds([`${process.env.NEXT_PUBLIC_SOLANA_TESTLANDASSETID}`])
                     console.log("landASSTIdTest==",landAssetIds)
 
-                }else{
+                } */
                     setLandAssetIds([rentData?.layers[0].tokenId]);
                     console.log("landASSTId==",landAssetIds)
                     console.log("res resll",rentData.layers[0].tokenId)
-                }
+                
 
             
     
