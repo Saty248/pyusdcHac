@@ -15,6 +15,7 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } f
 
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
+
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
     const [owner,setOwner]=useState({});
@@ -181,7 +182,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 landAssetIds:[rentData.layers[0].tokenId]
             }
             console.log("reqbody",JSON.stringify(req1Body))
-
+            let signatureObj={}
             if(user1){
                 const chainConfig = {
                     chainNamespace: 'solana',
@@ -241,6 +242,8 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
 
             } 
 
+            console.log("signature obj  ", signatureObj)
+
 
 
               let res=await  fetch(`/api/proxy?${Date.now()}`,{
@@ -256,7 +259,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                   address: signatureObj.sign_address,
 
                 },
-                body:req1Body
+                body:JSON.stringify(req1Body)
               })
               res=await res.json()
               console.log("res body",res)
@@ -284,7 +287,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                 endTime:endDate.toISOString(),
             }
             console.log("final exexution",JSON.stringify(req2body))
-
+             signatureObj={}
             if(user1){
                 const chainConfig = {
                     chainNamespace: 'solana',
@@ -357,7 +360,7 @@ const solanaWallet = new SolanaWallet(web3authProvider); // web3auth.provider
                     nonce: signatureObj.sign_nonce,
                     address: signatureObj.sign_address,
                   },
-                  body: req2body,
+                  body: JSON.stringify(req2body),
                 }
               );
               ans2=await ans2.json();
