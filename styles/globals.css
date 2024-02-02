@@ -33,6 +33,22 @@ button {
   height: 100px;
   cursor: pointer;
 }
+#marker2{
+  background-color: #0653ea;
+  
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  z-index: 40;
+}
+
+.mapboxgl-popup {
+  max-width: 200px;
+  background-color: #0653ea;
+  left: 0;
+  top: 0;
+}
 
 .mapbox-logo {
   display: none !important;

@@ -435,8 +435,11 @@ const Airspaces = () => {
                 style: 'mapbox://styles/mapbox/streets-v12',
                 center: [-15.498211, 28.035056],
                 zoom: 15,
+                bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
-            });
+            })
+                  
+    console.log("mapp  = ",newMap.getBounds())
 
             newMap.on('load', function () {
                 newMap.addLayer({
@@ -458,6 +461,8 @@ const Airspaces = () => {
                     },
                 });
             });
+
+
 
             setMap(newMap);
         }
@@ -611,6 +616,8 @@ const Airspaces = () => {
             console.log(error)
         }
     }
+
+    
 
     return (
         <Fragment>

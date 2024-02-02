@@ -70,7 +70,7 @@ const Airspace = () => {
           chainNamespace: 'solana',
           chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
           rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
+          displayName: 'Solana Mainnet',
           blockExplorer: 'https://explorer.solana.com',
           ticker: 'SOL',
           tickerName: 'Solana',
