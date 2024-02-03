@@ -25,6 +25,32 @@ import logo from '../../../public/images/logo.jpg';
 
 import { useSignature } from '@/hooks/useSignature';
 
+const chainConfig = {
+  chainNamespace: 'solana',
+  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+  displayName: 'Solana Mainnet',
+  blockExplorer: 'https://explorer.solana.com',
+  ticker: 'SOL',
+  tickerName: 'Solana',
+};
+
+const web3auth = new Web3AuthNoModal({
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+  chainConfig: chainConfig,
+});
+
+const privateKeyProvider = new SolanaPrivateKeyProvider({
+  config: { chainConfig },
+});
+
+const openLoginAdapter = new OpenloginAdapter({
+  privateKeyProvider,
+});
+
+web3auth.configureAdapter(openLoginAdapter);
+
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [categorySect, setCategorySect] = useState(false);
@@ -49,32 +75,6 @@ const Signup = () => {
       return;
     }
   }, []);
-
-  const chainConfig = {
-    chainNamespace: 'solana',
-    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-    displayName: 'Solana Mainnet',
-    blockExplorer: 'https://explorer.solana.com',
-    ticker: 'SOL',
-    tickerName: 'Solana',
-  };
-
-  const web3auth = new Web3AuthNoModal({
-    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-    chainConfig: chainConfig,
-  });
-
-  const privateKeyProvider = new SolanaPrivateKeyProvider({
-    config: { chainConfig },
-  });
-
-  const openLoginAdapter = new OpenloginAdapter({
-    privateKeyProvider,
-  });
-
-  web3auth.configureAdapter(openLoginAdapter);
 
   useEffect(() => {
     const init = async () => {
@@ -111,7 +111,7 @@ const Signup = () => {
         });
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        router.push("/");
+        router.push('/');
         return;
       }
     } else {
@@ -121,7 +121,7 @@ const Signup = () => {
         });
       } catch (err) {
         localStorage.removeItem('openlogin_store');
-        router.push("/");
+        router.push('/');
         return;
       }
     }
@@ -132,7 +132,7 @@ const Signup = () => {
       userInformation = await web3auth.getUserInfo();
     } catch (err) {
       localStorage.removeItem('openlogin_store');
-      router.push("/");
+      router.push('/');
       return;
     }
 
@@ -144,7 +144,7 @@ const Signup = () => {
       accounts = await solanaWallet.requestAccounts();
     } catch (err) {
       localStorage.removeItem('openlogin_store');
-      router.push("/");
+      router.push('/');
       return;
     }
 
@@ -163,7 +163,6 @@ const Signup = () => {
       });
 
       const user = await userRequest.json();
-
 
       if (user.id) {
         signIn({ user });
@@ -210,7 +209,7 @@ const Signup = () => {
   };
 
   const loginHandlerGood = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const email = emailRef.current.value;
     console.info('Login: email is', email);
@@ -226,7 +225,7 @@ const Signup = () => {
     let provider;
 
     try {
-      console.log("Login: creating provider...")
+      console.log('Login: creating provider...');
       provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: 'email_passwordless',
         extraLoginOptions: {
@@ -234,52 +233,57 @@ const Signup = () => {
         },
       });
     } catch (error) {
-      console.log("Login: ERROR while creating provider...", { error })
+      console.log('Login: ERROR while creating provider...', { error });
       localStorage.removeItem('openlogin_store');
       setIsVisitYourInboxVisible(false);
       return;
     }
 
-    console.log("Login: provider created")
+    console.log('Login: provider created');
 
     let userInformation;
 
     try {
-      console.log("Login: getting user information...")
+      console.log('Login: getting user information...');
       userInformation = await web3auth.getUserInfo();
-      console.log("Login: user information is", userInformation)
+      console.log('Login: user information is', userInformation);
     } catch (err) {
-      console.log("Login: ERROR while getting user information...", { err })
+      console.log('Login: ERROR while getting user information...', { err });
       localStorage.removeItem('openlogin_store');
       setIsVisitYourInboxVisible(false);
       // router.push("/");
       return;
     }
 
-    console.log("Login: creatinng solana wallet...");
+    console.log('Login: creatinng solana wallet...');
     const solanaWallet = new SolanaWallet(provider);
-    console.log("Login: solana wallet created...");
+    console.log('Login: solana wallet created...');
     let accounts;
-    console.log("Login: getting accounts of wallet");
+    console.log('Login: getting accounts of wallet');
     try {
       accounts = await solanaWallet.requestAccounts();
-      console.log("Login: accounts", accounts);
+      console.log('Login: accounts', accounts);
     } catch (err) {
-      console.log("Login: error getting accounts", { err });
+      console.log('Login: error getting accounts', { err });
       localStorage.removeItem('openlogin_store');
       setIsVisitYourInboxVisible(true);
       // router.push("/");
       return;
     }
 
-    console.log("Login: constructing object of signatures...");
+    console.log('Login: constructing object of signatures...');
 
     const { sign, sign_nonce, sign_issue_at, sign_address } =
       await signatureObject(accounts[0]);
-    console.log("Login: signature created", { sign, sign_nonce, sign_issue_at, sign_address });
+    console.log('Login: signature created', {
+      sign,
+      sign_nonce,
+      sign_issue_at,
+      sign_address,
+    });
 
     try {
-      console.log("Login: fetching...")
+      console.log('Login: fetching...');
       const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
         headers: {
           uri: '/private/users/session',
@@ -290,24 +294,24 @@ const Signup = () => {
         },
       });
 
-      console.log("Login: fetched done")
+      console.log('Login: fetched done');
       const user = await userRequest.json();
-      console.log("Login: json done", user)
+      console.log('Login: json done', user);
 
       if (user.id) {
-        console.log("Login: user has id and we use the auth hook")
+        console.log('Login: user has id and we use the auth hook');
         signIn({ user });
-        console.log("Login: done!")
-        router.replace("/homepage/dashboard2");
+        console.log('Login: done!');
+        router.replace('/homepage/dashboard2');
         // dispatch(counterActions.userAuth(user));
         // localStorage.setItem('user', JSON.stringify(user));
         // router.push('/homepage/dashboard');
         return user;
       }
-      console.log("Login: user has no ID")
+      console.log('Login: user has no ID');
 
       if (user.errorMessage === 'UNAUTHORIZED') {
-        console.log("Login: UNAUTHORIZED")
+        console.log('Login: UNAUTHORIZED');
         setTemporaryToken(JSON.parse(localStorage.getItem('openlogin_store')));
         // const token = localStorage.getItem('openlogin_store');
 
@@ -337,7 +341,7 @@ const Signup = () => {
       console.error(error);
       throw error;
     }
-  }
+  };
 
   const formSubmitHandler = (path, e) => {
     e.preventDefault();
@@ -350,22 +354,22 @@ const Signup = () => {
   };
 
   const handleSwitchingBetweenLoginAndRegister = () => {
-    setIsLogin(prev => !prev);
+    setIsLogin((prev) => !prev);
     setIsNewsletterChecked(false);
-  }
+  };
 
-  const onTermsAndConditionsClicked = () => { }
+  const onTermsAndConditionsClicked = () => {};
 
-  const onPrivacyPolicyClicked = () => { }
+  const onPrivacyPolicyClicked = () => {};
 
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
-  }
+  };
 
   const getProvider = async () => {
     try {
-      console.log("Login: creating provider...")
+      console.log('Login: creating provider...');
       provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: 'email_passwordless',
         extraLoginOptions: {
@@ -373,11 +377,11 @@ const Signup = () => {
         },
       });
     } catch (error) {
-      console.log("Login: ERROR while creating provider")
+      console.log('Login: ERROR while creating provider');
       localStorage.removeItem('openlogin_store');
       return;
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -386,32 +390,34 @@ const Signup = () => {
       {isLoading &&
         createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       {!categorySect && !isVisitYourInboxVisible && (
-        <div
-          className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
-        >
+        <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA] max-sm:bg-[white]'>
           <form
-            className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+            className='relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]'
             style={{
               maxWidth: '449px',
             }}
             id='login'
             name='login'
           >
-            <Image
-              src={logo}
-              alt="Company's logo"
-              width={199}
-              height={77}
-            />
-            <p className='text-xl font-medium text-light-black mt-[25px]'>
+            <Image src={logo} alt="Company's logo" width={199} height={77} />
+            <p className='mt-[25px] text-xl font-medium text-light-black'>
               Welcome{isLogin && ' back'} to SkyTrade
             </p>
-            <p className='text-base text-light-black'>{isLogin ? "Login" : "Register"}</p>
-            {isLogin && <p className='text-sm text-light-grey text-center'>Sign in effortlessly usign the authentication method you chose during sign up.</p>}
-            <div className='relative flex flex-col gap-[5px] w-full'>
+            <p className='text-base text-light-black'>
+              {isLogin ? 'Login' : 'Register'}
+            </p>
+            {isLogin && (
+              <p className='text-center text-sm text-light-grey'>
+                Sign in effortlessly usign the authentication method you chose
+                during sign up.
+              </p>
+            )}
+            <div className='relative flex w-full flex-col gap-[5px]'>
               <label
                 className='text-[14px] font-normal'
-                style={{ color: emailValid ? 'rgba(0, 0, 0, 0.50)' : '#E04F64' }}
+                style={{
+                  color: emailValid ? 'rgba(0, 0, 0, 0.50)' : '#E04F64',
+                }}
               >
                 Email<span className='text-[#E04F64]'>*</span>
               </label>{' '}
@@ -423,28 +429,37 @@ const Signup = () => {
                 ref={emailRef}
                 onChange={() => setEmailValid(true)}
                 placeholder='email@mail.com'
-                className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
+                className='rounded-lg px-[22px] py-4 font-sans placeholder:text-sm placeholder:font-medium placeholder:text-[#B8B8B8] focus:outline-none'
                 style={{
-                  border: emailValid ? '1px solid #87878D' : '1px solid #E04F64',
+                  border: emailValid
+                    ? '1px solid #87878D'
+                    : '1px solid #E04F64',
                 }}
               />
               {!emailValid && (
-                <p className='text-[11px] italic text-red-600'>
-                  Invalid email
-                </p>
+                <p className='text-[11px] italic text-red-600'>Invalid email</p>
               )}
             </div>
-            {!isLogin && <label className='flex w-full text-[14px] text-[#87878D] gap-[11px]'>
-              <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="newsletterCheckbox" name="newsletterCheckbox" checked={isNewsletterChecked} onChange={() => setIsNewsletterChecked(prev => !prev)} />
-              Send me newsletter to keep me updated
-            </label>}
+            {!isLogin && (
+              <label className='flex w-full gap-[11px] text-[14px] text-[#87878D]'>
+                <input
+                  className='h-[18px] w-[18px] cursor-pointer'
+                  type='checkbox'
+                  id='newsletterCheckbox'
+                  name='newsletterCheckbox'
+                  checked={isNewsletterChecked}
+                  onChange={() => setIsNewsletterChecked((prev) => !prev)}
+                />
+                Send me newsletter to keep me updated
+              </label>
+            )}
             <button
               onClick={(e) => loginHandlerGood(e)}
-              className='rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full'
+              className='w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
             >
               Get started
             </button>
-            <div className='relative text-center text-[#00000033] flex gap-[15px] w-full items-center align-middle'>
+            <div className='relative flex w-full items-center gap-[15px] text-center align-middle text-[#00000033]'>
               <div
                 style={{
                   width: '100%',
@@ -452,11 +467,7 @@ const Signup = () => {
                   background: '#00000033',
                 }}
               />
-              <p
-                className='text-sm'
-              >
-                or
-              </p>
+              <p className='text-sm'>or</p>
               <div
                 style={{
                   width: '100%',
@@ -467,7 +478,7 @@ const Signup = () => {
             </div>
             <button
               onClick={loginHandler.bind(null, 'google')}
-              className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 w-full justify-between pl-[18px] pr-[42px]'
+              className='flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue'
               style={{
                 border: '1px solid #595959',
               }}
@@ -479,34 +490,71 @@ const Signup = () => {
                 height={24}
                 className=''
               />
-              <p className='text-[#595959] mx-auto'>Connect with Google</p>
+              <p className='mx-auto text-[#595959]'>Connect with Google</p>
             </button>
             <button
               onClick={loginHandler.bind(null, 'google')}
-              className='flex items-center rounded-lg transition-all duration-500 ease-in-out hover:bg-bleach-blue py-4 justify-center w-full pl-[18px] text-[#595959]'
+              className='flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue'
               style={{
                 border: '1px solid #595959',
               }}
             >
               More Options
             </button>
-            <p className='text-[#87878D] text-sm text-center'>By creating an account I agree with <span onClick={onTermsAndConditionsClicked} className='text-[#0653EA] cursor-pointer'>Terms and Conditions</span> and <span onClick={onPrivacyPolicyClicked} className='text-[#0653EA] cursor-pointer'>Privacy Policy</span> agreement</p>
-            <div style={{ width: '100%', height: '1px', background: '#00000033' }} />
-            <p onClick={handleSwitchingBetweenLoginAndRegister} className='text-[#87878D]'>{isLogin ? "Don't have an account?" : "Already have an account?"} <span className='text-[#0653EA] font-bold cursor-pointer'>{isLogin ? "Register" : "Login"}</span></p>
+            <p className='text-center text-sm text-[#87878D]'>
+              By creating an account I agree with{' '}
+              <span
+                onClick={onTermsAndConditionsClicked}
+                className='cursor-pointer text-[#0653EA]'
+              >
+                Terms and Conditions
+              </span>{' '}
+              and{' '}
+              <span
+                onClick={onPrivacyPolicyClicked}
+                className='cursor-pointer text-[#0653EA]'
+              >
+                Privacy Policy
+              </span>{' '}
+              agreement
+            </p>
+            <div
+              style={{ width: '100%', height: '1px', background: '#00000033' }}
+            />
+            <p
+              onClick={handleSwitchingBetweenLoginAndRegister}
+              className='text-[#87878D]'
+            >
+              {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+              <span className='cursor-pointer font-bold text-[#0653EA]'>
+                {isLogin ? 'Register' : 'Login'}
+              </span>
+            </p>
           </form>
         </div>
       )}
       {isVisitYourInboxVisible && (
-        <div className='relative rounded bg-[#F0F0FA] max-sm:bg-[white] h-screen w-screen flex flex-col items-center justify-center gap-[21.5px] overflow-hidden'>
-          <div className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
+        <div className='relative flex h-screen w-screen flex-col items-center justify-center gap-[21.5px] overflow-hidden rounded bg-[#F0F0FA] max-sm:bg-[white]'>
+          <div
+            className='relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]'
             style={{
               maxWidth: '449px',
-            }}>
+            }}
+          >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
-            <p className='text-xl font-medium text-light-black mt-[25px]'>Welcome to SkyTrade</p>
-            <p className='text-[14px] text-center font-normal text-light-grey'>Visit your inbox to access the app using the verification code received via email. Click the code link, it will refresh this page, logging you in instantly.</p>
+            <p className='mt-[25px] text-xl font-medium text-light-black'>
+              Welcome to SkyTrade
+            </p>
+            <p className='text-center text-[14px] font-normal text-light-grey'>
+              Visit your inbox to access the app using the verification code
+              received via email. Click the code link, it will refresh this
+              page, logging you in instantly.
+            </p>
           </div>
-          <p className='text-light-grey text-[14px]'>Didn't receive the email? <span className='text-[#0653EA] cursor-pointer'>Resend</span></p>
+          <p className='text-[14px] text-light-grey'>
+            Didn't receive the email?{' '}
+            <span className='cursor-pointer text-[#0653EA]'>Resend</span>
+          </p>
         </div>
       )}
     </Fragment>
