@@ -586,7 +586,7 @@ const Rent = () => {
     const [showClaimModal,setShowClaimModal]=useState(false)
     console.log("front")
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },

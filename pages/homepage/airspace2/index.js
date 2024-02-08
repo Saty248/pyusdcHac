@@ -140,7 +140,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
                 <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='rent' name='rent' checked={data.rent}
             onChange={() =>
               setData((prev) => {
-                const newData = { ...prev, selll: false, rent: !prev.rent };
+                const newData = { ...prev, rent: !prev.rent };
                 newData.sell = false;
                 return newData;
               })
@@ -208,15 +208,15 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
 
             <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
             <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
-            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data.hasPlanningPermission === 'false'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'false' })) }
+            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data.hasPlanningPermission === 'true'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'true' })) }
            style={{
             appearance: 'none',
             border:
-              data.hasPlanningPermission !== 'false'
+              data.hasPlanningPermission !== 'true'
                 ? '2px solid #222222'
                 : '2px solid #0653EA',
             backgroundColor:
-              data.hasPlanningPermission === 'false'
+              data.hasPlanningPermission === 'true'
                 ? '#0653EA'
                 : 'transparent',
             borderRadius: '50%',
@@ -227,18 +227,18 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           id='individual'
         />
         Yes
-        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={data.hasPlanningPermission === 'true'}
+        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={data.hasPlanningPermission === 'false'}
           onChange={() =>
-            setData((prev) => ({ ...prev, hasPlanningPermission: 'true' }))
+            setData((prev) => ({ ...prev, hasPlanningPermission: 'false' }))
           }
           style={{
             appearance: 'none',
             border:
-              data.hasPlanningPermission !== 'true'
+              data.hasPlanningPermission !== 'false'
                 ? '2px solid #222222'
                 : '2px solid #0653EA',
             backgroundColor:
-              data.hasPlanningPermission === 'true' ? '#0653EA' : 'transparent',
+              data.hasPlanningPermission === 'false' ? '#0653EA' : 'transparent',
             borderRadius: '50%',
             backgroundClip: 'content-box',
           }}
@@ -475,7 +475,7 @@ const Airspaces = () => {
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '',  rent: true, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
