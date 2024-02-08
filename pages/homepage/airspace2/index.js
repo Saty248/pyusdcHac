@@ -147,7 +147,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
             {data.rent && (
                 <Fragment>
                     <h2 className="text-[#222222] font-normal text-[20px]">Rental Details</h2>
-                    <Link href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
+                    <Link target="_blank" href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
                     <div className="flex items-center justify-between gap-[15px]">
                         <div className="flex-1">
                             <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
