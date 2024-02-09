@@ -11,6 +11,7 @@ import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessI
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
+import axios from 'axios';
 import Link from "next/link";
 
 const Toggle = ({ checked, setChecked }) => {
@@ -509,10 +510,13 @@ const Airspaces = () => {
                 bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
             })
-                  
-    console.log("mapp  = ",newMap.getBounds())
+            
+
+     console.log("mapp  = ",newMap.getBounds())
 
             newMap.on('load', function () {
+                geolocate.trigger()
+            
                 newMap.addLayer({
                     id: 'maine',
                     type: 'fill',
@@ -531,7 +535,25 @@ const Airspaces = () => {
                         'fill-color': '#D20C0C',
                     },
                 });
+                newMap.flyTo({
+                    center: [
+                       -74.5 + (Math.random() - 0.5) * 10,
+                       40 + (Math.random() - 0.5) * 10
+                    ],
+                    essential: true
+                 });
             });
+
+            
+            // Add geolocate control to the map. it enables access to the browser's Geolocation API to provide the user's current location.
+           
+          const geolocate = new mapboxgl.GeolocateControl({
+                  positionOptions: {
+                    enableHighAccuracy: true
+                  },
+                  trackUserLocation: true
+                })
+                newMap.addControl (geolocate)
 
 
 
@@ -540,6 +562,11 @@ const Airspaces = () => {
 
         createMap();
     }, []);
+
+
+
+    
+
 
     useEffect(() => {
         if (!showOptions) setShowOptions(true);
