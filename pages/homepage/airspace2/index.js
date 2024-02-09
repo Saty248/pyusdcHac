@@ -441,28 +441,44 @@ const Airspaces = () => {
                   
     console.log("mapp  = ",newMap.getBounds())
 
-            newMap.on('load', function () {
-                newMap.addLayer({
-                    id: 'maine',
-                    type: 'fill',
-                    source: {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'Polygon',
-                                coordinates: [],
-                            },
-                        },
+    newMap.on('load', function () {
+        geolocate.trigger()
+        newMap.addLayer({
+            id: 'maine',
+            type: 'fill',
+            source: {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [],
                     },
-                    layout: {},
-                    paint: {
-                        'fill-color': '#D20C0C',
-                    },
-                });
-            });
-
-
+                },
+            },
+            layout: {},
+            paint: {
+                'fill-color': '#D20C0C',
+            },
+        });
+        newMap.flyTo({
+            center: [
+               -74.5 + (Math.random() - 0.5) * 10,
+               40 + (Math.random() - 0.5) * 10
+            ],
+            essential: true
+         });
+    });
+    
+    
+    // Add geolocate control to the map. it enables access to the browser's Geolocation API to provide the user's current location.
+        const geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true
+            })
+            newMap.addControl (geolocate)
 
             setMap(newMap);
         }
