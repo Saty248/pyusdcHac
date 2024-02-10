@@ -295,13 +295,13 @@ const IndividualSignup = () => {
                                         </p>
                                     )}
                                 </div>
-                                <div className='w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer' onClick={formSubmitHandler}>Submit</div>
+                                <div className='w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer bg-dark-blue' onClick={formSubmitHandler}>Submit</div>
                             </Fragment>
                         )
                     }
                     <div className='flex items-center justify-center pt-5 gap-[11px]'>
                         {[0, 1].map((_, index) => (
-                            <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : 'transparent', border: index === part ? '1px solid #D9D9D9' : 'none', borderRadius: "50%" }} />
+                            <div onClick={() => setPart(index)} className='cursor-pointer w-[14px] h-[14px]' style={{ background: index !== part ? '#D9D9D9' : '#0653EA', border: index === part ? '1px solid #D9D9D9' : '#0653EA', borderRadius: "50%" }} />
                         ))}
                     </div>
                 </div>
