@@ -23,8 +23,42 @@ const Toggle = ({ checked, setChecked }) => {
 }
 
 const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
-    const utcOffsets = Array.from({ length: 24 }, (_, index) => index - 11);
-
+    // const geographicTimeZones = Array.from({ length: 24 }, (_, index) => index - 11);
+    const geographicTimeZones = [
+        { label: '(GMT-12:00) International Date Line West', value: 'UTC-12' },
+        { label: '(GMT-11:00) Midway Island, Samoa', value: 'UTC-11' },
+        { label: '(GMT-10:00) Hawaii', value: 'UTC-10' },
+        { label: '(GMT-09:00) Alaska', value: 'UTC-9' },
+        { label: '(GMT-08:00) Pacific Time (US & Canada)', value: 'UTC-8' },
+        { label: '(GMT-07:00) Arizona, Mountain Time (US & Canada)', value: 'UTC-7' },
+        { label: '(GMT-06:00) Central Time (US & Canada), Saskatchewan, Guadalajara, Mexico City', value: 'UTC-6' },
+        { label: '(GMT-05:00) Eastern Time (US & Canada), Bogota, Lima, Quito', value: 'UTC-5' },
+        { label: '(GMT-04:00) Atlantic Time (Canada), Caracas, La Paz', value: 'UTC-4' },
+        { label: '(GMT-03:30) Newfoundland', value: 'UTC-3:30' },
+        { label: '(GMT-03:00) Brasilia, Buenos Aires, Georgetown', value: 'UTC-3' },
+        { label: '(GMT-02:00) Mid-Atlantic', value: 'UTC-2' },
+        { label: '(GMT-01:00) Azores, Cape Verde Islands', value: 'UTC-1' },
+        { label: '(GMT) Greenwich Mean Time: Dublin, Edinburgh, Lisbon, London', value: 'UTC+0' },
+        { label: '(GMT+01:00) Brussels, Copenhagen, Madrid, Paris', value: 'UTC+1' },
+        { label: '(GMT+02:00) Kaliningrad, South Africa', value: 'UTC+2' },
+        { label: '(GMT+03:00) Baghdad, Riyadh, Moscow, St. Petersburg', value: 'UTC+3' },
+        { label: '(GMT+03:30) Tehran', value: 'UTC+3:30' },
+        { label: '(GMT+04:00) Abu Dhabi, Muscat, Baku, Tbilisi', value: 'UTC+4' },
+        { label: '(GMT+04:30) Kabul', value: 'UTC+4:30' },
+        { label: '(GMT+05:00) Ekaterinburg, Islamabad, Karachi, Tashkent', value: 'UTC+5' },
+        { label: '(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi', value: 'UTC+5:30' },
+        { label: '(GMT+05:45) Kathmandu', value: 'UTC+5:45' },
+        { label: '(GMT+06:00) Almaty, Dhaka, Colombo', value: 'UTC+6' },
+        { label: '(GMT+06:30) Yangon (Rangoon)', value: 'UTC+6:30' },
+        { label: '(GMT+07:00) Bangkok, Hanoi, Jakarta', value: 'UTC+7' },
+        { label: '(GMT+08:00) Beijing, Perth, Singapore, Hong Kong', value: 'UTC+8' },
+        { label: '(GMT+09:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk', value: 'UTC+9' },
+        { label: '(GMT+09:30) Adelaide, Darwin', value: 'UTC+9:30' },
+        { label: '(GMT+10:00) Eastern Australia, Guam, Vladivostok', value: 'UTC+10' },
+        { label: '(GMT+11:00) Magadan, Solomon Islands, New Caledonia', value: 'UTC+11' },
+        { label: '(GMT+12:00) Auckland, Wellington, Fiji, Kamchatka', value: 'UTC+12' }
+      ];
+      
     const handleTimeZoneChange = (event) => {
         const selectedTimeZone = event.target.value;
         setTimeZone(selectedTimeZone);
@@ -34,9 +68,9 @@ const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
         <Fragment>
             <label htmlFor="timeZone" className="font-normal text-[14px] text-[#838187]">Time Zone<span className="text-[#E04F64]">*</span></label>
             <select value={timeZone} onChange={handleTimeZoneChange} name="timeZone" id="timeZone" className="w-full rounded-lg py-[16px] px-[22px] text-[#222222] text-[14px] font-normal appearance-none focus:outline-none" style={{ border: "1px solid #87878D" }} >
-                {utcOffsets.map((offset) => (
-                    <option key={offset} value={`UTC${offset >= 0 ? '+' : ''}${offset}`}>
-                        {`UTC${offset >= 0 ? '+' : ''}${offset}`}
+                {geographicTimeZones.map((geographicTimeZone) => (
+                    <option key={geographicTimeZone.value} value={geographicTimeZone.value}>
+                        {`${geographicTimeZone.label} ${geographicTimeZone.value}`}
                     </option>
                 ))}
             </select>
