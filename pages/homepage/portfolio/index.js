@@ -92,11 +92,12 @@ const PortfolioItemMobile = ({ airspaceName, tags, selectAirspace }) => {
     )
 }
 const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
+    console.log("all airspacesz ",airspacesList)
     return (
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({id}, index) => (<PortfolioItem airspaceName={id} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address}  tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
@@ -144,10 +145,26 @@ const Portfolio = () => {
         if (!user) return;
         (async () => {
             try {
-               // const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
+                const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
                //test
-                const response =myAirspacesTest;
-                setMyAirspaces(response.items)
+                //const response =myAirspacesTest;
+                if(response){
+                    let resp=await response.items;
+
+                    let retrievedAirspaces=await resp.map((item)=>{
+                        return {
+                            address:item.metadata.addresses[0],
+                            name:item.metadata.name,
+                            expirationDate:(new Date(item.metadata.endTime)).toString()
+
+                        }
+                    })
+                    setMyAirspaces(retrievedAirspaces)
+                    
+
+                }
+                
+                
                 console.log("the items from resport=", response.items)
             } catch (error) {
                 console.log(error);
