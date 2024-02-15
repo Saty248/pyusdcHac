@@ -120,12 +120,14 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
     const [isInfoVisible, setIsInfoVisible] = useState(false)
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
-            <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-50 flex flex-col gap-[15px] border-2 ">
+          <div className="z-[100] sticky  top-0 left-1/2 bg-white py-[15px] -mt-[1px]">
+            <div className="relative flex items-center gap-[20px] md:p-0 py-[15px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" >
                 <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl">Claim Airspace</h2>
                 <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
             </div>
+          </div>
             <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                 <div className="w-6 h-6"><LocationPointIcon /></div>
                 <p className="font-normal text-[#222222] text-[14px] flex-1">{data.address}</p>
