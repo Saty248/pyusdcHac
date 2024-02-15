@@ -97,7 +97,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address}  tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )

@@ -500,7 +500,7 @@ const rentCLickHandler=()=>{
 }
 
 const onClickRent=() =>{
-    console.log("hello==",rentData)
+    console.log("hello rent data==",rentData)
     setRentData(item)
     setShowClaimModal(true)
      
