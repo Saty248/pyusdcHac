@@ -55,7 +55,7 @@ const IndividualSignup = () => {
     const [newsletter, setNewsletter] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
-
+    const [referralDisabled,setReferralDisabled] = useState(false);
     useEffect(() => {
         console.log(status);
         console.log(typeof status);
@@ -68,6 +68,7 @@ const IndividualSignup = () => {
             if (!codeString) return;
             const { id, code } = JSON.parse(codeString).response;
             setReferralCode({ id, code })
+            setReferralDisabled(true)
         }
     }, [global?.window]);
 
@@ -292,6 +293,8 @@ const IndividualSignup = () => {
                                         ref={referralCodeRef}
                                         value={referralCode.code}
                                         placeholder='Enter referral code'
+                                        onChange={(event)=>setReferralCode({ ...referralCode, code: event.target.value })}
+                                        disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
                                     />
