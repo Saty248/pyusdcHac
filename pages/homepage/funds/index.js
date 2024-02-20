@@ -114,8 +114,16 @@ const TransactionHistory = ({ transactions, user }) => {
     )
 }
 
-const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
+const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, amount, setAmount }) => {
     const { SVG } = useQRCode();
+
+    const handleAmountInputChanged = (e) => {
+        const inputValue = e.target.value;
+        if (isAmountCorrect(inputValue) || inputValue === '') setAmount(inputValue);
+    }
+
+    const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number);
+
     return (
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
             boxShadow: "0px 12px 34px -10px #3A4DE926"
@@ -126,7 +134,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection }) => {
             <div className="flex flex-col gap-[5px] w-full">
                 <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="number" name="amount" id="amount" min={0} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
+                    <input type="text" name="amount" id="amount" value={amount} onChange={handleAmountInputChanged} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
@@ -191,6 +199,7 @@ const Funds = () => {
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
     const router = useRouter();
+    const [amount, setAmount] = useState('');
 
     // GET USER AND TOKEN
     useEffect(() => {
@@ -391,7 +400,7 @@ const Funds = () => {
                         <div className="flex gap-[50px] flex-wrap">
                             <div className="flex flex-col gap-5">
                                 <AvailableBalance balance={tokenBalance} />
-                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} />
+                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} amount={amount} setAmount={setAmount} />
                             </div>
                             <TransactionHistory transactions={transactions} user={user} />
                         </div>

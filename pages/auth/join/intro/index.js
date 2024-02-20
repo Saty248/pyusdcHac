@@ -295,7 +295,7 @@ const IndividualSignup = () => {
                                         </p>
                                     )}
                                 </div>
-                                <div className='w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer bg-dark-blue' onClick={formSubmitHandler}>Submit</div>
+                                <div className='w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer' onClick={formSubmitHandler}>Submit</div>
                             </Fragment>
                         )
                     }
