@@ -42,7 +42,6 @@ const IndividualSignup = () => {
     const [phoneNumber,setPhoneNumber] = useState('');
     const newsletterRef = useRef();
     const nameRef = useRef();
-    // const phoneNumberRef = useRef();
     const referralCodeRef = useRef();
 
     const router = useRouter();
@@ -159,10 +158,7 @@ const IndividualSignup = () => {
                         token: temporaryToken,
                         user: response,
                     });
-
-                    // nameRef.current.value = '';
-                    // phoneNumberRef.current.value = '';
-                    // referralCodeRef.current.value = '';
+                    referralCodeRef.current.value = '';
 
                     setName('');
                     setPhoneNumber('');
@@ -171,8 +167,7 @@ const IndividualSignup = () => {
                 });
             })
             .catch((error) => {
-                console.log(error,"error 1");
-                console.log(userInfo,"the info")
+                console.log(error);
                 swal({
                     title: 'Sorry!',
                     text: `Something went wrong, please try again.`,
@@ -180,7 +175,7 @@ const IndividualSignup = () => {
 
                 setIsLoading(false);
 
-                throw new Error(errorData.errorMessage);
+                // throw new Error(errorData.errorMessage);
             });
     };
 
