@@ -38,10 +38,11 @@ const PartOne = ({ setPart }) => {
 
 const IndividualSignup = () => {
     const [part, setPart] = useState(0);
-
+    const [name,setName] = useState('');
+    const [phoneNumber,setPhoneNumber] = useState('');
     const newsletterRef = useRef();
     const nameRef = useRef();
-    const phoneNumberRef = useRef();
+    // const phoneNumberRef = useRef();
     const referralCodeRef = useRef();
 
     const router = useRouter();
@@ -100,10 +101,11 @@ const IndividualSignup = () => {
         return true;
     }
 
+
     const formSubmitHandler = (e) => {
         e.preventDefault();
 
-        const [name, phoneNumber, referralCode] = [nameRef, phoneNumberRef, referralCodeRef].map(ref => ref.current?.value);
+        const [  referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
 
         if (!checkNameIsValid(name)) {
             setIsNameValid(false);
@@ -158,16 +160,19 @@ const IndividualSignup = () => {
                         user: response,
                     });
 
-                    nameRef.current.value = '';
-                    phoneNumberRef.current.value = '';
-                    referralCodeRef.current.value = '';
+                    // nameRef.current.value = '';
+                    // phoneNumberRef.current.value = '';
+                    // referralCodeRef.current.value = '';
+
+                    setName('');
+                    setPhoneNumber('');
 
                     router.replace('/homepage/dashboard2');
                 });
             })
             .catch((error) => {
-                console.log(error);
-
+                console.log(error,"error 1");
+                console.log(userInfo,"the info")
                 swal({
                     title: 'Sorry!',
                     text: `Something went wrong, please try again.`,
@@ -218,8 +223,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='name'
-                                        ref={nameRef}
-                                        onChange={() => setIsNameValid(true)}
+                                        value={name}
+                                        onChange={(e) => {
+                                            setIsNameValid(true); 
+                                            setName(e.target.value);
+                                        }}
                                         placeholder='John Doe'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isNameValid ? '1px solid #87878D' : '1px solid #E04F64' }}
@@ -239,8 +247,11 @@ const IndividualSignup = () => {
                                     </label>
                                     <input
                                         type='text'
-                                        ref={phoneNumberRef}
-                                        onChange={() => setIsPhoneNumberValid(true)}
+                                        value={phoneNumber}
+                                        onChange={(e) => {
+                                            setIsPhoneNumberValid(true);
+                                            setPhoneNumber(e.target.value);
+                                            }}
                                         placeholder='Enter your phone number'
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }}
