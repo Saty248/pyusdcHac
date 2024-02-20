@@ -41,7 +41,6 @@ const IndividualSignup = () => {
     const [name,setName] = useState('');
     const [phoneNumber,setPhoneNumber] = useState('');
     const newsletterRef = useRef();
-    const nameRef = useRef();
     const referralCodeRef = useRef();
 
     const router = useRouter();
@@ -159,10 +158,10 @@ const IndividualSignup = () => {
                         token: temporaryToken,
                         user: response,
                     });
-                    referralCodeRef.current.value = '';
-
                     setName('');
                     setPhoneNumber('');
+                    referralCodeRef.current.value = '';
+
 
                     router.replace('/homepage/dashboard2');
                 });
@@ -176,7 +175,7 @@ const IndividualSignup = () => {
 
                 setIsLoading(false);
 
-                // throw new Error(errorData.errorMessage);
+                throw new Error(errorData.errorMessage);
             });
     };
 

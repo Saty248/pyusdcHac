@@ -20,13 +20,13 @@ export default function App({ Component, pageProps }) {
     if (isMobile) {
         if (Tawk_API.hideWidget !== undefined) {
             Tawk_API.hideWidget();
-        } else if (!doItAgain) { // Check if doItAgain is false before updating it
+        } else if (!doItAgain) { 
             setDoItAgain(true);
         }
     } else {
         if (Tawk_API.showWidget !== undefined) {
             Tawk_API.showWidget();
-        } else if (doItAgain) { // Check if doItAgain is true before updating it
+        } else if (doItAgain) { 
             setDoItAgain(false);
         }
     }
