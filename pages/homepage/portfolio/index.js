@@ -146,6 +146,7 @@ const Portfolio = () => {
         (async () => {
             try {
                 const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
+                console.log(response, " The response ")
                //test
                 //const response =myAirspacesTest;
                 if(response){
@@ -163,7 +164,7 @@ const Portfolio = () => {
                     
 
                 }
-                
+               
                 
                 console.log("the items from resport=", response.items)
             } catch (error) {
