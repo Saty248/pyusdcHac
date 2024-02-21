@@ -35,7 +35,7 @@ const Sidebar = () => {
     }
 
     return (
-      <Link href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           {(numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
@@ -83,7 +83,8 @@ const Sidebar = () => {
         className='md:flex hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
         style={{ width: !isCollapsed ? '297.29px' : "98.2833px", height: '100vh', transition: "width 0.3s ease" }}
       >
-        <Image
+       <a href={'/homepage/dashboard2'}>
+          <Image
           src={logoNoChars}
           alt="Company's logo"
           width={isCollapsed ? 44.62 : 0}
@@ -91,6 +92,7 @@ const Sidebar = () => {
           className={`${isCollapsed ? 'opacity-100 mb-[29.27px] w-[44.62px] h-[51px]' : 'opacity-0 mb-0 w-0 h-0'}`}
           style={{ transition: "all 0.3s ease" }}
         />
+        </a>
         <Image
           src={logo}
           alt="Company's logo"
