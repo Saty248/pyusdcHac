@@ -404,7 +404,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
  
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
+        <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
             <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
@@ -429,7 +429,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
            
                 <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">rent Airspace</div>
+                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Rent Airspace</div>
             </div>
         </div>
         </LocalizationProvider>
@@ -451,8 +451,9 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
                     <MagnifyingGlassIcon />
                 </div>
+                </div>
                  {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
+                    <div className="absolute top-[55px] left-0 bg-white z-20 w-full flex-col">
                         {addresses.map((item) => {
                             return (
                                 <div
@@ -471,7 +472,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     </div>
                 )}
                 {regAdressShow && (
-                    <div className="absolute top-[55px] left-0 mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
+                    <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
                         {registeredAddress.map((item)=>{
 //add popup to black ones
@@ -525,7 +526,7 @@ const onClickRent=() =>{
                         })}
                     </div>
                 )} 
-            </div>
+            
         </div>
     )
 }
@@ -701,7 +702,7 @@ const Rent = () => {
 
 
             });
-            newMap.on('wheel', async(e) => {
+            newMap.on('move', async(e) => {
 
                 let el = document.createElement('div');
                 
@@ -840,10 +841,7 @@ const Rent = () => {
                   
                //console.log("new bounds",crds)
                 });
-
-                newMap.on('click',(e)=>{
-                    //console.log(e.point.x,e.point.y)
-                })
+                               
 
               
 
@@ -975,16 +973,16 @@ const Rent = () => {
 
                 </div> */}
                 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center gap-[15px] overflow-hidden ">
+            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
                 
                 <div className="w-full h-full flex flex-col">
                 
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
-                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px]`}>
+                    <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}>
                         <div
-                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0`}
+                            className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
                             //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
                             
                             id='map'
