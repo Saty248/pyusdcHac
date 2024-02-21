@@ -11,7 +11,6 @@ import { HelpQuestionIcon, ArrowLeftIcon, CloseIcon, LocationPointIcon, SuccessI
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
-import axios from 'axios';
 import Link from "next/link";
 
 const Toggle = ({ checked, setChecked }) => {
