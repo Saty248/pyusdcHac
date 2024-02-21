@@ -141,10 +141,26 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
             <div className="flex flex-col gap-[10px]">
                 <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
                 <div className="flex items-center gap-[7px]">
-                    <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="rent" name="rent" checked={data.rent} onChange={() => setData(prev => ({ ...prev, rent: !prev.rent }))} />
-                    Rent
-                    <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="sell" name="sell" checked={data.sell} onChange={() => setData(prev => ({ ...prev, sell: !prev.sell }))} />
-                    Sell
+                <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='rent' name='rent' checked={data.rent}
+            onChange={() =>
+              setData((prev) => {
+                const newData = { ...prev, rent: !prev.rent };
+                newData.sell = false;
+                return newData;
+              })
+            }
+          />
+          Rent
+          <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='sell' name='sell' checked={data.sell}
+            onChange={() =>
+              setData((prev) => {
+                const newData = { ...prev, sell: !prev.sell };
+                newData.rent = false;
+                return newData;
+              })
+            }
+          />
+          Sell
                 </div>
 
             </div>
@@ -208,10 +224,65 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
 
             <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
             <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
-                <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer bg-cover' checked={data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: true }))} style={{ appearance: "none", border: !data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
-                Yes
-                <input className='relative w-[16.67px] h-[16.67px] p-[2.5px] cursor-pointer' checked={!data.hasPlanningPermission} onChange={() => setData(prev => ({ ...prev, hasPlanningPermission: false }))} style={{ appearance: "none", border: data.hasPlanningPermission ? "2px solid #222222" : "2px solid #0653EA", backgroundColor: !data.hasPlanningPermission ? "#0653EA" : "transparent", borderRadius: "50%", backgroundClip: "content-box" }} type="checkbox" name="individual" id="individual" />
-                No
+            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data.hasPlanningPermission === 'true'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'true' })) }
+           style={{
+            appearance: 'none',
+            border:
+              data.hasPlanningPermission !== 'true'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'true'
+                ? '#0653EA'
+                : 'transparent',
+            borderRadius: '50%',
+            backgroundClip: 'content-box',
+          }}
+          type='checkbox'
+          name='individual'
+          id='individual'
+        />
+        Yes
+        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={data.hasPlanningPermission === 'false'}
+          onChange={() =>
+            setData((prev) => ({ ...prev, hasPlanningPermission: 'false' }))
+          }
+          style={{
+            appearance: 'none',
+            border:
+              data.hasPlanningPermission !== 'false'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'false' ? '#0653EA' : 'transparent',
+            borderRadius: '50%',
+            backgroundClip: 'content-box',
+          }}
+          type='checkbox'
+          name='individual'
+          id='individual'
+        />
+        No
+        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={!data.hasPlanningPermission}
+          onChange={() =>
+            setData((prev) => ({ ...prev, hasPlanningPermission: null }))
+          }
+          style={{
+            appearance: 'none',
+            border: data.hasPlanningPermission
+              ? '2px solid #222222'
+              : '2px solid #0653EA',
+            backgroundColor: !data.hasPlanningPermission
+              ? '#0653EA'
+              : 'transparent',
+            borderRadius: '50%',
+            backgroundClip: 'content-box',
+          }}
+          type='checkbox'
+          name='individual'
+          id='individual'
+        />
+        I don't Know
             </div>
             <div className="flex items-center justify-center gap-[20px] text-[14px]">
                 <div onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
@@ -422,7 +493,7 @@ const Airspaces = () => {
     const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
     const [marker, setMarker] = useState();
     const defaultData = {
-        address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: false, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+        address: flyToAddress, name: '',  rent: true, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
@@ -456,10 +527,13 @@ const Airspaces = () => {
                 bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
                 // attributionControl: false
             })
-                  
-    console.log("mapp  = ",newMap.getBounds())
+            
+
+     console.log("mapp  = ",newMap.getBounds())
 
             newMap.on('load', function () {
+                geolocate.trigger()
+            
                 newMap.addLayer({
                     id: 'maine',
                     type: 'fill',
@@ -478,7 +552,25 @@ const Airspaces = () => {
                         'fill-color': '#D20C0C',
                     },
                 });
+                newMap.flyTo({
+                    center: [
+                       -74.5 + (Math.random() - 0.5) * 10,
+                       40 + (Math.random() - 0.5) * 10
+                    ],
+                    essential: true
+                 });
             });
+
+            
+            // Add geolocate control to the map. it enables access to the browser's Geolocation API to provide the user's current location.
+           
+          const geolocate = new mapboxgl.GeolocateControl({
+                  positionOptions: {
+                    enableHighAccuracy: true
+                  },
+                  trackUserLocation: true
+                })
+                newMap.addControl (geolocate)
 
 
 
@@ -487,6 +579,11 @@ const Airspaces = () => {
 
         createMap();
     }, []);
+
+
+
+    
+
 
     useEffect(() => {
         if (!showOptions) setShowOptions(true);
