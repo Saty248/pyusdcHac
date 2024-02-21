@@ -15,6 +15,7 @@ import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
+import Head from "next/head";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -282,7 +283,8 @@ const Dashboard = () => {
 
     // GET AIRSPACE LENGTH
     useEffect(() => {
-        if (!user) return;
+        if (!user) router.push('/auth/join');
+
         (async () => {
             try {
                 const response = await getPropertiesByUserAddress(user.blockchainAddress,'landToken');
@@ -321,6 +323,9 @@ const Dashboard = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Dashboard</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
 

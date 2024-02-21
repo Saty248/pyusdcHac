@@ -170,12 +170,10 @@ const IndividualSignup = () => {
                 console.log(error);
                 swal({
                     title: 'Sorry!',
-                    text: `Something went wrong, please try again.`,
+                    text: error.message,
                 });
 
                 setIsLoading(false);
-
-                throw new Error(errorData.errorMessage);
             });
     };
 
