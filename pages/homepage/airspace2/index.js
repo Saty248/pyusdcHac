@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import Link from "next/link";
 import axios from "axios";
+import Head from "next/head";
 
 const Toggle = ({ checked, setChecked }) => {
     return (
@@ -733,6 +734,9 @@ const Airspaces = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Airspaces</title>
+            </Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
 
