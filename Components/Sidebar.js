@@ -10,6 +10,7 @@ import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
 
+
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
@@ -67,7 +68,9 @@ const Sidebar = () => {
 
   const logoutHandler = () => {
     setIsLoading(true);
+
     localStorage.clear();
+  
     router.push('/auth/join');
   };
 
