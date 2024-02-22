@@ -597,7 +597,7 @@ const Airspaces = () => {
             latitude = Number(latitude)
             longitude = Number(longitude)  
             if(!name)return
-            const g = await createProperty(user.blockchainAddress, {
+            const addProperty = await createProperty(user.blockchainAddress, {
                 address,
                 ownerId: user.id,
                 propertyStatusId: 0,
@@ -621,9 +621,6 @@ const Airspaces = () => {
                 ],
                 weekDayRanges
             })
-
-
-            console.log(g, "dsnfsdnsk")
             setShowClaimModal(false);
             setData({ ...defaultData });
             setShowSuccessPopUp(true);
