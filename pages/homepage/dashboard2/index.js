@@ -283,8 +283,7 @@ const Dashboard = () => {
 
     // GET AIRSPACE LENGTH
     useEffect(() => {
-        if (!user) router.push('/auth/join');
-
+        if (!user) return;
         (async () => {
             try {
                 const response = await getPropertiesByUserAddress(user.blockchainAddress,'landToken');

@@ -183,6 +183,9 @@ const IndividualSignup = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>StyTrade - Login</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading &&
                 createPortal(<Spinner />, document.getElementById('backdrop-root'))}
