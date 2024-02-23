@@ -19,6 +19,7 @@ import base58 from 'bs58';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 import dayjs from 'dayjs';
+import Head from "next/head";
 const SuccessModal = ({ setShowSuccess,finalAns}) => {
 
     const [owner,setOwner]=useState({});
@@ -976,6 +977,7 @@ const Rent = () => {
 
     return (
         <Fragment>
+            <Head><title>SkyTrade - Marketplace : Rent</title></Head>
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
             {/* <div className=" bg-black w-screen h-screen ">

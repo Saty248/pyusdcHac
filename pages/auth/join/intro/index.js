@@ -172,12 +172,10 @@ const IndividualSignup = () => {
                 console.log(error);
                 swal({
                     title: 'Sorry!',
-                    text: `Something went wrong, please try again.`,
+                    text: error.message,
                 });
 
                 setIsLoading(false);
-
-                throw new Error(errorData.errorMessage);
             });
     };
 
@@ -187,6 +185,9 @@ const IndividualSignup = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>StyTrade - Login</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading &&
                 createPortal(<Spinner />, document.getElementById('backdrop-root'))}

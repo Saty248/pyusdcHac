@@ -9,7 +9,10 @@ import { useMobile } from "@/hooks/useMobile";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import useOrigin from "@/hooks/useOrigin";
- 
+
+import Head from "next/head";
+
+
 const Item = ({ icon, title, text }) => {
     return (
         <div className="py-5 px-[15px] rounded-[30px] bg-white flex flex-col gap-[15px] items-center md:min-w-[225px] md:h-[223px] w-full" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
@@ -264,6 +267,7 @@ const Referral = () => {
 
     return (
         <Fragment>
+            <Head><title>SkyTrade - Referral Program</title></Head>
             {isLoading && createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document.getElementById('backdrop-root'))}
 
