@@ -296,7 +296,7 @@ const Dashboard = () => {
 
                     let retrievedAirspaces=await resp.map((item)=>{
                         return {
-                            address:item.metadata.addresses[0],
+                            address:item.address,
                             
                            
 
