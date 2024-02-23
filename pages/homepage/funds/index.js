@@ -132,7 +132,7 @@ const SuccessModal = ({ setShowSuccess, finalAns }) => {
 }
 
 const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
-    const [amount, setAmount] = useState()
+    const [amount, setAmount] = useState('')
     const [showSuccess, setShowSuccess] = useState(false)
     const [finalAns, setFinalAns] = useState({
         status: "Transaction SuccessFull"
@@ -293,7 +293,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
         if (isAmountCorrect(inputValue) || inputValue === '') setAmount(inputValue);
     }
 
-    const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number);
+    const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number) && number !== '-';
 
     return (
 
