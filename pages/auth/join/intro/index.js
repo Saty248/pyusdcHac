@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import swal from 'sweetalert';
-import Script from 'next/script';
+import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
