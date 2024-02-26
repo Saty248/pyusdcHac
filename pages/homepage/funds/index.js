@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
+import Head from "next/head";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -602,8 +603,11 @@ const Funds = () => {
 
     return (
         <Fragment>
-            {isLoading && <Backdrop />}
-            {isLoading && <Spinner />}
+            <Head>
+                <title>SkyTrade - Wallet</title>
+            </Head>
+           {isLoading && <Backdrop />}
+           {isLoading && <Spinner />}
             <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">

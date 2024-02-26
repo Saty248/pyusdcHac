@@ -8,6 +8,7 @@ import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
+import Head from "next/head";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -154,8 +155,8 @@ const Portfolio = () => {
 
                     let retrievedAirspaces=await resp.map((item)=>{
                         return {
-                            address:item.metadata.addresses[0],
-                            name:item.metadata.name,
+                            address:item.address,
+                            name:item.id,
                             expirationDate:(new Date(item.metadata.endTime)).toString()
 
                         }
@@ -164,7 +165,7 @@ const Portfolio = () => {
                     
 
                 }
-                
+               
                 
                 console.log("the items from resport=", response.items)
                 setIsLoading(false)
@@ -184,6 +185,9 @@ const Portfolio = () => {
 
     return (
         <Fragment>
+            <Head>
+                <title>SkyTrade - Portfolio</title>
+            </Head>
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
             {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}
