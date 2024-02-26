@@ -9,27 +9,31 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { msclaritConfig } from '@/hooks/msclaritConfig';
 import { useMobile } from '@/hooks/useMobile';
 import { useEffect, useState } from 'react';
+import { SidebarProvider } from '@/hooks/sidebarContext';
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
+
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
+
     if (isMobile) {
-      if (Tawk_API.hideWidget !== undefined) {
-        Tawk_API.hideWidget();
-      } else {
-        setDoItAgain(prev => !prev)
-      }
+        if (Tawk_API.hideWidget !== undefined) {
+            Tawk_API.hideWidget();
+        } else if (!doItAgain) { 
+            setDoItAgain(true);
+        }
     } else {
-      if (Tawk_API.showWidget !== undefined) {
-        Tawk_API.showWidget();
-      } else {
-        setDoItAgain(prev => !prev)
-      }
+        if (Tawk_API.showWidget !== undefined) {
+            Tawk_API.showWidget();
+        } else if (doItAgain) { 
+            setDoItAgain(false);
+        }
     }
-  }, [isMobile, global.Tawk_API, doItAgain]);
+}, [isMobile, global.Tawk_API, doItAgain]);
+
 
   return (
     <AuthProvider>
@@ -50,7 +54,9 @@ export default function App({ Component, pageProps }) {
                 gtag('config', 'G-C0J4J56QW5');
             `}
           </Script>
-          <Component {...pageProps} />
+          <SidebarProvider>
+            <Component {...pageProps} />
+          </SidebarProvider>
           <CookieConsent />
         </>
       </Provider>

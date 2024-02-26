@@ -20,6 +20,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMobile } from '@/hooks/useMobile';
 import Link from 'next/link';
 import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
+import axios from "axios";
+import Head from "next/head";
 
 const Toggle = ({ checked, setChecked }) => {
   return (
@@ -206,250 +208,123 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 };
 
 const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
-  return (
-    <div className='fixed left-1/2 top-1/2 z-50 flex h-screen max-h-screen w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-[15px] overflow-y-auto bg-white px-[29px] py-[30px] md:h-auto md:max-h-[700px] md:w-[689px] md:rounded-[30px]'>
-      <div
-        className='relative -mx-[29px] -mt-[30px] flex items-center gap-[20px] px-[29px] py-[20px] md:mx-0 md:my-0 md:p-0 md:shadow-none'
-        style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}
-      >
-        <div className='h-[12px] w-[16px] md:hidden' onClick={onCloseModal}>
-          <ArrowLeftIcon />
-        </div>
-        <h2 className='text-center text-xl font-medium text-[#222222]'>
-          Claim Airspace
-        </h2>
-        <div
-          onClick={onCloseModal}
-          className='absolute right-0 top-0 ml-auto hidden h-[15px] w-[15px] cursor-pointer md:block'
-        >
-          <CloseIcon />
-        </div>
-      </div>
-      <div
-        className='flex items-center gap-[10px] rounded-lg px-[22px] py-4'
-        style={{ border: '1px solid #4285F4' }}
-      >
-        <div className='h-6 w-6'>
-          <LocationPointIcon />
-        </div>
-        <p className='flex-1 text-[14px] font-normal text-[#222222]'>
-          {data.address}
-        </p>
-      </div>
-      <div className='flex flex-col gap-[5px]'>
-        <label htmlFor='name'>
-          Name of airspace<span className='text-[#E04F64]'>*</span>
-        </label>
-        <input
-          value={data.name}
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, name: e.target.value }))
-          }
-          className='rounded-lg px-[22px] py-[16px] text-[14px] text-[#222222] outline-none'
-          style={{ border: '1px solid #87878D' }}
-          type='text'
-          name='name'
-          id='name'
-          autoComplete='off'
-        />
-      </div>
-      <div className='flex flex-col gap-[10px]'>
-        <p className='text-[14px] font-normal text-[#838187]'>
-          Are you looking to Rent or Sell your airspace?
-        </p>
-        <div className='flex items-center gap-[7px]'>
-          <input
-            className='h-[18px] w-[18px] cursor-pointer'
-            type='checkbox'
-            id='rent'
-            name='rent'
-            checked={data.rent}
-            onChange={() => setData((prev) => ({ ...prev, rent: !prev.rent }))}
+    const [isInfoVisible, setIsInfoVisible] = useState(false)
+    return (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
+          <div className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+            <div className="relative flex items-center gap-[20px] md:p-0">
+                <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}><ArrowLeftIcon /></div>
+                    <h2 className="text-[#222222] text-center font-medium text-xl">Claim Airspace</h2>
+                    <div onClick={onCloseModal} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
+                </div>
+            </div>
+            <div className="px-[29px]">
+
+            <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
+                <div className="w-6 h-6"><LocationPointIcon /></div>
+                <p className="font-normal text-[#222222] text-[14px] flex-1">{data.address}</p>
+            </div>
+            <div className="flex flex-col gap-[5px]">
+                <label htmlFor="name">Name of airspace<span className="text-[#E04F64]">*</span></label>
+                <input value={data.name} onChange={(e) => setData(prev => ({ ...prev, name: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]" style={{ border: '1px solid #87878D' }} type="text" name="name" id="name" autoComplete="off" />
+            </div>
+            <div className="flex flex-col gap-[10px]">
+                <p className="text-[14px] font-normal text-[#838187]">Are you looking to Rent or Sell your airspace?</p>
+                <div className="flex items-center gap-[7px]">
+                <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='rent' name='rent' checked={data.rent}
+            onChange={() =>
+              setData((prev) => {
+                const newData = { ...prev, rent: !prev.rent };
+                newData.sell = false;
+                return newData;
+              })
+            }
           />
           Rent
-          <input
-            className='h-[18px] w-[18px] cursor-pointer'
-            type='checkbox'
-            id='sell'
-            name='sell'
-            checked={data.sell}
-            onChange={() => setData((prev) => ({ ...prev, sell: !prev.sell }))}
+          <input className='h-[18px] w-[18px] cursor-pointer' type='checkbox' id='sell' name='sell' checked={data.sell}
+            onChange={() =>
+              setData((prev) => {
+                const newData = { ...prev, sell: !prev.sell };
+                newData.rent = false;
+                return newData;
+              })
+            }
           />
           Sell
-        </div>
-      </div>
-      {data.rent && (
-        <Fragment>
-          <h2 className='text-[20px] font-normal text-[#222222]'>
-            Rental Details
-          </h2>
-          <Link
-            target='_blank'
-            href={'https://skytrade.tawk.help'}
-            className='cursor-pointer text-[14px] font-normal text-[#0653EA]'
-          >
-            Learn more about rentals in our FAQ.
-          </Link>
-          <div className='flex items-center justify-between gap-[15px]'>
-            <div className='flex-1'>
-              <VariableFeeRentalRangesSelect
-                fee={data.transitFee}
-                setFee={(fee) =>
-                  setData((prev) => ({ ...prev, transitFee: '' + fee }))
-                }
-              />
-            </div>
-            <div className='flex-1'>
-              <TimeZoneSelect
-                timeZone={data.timezone}
-                setTimeZone={(timezone) =>
-                  setData((prev) => ({ ...prev, timezone }))
-                }
-              />
-            </div>
-          </div>
-          <div className='flex flex-col gap-[10px]'>
-            <p className='text-[14px] font-normal text-[#838187]'>
-              Select extra features your facility provides
-              <span className='text-[#E04F64]'>*</span>
-            </p>
-            <div className='flex items-center gap-[10px]'>
-              <input
-                className='h-[18px] w-[18px] cursor-pointer'
-                type='checkbox'
-                id='hasLandingDeck'
-                name='hasLandingDeck'
-                checked={data.hasLandingDeck}
-                onChange={() =>
-                  setData((prev) => ({
-                    ...prev,
-                    hasLandingDeck: !prev.hasLandingDeck,
-                  }))
-                }
-              />
-              <p className='text-[14px] font-normal text-[#87878D]'>
-                Landing Deck
-              </p>
-              <input
-                className='h-[18px] w-[18px] cursor-pointer'
-                type='checkbox'
-                id='hasChargingStation'
-                name='hasChargingStation'
-                checked={data.hasChargingStation}
-                onChange={() =>
-                  setData((prev) => ({
-                    ...prev,
-                    hasChargingStation: !prev.hasChargingStation,
-                  }))
-                }
-              />
-              <p className='text-[14px] font-normal text-[#87878D]'>
-                Charging Station
-              </p>
-              <input
-                className='h-[18px] w-[18px] cursor-pointer'
-                type='checkbox'
-                id='hasStorageHub'
-                name='hasStorageHub'
-                checked={data.hasStorageHub}
-                onChange={() =>
-                  setData((prev) => ({
-                    ...prev,
-                    hasStorageHub: !prev.hasStorageHub,
-                  }))
-                }
-              />
-              <p className='text-[14px] font-normal text-[#87878D]'>
-                Storage Hub
-              </p>
-            </div>
-          </div>
-          <div className='flex flex-col gap-[15px]'>
-            <p>
-              Availability<span className='text-[#E04F64]'>*</span>
-            </p>
-            <WeekDayRangesForm
-              weekDayRanges={data.weekDayRanges}
-              setWeekDayRanges={(weekDayRanges) =>
-                setData((prev) => ({ ...prev, weekDayRanges }))
-              }
-            />
-          </div>
-        </Fragment>
-      )}
-      {data.sell && (
-        <Fragment>
-          <div className='flex items-center gap-[7.5px]'>
-            <h2 className='text-[20px] font-normal text-[#222222]'>
-              Selling Details
-            </h2>
-            <div
-              onClick={() => setIsInfoVisible((prev) => !prev)}
-              className='relative flex h-[20px] w-[20px] items-center justify-center'
-            >
-              <InfoIcon />
-              {isInfoVisible && (
-                <div className='absolute -top-4 left-6 w-[189px] rounded-[4px] bg-[#CCE3FC] p-[12px] text-[10px] font-normal italic'>
-                  Note that rental availability are not applicable to your
-                  selling
                 </div>
-              )}
-            </div>
-          </div>
-          <Link
-            href={'https://skytrade.tawk.help'}
-            className='cursor-pointer text-[14px] font-normal text-[#0653EA]'
-          >
-            Learn more about selling in our FAQ.
-          </Link>
-          <div className='flex flex-col gap-[5px]'>
-            <label
-              className='text-[14px] font-normal text-[#838187]'
-              htmlFor='sellingPrice'
-            >
-              Selling Price
-            </label>
-            <div className='relative'>
-              <span class='absolute inset-y-0 left-0 flex items-center pl-[22px] text-[14px] text-[#222222] '>
-                $
-              </span>
-              <input
-                className='w-full rounded-lg py-[16px] pl-[31px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
-                style={{ border: '1px solid #87878D' }}
-                autoComplete='off'
-                type='number'
-                name='sellingPrice'
-                id='sellingPrice'
-              />
-            </div>
-          </div>
-        </Fragment>
-      )}
 
-      <p className='text-[14px] font-normal text-[#838187]'>
-        Do you currently have zoning or planning permission to develop above
-        your land or property?{' '}
-        <span className='text-[10px] italic'>
-          (Your answer won't affect your claim)
-          <span className='text-[#E04F64]'>*</span>
-        </span>{' '}
-      </p>
-      <div className='flex items-center gap-[7px] text-[14px] text-[#87878D]'>
-        <input
-          className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]'
-          checked={data.hasPlanningPermission}
-          onChange={() =>
-            setData((prev) => ({ ...prev, hasPlanningPermission: true }))
-          }
-          style={{
+            </div>
+            {data.rent && (
+                <Fragment>
+                    <h2 className="text-[#222222] font-normal text-[20px]">Rental Details</h2>
+                    <Link target="_blank" href={"https://skytrade.tawk.help"} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about rentals in our FAQ.</Link>
+                    <div className="flex items-center justify-between gap-[15px]">
+                        <div className="flex-1">
+                            <VariableFeeRentalRangesSelect fee={data.transitFee} setFee={(fee) => setData(prev => ({ ...prev, transitFee: '' + fee }))} />
+                        </div>
+                        <div className="flex-1">
+                            <TimeZoneSelect timeZone={data.timezone} setTimeZone={(timezone) => setData(prev => ({ ...prev, timezone }))} />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-[10px]">
+                        <p className="text-[14px] font-normal text-[#838187]">Select extra features your facility provides<span className="text-[#E04F64]">*</span></p>
+                        <div className="flex items-center gap-[10px]">
+                            <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="hasLandingDeck" name="hasLandingDeck" checked={data.hasLandingDeck} onChange={() => setData(prev => ({ ...prev, hasLandingDeck: !prev.hasLandingDeck }))} />
+                            <p className="text-[#87878D] text-[14px] font-normal">Landing Deck</p>
+                            <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="hasChargingStation" name="hasChargingStation" checked={data.hasChargingStation} onChange={() => setData(prev => ({ ...prev, hasChargingStation: !prev.hasChargingStation }))} />
+                            <p className="text-[#87878D] text-[14px] font-normal">Charging Station</p>
+                            <input className='w-[18px] h-[18px] cursor-pointer' type="checkbox" id="hasStorageHub" name="hasStorageHub" checked={data.hasStorageHub} onChange={() => setData(prev => ({ ...prev, hasStorageHub: !prev.hasStorageHub }))} />
+                            <p className="text-[#87878D] text-[14px] font-normal">Storage Hub</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-[15px]">
+                        <p>Availability<span className="text-[#E04F64]">*</span></p>
+                        <WeekDayRangesForm weekDayRanges={data.weekDayRanges} setWeekDayRanges={(weekDayRanges) => setData(prev => ({ ...prev, weekDayRanges }))} />
+                    </div>
+                </Fragment>
+            )}
+            {data.sell && (
+                <Fragment>
+                    <div className="flex items-center gap-[7.5px]">
+                        <h2 className="text-[#222222] font-normal text-[20px]">Selling Details</h2>
+                        <div onClick={() => setIsInfoVisible(prev => !prev)} className="relative w-[20px] h-[20px] flex justify-center items-center">
+                            <InfoIcon />
+                            {isInfoVisible && <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">Note that rental availability are not applicable to your selling</div>}
+                        </div>
+                    </div>
+                    <Link href={'https://skytrade.tawk.help'} className="text-[#0653EA] text-[14px] font-normal cursor-pointer">Learn more about selling in our FAQ.</Link>
+                    <div className="flex flex-col gap-[5px]">
+                        <label className="font-normal text-[#838187] text-[14px]" htmlFor="sellingPrice">Selling Price</label>
+                        <div className='relative'>
+                            <span class='absolute inset-y-0 left-0 flex items-center text-[14px] pl-[22px] text-[#222222] '>
+                                $
+                            </span>
+                            <input
+                                className='rounded-lg pl-[31px] w-full py-[16px] text-[14px] text-[#222222] outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                                style={{ border: '1px solid #87878D' }}
+                                autoComplete='off'
+                                type='number'
+                                name='sellingPrice'
+                                id='sellingPrice'
+                            />
+                        </div>
+                        </div>
+                </Fragment>
+            )}
+
+            <p className="text-[14px] font-normal text-[#838187]">Do you currently have zoning or planning permission to develop above your land or property? <span className="italic text-[10px]">(Your answer won't affect your claim)<span className="text-[#E04F64]">*</span></span> </p>
+            <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
+            <input className='relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]' checked={data.hasPlanningPermission === 'true'}  onChange={() =>  setData((prev) => ({ ...prev, hasPlanningPermission: 'true' })) }
+           style={{
             appearance: 'none',
-            border: !data.hasPlanningPermission
-              ? '2px solid #222222'
-              : '2px solid #0653EA',
-            backgroundColor: data.hasPlanningPermission
-              ? '#0653EA'
-              : 'transparent',
+            border:
+              data.hasPlanningPermission !== 'true'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'true'
+                ? '#0653EA'
+                : 'transparent',
             borderRadius: '50%',
             backgroundClip: 'content-box',
           }}
@@ -458,11 +333,29 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           id='individual'
         />
         Yes
-        <input
-          className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]'
-          checked={!data.hasPlanningPermission}
+        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={data.hasPlanningPermission === 'false'}
           onChange={() =>
-            setData((prev) => ({ ...prev, hasPlanningPermission: false }))
+            setData((prev) => ({ ...prev, hasPlanningPermission: 'false' }))
+          }
+          style={{
+            appearance: 'none',
+            border:
+              data.hasPlanningPermission !== 'false'
+                ? '2px solid #222222'
+                : '2px solid #0653EA',
+            backgroundColor:
+              data.hasPlanningPermission === 'false' ? '#0653EA' : 'transparent',
+            borderRadius: '50%',
+            backgroundClip: 'content-box',
+          }}
+          type='checkbox'
+          name='individual'
+          id='individual'
+        />
+        No
+        <input className='relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]' checked={!data.hasPlanningPermission}
+          onChange={() =>
+            setData((prev) => ({ ...prev, hasPlanningPermission: null }))
           }
           style={{
             appearance: 'none',
@@ -479,24 +372,15 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           name='individual'
           id='individual'
         />
-        No
-      </div>
-      <div className='flex items-center justify-center gap-[20px] text-[14px]'>
-        <div
-          onClick={onCloseModal}
-          className='cursor-pointer rounded-[5px] px-[22px] py-[10px] text-[#0653EA]'
-          style={{ border: '1px solid #0653EA' }}
-        >
-          Cancel
+        I don't Know
+            </div>
+            <div className="flex items-center justify-center gap-[20px] text-[14px]">
+                <div onClick={onCloseModal} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer" style={{ border: "1px solid #0653EA" }}>Cancel</div>
+                <div onClick={onClaim} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">Claim Airspace</div>
+            </div>
+            </div>
+
         </div>
-        <div
-          onClick={onClaim}
-          className='cursor-pointer rounded-[5px] bg-[#0653EA] px-[22px] py-[10px] text-white'
-        >
-          Claim Airspace
-        </div>
-      </div>
-    </div>
   );
 };
 
@@ -737,17 +621,15 @@ const Slider = () => {
 };
 
 const PopUp = ({ isVisible }) => {
-  return (
-    <div
-      className={`absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} flex items-center gap-5 bg-white p-5 duration-500`}
-    >
-      <div className='flex h-[18px] w-[18px] items-center justify-center'>
-        <SuccessIcon />
-      </div>
-      Congratulations on claiming your piece of the sky successfully!
-    </div>
-  );
-};
+    return (
+        <div className={` z-20 absolute top-[14px] ${isVisible ? 'right-0' : '-right-[100%]'} bg-white p-5 flex items-center gap-5 duration-500`}>
+            <div className="flex items-center justify-center w-[18px] h-[18px]">
+                <SuccessIcon />
+            </div>
+            Congratulations on claiming your piece of the sky successfully!
+        </div>
+    );
+}
 
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
@@ -841,54 +723,39 @@ const HowToModal = ({ goBack }) => {
 };
 
 const Airspaces = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  // map
-  const [map, setMap] = useState(null);
-  const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(false);
-  const [showHowToModal, setShowHowToModal] = useState(false);
-  // variables
-  const [address, setAddress] = useState('');
-  const [addressData, setAddressData] = useState();
-  const [addresses, setAddresses] = useState([]);
-  const [flyToAddress, setFlyToAddress] = useState('');
-  const [coordinates, setCoordinates] = useState({
-    longitude: '',
-    latitude: '',
-  });
-  const [marker, setMarker] = useState();
-  const defaultData = {
-    address: flyToAddress,
-    name: '',
-    rent: false,
-    sell: false,
-    hasPlanningPermission: false,
-    hasChargingStation: false,
-    hasLandingDeck: false,
-    hasStorageHub: false,
-    sellingPrice: '',
-    timezone: 'GMT+0',
-    transitFee: '1-99',
-    isFixedTransitFee: false,
-    noFlyZone: false,
-    weekDayRanges: [
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
-    ],
-  };
-  // showing
-  const [showOptions, setShowOptions] = useState(false);
-  const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
-  const [showClaimModal, setShowClaimModal] = useState(false);
-  const [data, setData] = useState({ ...defaultData });
-  // database
-  const { createProperty } = useDatabase();
-  const { user } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    // map
+    const [map, setMap] = useState(null);
+    const { isMobile } = useMobile();
+    const [showMobileMap, setShowMobileMap] = useState(false);
+    const [showHowToModal, setShowHowToModal] = useState(false);
+    // variables
+    const [address, setAddress] = useState('');
+    const [addressData, setAddressData] = useState();
+    const [addresses, setAddresses] = useState([]);
+    const [flyToAddress, setFlyToAddress] = useState('');
+    const [coordinates, setCoordinates] = useState({ longitude: '', latitude: '' })
+    const [marker, setMarker] = useState();
+    const defaultData = {
+        address: flyToAddress, name: '',  rent: true, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
+            { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
+        ]
+    }
+    // showing
+    const [showOptions, setShowOptions] = useState(false);
+    const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+    const [showClaimModal, setShowClaimModal] = useState(false);
+    const [data, setData] = useState({ ...defaultData });
+    // database
+    const { createProperty } = useDatabase();
+    const { user } = useAuth();
+
 
   useEffect(() => {
     if (map) return;
@@ -896,46 +763,47 @@ const Airspaces = () => {
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
-      const newMap = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-15.498211, 28.035056],
-        zoom: 15,
-        bounds: [
-          [-73.9876, 40.7661],
-          [-73.9397, 40.8002],
-        ],
-        // attributionControl: false
-      });
-
-      console.log('mapp  = ', newMap.getBounds());
-
-      newMap.on('load', function () {
-        newMap.addLayer({
-          id: 'maine',
-          type: 'fill',
-          source: {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              geometry: {
-                type: 'Polygon',
-                coordinates: [],
-              },
-            },
-          },
-          layout: {},
-          paint: {
-            'fill-color': '#D20C0C',
-          },
+            const newMap = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [-15.498211, 28.035056],
+                zoom: 15,
+                bounds:[[-73.9876, 40.7661], [-73.9397, 40.8002]]
+                // attributionControl: false
+            })
+           
+             
+    newMap.on('load', function () {
+            newMap.addLayer({
+                id: 'maine',
+                type: 'fill',
+                source: {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Polygon',
+                            coordinates: [],
+                        },
+                    },
+                },
+                layout: {},
+                paint: {
+                    'fill-color': '#D20C0C',
+                },
+            });
         });
-      });
+        
+    setMap(newMap);
+    flyToUserIpAddress(newMap)
+        }
+        createMap();
+    }, []);
 
-      setMap(newMap);
-    };
 
-    createMap();
-  }, []);
+
+    
+
 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
@@ -1044,62 +912,74 @@ const Airspaces = () => {
     setShowOptions(false);
   };
 
-  const onClaim = async () => {
-    try {
-      const {
-        address,
-        name,
-        hasChargingStation,
-        hasLandingDeck,
-        hasPlanningPermission,
-        hasStorageHub,
-        rent,
-        timezone,
-        transitFee,
-        noFlyZone,
-        isFixedTransitFee,
-        weekDayRanges,
-      } = data;
-      let { latitude, longitude } = coordinates;
-      latitude = Number(latitude);
-      longitude = Number(longitude);
-      await createProperty(user.blockchainAddress, {
-        address,
-        ownerId: user.id,
-        propertyStatusId: 0,
-        hasChargingStation,
-        hasLandingDeck,
-        hasStorageHub,
-        isRentableAirspace: rent,
-        title: name,
-        transitFee,
-        noFlyZone,
-        isFixedTransitFee,
-        latitude,
-        longitude,
-        timezone,
-        isActive: hasPlanningPermission,
-        vertexes: [
-          { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
-          { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
-          { latitude: latitude - 0.0001, longitude: longitude + 0.0001 },
-          { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
-        ],
-        weekDayRanges,
-      });
-
-      setShowClaimModal(false);
-      setData({ ...defaultData });
-      setShowSuccessPopUp(true);
-    } catch (error) {
-      console.log(error);
+    const onClaim = async () => {
+        try {
+            const { address, name, hasChargingStation, hasLandingDeck, hasPlanningPermission, hasStorageHub, rent, timezone, transitFee, noFlyZone, isFixedTransitFee, weekDayRanges } = data;
+            let { latitude, longitude } = coordinates;
+            latitude = Number(latitude)
+            longitude = Number(longitude)  
+            if(!name)return
+            const addProperty = await createProperty(user.blockchainAddress, {
+                address,
+                ownerId: user.id,
+                propertyStatusId: 0,
+                hasChargingStation,
+                hasLandingDeck,
+                hasStorageHub,
+                isRentableAirspace: rent,
+                title: name,
+                transitFee,
+                noFlyZone,
+                isFixedTransitFee,
+                latitude,
+                longitude,
+                timezone,
+                isActive: hasPlanningPermission,
+                vertexes: [
+                    { latitude: latitude + 0.0001, longitude: longitude + 0.0001 },
+                    { latitude: latitude + 0.0001, longitude: longitude - 0.0001 },
+                    { latitude: latitude - 0.0001, longitude: longitude + 0.0001 },
+                    { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
+                ],
+                weekDayRanges
+            })
+            setShowClaimModal(false);
+            setData({ ...defaultData });
+            setShowSuccessPopUp(true);
+        } catch (error) {
+            console.log(error)
+        }
     }
-  };
+    const flyToUserIpAddress = async (map) => {
+        if (!map) {
+            return;
+        }
+        try {
+            const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+            const ipAddress = ipResponse.data.ip;
+            const  ipGeolocationApiUrl = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`);
+            const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
+            const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
+    
+            if (isNaN(latitude) || isNaN(longitude)) {
+                return;
+            }
+            map.flyTo({
+                center: [longitude, latitude],
+                zoom: 15 
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
-  return (
-    <Fragment>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+    return (
+        <Fragment>
+            <Head>
+                <title>SkyTrade - Airspaces</title>
+            </Head>
+            {isLoading && <Backdrop />}
+            {isLoading && <Spinner />}
 
       <div className='relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]'>
         {!showMobileMap && <Sidebar />}
