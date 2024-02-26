@@ -312,9 +312,11 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
             <div className="flex flex-col gap-[5px] w-full">
             <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <input type="text" name="amount" id="amount" value={activeSection === 0 ? (depositAmount === '' ? 'USDC' : depositAmount) : (withdrawAmount === '' ? 'USDC' : withdrawAmount)}
-                        onChange={(e) => { const value = e.target.value; activeSection === 0 ? setDepositAmount(value === 'USDC' ? '' : value) : setWithdrawAmount(value === 'USDC' ? '' : value);
-                        }} placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }}/>
+                    <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-[#87878D]">
+                    <label htmlFor="usdc" className="block text-[14px] font-normal text-[#838187]">USDC</label>
+                    <input type="number" name="amount" id="amount" value={activeSection === 0 ? (depositAmount === '' ? 'USDC' : depositAmount) : (withdrawAmount === '' ? 'USDC' : withdrawAmount)}
+                        onChange={(e) => { const value = e.target.value; activeSection === 0 ? setDepositAmount(value === 'USDC' ? '' : value) : setWithdrawAmount(value === 'USDC' ? '' : value); }} className="appearance-none outline-none border-none flex-1 pl-[0.5rem]" />
+                    </div>     
                 </div>
                 {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
