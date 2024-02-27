@@ -17,7 +17,6 @@ import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
-import { toast } from "react-hot-toast";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -152,16 +151,12 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-                toast.error(`Transaction Failed! - Invalid transfer amount`, {
-                    style: {
-                      padding: '16px',
-                      color: '#F5AA5E',
-                    },
-                    iconTheme: {
-                      primary: '#F5AA5E',
-                      secondary: '#FFFAEE',
-                    },
-                  });
+                setFinalAns({
+                    status: "Transaction failed",
+                    message: `invalid transafer amount`
+                })
+                setShowSuccess(true)
+                throw new Error('invalid transafer amount')
             }
             //new PublicKey('fgdf')
 
@@ -267,16 +262,11 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
 
             } catch (err) {
-                toast.error(`Transaction Failed - ${err}`, {
-                    style: {
-                      padding: '16px',
-                      color: '#F5AA5E',
-                    },
-                    iconTheme: {
-                      primary: '#F5AA5E',
-                      secondary: '#FFFAEE',
-                    },
-                  });
+                setFinalAns({
+                    status: "Transaction Failed",
+                    message: `transaction failed ${err}`
+                })
+                setShowSuccess(true)
 
 
 
@@ -284,18 +274,12 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             }
         } catch (error) {
-
-
-            toast.error('Transaction Failed', {
-                style: {
-                  padding: '16px',
-                  color: '#F5AA5E',
-                },
-                iconTheme: {
-                  primary: '#F5AA5E',
-                  secondary: '#FFFAEE',
-                },
-              });
+            console.log("pub key ", error)
+            setFinalAns({
+                status: "Transaction failed",
+                message: ` ${error}`
+            })
+            setShowSuccess(true)
             setIsLoading(false);
         }
 
