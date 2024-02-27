@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, forwardRef } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import { ArrowLeftIcon, CloseIcon, CloseIconWhite, LocationPointIcon, MagnifyingGlassIcon,SuccessIcon, SuccessIconwhite,CloseIconWhitesm} from "@/Components/Icons";
@@ -9,6 +9,7 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
+import DatePicker from "react-datepicker";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
@@ -80,7 +81,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
     const maxDate=dayjs().add(29,'day')
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState([])
-    const [date,setDate]=useState(defaultValueDate);
+    const [date,setDate]=useState(new Date());
   
     const [showSuccess,setShowSuccess]=useState(false)
    
@@ -445,36 +446,47 @@ if(ans2) {
 
         }
     }
+
+    const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+        <div className="w-full cursor-pointer border rounded-xl p-4 border-gray-400" onClick={onClick} ref={ref}>
+          {value}
+        </div>
+
+
+         ));
    
  
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px]">
-            <div className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
+        <div style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className="touch-manipulation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto  md:w-[689px] z-40 flex flex-col gap-[15px]">
+            <div className="touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                 <div className="w-[16px] h-[12px] md:hidden" onClick={()=>{console.log("ggdgdgdg")}}><ArrowLeftIcon /></div>
                 <h2 className="text-[#222222] text-center font-medium text-xl"> Airspace Details</h2>
                 <div onClick={()=>{setShowClaimModal(false)}} className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"><CloseIcon /></div>
             </div>
-            <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
+            <div className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
                 <div className="w-6 h-6"><LocationPointIcon /></div>
                 <p className="font-normal text-[#222222] text-[14px] flex-1">{rentData?rentData.address:''}</p>
             </div>
-            <div className="gap-[5px]">
+            <div className="gap-[5px] touch-manipulation">
             <span>Owner</span><span>  {owner?owner.name:"grgr"}</span>
             </div>
-            <div className="flex items-center justify-evenly gap-[20px] text-[14px]">
-            <div className="flex flex-col gap-[5px] w-full">
-                <label htmlFor="rentalDate" >Rental Date and Time<span className="text-[#E04F64]">*</span></label>
-                <DateTimePicker value={date} onChange={(e)=>{setDate(e);}} disablePast maxDate={maxDate}
-            shouldDisableTime={shouldDisableTime} />
+            <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
+            <div className="flex touch-manipulation flex-col gap-[5px] w-full">
+                <label htmlFor="rentalDate" >Rental Date and Time<span className="text-[#E04F64] touch-manipulation">*</span></label>
+                <DatePicker
+                    selected={date}
+                    onChange={(d) => setDate(d)}
+                    customInput={<ExampleCustomInput />}
+                    />
             </div>
            
             
             </div>
            
-                <div className="flex items-center justify-center gap-[20px] text-[14px]">
-                <div onClick={()=>{setShowClaimModal(false)}} className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
-                <div onClick={handleRentAirspace} className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Rent Airspace</div>
+                <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
+                <div onClick={()=>{setShowClaimModal(false)}} className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2" style={{ border: "1px solid #0653EA" }}>Cancel</div>
+                <div onClick={handleRentAirspace} className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2">Rent Airspace</div>
             </div>
         </div>
         </LocalizationProvider>
@@ -1028,7 +1040,11 @@ const Rent = () => {
                          
                          {!isMobile && <div className="flex justify-start items-start">
                             <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1}/>
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>}
+                            {/* {showClaimModal &&  */}
+                            
+                            <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1}/>
+                            
+                            {/* } */}
                         
                         </div>}
                     </section>
