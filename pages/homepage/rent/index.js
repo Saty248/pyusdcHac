@@ -157,21 +157,10 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
         console.log('endtart date in date fm',endDate) 
 
          if(startDate.getMinutes()%30!=0){
-        //     setfinalAns({status:'Rent failed',
-        //         message:'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.'
-        // })
-
-        toast.error(`Rent Failed - Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.`, {
-            style: {
-              padding: '16px',
-              color: '#F5AA5E',
-            },
-            iconTheme: {
-              primary: '#F5AA5E',
-              secondary: '#FFFAEE',
-            },
-          });
-
+            setfinalAns({status:'Rent failed',
+                message:'Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.'
+        })
+        setShowSuccess(true)
         setIsLoading(false)
         }else{
                     setLandAssetIds([rentData?.layers[0].tokenId]);
@@ -268,22 +257,11 @@ try {
       console.log("res body",res)
       if(res.statusCode==400){
         setShowSuccess(true)
-        //         setfinalAns({status:'Rent failed',
-        //         message:res.data.message
-                
-        // })
-
-        toast.error(`Rent Failed - ${res.data.message} `, {
-            style: {
-            padding: '16px',
-            color: '#F5AA5E',
-            },
-            iconTheme: {
-            primary: '#F5AA5E',
-            secondary: '#FFFAEE',
-            },
-        });
-        setIsLoading(false)
+        setfinalAns({status:'Rent failed',
+        message:res.data.message
+        
+})
+setIsLoading(false)
 return
       }
       const transaction = Transaction.from(Buffer.from(res, 'base64'));
@@ -385,20 +363,9 @@ if(ans2) {
             message:ans2.data.message
     })
     }else{
-    //     setfinalAns({status:'Rent failed',
-    //         message:ans2.data.message
-
-    toast.error(`Rent Failed - ${ans2.data.message}`, {
-        style: {
-          padding: '16px',
-          color: '#F5AA5E',
-        },
-        iconTheme: {
-          primary: '#F5AA5E',
-          secondary: '#FFFAEE',
-        },
-      });
-    // })
+        setfinalAns({status:'Rent failed',
+            message:ans2.data.message
+    })
     }
 
     setShowSuccess(true)
@@ -409,22 +376,9 @@ if(ans2) {
  
     
 } catch (error) {
-    //     setfinalAns({status:'Rent failed',
-    //     message:error
-    // })
-
-    toast.error(`Rent Failed - ${error}`, {
-        style: {
-          padding: '16px',
-          color: '#F5AA5E',
-        },
-        iconTheme: {
-          primary: '#F5AA5E',
-          secondary: '#FFFAEE',
-        },
-      });
-
-    
+    setfinalAns({status:'Rent failed',
+    message:error
+})
 
     setIsLoading(false)
     
