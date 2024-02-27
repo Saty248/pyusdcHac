@@ -17,6 +17,7 @@ import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
+import { toast } from "react-hot-toast";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -151,12 +152,16 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-                setFinalAns({
-                    status: "Transaction failed",
-                    message: `invalid transafer amount`
-                })
-                setShowSuccess(true)
-                throw new Error('invalid transafer amount')
+                toast.error(`Transaction Failed! - Invalid transfer amount`, {
+                    style: {
+                      padding: '16px',
+                      color: '#F5AA5E',
+                    },
+                    iconTheme: {
+                      primary: '#F5AA5E',
+                      secondary: '#FFFAEE',
+                    },
+                  });
             }
             //new PublicKey('fgdf')
 
@@ -262,11 +267,16 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
 
             } catch (err) {
-                setFinalAns({
-                    status: "Transaction Failed",
-                    message: `transaction failed ${err}`
-                })
-                setShowSuccess(true)
+                toast.error(`Transaction Failed - ${err}`, {
+                    style: {
+                      padding: '16px',
+                      color: '#F5AA5E',
+                    },
+                    iconTheme: {
+                      primary: '#F5AA5E',
+                      secondary: '#FFFAEE',
+                    },
+                  });
 
 
 
@@ -274,12 +284,18 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             }
         } catch (error) {
-            console.log("pub key ", error)
-            setFinalAns({
-                status: "Transaction failed",
-                message: ` ${error}`
-            })
-            setShowSuccess(true)
+
+
+            toast.error('Transaction Failed', {
+                style: {
+                  padding: '16px',
+                  color: '#F5AA5E',
+                },
+                iconTheme: {
+                  primary: '#F5AA5E',
+                  secondary: '#FFFAEE',
+                },
+              });
             setIsLoading(false);
         }
 
