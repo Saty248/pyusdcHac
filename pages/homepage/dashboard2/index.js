@@ -297,7 +297,7 @@ const Dashboard = () => {
                 if(response){
                     let retrievedAirspaces= response.items.map((item)=>{
                         return {
-                            address:item.address,
+                            address:item.metadata.addresses[0],
                             
                            
 
