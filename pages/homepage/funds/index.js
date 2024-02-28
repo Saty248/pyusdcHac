@@ -1,5 +1,5 @@
 'use client';
-import { CloseIcon, SuccessIcon } from "@/Components/Icons";
+import { CloseIcon, SuccessIcon,chevronDownIcon,chevronUpIcon} from "@/Components/Icons";
 import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -17,6 +17,7 @@ import { useQRCode } from 'next-qrcode';
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
+import Image from 'next/image';
 
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -126,12 +127,14 @@ const TransactionHistory = ({ transactions, user }) => {
 
 const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
     const [amount, setAmount] = useState('')
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [finalAns, setFinalAns] = useState({
+        status: "Transaction SuccessFull"
+    })
   
     
     const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
     const notifyFail= () => toast.error("Withdrawal unsuccessful. plz try again or contact support at support@sky.trade");
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [depositAmount, setDepositAmount] = useState('');
 
     const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
@@ -142,10 +145,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-               
+                notifyFail()
                
                 throw new Error('invalid transafer amount')
-                notifyFail()
+
             }
             //new PublicKey('fgdf')
 
@@ -294,18 +297,12 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
               
             </div>
             <div className="flex gap-[5px] w-full">
-                {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setDepositAmount(""); setActiveSection(index); setWithdrawAmount("")}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
+                {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setActiveSection(index); setAmount('')}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
             </div>
             <div className="flex flex-col gap-[5px] w-full">
-            <div className="flex flex-col gap-[5px]">
-                    <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Enter amount you want to {activeSection === 0 ? 'deposit' : 'withdraw'}</label>
-                    <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-[#87878D]">
-                    <label htmlFor="usdc" className="block text-[14px] font-normal text-[#838187]">USDC</label>
-                    <input type="number" name="amount" id="amount" value={activeSection === 0 ? (depositAmount === '' ? 'USDC' : depositAmount) : (withdrawAmount === '' ? 'USDC' : withdrawAmount)}
-                        onChange={(e) => { const value = e.target.value; activeSection === 0 ? setDepositAmount(value === 'USDC' ? '' : value) : setWithdrawAmount(value === 'USDC' ? '' : value); }} className="appearance-none outline-none border-none flex-1 pl-[0.5rem]" />
-                    </div>     
-                </div>
-                {activeSection === 0 &&
+                <Accordion/>  
+            </div>
+            {activeSection === 0 &&
                     <div className="flex items-end gap-[11px]">
                         <div className="flex flex-col items-start gap-[5px] flex-1">
                             <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
@@ -329,25 +326,8 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                         </div>
                     </div>
                 }
-                {activeSection === 1 &&
-                    <div className="flex flex-col gap-[5px]">
-                        <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
-                        <input type="text" name="walletId" id="walletId" placeholder="Wallet" value={recipientWalletAddress} onChange={(e) => { setRecipientWalletAddress(e.target.value) }} className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal" style={{ border: "1px solid #87878D" }} />
-                    </div>
-                }
-            </div>
-            <div className="flex items-center gap-[15px] w-full">
-                <div className="w-full h-0" style={{ border: "1px solid #00000033" }} />
-                <div className="text-sm text-[#CCCCCC] font-normal">or</div>
-                <div className="w-full h-0" style={{ border: "1px solid #00000033" }} />
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-                <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment source</label>
-                <select name="paymentMethod" id="amount" placeholder="USDC" className="w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal appearance-none focus:outline-none" style={{ border: "1px solid #87878D" }}>
-                    <option value="stripe">native</option>
-                    <option value="stripe">stripe</option>
-                </select>
-            </div>
+               
+            {activeSection === 0 &&  <div className="mt-2 w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg">Deposit</div>}
             {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
             <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
                 <div className="w-6 h-6"><WarningIcon /></div>
@@ -357,6 +337,74 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
     )
 }
 
+
+const Accordion = () =>{
+    const [isOpen, setIsOpen] = useState(false);
+    const handleSelection = (method) => {
+        setSelectedMethod(method)
+        setIsOpen(false)
+    }
+    
+    const toggleAccordion = () => {
+        setIsOpen(!isOpen);
+    };
+    const [selectedMethod, setSelectedMethod] = useState(null)
+
+    const supportedMethods = [
+        {
+            icon: '/images/Stripe-img.png',
+            name: 'stripe'
+        },
+        {
+            icon:  '/images/Binance-img.png',
+            name: 'native'
+        }
+    ]
+    return (
+        <div className="border rounded-lg ">
+        <div className="flex justify-between items-center p-4 cursor-pointer" onClick={toggleAccordion}>
+            {selectedMethod ? (
+                <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
+                <Image
+                src={selectedMethod.icon}
+                alt="Placeholder"
+                className="w-8 h-8 mr-2"
+                width={12}
+                height={12}
+                />
+                <p>{selectedMethod.name}</p>
+            </div>
+            ) : (
+                <div className="font-medium  text-[#838187] text-[12px]">Select</div>
+            )}
+
+
+            <div className="transform transition-transform duration-300">
+            {isOpen ? chevronDownIcon() : chevronUpIcon()}
+            </div>
+        </div>
+        {isOpen && (
+            <div className=" p-4">
+            <ul>
+            {supportedMethods.map((method, index) => (
+                <li key={index} onClick={() => handleSelection(method)} className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
+                    <Image
+                    src={method.icon}
+                    alt="Placeholder"
+                    className="w-8 h-8 mr-2"
+                    width={12}
+                    height={12}
+                    />
+                    <p>{method.name}</p>
+                </li>
+            ))}
+                
+            </ul>
+            </div>
+        )}
+        </div>
+    );
+}
 const Funds = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState(0);
