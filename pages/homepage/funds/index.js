@@ -19,6 +19,11 @@ import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, cre
 import Head from "next/head";
 import Image from 'next/image';
 
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
+
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -118,20 +123,7 @@ const TransactionHistory = ({ transactions, user }) => {
     )
 }
 
-const SuccessModal = ({ setShowSuccess, finalAns }) => {
 
-    const [owner, setOwner] = useState({});
-    return (
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${finalAns.status == 'Transaction SuccessFull' ? 'bg-green-600' : 'bg-red-600'} py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto overflow-y-auto md:w-[689px] z-40 flex flex-col gap-[15px] items-center`}>
-
-            <div className="w-[100px] h-[100px]  " >{finalAns.status == 'Transaction SuccessFull' ? <SuccessIcon /> : <CloseIcon />}</div>
-            <div className=" text-xl text-white text-center"> {finalAns.status} </div>
-            <div className=" text-xl text-white text-center"> {finalAns.message}</div>
-            <div onClick={() => { setShowSuccess(false) }} className="rounded-[5px] py-[10px] px-16 text-green-600 bg-white text-center cursor-pointer w-1/2">OK</div>
-
-        </div>
-    )
-}
 
 const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
     const [amount, setAmount] = useState('')
@@ -139,6 +131,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
     const [finalAns, setFinalAns] = useState({
         status: "Transaction SuccessFull"
     })
+  
+    
+    const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
+    const notifyFail= () => toast.error("Withdrawal unsuccessful. plz try again or contact support at support@sky.trade");
 
     const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
@@ -149,12 +145,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
-                setFinalAns({
-                    status: "Transaction failed",
-                    message: `invalid transafer amount`
-                })
-                setShowSuccess(true)
+                notifyFail()
+               
                 throw new Error('invalid transafer amount')
+
             }
             //new PublicKey('fgdf')
 
@@ -248,23 +242,21 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                 const signature = await solanaWallet.signAndSendTransaction(tx);
 
                 console.log("sig =", signature)
-                setFinalAns({
-                    status: "Transaction SuccessFull",
-                    message: 'signature ' + `${signature.signature}`.slice(0, 30) + '.........'
-                })
-                setShowSuccess(true)
+               
+           
+               
                 setTokenBalance(tokenBalance - amount); console.log("new token bal=", amount);
-                setTimeout(() => { setIsLoading(false); console.log('timeout over'); setreFetchBal(!refetchBal) }, 10000)
+                setTimeout(() => { setIsLoading(false); console.log('timeout over');}, 2000)
+                notifySuccess()
 
 
 
 
             } catch (err) {
-                setFinalAns({
-                    status: "Transaction Failed",
-                    message: `transaction failed ${err}`
-                })
-                setShowSuccess(true)
+                
+                
+                notifyFail()
+            
 
 
 
@@ -272,13 +264,12 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
             }
         } catch (error) {
+          
             console.log("pub key ", error)
-            setFinalAns({
-                status: "Transaction failed",
-                message: ` ${error}`
-            })
-            setShowSuccess(true)
+          
+           
             setIsLoading(false);
+            notifyFail()
         }
 
 
@@ -301,8 +292,9 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
         <div className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]" style={{
             boxShadow: "0px 12px 34px -10px #3A4DE926"
         }}>
+            <ToastContainer style={{ width: "500px" }} />
             <div>
-                {showSuccess && <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} />}
+              
             </div>
             <div className="flex gap-[5px] w-full">
                 {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setActiveSection(index); setAmount('')}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
