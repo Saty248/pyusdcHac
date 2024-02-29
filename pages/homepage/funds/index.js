@@ -401,12 +401,14 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
 
     const supportedMethods = [
         {
-            icon: '/images/Stripe-img.png',
-            name: 'stripe'
-        },{
-            icon: '/images/Stripe-img.png',
-            name: ' Native '
-        }
+            icon: '/images/Stripe.svg',
+            name: 'Stripe'
+        },
+        {
+            icon: '/images/bank-note-arrow.svg',
+            name: 'Native'
+        },
+
     ]
     return (
         <div className="border rounded-lg ">
