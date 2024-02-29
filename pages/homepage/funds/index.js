@@ -151,6 +151,13 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                 throw new Error('invalid transafer amount')
 
             }
+            if (activeSection == 1 && Solbalance<=0) {
+                console.log('amts=', parseInt(tokenBalance), parseInt(amount))
+                notifyFail()
+               
+                throw new Error('NO sol')
+
+            }
             //new PublicKey('fgdf')
 
             setIsLoading(true);
