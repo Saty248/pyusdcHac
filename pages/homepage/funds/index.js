@@ -364,7 +364,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                         </div>
                     
                     </div>
-                    {selectedMethod.name=='stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
+                    {selectedMethod.name=='Stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
                     </>
                     
                 }
