@@ -286,7 +286,9 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
         setAmount(formattedValue)
     }
 
-     const [selectedMethod, setSelectedMethod] = useState(null)
+     const [selectedMethod, setSelectedMethod] = useState({
+               name: ''
+    })
      const [selectedOption, setSelectedOption] = useState('');
        const options = ['Standard Native Payment','Stripe'];
 
@@ -409,7 +411,7 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
     return (
         <div className="border rounded-lg ">
         <div className="flex justify-between items-center p-2 cursor-pointer" onClick={toggleAccordion}>
-            {selectedMethod ? (
+            {selectedMethod.name!='' ? (
                 <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
                 <Image
                 src={selectedMethod.icon}
