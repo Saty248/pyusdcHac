@@ -515,7 +515,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
                 </div>
                 {showOptions && (
-          <div className='overflow-y-scroll max-h-60 w-full flex-col bg-white'>
+          <div className=' overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white'>
             {addresses.map((item) => {
               return (
                 <div

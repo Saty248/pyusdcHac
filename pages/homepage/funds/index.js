@@ -14,7 +14,7 @@ import base58 from 'bs58';
 import { MagnifyingGlassIcon, WarningIcon, WalletIcon } from "@/Components/Icons";
 import { useRouter } from "next/router";
 import { useQRCode } from 'next-qrcode';
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { TokenAccountNotFoundError, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import Head from "next/head";
 import Image from 'next/image';
@@ -29,12 +29,13 @@ let USDollar = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const AvailableBalance = ({ balance = 0 }) => {
+const AvailableBalance = ({ balance = 0,Solbalance }) => {
     return (
         <div className="relative bg-white flex items-center px-[32px] py-[37px] rounded-[30px] justify-between w-[468px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex flex-col justify-between h-full">
                 <p className="text-xl font-medium text-[#222222]">Available balance</p>
                 <p className="text-3xl text-[#4285F4] font-medium">{USDollar.format(balance)}</p>
+                <p className=" text-sm text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance/LAMPORTS_PER_SOL)}`}</p>
             </div>
             <div className="absolute top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
                 <div className="h-6 w-6">
@@ -177,7 +178,10 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
             const solanaWallet = new SolanaWallet(web3authProvider);
 
             console.log("solana wallet ", solanaWallet)
-
+            const accounts = await solanaWallet.requestAccounts();
+           
+              
+            
 
             const connectionConfig = await solanaWallet.request({
                 method: "solana_provider_config",
@@ -185,7 +189,9 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
             });
 
             const connection = new Connection(connectionConfig.rpcTarget);
-
+            const Solbalance = await connection.getBalance(new PublicKey(accounts[0]));
+            
+            console.log("sol balance = ",Solbalance)
             console.log("connection ", connection)
             let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
             let tx = new Transaction();
@@ -417,7 +423,7 @@ const Funds = () => {
     const [tokenBalance, setTokenBalance] = useState('');
     const [signature, setSignature] = useState();
     const router = useRouter();
-
+    const [Solbalance,setSolBalance]=useState('0')
     useEffect(() => {
         if (selectorUser) {
             const authUser = async () => {
@@ -437,6 +443,7 @@ const Funds = () => {
                     chainConfig: chainConfig,
                 });
                 await web3auth.initModal();
+               
                 // await web3auth.connect();
                 let userInfo;
                 try {
@@ -545,7 +552,23 @@ const Funds = () => {
                 const web3authProvider = await web3auth.connect();
 
                 const solanaWallet = new SolanaWallet(web3authProvider);
-
+                
+    
+                console.log("solana wallet ", solanaWallet)
+                const accounts = await solanaWallet.requestAccounts();
+               
+                  
+                
+    
+                const connectionConfig = await solanaWallet.request({
+                    method: "solana_provider_config",
+                    params: [],
+                });
+    
+                const connection = new Connection(connectionConfig.rpcTarget);
+                const Solbalance = await connection.getBalance(new PublicKey(accounts[0]));
+                
+                console.log("sol balance = ",Solbalance)
                 // const userInfo = await web3auth.getUserInfo();
 
                 const domain = window.location.host;
@@ -580,6 +603,60 @@ const Funds = () => {
             getSignature();
         }
     }, [user]);
+
+    //get sol balance
+    useEffect(()=>{
+
+       
+        let fetchbalance=async()=>{
+            if(user){ const chainConfig = {
+                chainNamespace: 'solana',
+                chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+                rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+                displayName: 'Solana Mainnet',
+                blockExplorer: 'https://explorer.solana.com',
+                ticker: 'SOL',
+                tickerName: 'Solana',
+            };
+        
+            const web3auth = new Web3Auth({
+                clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+                web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+                chainConfig: chainConfig,
+            });
+        
+            await web3auth.initModal();
+        
+            const web3authProvider = await web3auth.connect();
+        
+            const solanaWallet = new SolanaWallet(web3authProvider);
+            
+        
+            console.log("solana wallet ", solanaWallet)
+            const accounts = await solanaWallet.requestAccounts();
+           
+              
+            
+        
+            const connectionConfig = await solanaWallet.request({
+                method: "solana_provider_config",
+                params: [],
+            });
+        
+            const connection = new Connection(connectionConfig.rpcTarget);
+            const Solbalance1 = await connection.getBalance(new PublicKey(accounts[0]));
+            setSolBalance(Solbalance1)
+            console.log("sol balance = ",Solbalance)}
+            
+        }
+        fetchbalance()
+    // make sure to catch any error
+    .catch(console.error);
+
+
+    
+           
+    },[Solbalance,user])
 
 
     // GET TRANSACTION HISTORY
@@ -656,7 +733,7 @@ const Funds = () => {
                     <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll pl-[68.82px] pr-[55px]">
                         <div className="flex gap-[50px] flex-wrap">
                             <div className="flex flex-col gap-5">
-                                <AvailableBalance balance={tokenBalance} />
+                                <AvailableBalance balance={tokenBalance} Solbalance={Solbalance} />
                                 <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} setIsLoading={setIsLoading} setreFetchBal={setreFetchBal} refetchBal={refetchBal} setTokenBalance={setTokenBalance} tokenBalance={tokenBalance} />
                             </div>
                             <TransactionHistory transactions={transactions} user={user} />
