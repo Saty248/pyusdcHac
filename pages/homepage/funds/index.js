@@ -402,11 +402,11 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
     const supportedMethods = [
         {
             icon: '/images/Stripe.svg',
-            name: 'Stripe'
+            name: 'stripe'
         },
         {
             icon: '/images/bank-note-arrow.svg',
-            name: 'Native'
+            name: 'native'
         },
 
     ]
