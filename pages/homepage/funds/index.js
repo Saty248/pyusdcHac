@@ -303,7 +303,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                name: ''
     })
      const [selectedOption, setSelectedOption] = useState('');
-       const options = ['Standard Native Payment'];
+       const options = [' Native'];
 
     return (
 
@@ -418,7 +418,7 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
             name: 'stripe'
         },{
             icon: '/images/Stripe-img.png',
-            name: 'Standard Native Payments'
+            name: ' Native '
         }
     ]
     return (
