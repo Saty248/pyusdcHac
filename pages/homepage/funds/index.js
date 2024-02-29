@@ -127,12 +127,10 @@ const TransactionHistory = ({ transactions, user }) => {
 
 
 const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
+    const router=useRouter()
     const [amount, setAmount] = useState('')
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [finalAns, setFinalAns] = useState({
-        status: "Transaction SuccessFull"
-    })
-  
+
+ 
     
     const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
     const notifyFail= () => toast.error("Withdrawal unsuccessful. plz try again or contact support at support@sky.trade");
@@ -261,7 +259,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
            
                
                 setTokenBalance(tokenBalance - amount); console.log("new token bal=", amount);
-                setTimeout(() => { setIsLoading(false); console.log('timeout over');}, 2000)
+                setTimeout(() => { setIsLoading(false); console.log('timeout over');router.prefetch('/homepage/funds')}, 5000)
                 notifySuccess()
 
 
@@ -303,7 +301,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
 
      const [selectedMethod, setSelectedMethod] = useState(null)
      const [selectedOption, setSelectedOption] = useState('');
-       const options = ['Standard Payment'];
+       const options = ['Standard Native Payment','Stripe'];
 
     return (
 
@@ -318,7 +316,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                 {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setActiveSection(index); setAmount('')}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
             </div>
             <div className="flex flex-col gap-[5px] w-full">
-              {activeSection === 0 && <Accordion selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod}/>  }  
+              {activeSection === 0 && <Accordion  selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod}/>  }  
                 {activeSection === 1  && <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment method</label>
                     <SelectAccordion options={options} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
@@ -333,12 +331,13 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                     </div>
                     <div className="mt-2 ">
                     <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
-                        <input type="text" name="walletId" id="walletId" placeholder="Wallet" value={walletId} onChange={(e) => setRecipientWalletAddress(e.target.value)} className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"/>
+                        <input type="text" name="walletId" id="walletId"  value={recipientWalletAddress} onChange={(e) => setRecipientWalletAddress(e.target.value)} className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"/>
                     </div>
                  </div>}
             </div>
            
-            {activeSection === 0 &&
+            {activeSection === 0 &&<>
+            
                     <div className="flex items-end gap-[11px]">
                         <div className="flex flex-col items-start gap-[5px] flex-1">
                             <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
@@ -346,6 +345,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                                 <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
                                 <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
                             </div>
+                        
                         </div>
                         <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
                             {walletId && <SVG
@@ -360,7 +360,11 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                                 }}
                             />}
                         </div>
+                    
                     </div>
+                    {selectedMethod.name=='stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >Deposit</div>}
+                    </>
+                    
                 }
                
             {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
@@ -410,6 +414,9 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
         {
             icon: '/images/Stripe-img.png',
             name: 'stripe'
+        },{
+            icon: '/images/Stripe-img.png',
+            name: 'Standard Native Payments'
         }
     ]
     return (
@@ -425,6 +432,7 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
                 height={12}
                 />
                 <p>{selectedMethod.name}</p>
+
             </div>
             ) : (
                 <div className="font-medium  text-[#838187] text-[12px]">Select</div>
@@ -454,6 +462,7 @@ const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
             </ul>
             </div>
         )}
+       
         </div>
     );
 }
