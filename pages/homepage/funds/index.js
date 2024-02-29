@@ -303,7 +303,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                name: ''
     })
      const [selectedOption, setSelectedOption] = useState('');
-       const options = ['Standard Native Payment','Stripe'];
+       const options = ['Standard Native Payment'];
 
     return (
 
@@ -364,7 +364,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                         </div>
                     
                     </div>
-                    {selectedMethod.name=='stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >Deposit</div>}
+                    {selectedMethod.name=='stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
                     </>
                     
                 }
