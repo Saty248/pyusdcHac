@@ -33,7 +33,7 @@ const AvailableBalance = ({ balance = 0 }) => {
     return (
         <div className="relative bg-white flex items-center px-[32px] py-[37px] rounded-[30px] justify-between w-[468px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex flex-col justify-between h-full">
-                <p className="text-xl font-medium text-[#222222]">Available balance</p>
+                <p className="text-xl font-medium text-[#222222]">Available Balance</p>
                 <p className="text-3xl text-[#4285F4] font-medium">{USDollar.format(balance)}</p>
             </div>
             <div className="absolute top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
@@ -125,13 +125,11 @@ const TransactionHistory = ({ transactions, user }) => {
 
 
 
-const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
+const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
+    const router=useRouter()
     const [amount, setAmount] = useState('')
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [finalAns, setFinalAns] = useState({
-        status: "Transaction SuccessFull"
-    })
-  
+
+ 
     
     const notifySuccess= () => toast.success("Success !. Your funds have been withdrawn successfully");
     const notifyFail= () => toast.error("Withdrawal unsuccessful. plz try again or contact support at support@sky.trade");
@@ -144,6 +142,8 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
         try {
 
             if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
+                console.log(tokenBalance, "this is tokenBalance")
+                console.log(amount, "this is amount")
                 console.log('amts=', parseInt(tokenBalance), parseInt(amount))
                 notifyFail()
                
@@ -246,7 +246,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
            
                
                 setTokenBalance(tokenBalance - amount); console.log("new token bal=", amount);
-                setTimeout(() => { setIsLoading(false); console.log('timeout over');}, 2000)
+                setTimeout(() => { setIsLoading(false); console.log('timeout over');router.prefetch('/homepage/funds')}, 5000)
                 notifySuccess()
 
 
@@ -282,10 +282,15 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 
     const handleAmountInputChanged = (e) => {
         const inputValue = e.target.value;
-        if (isAmountCorrect(inputValue) || inputValue === '') setAmount(inputValue);
+        const formattedValue = inputValue.replace(/[^0-9]/g, "")
+        setAmount(formattedValue)
     }
 
-    const isAmountCorrect = (number) => /^\d*\.?\d*$/.test(number) && number !== '-';
+     const [selectedMethod, setSelectedMethod] = useState({
+               name: ''
+    })
+     const [selectedOption, setSelectedOption] = useState('');
+       const options = [' Native'];
 
     return (
 
@@ -300,9 +305,28 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                 {['Deposit', 'Withdraw'].map((text, index) => (<div onClick={() => {setActiveSection(index); setAmount('')}} className={`${activeSection === index ? 'bg-[#222222] text-base text-white' : 'bg-[#2222221A] text-[15px] text-[#222222]'} rounded-[30px] p-[10px] text-center cursor-pointer w-full`}>{text}</div>))}
             </div>
             <div className="flex flex-col gap-[5px] w-full">
-                <Accordion/>  
+              {activeSection === 0 && <Accordion  selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod}/>  }  
+                {activeSection === 1  && <div className="flex flex-col gap-[5px]">
+                    <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment method</label>
+                    <SelectAccordion options={options} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+                    <div>
+                </div>
+                    <div className="mt-2">
+                    <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Amount</label>
+                    <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
+                    <label htmlFor="usdc" className=" text-[14px] font-normal text-[#838187]">$</label>
+                   <input type="text" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
+                    </div>
+                    </div>
+                    <div className="mt-2 ">
+                    <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
+                        <input type="text" name="walletId" id="walletId"  value={recipientWalletAddress} onChange={(e) => setRecipientWalletAddress(e.target.value)} className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"/>
+                    </div>
+                 </div>}
             </div>
-            {activeSection === 0 &&
+           
+            {activeSection === 0 &&<>
+            
                     <div className="flex items-end gap-[11px]">
                         <div className="flex flex-col items-start gap-[5px] flex-1">
                             <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Wallet ID</label>
@@ -310,6 +334,7 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                                 <input className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]" type="text" name="walletId" id="walletId" value={walletId} disabled />
                                 <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">Copy</p>
                             </div>
+                        
                         </div>
                         <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
                             {walletId && <SVG
@@ -324,10 +349,13 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
                                 }}
                             />}
                         </div>
+                    
                     </div>
+                    {selectedMethod.name=='stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
+                    </>
+                    
                 }
                
-            {activeSection === 0 &&  <div className="mt-2 w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg">Deposit</div>}
             {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
             <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
                 <div className="w-6 h-6"><WarningIcon /></div>
@@ -338,7 +366,29 @@ const DepositAndWithdraw = ({ walletId, activeSection, setActiveSection, setIsLo
 }
 
 
-const Accordion = () =>{
+
+
+const SelectAccordion = ({ options, selectedOption, setSelectedOption }) => {
+    const handleSelection = (event) => {
+        setSelectedOption(event.target.value);
+    };
+
+    return (
+        <select
+            value={selectedOption}
+            onChange={handleSelection}
+            className="border rounded-lg p-4 cursor-pointer text-[14px] font-normal text-[#838187] outline-none"
+        >
+            
+            {options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+            ))}
+        </select>
+    );
+};
+
+
+const Accordion = ({ selectedMethod ,setSelectedMethod}) =>{
     const [isOpen, setIsOpen] = useState(false);
     const handleSelection = (method) => {
         setSelectedMethod(method)
@@ -348,22 +398,20 @@ const Accordion = () =>{
     const toggleAccordion = () => {
         setIsOpen(!isOpen);
     };
-    const [selectedMethod, setSelectedMethod] = useState(null)
 
     const supportedMethods = [
         {
             icon: '/images/Stripe-img.png',
             name: 'stripe'
-        },
-        {
-            icon:  '/images/Binance-img.png',
-            name: 'native'
+        },{
+            icon: '/images/Stripe-img.png',
+            name: ' Native '
         }
     ]
     return (
         <div className="border rounded-lg ">
-        <div className="flex justify-between items-center p-4 cursor-pointer" onClick={toggleAccordion}>
-            {selectedMethod ? (
+        <div className="flex justify-between items-center p-2 cursor-pointer" onClick={toggleAccordion}>
+            {selectedMethod.name!='' ? (
                 <div className="flex items-center cursor-pointer hover:bg-gray-100 p-2">
                 <Image
                 src={selectedMethod.icon}
@@ -373,6 +421,7 @@ const Accordion = () =>{
                 height={12}
                 />
                 <p>{selectedMethod.name}</p>
+
             </div>
             ) : (
                 <div className="font-medium  text-[#838187] text-[12px]">Select</div>
@@ -402,6 +451,7 @@ const Accordion = () =>{
             </ul>
             </div>
         )}
+       
         </div>
     );
 }
@@ -500,6 +550,7 @@ const Funds = () => {
                     return response.json();
                 })
                 .then((result) => {
+                    console.log(result, " this is result")
                     if (result.result.value.length < 1) {
                         setTokenBalance('0');
                         return;
@@ -510,6 +561,7 @@ const Funds = () => {
                         result.result.value[0].account.data.parsed.info.tokenAmount
                             .uiAmountString
                     );
+                    
                 })
                 .catch((error) => {
                     setTokenBalance('');
