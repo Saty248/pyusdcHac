@@ -1,5 +1,5 @@
 {
-  "name": "my-nextjs-app",
+  "name": "address-claiming",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
+  },
+  "engines": {
+    "node": "20.11.1",
+    "npm": "10.2.4"
   },
   "dependencies": {
     "@babel/runtime": "^7.23.2",
