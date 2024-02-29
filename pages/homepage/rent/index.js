@@ -20,17 +20,20 @@ import base58 from 'bs58';
 import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Head from "next/head";
-const SuccessModal = ({ setShowSuccess,finalAns}) => {
-
+import { useRouter } from "next/navigation";
+const SuccessModal = ({ setShowSuccess,finalAns,rentData,setShowClaimModal}) => {
+const router=useRouter()
        return (
         <div className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}>
-            <div className=" text-xl text-white text-center"> {finalAns?.status} </div>
-            <div className=" text-xl text-white text-center"> {finalAns?.message}</div>
-
-            <div className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status ==='Rent SuccessFull'? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
-            <div onClick={() => setShowSuccess(false)} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhitesm/></div>
+            {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
+            <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
+ */}
+              <div className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status ==='Rent SuccessFull'? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}>
+            
+            <div onClick={() => {setShowSuccess(false);setShowClaimModal(false)}} className="w-[10px] h-[10px] absolute top-[10px] right-[10px] "><CloseIconWhite/></div>
+            
            <div className="w-[54.56px] h-[54.56px]" >{finalAns?.status ==='Rent SuccessFull'?<SuccessIconwhite />:<CloseIconWhite/>}</div>
-            {finalAns?.status ==='Rent SuccessFull' ? (
+             {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
                 <div className="w-[70%] h-[10%] ">
                 <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">Your rental order is complete</h1>
@@ -42,13 +45,13 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
                 <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">Rent failed</h1>
             </div>
                 </>
-            )}
+            )} 
 
 
-                  <div className="w-[80%] h-[108px] mt-[2rem] ">
+                   <div className="w-[80%] h-[108px] mt-[2rem] ">
                <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-                {finalAns?.message} </p> 
-            </div>
+               {`You rented`}  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  </p> 
+            </div> 
 
            
              {finalAns?.status === "Rent SuccessFull" && (
@@ -60,35 +63,35 @@ const SuccessModal = ({ setShowSuccess,finalAns}) => {
             {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
                             <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
-            <button className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
+            <button onClick={()=>(router.push('/homepage/funds'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
                 </>
             ) : (
                 <>
-                  <button  className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px]">Close</button>
+                  <button onClick={() =>{ setShowSuccess(false);setShowClaimModal(false)}} className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-[14px]">Close</button>
                 </>
             )}
 
-           </div>
+           </div>   
         </div>
     )
 }    
 
 
 
-const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1}) => {
+const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
     
     const defaultValueDate =dayjs().add(1,'h').set('minute', 30).startOf('minute');
     const maxDate=dayjs().add(29,'day')
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState([])
-    const [date,setDate]=useState(new Date());
+    const [date,setDate]=useState(defaultValueDate);
   
     const [showSuccess,setShowSuccess]=useState(false)
    
-    const [finalAns,setfinalAns]=useState('');
+    const [finalAns,setfinalAns]=useState();
     const { user: selectorUser } = useAuth();
 
-    console.log("yo selector user",selectorUser)
+    console.log("yo selector user",rentData)
 
     useEffect(() => {
         const authUser = async () => {
@@ -432,7 +435,7 @@ if(ans2) {
      }
     if(showSuccess){
         return(
-            <SuccessModal setShowSuccess={setShowSuccess} rentData={rentData} finalAns={finalAns} />
+            <SuccessModal setShowSuccess={setShowSuccess} finalAns={finalAns} rentData={rentData} setShowClaimModal={setShowClaimModal}/>
 
         )
     }
@@ -474,11 +477,13 @@ if(ans2) {
             <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
             <div className="flex touch-manipulation flex-col gap-[5px] w-full">
                 <label htmlFor="rentalDate" >Rental Date and Time<span className="text-[#E04F64] touch-manipulation">*</span></label>
-                <DatePicker
+                {/* <DatePicker
                     selected={date}
                     onChange={(d) => setDate(d)}
                     customInput={<ExampleCustomInput />}
-                    />
+                    /> */}
+                    <DateTimePicker value={date} onChange={(e)=>{setDate(e);}} disablePast maxDate={maxDate}
+            shouldDisableTime={shouldDisableTime} />
             </div>
            
             
@@ -509,25 +514,25 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                     <MagnifyingGlassIcon />
                 </div>
                 </div>
-                 {showOptions && (
-                    <div className="absolute top-[55px] left-0 bg-white z-20 w-full flex-col">
-                        {addresses.map((item) => {
-                            return (
-                                <div
-                                    key={item.id}
-                                    value={item.place_name}
-                                    onClick={() => handleSelectAddress(item.place_name)}
-                                    className='p-5 text-left text-[#222222] w-full'
-                                    style={{
-                                        borderTop: '0.2px solid #222222',
-                                    }}
-                                >
-                                    {item.place_name}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
+                {showOptions && (
+          <div className='overflow-y-scroll max-h-60 w-full flex-col bg-white'>
+            {addresses.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  value={item.place_name}
+                  onClick={() => handleSelectAddress(item.place_name)}
+                  className='w-full p-5 text-left text-[#222222]  '
+                  style={{
+                    borderTop: '0.2px solid #222222',
+                  }}
+                >
+                  {item.place_name}
+                </div>
+              );
+            })}
+          </div>
+        )}
                 {regAdressShow && (
                     <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
@@ -928,7 +933,7 @@ const Rent = () => {
                     const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
                     const response = await fetch(mapboxGeocodingUrl);
-
+                    const data = await response.json();
                     if (!response.ok) throw new Error("Error while getting addresses");
 
     
