@@ -126,9 +126,11 @@ const TransactionHistory = ({ transactions, user }) => {
 
 
 
+
 const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance, Solbalance}) => {
     const router=useRouter()
     const [amount, setAmount] = useState()
+
 
  
     
@@ -146,6 +148,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                 console.log(tokenBalance, "this is tokenBalance")
                 console.log(amount, "this is amount")
                 console.log('amts=', parseFloat(tokenBalance), parseFloat(amount))
+
                 notifyFail()
                
                 throw new Error('invalid transafer amount')
@@ -297,8 +300,10 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
     const handleAmountInputChanged = (e) => {
         const inputValue = e.target.value;
         const formattedValue = inputValue.replace(/[^0-9]/g, "")
+
         //setAmount(formattedValue)
         setAmount(inputValue)
+
     }
 
      const [selectedMethod, setSelectedMethod] = useState({
@@ -330,7 +335,9 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                     <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Amount</label>
                     <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
                     <label htmlFor="usdc" className=" text-[14px] font-normal text-[#838187]">$</label>
+
                    <input type="number" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
+
                     </div>
                     </div>
                     <div className="mt-2 ">
