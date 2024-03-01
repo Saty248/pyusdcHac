@@ -23,7 +23,7 @@ import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { createUSDCBalStore } from "@/pages/store";
+import { createUSDCBalStore } from "@/zustand/store";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
