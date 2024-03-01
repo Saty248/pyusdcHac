@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useContext } from 'react';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,6 +11,24 @@ import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import { useAuth } from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
+
+
+const chainConfig = {
+  chainNamespace: 'solana',
+  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+  displayName: 'Solana Mainnet',
+  blockExplorer: 'https://explorer.solana.com',
+  ticker: 'SOL',
+  tickerName: 'Solana',
+};
+
+const web3auth = new Web3AuthNoModal({
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+  chainConfig: chainConfig,
+});
+
 
 
 const Sidebar = () => {
@@ -67,12 +86,22 @@ const Sidebar = () => {
     )
   }
 
-  const logoutHandler = () => {
-    setIsLoading(true);
+  const logoutHandler = async () => {
 
-    localStorage.clear();
-  
-    router.push('/auth/join');
+      // const userOut=  await web3auth.logout()
+      // console.log({userOut})
+      // setIsLoading(true);
+      // localStorage.clear();
+
+      // localStorage.removeItem(
+      //   'openlogin_store',
+        
+      // );
+
+      signOut()
+
+      
+ 
   };
 
   return (

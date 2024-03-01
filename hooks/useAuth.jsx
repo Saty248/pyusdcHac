@@ -1,8 +1,25 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
 
 const AuthContext = createContext({});
+
+const chainConfig = {
+  chainNamespace: 'solana',
+  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
+  displayName: 'Solana Mainnet',
+  blockExplorer: 'https://explorer.solana.com',
+  ticker: 'SOL',
+  tickerName: 'Solana',
+};
+
+const web3auth = new Web3AuthNoModal({
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
+  chainConfig: chainConfig,
+});
 
 const AuthProvider = ({ children }) => {
   const router = useRouter();
@@ -32,9 +49,8 @@ const AuthProvider = ({ children }) => {
   };
 
   const signOut = () => {
-    setData({});
-    localStorage.removeItem('user');
-    localStorage.removeItem('openlogin_store');
+    localStorage.clear();
+      window.location = '/'
   };
 
   const updateProfile = (updatedUser) => {
