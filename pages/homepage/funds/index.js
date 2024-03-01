@@ -23,6 +23,7 @@ import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { createUSDCBalStore } from "@/pages/store";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -30,12 +31,18 @@ let USDollar = new Intl.NumberFormat('en-US', {
 });
 
 const AvailableBalance = ({ balance = 0,Solbalance }) => {
+    let {USDCBal,setUSDCBal}=createUSDCBalStore()
+    useEffect(()=>{
+        setUSDCBal(balance)
+    },[balance])
+    
+    console.log("yoooooooooooooooooooooooooooooooooooo = ",USDCBal )
     return (
         <div className="relative bg-white flex items-center px-[32px] py-[37px] rounded-[30px] justify-between w-[468px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex flex-col justify-between h-full">
                 <p className="text-xl font-medium text-[#222222]">Available Balance</p>
-                <p className="text-3xl text-[#4285F4] font-medium">{USDollar.format(balance)}</p>
-                <p className=" text-sm text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance/LAMPORTS_PER_SOL)}`}</p>
+                <p className="text-3xl text-[#4285F4] font-medium">{USDollar.format(USDCBal)}</p>
+                <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance/LAMPORTS_PER_SOL)}`}</p>
             </div>
             <div className="absolute top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
                 <div className="h-6 w-6">
@@ -310,7 +317,11 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                name: ''
     })
      const [selectedOption, setSelectedOption] = useState('');
-       const options = [' Native'];
+       const options = [{
+        icon: '/images/bank-note-arrow.svg',
+        name: 'Native'
+    },];
+     
 
     return (
 
@@ -328,9 +339,9 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
               {activeSection === 0 && <Accordion  selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod}/>  }  
                 {activeSection === 1  && <div className="flex flex-col gap-[5px]">
                     <label htmlFor="amount" className="text-[14px] font-normal text-[#838187]">Choose your payment method</label>
-                    <SelectAccordion options={options} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
-                    <div>
-                </div>
+                    <Accordion  selectedMethod={selectedMethod} setSelectedMethod={setSelectedMethod}/> 
+                    {selectedMethod.name=='Native' && <div>
+                
                     <div className="mt-2">
                     <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Amount</label>
                     <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
@@ -344,6 +355,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                     <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Your Wallet ID</label>
                         <input type="text" name="walletId" id="walletId"  value={recipientWalletAddress} onChange={(e) => setRecipientWalletAddress(e.target.value)} className="w-full rounded-lg py-[16px] px-[22px] text-[#838187] text-[14px] font-normal outline-none border border-{#87878D}"/>
                     </div>
+                    </div>}
                  </div>}
             </div>
            
@@ -373,12 +385,14 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                         </div>
                     
                     </div>
-                    {selectedMethod.name=='Stripe' &&<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
+                    {selectedMethod.name=='Stripe' &&<div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg" >COMING SOON </div>}
                     </>
                     
                 }
                
-            {activeSection === 1 && <div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
+            {activeSection === 1 && <>
+            {selectedMethod.name=='Stripe'?<div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg" >COMING SOON </div>:<div className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg" onClick={handleWithdraw}>withdraw</div>}
+            </>}
             <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
                 <div className="w-6 h-6"><WarningIcon /></div>
                 <div className="text-[#222222] text-[14px] font-normal w-full">Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.</div>
