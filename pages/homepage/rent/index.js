@@ -515,7 +515,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
                 </div>
                 {showOptions && (
-          <div className='overflow-y-scroll max-h-60 w-full flex-col bg-white'>
+          <div className=' overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white'>
             {addresses.map((item) => {
               return (
                 <div
@@ -1027,7 +1027,7 @@ const Rent = () => {
             {isLoading && <Backdrop />}
             {isLoading && <Spinner />}
                 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
                 <Sidebar />
                 
                 <div className="w-full h-full flex flex-col">
