@@ -263,7 +263,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
            
                
                 setTokenBalance(tokenBalance - amount); console.log("new token bal=", amount);
-                setTimeout(() => { setIsLoading(false); console.log('timeout over');router.prefetch('/homepage/funds')}, 5000)
+                setTimeout(() => { setIsLoading(false); console.log('timeout over');router.prefetch('/homepage/funds')}, 10000)
                 notifySuccess()
 
 
@@ -542,7 +542,9 @@ const Funds = () => {
     // GET TOKEN BALANCE
     useEffect(() => {
         if (user) {
-            console.log({ user });
+            setInterval(()=>{
+                console.log("set interval function called")
+                console.log({ user });
             const data = {
                 jsonrpc: '2.0',
                 id: 1,
@@ -592,8 +594,18 @@ const Funds = () => {
                     setTokenBalance('');
                     console.error(error);
                 });
+            },5000)
+            
         }
-    }, [user, refetchBal]);
+    }, [user,selectorUser, refetchBal]);
+
+/*     useEffect(()=>{
+
+        setInterval(()=>{
+            console.log("set interval function called")
+        },5000)
+    },[]) */
+
 
     // GET SIGNATURE
     useEffect(() => {
