@@ -87,21 +87,7 @@ const Sidebar = () => {
   }
 
   const logoutHandler = async () => {
-
-      // const userOut=  await web3auth.logout()
-      // console.log({userOut})
-      // setIsLoading(true);
-      // localStorage.clear();
-
-      // localStorage.removeItem(
-      //   'openlogin_store',
-        
-      // );
-
       signOut()
-
-      
- 
   };
 
   return (
