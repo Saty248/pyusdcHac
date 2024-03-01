@@ -2,10 +2,13 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 
+
 const AuthContext = createContext({});
 
+
+
 const AuthProvider = ({ children }) => {
-  const router = useRouter();
+
 
   const [data, setData] = useState({});
   const [temporaryToken, setTemporaryToken] = useState({});

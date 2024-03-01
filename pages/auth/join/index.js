@@ -210,9 +210,7 @@ const Signup = () => {
   };
 
   const loginHandlerGood = async () => {
-    console.log('WTF!!!')
-    
-    
+  
 
     const email = emailRef.current.value;
     console.log({email})
@@ -465,7 +463,7 @@ const Signup = () => {
 
             )}
             <button
-              onClick={(e) => loginHandlerGood(e)}
+              onClick={loginHandlerGood}
               className='w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600'
             >
               Get started
