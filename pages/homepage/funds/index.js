@@ -126,9 +126,9 @@ const TransactionHistory = ({ transactions, user }) => {
 
 
 
-const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance }) => {
+const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoading, setreFetchBal, refetchBal, setTokenBalance, tokenBalance, Solbalance}) => {
     const router=useRouter()
-    const [amount, setAmount] = useState('')
+    const [amount, setAmount] = useState()
 
  
     
@@ -138,21 +138,22 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
     const [recipientWalletAddress, setRecipientWalletAddress] = useState('')
 
     const { user } = useAuth();
-
+    let userSolBalc=Solbalance;
     const handleWithdraw = async () => {
         try {
 
-            if (activeSection == 1 && parseInt(tokenBalance) <= parseInt(amount)) {
+            if (activeSection == 1 && parseFloat(tokenBalance) <= parseFloat(amount)) {
                 console.log(tokenBalance, "this is tokenBalance")
                 console.log(amount, "this is amount")
-                console.log('amts=', parseInt(tokenBalance), parseInt(amount))
+                console.log('amts=', parseFloat(tokenBalance), parseFloat(amount))
                 notifyFail()
                
                 throw new Error('invalid transafer amount')
 
             }
-            if (activeSection == 1 && Solbalance<=0) {
-                console.log('amts=', parseInt(tokenBalance), parseInt(amount))
+            if (activeSection == 1 && parseFloat(userSolBalc)==0) {
+                
+                console.log('amts=', parseFloat(tokenBalance), parseFloat(amount))
                 notifyFail()
                
                 throw new Error('NO sol')
@@ -236,7 +237,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                 senderUSDCAddr,
                 recipientUSDCAddr,
                 new PublicKey(user.blockchainAddress),
-                parseInt(amount) * Math.pow(10, 6)
+                parseFloat(amount) * Math.pow(10, 6)
             );
 
             ix.push(transferIx);
@@ -296,7 +297,8 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
     const handleAmountInputChanged = (e) => {
         const inputValue = e.target.value;
         const formattedValue = inputValue.replace(/[^0-9]/g, "")
-        setAmount(formattedValue)
+        //setAmount(formattedValue)
+        setAmount(inputValue)
     }
 
      const [selectedMethod, setSelectedMethod] = useState({
@@ -328,7 +330,7 @@ const DepositAndWithdraw = ({walletId, activeSection, setActiveSection, setIsLoa
                     <label htmlFor="walletId" className="text-[14px] font-normal text-[#838187]">Amount</label>
                     <div className="flex items-center w-full rounded-lg py-[16px] px-[22px] text-[#87878D] text-[14px] font-normal border border-{#87878D}">
                     <label htmlFor="usdc" className=" text-[14px] font-normal text-[#838187]">$</label>
-                   <input type="text" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
+                   <input type="number" value={amount} name="amount" onChange={handleAmountInputChanged} id="amount" min={0} className="appearance-none outline-none border-none flex-1 pl-[0.5rem] " />
                     </div>
                     </div>
                     <div className="mt-2 ">
@@ -795,7 +797,7 @@ const Funds = () => {
                         <div className="flex gap-[50px] flex-wrap">
                             <div className="flex flex-col gap-5">
                                 <AvailableBalance balance={tokenBalance} Solbalance={Solbalance} />
-                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} setIsLoading={setIsLoading} setreFetchBal={setreFetchBal} refetchBal={refetchBal} setTokenBalance={setTokenBalance} tokenBalance={tokenBalance} />
+                                <DepositAndWithdraw walletId={user?.blockchainAddress} activeSection={activeSection} setActiveSection={setActiveSection} setIsLoading={setIsLoading} setreFetchBal={setreFetchBal} refetchBal={refetchBal} setTokenBalance={setTokenBalance} tokenBalance={tokenBalance} Solbalance={Solbalance}/>
                             </div>
                             <TransactionHistory transactions={transactions} user={user} />
                         </div>
