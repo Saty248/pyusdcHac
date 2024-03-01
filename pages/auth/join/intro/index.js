@@ -44,7 +44,21 @@ export const phoneValidationSchema = Yup.object().shape({
       .min(10, 'Phone number must be at least 10 digits')
       .max(15, 'Phone number must be less than 15 digits'),
   });
+export  const checkPhoneIsValid = async (phone) => {
+    try {
+         await phoneValidationSchema.validate({ phone });
+        return {
+            status: true,
+            message: ""
+        }
+      } catch (error) {
+        return {
+            status: false,
+            message: error.message
+        }
+      }
 
+}
 const IndividualSignup = () => {
     const [part, setPart] = useState(0);
     const [name,setName] = useState('');
@@ -102,21 +116,6 @@ const IndividualSignup = () => {
     }
 
 
-    const checkPhoneIsValid = async (phone) => {
-        try {
-             await phoneValidationSchema.validate({ phone });
-            return {
-                status: true,
-                message: ""
-            }
-          } catch (error) {
-            return {
-                status: false,
-                message: error.message
-            }
-          }
-
-    }
 
     const checkReferralCodeIsValid = (referralCode1) => {
         return true;
