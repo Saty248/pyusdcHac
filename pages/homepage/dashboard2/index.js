@@ -16,7 +16,7 @@ import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 import base58 from 'bs58';
 import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
-import { createUSDCBalStore } from "@/pages/store";
+import { createUSDCBalStore } from "@/zustand/store";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
