@@ -216,7 +216,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
   });
 };
 
-const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
+const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading}) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   return (
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
@@ -541,12 +541,20 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim }) => {
           >
             Cancel
           </div>
-          <div
+          <button
             onClick={onClaim}
             className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
           >
-            Claim Airspace
-          </div>
+            {
+              claimButtonLoading ? 
+              <svg class="animate-spin -ml-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              :
+              'Claim Airspace'
+            }
+          </button>
         </div>
       </div>
     </div>
@@ -909,7 +917,8 @@ const HowToModal = ({ goBack }) => {
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // map
+  // 
+  const [claimButtonLoading,setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
   const [showMobileMap, setShowMobileMap] = useState(false);
@@ -1121,6 +1130,7 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
+      setClaimButtonLoading(true);
       const {
         address,
         name,
@@ -1172,7 +1182,10 @@ const Airspaces = () => {
       setData({ ...defaultData });
     } catch (error) {
       console.log(error);
+    } finally{
+      setClaimButtonLoading(false)
     }
+
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1253,6 +1266,7 @@ const Airspaces = () => {
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
+                    claimButtonLoading={claimButtonLoading}
                   />
                 )}
               </Fragment>
@@ -1278,6 +1292,7 @@ const Airspaces = () => {
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
+                    claimButtonLoading={claimButtonLoading}
                   />
                 )}
               </div>
