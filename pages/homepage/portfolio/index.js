@@ -29,7 +29,7 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
                     <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
                 </div>
                 {Object.entries({ 'ID': id, 'Expiration Date': expirationDate, 'Current Price': currentPrice }).map(([key, value]) => {
-                    if (value === undefined || value === null || (key === 'Expiration Date' && isNaN(new Date(value)))) return null;
+                    if (!value) return;
                     return (
                         <div className="flex gap-[15px]">
                             <p className="text-[14px] font-normal text-[#222222]">{key}:</p>
@@ -69,7 +69,6 @@ const PortfolioItem = ({ airspaceName, tags, selectAirspace }) => {
                 {!!tags[1] && <div className="bg-[#E7E6E6] text-[#222222] text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">On Sale</div>}
                 {!!tags[2] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">No Fly Zone</div>}
                 {!!tags[3] && <div className="bg-[#E04F64] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Review Offer</div>}
-                {!!tags[4] && <div className="bg-[#222222] text-white text-sm font-normal px-[7px] cursor-pointer rounded-[3px]">Claimed</div>}
                 <div className="w-[7px] h-[14px]"><ChevronRightIcon /></div>
             </div>
         </div>
@@ -99,7 +98,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace }) => {
         <div className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <h2 className="font-medium text-xl text-[#222222] text-center">{title}</h2>
             <div className="flex flex-col gap-[15px]">
-                {airspacesList.map(({address,expirationDate,name,landToken}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[!landToken, false,false,  false,landToken]} selectAirspace={() => selectAirspace(index)} />))}
+                {airspacesList.map(({address,expirationDate,name}, index) => (<PortfolioItem airspaceName={address} key={index} tags={[true, false,false,  false]} selectAirspace={() => selectAirspace(index)} />))}
             </div>
         </div>
     )
@@ -148,17 +147,17 @@ const Portfolio = () => {
         (async () => {
             try {
                 setIsLoading(true)
-                const response = await getPropertiesByUserAddress(user.blockchainAddress);
+                const response = await getPropertiesByUserAddress(user.blockchainAddress,'rentalToken');
                //test
                 //const response =myAirspacesTest;
                 if(response){
                     let resp=await response.items;
+
                     let retrievedAirspaces=await resp.map((item)=>{
                         return {
                             address:item.address,
-                            id:item.id,
-                            landToken:item?.type ==='land' ,
-                            expirationDate:(new Date(item?.metadata?.endTime))?.toString()
+                            name:item.id,
+                            expirationDate:(new Date(item.metadata.endTime)).toString()
 
                         }
                     })
@@ -199,10 +198,10 @@ const Portfolio = () => {
                     {selectedAirspace !== null && <Modal airspace={myAirspaces[selectedAirspace]} onCloseModal={onCloseModal} />}
                     <PageHeader pageTitle={'Portfolio'} username={'John Doe'} />
                     <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
-                        <PortfolioList airspacesList={myAirspaces} title={'My airspaces '} selectAirspace={selectAirspace} />
+                        <PortfolioList airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
-                        <PortfolioListMobile airspacesList={myAirspaces} title={'My airspaces '} selectAirspace={selectAirspace} />
+                        <PortfolioListMobile airspacesList={myAirspaces} title={'Rented airspaces'} selectAirspace={selectAirspace} />
                     </section>
                     {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
                 </div>
