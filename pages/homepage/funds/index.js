@@ -41,11 +41,10 @@ import Image from "next/image";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
+import { toast } from "react-toastify";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -412,7 +411,6 @@ const DepositAndWithdraw = ({
         boxShadow: "0px 12px 34px -10px #3A4DE926",
       }}
     >
-      <ToastContainer style={{ width: "500px" }} />
       <div></div>
       <div className="flex gap-[5px] w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
