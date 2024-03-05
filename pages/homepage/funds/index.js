@@ -45,19 +45,19 @@ import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 import { createUSDCBalStore } from "@/zustand/store";
+import { BalanceLoader } from "@/Components/Wrapped";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-const AvailableBalance = ({ balance = 0, Solbalance }) => {
+const AvailableBalance = ({ balance, Solbalance, loading }) => {
   let { USDCBal, setUSDCBal } = createUSDCBalStore();
   useEffect(() => {
     setUSDCBal(balance);
   }, [balance]);
 
-  console.log("yoooooooooooooooooooooooooooooooooooo = ", USDCBal);
   return (
     <div
       className="relative bg-white flex items-center px-[32px] py-[37px] rounded-[30px] justify-between w-[468px]"
@@ -65,10 +65,18 @@ const AvailableBalance = ({ balance = 0, Solbalance }) => {
     >
       <div className="flex flex-col justify-between h-full">
         <p className="text-xl font-medium text-[#222222]">Available Balance</p>
-        <p className="text-3xl text-[#4285F4] font-medium">
-          {USDollar.format(USDCBal)}
-        </p>
-        <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance / LAMPORTS_PER_SOL)}`}</p>
+        {loading ? (
+          <div className="my-4">
+            <BalanceLoader />
+          </div>
+        ) : (
+          <>
+            <p className="text-3xl text-[#4285F4] font-medium">
+              {USDollar.format(USDCBal)}
+            </p>
+            <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance / LAMPORTS_PER_SOL)}`}</p>
+          </>
+        )}
       </div>
       <div className="absolute top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
         <div className="h-6 w-6">
@@ -668,6 +676,7 @@ const Funds = () => {
   const [user, setUser] = useState();
   const [token, setToken] = useState("");
   const [tokenBalance, setTokenBalance] = useState("");
+  const [balanceLoading, setBalanceLoading] = useState(false);
   const [signature, setSignature] = useState();
   const router = useRouter();
   const [Solbalance, setSolBalance] = useState("0");
@@ -720,6 +729,7 @@ const Funds = () => {
 
   // GET TOKEN BALANCE
   useEffect(() => {
+    setBalanceLoading(true);
     if (user) {
       setInterval(() => {
         console.log("set interval function called");
@@ -759,6 +769,7 @@ const Funds = () => {
             console.log(result, " this is result");
             if (result.result.value.length < 1) {
               setTokenBalance("0");
+              setBalanceLoading(false);
               return;
             }
             console.log(
@@ -770,9 +781,11 @@ const Funds = () => {
               result.result.value[0].account.data.parsed.info.tokenAmount
                 .uiAmountString
             );
+            setBalanceLoading(false);
           })
           .catch((error) => {
             setTokenBalance("");
+            setBalanceLoading(false);
             console.error(error);
           });
       }, 5000);
@@ -981,6 +994,7 @@ const Funds = () => {
             <div className="flex gap-[50px] flex-wrap">
               <div className="flex flex-col gap-5">
                 <AvailableBalance
+                  loading={balanceLoading}
                   balance={tokenBalance}
                   Solbalance={Solbalance}
                 />
