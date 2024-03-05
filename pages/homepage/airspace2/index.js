@@ -140,10 +140,13 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
   // Initialize the weekDayRanges state with all days set to available
   useEffect(() => {
-    const defaultWeekDayRanges = weekDays.map((day) => ({
+    const defaultWeekDayRanges = weekDayRanges.map((day) => ({
       isAvailable: true,
-      fromTime: 0,
-      toTime: 0,
+      fromTime: 9,
+      toTime: 21,
+      weekDayId:day.weekDayId
+
+      
     }));
     setWeekDayRanges(defaultWeekDayRanges);
   }, []);
@@ -218,6 +221,38 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
 const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading}) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  useEffect(()=>{
+    let airSpaceName=data.address.split(',')
+    setData((prev) => {
+      return {
+        ...prev,
+        name:airSpaceName[0],
+      };})
+  },[])
+  const handleSellPrice=(e)=>{
+  let inputVal=e.target.value;
+  console.log(inputVal)
+  let parsedVal=parseFloat(inputVal)
+   if(parsedVal>=0 && parsedVal!=NaN){
+    console.log("parseVal ",parseFloat(inputVal))
+    setData((prev) => {
+      return {
+        ...prev,
+        sellingPrice: inputVal,
+      };})
+
+   }else{
+    setData((prev) => {
+      return {
+        ...prev,
+        sellingPrice:'0'
+       
+      };})
+   }
+      
+    
+
+  }
   return (
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
       <div
@@ -445,6 +480,9 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                   style={{ border: "1px solid #87878D" }}
                   autoComplete="off"
                   type="number"
+                  min={0}
+                  value={data.sellingPrice}
+                  onChange={handleSellPrice}
                   name="sellingPrice"
                   id="sellingPrice"
                 />
@@ -642,6 +680,7 @@ const Explorer = ({
           Claim Airspace
         </div>
       )}
+      
     </div>
   );
 };
@@ -825,6 +864,7 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
+  console.log("yoo how too")
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -937,19 +977,19 @@ const Airspaces = () => {
     address: flyToAddress,
     name: "",
     rent: true,
-    sell: false,
+    sell: true,
     hasPlanningPermission: null,
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
-    sellingPrice: "",
+    sellingPrice: "0",
     timezone: "UTC+0",
     transitFee: "1-99",
     isFixedTransitFee: false,
     noFlyZone: false,
     weekDayRanges: [
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 1 },
+      { fromTime: 9, toTime: 21, isAvailable: false, weekDayId: 0 },
+      { fromTime: 9, toTime: 21, isAvailable: false, weekDayId: 1 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
@@ -1173,12 +1213,14 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
+      console.log("add property results ,",addProperty)
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
       } else {
         setShowSuccessPopUp(true);
       }
       setShowClaimModal(false);
+      setIsLoading(false)
       setData({ ...defaultData });
     } catch (error) {
       console.log(error);
@@ -1233,7 +1275,7 @@ const Airspaces = () => {
               addresses={addresses}
               showOptions={showOptions}
               handleSelectAddress={handleSelectAddress}
-              onClaimAirspace={() => setShowClaimModal(true)}
+              onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
             />
           )}
           {showHowToModal && (
@@ -1252,7 +1294,7 @@ const Airspaces = () => {
             />
             {isMobile && showMobileMap && flyToAddress && (
               <div
-                onClick={() => setShowClaimModal(true)}
+                onClick={() =>{ setShowClaimModal(true);setIsLoading(true)}}
                 className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
@@ -1262,7 +1304,7 @@ const Airspaces = () => {
               <Fragment>
                 {showClaimModal && (
                   <ClaimModal
-                    onCloseModal={() => setShowClaimModal(false)}
+                    onCloseModal={() => {setShowClaimModal(false);setIsLoading(false)}}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
@@ -1280,7 +1322,7 @@ const Airspaces = () => {
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
-                  onClaimAirspace={() => setShowClaimModal(true)}
+                  onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
@@ -1288,7 +1330,7 @@ const Airspaces = () => {
 
                 {showClaimModal && (
                   <ClaimModal
-                    onCloseModal={() => setShowClaimModal(false)}
+                    onCloseModal={() =>{ setShowClaimModal(false);setIsLoading(false)}}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
