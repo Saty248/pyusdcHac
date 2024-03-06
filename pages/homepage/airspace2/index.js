@@ -769,29 +769,22 @@ const Slider = () => {
                         <p>Easily adjust the location pin if Google Maps is off.</p>
                     </div>
                 </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={3}>
-                    <p className="">3.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Define Your Property</p>
-                        <p>Outline your land using the polygon tool if the location is not exact (top right of the map).</p>
-                    </div>
-                </div>
                 <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={4}>
-                    <p className="">4.</p>
+                    <p className="">3.</p>
                     <div className="flex flex-col">
                         <p className="font-bold">Claim Airspace</p>
                         <p>Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime.</p>
                     </div>
                 </div>
                 <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={5}>
-                    <p className="">5.</p>
+                    <p className="">4.</p>
                     <div className="flex flex-col">
                         <p className="font-bold">Checking the details</p>
                         <p>We confirm official records.</p>
                     </div>
                 </div>
                 <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={6}>
-                    <p className="">6.</p>
+                    <p className="">5.</p>
                     <div className="flex flex-col">
                         <p className="font-bold">Passive income is on the way</p>
                         <p>We will update you as your account receives funds.</p>
