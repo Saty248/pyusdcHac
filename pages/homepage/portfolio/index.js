@@ -157,7 +157,7 @@ const Portfolio = () => {
                         address: item.address,
                         name: item.id,
                         type: item.type,
-                        expirationDate: item.type === "land" ? new Date().toString() : new Date(item.metadata.endTime).toString()
+                        expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
                     }))
                 )
             } catch (error) {
