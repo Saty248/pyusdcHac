@@ -56,14 +56,13 @@ const router=useRouter()
            
              {finalAns?.status === "Rent SuccessFull" && (
                  <div  className=" w-[75%] h-[10%]  ">
-                 <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your funds </p>
+                 <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">A copy of your transaction is availble inside your Portfolio </p>
               </div>
              )}
            
             {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
-                            <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
-            <button onClick={()=>(router.push('/homepage/funds'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
+            <button onClick={()=>(router.push('/homepage/portfolio'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Portfolio</button>
                 </>
             ) : (
                 <>
