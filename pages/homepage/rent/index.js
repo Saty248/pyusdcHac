@@ -62,7 +62,6 @@ const router=useRouter()
            
             {finalAns?.status ==='Rent SuccessFull' ? (
                 <>
-                            <button className="py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-white text-center text-[#34A853] text-[14px]">Marketplace</button>
             <button onClick={()=>(router.push('/homepage/funds'))} className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-[14px]">Funds</button>
                 </>
             ) : (
