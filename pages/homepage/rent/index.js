@@ -50,7 +50,22 @@ const router=useRouter()
 
                    <div className="w-[80%] h-[108px] mt-[2rem] ">
                <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-               {`You rented`}  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  </p> 
+             {finalAns?.status ==='Rent SuccessFull' && 
+             <div>
+                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
+             </div>
+                 
+                 }
+                  </p>
+
+                  <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+             {finalAns?.status !=='Rent SuccessFull' && 
+             <div>
+                 An error occured, please try again.
+             </div>
+                 
+                 }
+                  </p>
             </div> 
 
            
@@ -996,6 +1011,8 @@ const Rent = () => {
                 <Sidebar />
 
                 <div className="w-full h-full flex flex-col">
+
+                    
 
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
                     {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
