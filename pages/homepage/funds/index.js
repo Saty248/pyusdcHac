@@ -565,8 +565,8 @@ const DepositAndWithdraw = ({
           <WarningIcon />
         </div>
         <div className="text-[#222222] text-[14px] font-normal w-full">
-          Funds may be irrecoverable if you enter an incorrect wallet ID. It is
-          crucial to ensure the accuracy of the provided ID to avoid any loss.
+          To complete your deposit, please use your crypto wallet to deposit
+          USDC to the following address: bc1q4q4... Thank you
         </div>
       </div>
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
