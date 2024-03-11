@@ -50,23 +50,23 @@ const router=useRouter()
 
 
                    <div className="w-[80%] h-[108px] mt-[2rem] ">
-               <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+               <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status ==='Rent SuccessFull' && 
              <div>
                  'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
              </div>
                  
                  }
-                  </p>
+                  </div>
 
-                  <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+                  <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status !=='Rent SuccessFull' && 
              <div>
                  An error occured, please try again.
              </div>
                  
                  }
-                  </p>
+                  </div>
             </div> 
 
            
