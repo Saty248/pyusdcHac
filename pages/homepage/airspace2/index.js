@@ -1201,8 +1201,7 @@ const Airspaces = () => {
   }, [showFailurePopUp]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (localStorage.get("new")) {
+    if (localStorage.getItem("new")) {
       setIsOpen(true);
       localStorage.removeItem("new");
     }
