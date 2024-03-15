@@ -8,16 +8,13 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "engines": {
-    "node": "20.11.1",
-    "npm": "10.2.4"
-  },
   "dependencies": {
     "@babel/runtime": "^7.23.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.15.7",
     "@mui/x-date-pickers": "^6.19.3",
+    "@reactour/tour": "^3.6.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@sentry/nextjs": "^7.77.0",
     "@solana/spl-token": "^0.4.0",
