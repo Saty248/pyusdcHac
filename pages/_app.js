@@ -111,7 +111,7 @@ export default function App({ Component, pageProps }) {
 const steps = [
   {
     selector: ".first-step",
-    content: "Enter your address and outlined your property",
+    content: "Enter your address and outline your property",
   },
   {
     selector: ".second-step",
