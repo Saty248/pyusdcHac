@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }) {
   return (
     <AuthProvider>
       <TourProvider
-        steps={steps}
+        steps={ isMobile ? mobileSteps : steps}
         prevButton={({ currentStep, setCurrentStep, steps }) => {
           const first = currentStep === 0;
           return (
@@ -110,21 +110,48 @@ export default function App({ Component, pageProps }) {
 
 const steps = [
   {
-    selector: ".first-step",
-    content: "Enter your address and outline your property",
+    selector: ".enter-address-step",
+    content: "Enter your address and outline your property.",
   },
   {
-    selector: ".second-step",
+    selector: ".Claim-airspacebtn-step",
     content:
-      " Click on Claim Airspace button to set your airspace",
+      " Click on Claim Airspace button to set your airspace.",
   },
   {
-    selector: ".third-step",
+    selector: ".claim-modal-step",
     content:
-      "fill in the details and select your preference (rent/sell details section or both)",
+      "fill in the details and select your preference (rent/sell details section or both).",
   },
   {
-    selector: ".fourth-step",
+    selector: ".Claim-airspacebtn2-step",
+    content:
+      "Click the ‘Claim Airspace’ button to confirm your airspace address.",
+  },
+];
+
+const mobileSteps = [
+  {
+    selector: ".claim-step",
+    content: "Click on Claim your Airspace.",
+  },
+  {
+    selector: ".enter-address-step",
+    content:
+     "Enter your address and outline your property."
+  },
+  {
+    selector: ".Claim-airspacebtn-step",
+    content:
+      " Click on Claim Airspace button to set your airspace.",
+  },
+  {
+    selector: ".claim-modal-step",
+    content:
+      "fill in the details and select your preference (rent/sell details section or both).",
+  },
+  {
+    selector: ".Claim-airspacebtn2-step",
     content:
       "Click the ‘Claim Airspace’ button to confirm your airspace address.",
   },

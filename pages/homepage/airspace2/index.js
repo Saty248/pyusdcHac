@@ -271,7 +271,7 @@ const ClaimModal = ({
   };
   return (
     <div
-      className={`third-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar`}
+      className={`claim-modal-step fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar`}
     >
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none"
@@ -610,7 +610,7 @@ const ClaimModal = ({
 
           <button
             onClick={onClaim}
-            className=" fourth-step rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
+            className=" Claim-irspacebtn-step rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
           >
             {claimButtonLoading ? (
               <svg
@@ -682,7 +682,7 @@ const Explorer = ({
         times ahead!
       </p>
       <div
-        className="relative first-step w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="relative enter-address-step w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -721,7 +721,7 @@ const Explorer = ({
       {(flyToAddress || isOpen) && (
         <div
           onClick={onClaimAirspace}
-          className="second-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+          className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
         >
           Claim Airspace
         </div>
@@ -760,7 +760,7 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
+          className=" enter-address-step w-full pr-[20px] outline-none"
         />
         <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
           <MagnifyingGlassIcon />
@@ -1342,7 +1342,7 @@ const Airspaces = () => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="Claim-airspacebtn2-step absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
@@ -1407,7 +1407,7 @@ const Airspaces = () => {
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  <div className="claim-step  w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>
@@ -1436,7 +1436,7 @@ const Airspaces = () => {
                   </div>
                   <div
                     onClick={() => setShowHowToModal(true)}
-                    className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
+                    className="  flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
                   >
                     <div className="h-[24px] w-[24px]">
                       <HelpQuestionIcon color="white" />
