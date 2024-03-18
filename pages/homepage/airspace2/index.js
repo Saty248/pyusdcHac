@@ -238,10 +238,7 @@ const ClaimModal = ({
       const maxScrollTop = scrollHeight - clientHeight;
       endOfDivRef.current.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
     }
-    console.log(currentStep, ">>>>>>>>>>>>");
   }, [currentStep]);
-  console.log(currentStep, ">>>>>>>>>>>>");
-
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
