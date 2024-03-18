@@ -116,7 +116,7 @@ const steps = [
   {
     selector: ".second-step",
     content:
-      "click  on claim property CTA, to opens modal select your preference",
+      " Click on Claim Airspace button to set your airspace",
   },
   {
     selector: ".third-step",
