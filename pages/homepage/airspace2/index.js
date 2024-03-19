@@ -610,7 +610,7 @@ const ClaimModal = ({
 
           <button
             onClick={onClaim}
-            className=" Claim-irspacebtn-step rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
+            className=" Claim-airspacebtn2-step rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
           >
             {claimButtonLoading ? (
               <svg
@@ -741,7 +741,7 @@ const ExplorerMobile = ({
   onGoBack,
 }) => {
   return (
-    <div className="z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className=" enter-address-step  z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
       <div
         onClick={onGoBack}
         className="flex h-6 w-6 items-center justify-center"
@@ -749,7 +749,7 @@ const ExplorerMobile = ({
         <ArrowLeftIcon />
       </div>
       <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="  relative w-full rounded-lg bg-white px-[22px] py-[16px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -760,7 +760,7 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className=" enter-address-step w-full pr-[20px] outline-none"
+          className="w-full pr-[20px] outline-none"
         />
         <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
           <MagnifyingGlassIcon />
@@ -993,7 +993,8 @@ const Airspaces = () => {
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(false);
+  const { setIsOpen, currentStep, isOpen } = useTour();
+  const [showMobileMap, setShowMobileMap] = useState(isOpen);
   const [showHowToModal, setShowHowToModal] = useState(false);
   // variables
   const [address, setAddress] = useState("");
@@ -1038,9 +1039,6 @@ const Airspaces = () => {
   // database
   const { createProperty } = useDatabase();
   const { user } = useAuth();
-  const searchParams = useSearchParams();
-  const { setIsOpen, currentStep, isOpen } = useTour();
-  const router = useRouter();
 
   useEffect(() => {
     if (map) return;
@@ -1198,10 +1196,10 @@ const Airspaces = () => {
   }, [showFailurePopUp]);
 
   useEffect(() => {
-    if (localStorage.getItem("new")) {
-      setIsOpen(true);
-      localStorage.removeItem("new");
-    }
+    // if (localStorage.getItem("new")) {
+    setIsOpen(true);
+    // localStorage.removeItem("new");
+    // }
   }, []);
 
   const handleSelectAddress = (placeName) => {
@@ -1294,6 +1292,17 @@ const Airspaces = () => {
       console.error("Error:", error);
     }
   };
+  useEffect(() => {
+    if (currentStep === 1 && isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3 && isMobile) {
+      setShowClaimModal(true);
+    }
+  }, [currentStep]);
 
   return (
     <Fragment>
@@ -1307,7 +1316,7 @@ const Airspaces = () => {
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
+          {((showMobileMap && isMobile) || currentStep === 1) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               flyToAddress={flyToAddress}
@@ -1336,20 +1345,21 @@ const Airspaces = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && (
+            {((isMobile && showMobileMap && flyToAddress) ||
+              (isOpen && currentStep === 2)) && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="Claim-airspacebtn2-step absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="Claim-airspacebtn-step absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
             )}
             {isMobile && (
               <Fragment>
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       setShowClaimModal(false);
@@ -1395,7 +1405,7 @@ const Airspaces = () => {
                 )}
               </div>
             )}
-            {!showMobileMap && (
+            {(!showMobileMap || isOpen) && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}

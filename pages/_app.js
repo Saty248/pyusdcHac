@@ -15,6 +15,7 @@ import { TourProvider } from "@reactour/tour";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
+import { useMediaQuery } from "@mui/material";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
@@ -39,71 +40,34 @@ export default function App({ Component, pageProps }) {
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 
+  const mediaQuery = useMediaQuery("(max-width: 1024px)");
+  console.log(mediaQuery, "ttttttt");
+
   return (
     <AuthProvider>
-      <TourProvider
-        steps={ isMobile ? mobileSteps : steps}
-        prevButton={({ currentStep, setCurrentStep, steps }) => {
-          const first = currentStep === 0;
-          return (
-            <button
-              onClick={() => {
-                if (first) {
-                  setCurrentStep((s) => steps.length - 1);
-                } else {
-                  setCurrentStep((s) => s - 1);
-                }
-              }}
-            >
-              Back
-            </button>
-          );
-        }}
-        nextButton={({
-          currentStep,
-          stepsLength,
-          setIsOpen,
-          setCurrentStep,
-          steps,
-        }) => {
-          const last = currentStep === stepsLength - 1;
-          return (
-            <button
-              onClick={() => {
-                if (last) {
-                  setIsOpen(false);
-                } else {
-                  setCurrentStep((s) => (s === steps?.length - 1 ? 0 : s + 1));
-                }
-              }}
-            >
-              {last ? "Close!" : "Next"}
-            </button>
-          );
-        }}
-      >
-        <Provider store={store}>
-          <>
-            <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
-            <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
-            <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
-            <Script id="google-analytics">
-              {`
+      <Provider store={store}>
+        <>
+          <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
+          <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
+          <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
+          <Script id="google-analytics">
+            {`
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
           
                   gtag('config', 'G-C0J4J56QW5');
               `}
-            </Script>
-            <SidebarProvider>
-              <ToastContainer style={{ width: "500px" }} />
+          </Script>
+          <SidebarProvider>
+            <ToastContainer style={{ width: "500px" }} />
+            <OnboardingTour>
               <Component {...pageProps} />
-            </SidebarProvider>
-            <CookieConsent />
-          </>
-        </Provider>
-      </TourProvider>
+            </OnboardingTour>
+          </SidebarProvider>
+          <CookieConsent />
+        </>
+      </Provider>
     </AuthProvider>
   );
 }
@@ -115,8 +79,7 @@ const steps = [
   },
   {
     selector: ".Claim-airspacebtn-step",
-    content:
-      " Click on Claim Airspace button to set your airspace.",
+    content: " Click on Claim Airspace button to set your airspace.",
   },
   {
     selector: ".claim-modal-step",
@@ -137,13 +100,11 @@ const mobileSteps = [
   },
   {
     selector: ".enter-address-step",
-    content:
-     "Enter your address and outline your property."
+    content: "Enter your address and outline your property.",
   },
   {
     selector: ".Claim-airspacebtn-step",
-    content:
-      " Click on Claim Airspace button to set your airspace.",
+    content: " Click on Claim Airspace button to set your airspace.",
   },
   {
     selector: ".claim-modal-step",
@@ -156,3 +117,73 @@ const mobileSteps = [
       "Click the ‘Claim Airspace’ button to confirm your airspace address.",
   },
 ];
+export const handleNextSteps = ({
+  currentStep,
+  stepsLength,
+  setIsOpen,
+  setCurrentStep,
+  steps,
+}) => {
+  const last = currentStep === stepsLength - 1;
+  return (
+    <button
+      onClick={() => {
+        if (last) {
+          setIsOpen(false);
+        } else {
+          setCurrentStep((s) => (s === steps?.length - 1 ? 0 : s + 1));
+        }
+      }}
+    >
+      {last ? "Close!" : "Next"}
+    </button>
+  );
+};
+export const handlePrevStep = ({ currentStep, setCurrentStep, steps }) => {
+  const first = currentStep === 0;
+  return (
+    <button
+      onClick={() => {
+        if (first) {
+          setCurrentStep((s) => steps.length - 1);
+        } else {
+          setCurrentStep((s) => s - 1);
+        }
+      }}
+    >
+      Back
+    </button>
+  );
+};
+export const MobileTourPeovider = ({ children }) => {
+  return (
+    <TourProvider
+      steps={mobileSteps}
+      prevButton={handlePrevStep}
+      nextButton={handleNextSteps}
+    >
+      {children}
+    </TourProvider>
+  );
+};
+export const DeskstopTourPeovider = ({ children }) => {
+  return (
+    <TourProvider
+      steps={steps}
+      prevButton={handlePrevStep}
+      nextButton={handleNextSteps}
+    >
+      {children}
+    </TourProvider>
+  );
+};
+
+const OnboardingTour = ({ children }) => {
+  const { isMobile } = useMobile();
+
+  return isMobile ? (
+    <MobileTourPeovider>{children}</MobileTourPeovider>
+  ) : (
+    <DeskstopTourPeovider>{children}</DeskstopTourPeovider>
+  );
+};
