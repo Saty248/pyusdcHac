@@ -156,6 +156,7 @@ export const MobileTourPeovider = ({ children }) => {
   return (
     <TourProvider
       steps={mobileSteps}
+      disableInteraction={true}
       prevButton={handlePrevStep}
       nextButton={handleNextSteps}
     >
@@ -167,6 +168,7 @@ export const DeskstopTourPeovider = ({ children }) => {
   return (
     <TourProvider
       steps={steps}
+      disableInteraction={true}
       prevButton={handlePrevStep}
       nextButton={handleNextSteps}
     >
