@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Head from "next/head";
 import { useRouter } from "next/navigation";
+import { BalanceLoader } from "@/Components/Wrapped";
 const SuccessModal = ({ setShowSuccess,finalAns,rentData,setShowClaimModal}) => {
 const router=useRouter()
        return (
@@ -49,23 +50,23 @@ const router=useRouter()
 
 
                    <div className="w-[80%] h-[108px] mt-[2rem] ">
-               <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+               <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status ==='Rent SuccessFull' && 
              <div>
                  'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
              </div>
                  
                  }
-                  </p>
+                  </div>
 
-                  <p className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+                  <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status !=='Rent SuccessFull' && 
              <div>
                  An error occured, please try again.
              </div>
                  
                  }
-                  </p>
+                  </div>
             </div> 
 
            
@@ -176,6 +177,7 @@ console.log("solanaWallet=",balance)// ui info wrong
     }, [rentData])
     
     const handleRentAirspace=async()=>{
+
 
         setIsLoading(true)
         
@@ -412,7 +414,9 @@ if(signedTx){
         }
       );
       ans2=await ans2.json();
-console.log("execute result",ans2)
+
+
+
 if(ans2) {
     if(ans2.data.status=='success'){
         setfinalAns({status:'Rent SuccessFull',
@@ -428,6 +432,11 @@ if(ans2) {
 
     setIsLoading(false)
 }
+
+
+
+
+
 }
  
     
@@ -513,9 +522,9 @@ if(ans2) {
 }
 
 
-const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData, user1}) => {
+const Explorer = ({ loadingReg,loading,address, setAddress, addresses, showOptions, handleSelectAddress,regAdressShow,registeredAddress,map,marker,setMarker,showClaimModal ,setShowClaimModal ,rentData, setRentData, user1}) => {
     const [selectedAddress,setSelectedAddress]=useState()
-    
+    console.log({loading})
     return (
         <div className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
             <div className="flex gap-[5px] items-center">
@@ -530,7 +539,7 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
                 </div>
                 {showOptions && (
           <div className=' overflow-y-scroll max-h-60 w-full flex-col z-20 bg-white'>
-            {addresses.map((item) => {
+            { loading ? <div className="pt-8 flex justify-center items-center"><BalanceLoader/></div> : addresses.map((item) => {
               return (
                 <div
                   key={item.id}
@@ -547,6 +556,11 @@ const Explorer = ({ address, setAddress, addresses, showOptions, handleSelectAdd
             })}
           </div>
         )}
+
+        {loadingReg && <div className="mt-4">
+                    <BalanceLoader/>
+                    </div>}
+
                 {regAdressShow && (
                     <div  style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }} className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll">
                         
@@ -604,7 +618,7 @@ const onClickRent=() =>{
     )
 }
 
-const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSelectAddress }) => {
+const ExplorerMobile = ({ loadingReg,loading,address, setAddress, addresses, showOptions, handleSelectAddress }) => {
 
     return (
         <div className="flex bg-white items-center gap-[15px] pb-[19px] px-[21px] z-[40]">
@@ -615,7 +629,7 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
                 </div>
                 {showOptions && (
                     <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-                        {addresses.map((item) => {
+                        {loading ? <div className="pt-8 flex justify-center items-center"><BalanceLoader/></div> : addresses.map((item) => {
                             return (
                                 <div
                                     key={item.id}
@@ -648,6 +662,8 @@ const ExplorerMobile = ({ address, setAddress, addresses, showOptions, handleSel
 
 const Rent = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingAddresses, setLoadingAddresses] = useState(false);
+    const [loadingRegAddresses, setLoadingRegAddresses] = useState(false);
     const [map, setMap] = useState(null);
     const { isMobile } = useMobile();
     const [registeredAddress, setRegisteredAddress] = useState([]);
@@ -662,7 +678,7 @@ const Rent = () => {
     const [marker, setMarker] = useState();
     const [rentData, setRentData] = useState()
     const [showClaimModal, setShowClaimModal] = useState(false);
-    console.log("front")
+
     const defaultData = {
         address: flyToAddress, name: '', rent: false, sell: false, hasPlanningPermission: null, hasChargingStation: false, hasLandingDeck: false, hasStorageHub: false, sellingPrice: '', timezone: 'UTC+0', transitFee: "1-99", isFixedTransitFee: false, noFlyZone: false, weekDayRanges: [
             { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 0 },
@@ -742,7 +758,6 @@ const Rent = () => {
 
     useEffect(() => {
         if (map) return;
-
         const createMap = () => {
             mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
@@ -778,6 +793,8 @@ const Rent = () => {
             let timeoutId;
 
             newMap.on('move', async (e) => {
+                setLoadingRegAddresses(true)
+
                 clearTimeout(timeoutId);
                 timeoutId = setTimeout(async () => {
                     let el = document.createElement('div');
@@ -809,7 +826,6 @@ const Rent = () => {
                         const web3authProvider = await web3auth.connect();
 
                         const solanaWallet = new SolanaWallet(web3authProvider);
-
                         const domain = window.location.host;
                         const origin = window.location.origin;
 
@@ -837,6 +853,7 @@ const Rent = () => {
                         signatureObj.sign_issue_at = message.payload.issuedAt;
                         signatureObj.sign_address = user1.blockchainAddress;
                     }
+                    
 
                     let res = await fetch(`/api/proxy?${Date.now()}`, {
                         method: 'POST',
@@ -859,7 +876,7 @@ const Rent = () => {
                         })
                     });
                     res = await res.json();
-                    console.log("returned from the api property", res);
+
                     let ans, features1 = [];
                     if (res) {
                         ans = res.filter((property1) => {
@@ -870,6 +887,7 @@ const Rent = () => {
                     }
 
                     setRegisteredAddress(ans);
+                    setLoadingRegAddresses(false)
 
                     if (ans.length > 0) {
                         for (let i = 0; i < ans.length; i++) {
@@ -899,6 +917,8 @@ const Rent = () => {
         } else {
             setRegAdressShow(false);
         }
+
+
     }, [registeredAddress])
 
     useEffect(() => {
@@ -908,6 +928,7 @@ const Rent = () => {
         let timeoutId;
 
         const getAddresses = async () => {
+            setLoadingAddresses(true)
             setCoordinates({ longitude: '', latitude: '' });
 
             timeoutId = setTimeout(async () => {
@@ -916,16 +937,28 @@ const Rent = () => {
 
                     const response = await fetch(mapboxGeocodingUrl);
                     const data = await response.json();
-                    if (!response.ok) throw new Error("Error while getting addresses");
+                    if (!response.ok){
+                        setLoadingAddresses(false)
+                        throw new Error("Error while getting addresses");
+                    }
+                    
+                    
 
 
                     if (data.features && data.features.length > 0) {
                         setAddresses(data.features);
+                        setLoadingAddresses(false)
+
                     } else {
                         setAddresses([]);
+                        setLoadingAddresses(false)
                     }
+                    
+
                 } catch (error) {
                     console.log(error);
+                    setLoadingAddresses(false)
+
                 }
             }, 500);
         }
@@ -1015,7 +1048,7 @@ const Rent = () => {
                     
 
                     <PageHeader pageTitle={isMobile ? 'Rent' : 'Marketplace: Rent'} />
-                    {isMobile && <ExplorerMobile address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
+                    {isMobile && <ExplorerMobile loadingReg={loadingRegAddresses} loading={loadingAddresses} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} />}
                     <section className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}>
                         <div
                             className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
@@ -1026,7 +1059,7 @@ const Rent = () => {
                         />
 
                         {!isMobile && <div className="flex justify-start items-start">
-                            <Explorer address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1} />
+                            <Explorer loadingReg={loadingRegAddresses} loading={loadingAddresses} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1} />
                             {/* {showClaimModal &&  */}
 
                             {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1} />}
