@@ -66,7 +66,7 @@ const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
     <Fragment>
       <label
         htmlFor="timeZone"
-        className="text-[14px] font-normal text-[#838187]"
+        className="text-[14px] font-normal text-[#838187] leading-[2rem] md:leading-none "
       >
         Time Zone<span className="text-[#E04F64]">*</span>
       </label>
@@ -101,7 +101,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }) => {
     <Fragment>
       <label
         htmlFor="variableFeeRentalRange"
-        className="text-[14px] font-normal text-[#838187]"
+        className="text-[14px] font-normal text-[#838187] leading-[2rem] "
       >
         Variable Fee Rental Range (per transit)
         <span className="text-[#E04F64]">*</span>
@@ -111,7 +111,7 @@ const VariableFeeRentalRangesSelect = ({ fee, setFee }) => {
         onChange={handleVariableFeeRentalRangeChange}
         name="variableFeeRentalRange"
         id="variableFeeRentalRange"
-        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
+        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none "
         style={{ border: "1px solid #87878D" }}
       >
         <option value="1-99">$1-$99</option>
@@ -144,9 +144,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
       isAvailable: true,
       fromTime: 9,
       toTime: 21,
-      weekDayId:day.weekDayId
-
-      
+      weekDayId: day.weekDayId,
     }));
     setWeekDayRanges(defaultWeekDayRanges);
   }, []);
@@ -219,40 +217,44 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
   });
 };
 
-const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading}) => {
+const ClaimModal = ({
+  onCloseModal,
+  data,
+  setData,
+  onClaim,
+  claimButtonLoading,
+}) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  useEffect(()=>{
-    let airSpaceName=data.address.split(',')
+  useEffect(() => {
+    let airSpaceName = data.address.split(",");
     setData((prev) => {
       return {
         ...prev,
-        name:airSpaceName[0],
-      };})
-  },[])
-  const handleSellPrice=(e)=>{
-  let inputVal=e.target.value;
-  console.log(inputVal)
-  let parsedVal=parseFloat(inputVal)
-   if(parsedVal>=0 && parsedVal!=NaN){
-    console.log("parseVal ",parseFloat(inputVal))
-    setData((prev) => {
-      return {
-        ...prev,
-        sellingPrice: inputVal,
-      };})
-
-   }else{
-    setData((prev) => {
-      return {
-        ...prev,
-        sellingPrice:'0'
-       
-      };})
-   }
-      
-    
-
-  }
+        name: airSpaceName[0],
+      };
+    });
+  }, []);
+  const handleSellPrice = (e) => {
+    let inputVal = e.target.value;
+    console.log(inputVal);
+    let parsedVal = parseFloat(inputVal);
+    if (parsedVal >= 0 && parsedVal != NaN) {
+      console.log("parseVal ", parseFloat(inputVal));
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: inputVal,
+        };
+      });
+    } else {
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: "0",
+        };
+      });
+    }
+  };
   return (
     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white  md:rounded-[30px]  w-full max-h-screen h-screen md:max-h-[600px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] short-scrollbar">
       <div
@@ -266,6 +268,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
           <h2 className="text-[#222222] text-center font-medium text-xl">
             Claim Airspace
           </h2>
+
           <div
             onClick={onCloseModal}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -286,7 +289,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
             {data.address}
           </p>
         </div>
-        <div className="flex flex-col gap-[5px]">
+        <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
           <label htmlFor="name">
             Name of airspace<span className="text-[#E04F64]">*</span>
           </label>
@@ -295,7 +298,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
             onChange={(e) =>
               setData((prev) => ({ ...prev, name: e.target.value }))
             }
-            className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222]"
+            className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
             style={{ border: "1px solid #87878D" }}
             type="text"
             name="name"
@@ -303,8 +306,8 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
             autoComplete="off"
           />
         </div>
-        <div className="flex flex-col gap-[10px]">
-          <p className="text-[14px] font-normal text-[#838187]">
+        <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
+          <p className="text-[14px] font-normal text-[#838187] ">
             Are you looking to Rent or Sell your airspace?
           </p>
           <div className="flex items-center gap-[7px]">
@@ -343,18 +346,18 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
         </div>
         {data.rent && (
           <Fragment>
-            <h2 className="text-[#222222] font-normal text-[20px]">
+            <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem] ">
               Rental Details
             </h2>
             <Link
               target="_blank"
               href={"https://skytrade.tawk.help"}
-              className="text-[#0653EA] text-[14px] font-normal cursor-pointer"
+              className="text-[#0653EA] text-[14px] font-normal cursor-pointer leading-[1.5rem]"
             >
               Learn more about rentals in our FAQ.
             </Link>
-            <div className="flex items-center justify-between gap-[15px]">
-              <div className="flex-1">
+            <div className="md:flex items-center justify-between gap-[15px] mt-4">
+              <div className="flex-1 ">
                 <VariableFeeRentalRangesSelect
                   fee={data.transitFee}
                   setFee={(fee) =>
@@ -362,7 +365,7 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                   }
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 mt-4 md:mt-0 ">
                 <TimeZoneSelect
                   timeZone={data.timezone}
                   setTimeZone={(timezone) =>
@@ -371,12 +374,13 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-[10px]">
-              <p className="text-[14px] font-normal text-[#838187]">
+            <div className="flex flex-col gap-[10px] ">
+              <p className="text-[14px] font-normal text-[#838187] mt-3">
                 Select extra features your facility provides
                 <span className="text-[#E04F64]">*</span>
               </p>
-              <div className="flex items-center gap-[10px]">
+              <div className=" flex-col  flex md:flex-row  md:items-center gap-[10px] leading-[2rem]">
+                <div className="text">
                 <input
                   className="w-[18px] h-[18px] cursor-pointer"
                   type="checkbox"
@@ -390,9 +394,14 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                     }))
                   }
                 />
-                <label htmlFor="hasLandingDeck" className="text-[#87878D] text-[14px] font-normal">
+                <label
+                  htmlFor="hasLandingDeck"
+                  className="text-[#87878D] text-[14px] font-normal"
+                >
                   Landing Deck
                 </label>
+                </div>
+                <div>
                 <input
                   className="w-[18px] h-[18px] cursor-pointer"
                   type="checkbox"
@@ -406,9 +415,14 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                     }))
                   }
                 />
-                <label  htmlFor="hasChargingStation" className="text-[#87878D] text-[14px] font-normal">
+                <label
+                  htmlFor="hasChargingStation"
+                  className="text-[#87878D] text-[14px] font-normal"
+                >
                   Charging Station
                 </label>
+                </div>
+                <div>
                 <input
                   className="w-[18px] h-[18px] cursor-pointer"
                   type="checkbox"
@@ -422,9 +436,13 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
                     }))
                   }
                 />
-                <label htmlFor="hasStorageHub" className="text-[#87878D] text-[14px] font-normal">
+                <label
+                  htmlFor="hasStorageHub"
+                  className="text-[#87878D] text-[14px] font-normal"
+                >
                   Storage Hub
                 </label>
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-[15px]">
@@ -584,15 +602,30 @@ const ClaimModal = ({ onCloseModal, data, setData, onClaim ,claimButtonLoading})
             onClick={onClaim}
             className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
           >
-            {
-              claimButtonLoading ? 
-              <svg className="animate-spin -ml-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            {claimButtonLoading ? (
+              <svg
+                className="animate-spin -ml-1 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
-              :
-              'Claim Airspace'
-            }
+            ) : (
+              "Claim Airspace"
+            )}
           </button>
         </div>
       </div>
@@ -681,7 +714,6 @@ const Explorer = ({
           Claim Airspace
         </div>
       )}
-      
     </div>
   );
 };
@@ -748,51 +780,79 @@ const ExplorerMobile = ({
 const Slider = () => {
   const [isFullyVisible, setIsFullyVisible] = useState(false);
 
-    return (
-        <div onClick={() => setIsFullyVisible(prev => !prev)} className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? 'bottom-0' : '-bottom-[600px]'} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}>
-            <div className="flex items-center gap-[4px]">
-                <div className="flex items-center justify-center w-[24px] h-[24px]"><HelpQuestionIcon /></div>
-                <p className="font-medium text-xl text-[#222222] text-center">How to Claim My Airspsace?</p>
-            </div>
-            <div className="flex flex-col px-[6px]">
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={1}>
-                    <p className="">1.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Discover Your Address</p>
-                        <p>Enter your address using the map for accuracy.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={2}>
-                    <p className="">2.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Move the Pin If Needed</p>
-                        <p>Easily adjust the location pin if Google Maps is off.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={4}>
-                    <p className="">3.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Claim Airspace</p>
-                        <p>Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={5}>
-                    <p className="">4.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Checking the details</p>
-                        <p>We confirm official records.</p>
-                    </div>
-                </div>
-                <div className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]" key={6}>
-                    <p className="">5.</p>
-                    <div className="flex flex-col">
-                        <p className="font-bold">Passive income is on the way</p>
-                        <p>We will update you as your account receives funds.</p>
-                    </div>
-                </div>
-            </div>
-            <div className="font-normal text-[15px] text-[#222222] text-center">Let's get started on creating the future and receiving passive income from your skies. 🚀✨</div>
+  return (
+    <div
+      onClick={() => setIsFullyVisible((prev) => !prev)}
+      className={`cursor-pointer rounded-t-[30px] absolute ${isFullyVisible ? "bottom-0" : "-bottom-[600px]"} right-6 flex flex-col items-center gap-[34px] py-[43px] px-[23px] bg-white max-w-[362px] duration-5000 z-20`}
+    >
+      <div className="flex items-center gap-[4px]">
+        <div className="flex items-center justify-center w-[24px] h-[24px]">
+          <HelpQuestionIcon />
         </div>
+        <p className="font-medium text-xl text-[#222222] text-center">
+          How to Claim My Airspsace?
+        </p>
+      </div>
+      <div className="flex flex-col px-[6px]">
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={1}
+        >
+          <p className="">1.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Discover Your Address</p>
+            <p>Enter your address using the map for accuracy.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={2}
+        >
+          <p className="">2.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Move the Pin If Needed</p>
+            <p>Easily adjust the location pin if Google Maps is off.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={4}
+        >
+          <p className="">3.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Claim Airspace</p>
+            <p>
+              Click the 'Claim Airspace' button to confirm your airspace
+              address. Your Airspace is saved. Modify your details anytime.
+            </p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={5}
+        >
+          <p className="">4.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Checking the details</p>
+            <p>We confirm official records.</p>
+          </div>
+        </div>
+        <div
+          className="flex items-start text-[#222222] font-normal text-[15px] gap-[4px]"
+          key={6}
+        >
+          <p className="">5.</p>
+          <div className="flex flex-col">
+            <p className="font-bold">Passive income is on the way</p>
+            <p>We will update you as your account receives funds.</p>
+          </div>
+        </div>
+      </div>
+      <div className="font-normal text-[15px] text-[#222222] text-center">
+        Let's get started on creating the future and receiving passive income
+        from your skies. 🚀✨
+      </div>
+    </div>
   );
 };
 
@@ -824,7 +884,7 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
-  console.log("yoo how too")
+  console.log("yoo how too");
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -917,8 +977,8 @@ const HowToModal = ({ goBack }) => {
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // 
-  const [claimButtonLoading,setClaimButtonLoading] = useState(false);
+  //
+  const [claimButtonLoading, setClaimButtonLoading] = useState(false);
   const [map, setMap] = useState(null);
   const { isMobile } = useMobile();
   const [showMobileMap, setShowMobileMap] = useState(false);
@@ -1173,21 +1233,20 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       });
-      console.log("add property results ,",addProperty)
+      console.log("add property results ,", addProperty);
       if (addProperty === undefined) {
         setShowFailurePopUp(true);
       } else {
         setShowSuccessPopUp(true);
       }
       setShowClaimModal(false);
-      setIsLoading(false)
+      setIsLoading(false);
       setData({ ...defaultData });
     } catch (error) {
       console.log(error);
-    } finally{
-      setClaimButtonLoading(false)
+    } finally {
+      setClaimButtonLoading(false);
     }
-
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1235,7 +1294,10 @@ const Airspaces = () => {
               addresses={addresses}
               showOptions={showOptions}
               handleSelectAddress={handleSelectAddress}
-              onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
+              onClaimAirspace={() => {
+                setShowClaimModal(true);
+                setIsLoading(true);
+              }}
             />
           )}
           {showHowToModal && (
@@ -1254,7 +1316,10 @@ const Airspaces = () => {
             />
             {isMobile && showMobileMap && flyToAddress && (
               <div
-                onClick={() =>{ setShowClaimModal(true);setIsLoading(true)}}
+                onClick={() => {
+                  setShowClaimModal(true);
+                  setIsLoading(true);
+                }}
                 className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
@@ -1264,7 +1329,10 @@ const Airspaces = () => {
               <Fragment>
                 {showClaimModal && (
                   <ClaimModal
-                    onCloseModal={() => {setShowClaimModal(false);setIsLoading(false)}}
+                    onCloseModal={() => {
+                      setShowClaimModal(false);
+                      setIsLoading(false);
+                    }}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
@@ -1282,7 +1350,10 @@ const Airspaces = () => {
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
-                  onClaimAirspace={() => {setShowClaimModal(true);setIsLoading(true)}}
+                  onClaimAirspace={() => {
+                    setShowClaimModal(true);
+                    setIsLoading(true);
+                  }}
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
@@ -1290,7 +1361,10 @@ const Airspaces = () => {
 
                 {showClaimModal && (
                   <ClaimModal
-                    onCloseModal={() =>{ setShowClaimModal(false);setIsLoading(false)}}
+                    onCloseModal={() => {
+                      setShowClaimModal(false);
+                      setIsLoading(false);
+                    }}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
