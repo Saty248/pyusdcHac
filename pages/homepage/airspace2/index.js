@@ -171,7 +171,10 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
     const isDayAvailable = weekDayRanges[index].isAvailable;
 
     return (
-      <div className="flex items-center justify-between" key={index}>
+      <div
+        className="flex-none md:flex items-center justify-between"
+        key={index}
+      >
         <div className="flex items-center gap-[15px] pr-[32px]">
           <Toggle
             checked={isDayAvailable}
@@ -179,7 +182,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
           />
           <p>{day}</p>
         </div>
-        <div className="flex items-center gap-[66px]">
+        <div className="flex items-center gap-[66px] mt-2">
           <select
             disabled={!isDayAvailable}
             value={weekDayRanges[index].fromTime}
@@ -374,78 +377,81 @@ const ClaimModal = ({
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-[10px] ">
-              <p className="text-[14px] font-normal text-[#838187] mt-3">
+            <div
+              className="
+            flex flex-col gap-[10px] "
+            >
+              <p className="text-[14px] font-normal text-[#838187] mt-4">
                 Select extra features your facility provides
                 <span className="text-[#E04F64]">*</span>
               </p>
               <div className=" flex-col  flex md:flex-row  md:items-center gap-[10px] leading-[2rem]">
-                <div className="text">
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasLandingDeck"
-                  name="hasLandingDeck"
-                  checked={data.hasLandingDeck}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasLandingDeck: !prev.hasLandingDeck,
-                    }))
-                  }
-                />
-                <label
-                  htmlFor="hasLandingDeck"
-                  className="text-[#87878D] text-[14px] font-normal"
-                >
-                  Landing Deck
-                </label>
+                <div className="flex items-center gap-[5px]">
+                  <input
+                    className="w-[18px] h-[18px] cursor-pointer"
+                    type="checkbox"
+                    id="hasLandingDeck"
+                    name="hasLandingDeck"
+                    checked={data.hasLandingDeck}
+                    onChange={() =>
+                      setData((prev) => ({
+                        ...prev,
+                        hasLandingDeck: !prev.hasLandingDeck,
+                      }))
+                    }
+                  />
+                  <label
+                    htmlFor="hasLandingDeck"
+                    className="text-[#87878D] text-[14px] font-normal"
+                  >
+                    Landing Deck
+                  </label>
                 </div>
-                <div>
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasChargingStation"
-                  name="hasChargingStation"
-                  checked={data.hasChargingStation}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasChargingStation: !prev.hasChargingStation,
-                    }))
-                  }
-                />
-                <label
-                  htmlFor="hasChargingStation"
-                  className="text-[#87878D] text-[14px] font-normal"
-                >
-                  Charging Station
-                </label>
+                <div className="flex items-center gap-[5px] mt-1">
+                  <input
+                    className="w-[18px] h-[18px] cursor-pointer"
+                    type="checkbox"
+                    id="hasChargingStation"
+                    name="hasChargingStation"
+                    checked={data.hasChargingStation}
+                    onChange={() =>
+                      setData((prev) => ({
+                        ...prev,
+                        hasChargingStation: !prev.hasChargingStation,
+                      }))
+                    }
+                  />
+                  <label
+                    htmlFor="hasChargingStation"
+                    className="text-[#87878D] text-[14px] font-normal"
+                  >
+                    Charging Station
+                  </label>
                 </div>
-                <div>
-                <input
-                  className="w-[18px] h-[18px] cursor-pointer"
-                  type="checkbox"
-                  id="hasStorageHub"
-                  name="hasStorageHub"
-                  checked={data.hasStorageHub}
-                  onChange={() =>
-                    setData((prev) => ({
-                      ...prev,
-                      hasStorageHub: !prev.hasStorageHub,
-                    }))
-                  }
-                />
-                <label
-                  htmlFor="hasStorageHub"
-                  className="text-[#87878D] text-[14px] font-normal"
-                >
-                  Storage Hub
-                </label>
+                <div className="flex items-center gap-[5px] mt-1">
+                  <input
+                    className="w-[18px] h-[18px] cursor-pointer"
+                    type="checkbox"
+                    id="hasStorageHub"
+                    name="hasStorageHub"
+                    checked={data.hasStorageHub}
+                    onChange={() =>
+                      setData((prev) => ({
+                        ...prev,
+                        hasStorageHub: !prev.hasStorageHub,
+                      }))
+                    }
+                  />
+                  <label
+                    htmlFor="hasStorageHub"
+                    className="text-[#87878D] text-[14px] font-normal"
+                  >
+                    Storage Hub
+                  </label>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col gap-[15px]">
+            <div className="flex flex-col gap-[15px] mt-2">
               <p>
                 Availability<span className="text-[#E04F64]">*</span>
               </p>
@@ -510,15 +516,17 @@ const ClaimModal = ({
           </Fragment>
         )}
 
-        <p className="text-[14px] font-normal text-[#838187]">
-          Do you currently have zoning or planning permission to develop above
-          your land or property?{" "}
-          <span className="italic text-[10px]">
-            (Your answer won't affect your claim)
-            <span className="text-[#E04F64]">*</span>
-          </span>{" "}
-        </p>
-        <div className="flex items-center gap-[7px] text-[#87878D] text-[14px]">
+        <div className="mt-4">
+          <p className="text-[16px]  md:text-[14px] font-normal text-[#838187]">
+            Do you currently have zoning or planning permission to develop above
+            your land or property?{" "}
+            <span className="italic  text-[12px] md:text-[10px]">
+              (Your answer won't affect your claim)
+              <span className="text-[#E04F64]">*</span>
+            </span>{" "}
+          </p>
+        </div>
+        <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] mt-4">
           <input
             className="relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]"
             checked={data.hasPlanningPermission === "true"}
@@ -590,7 +598,9 @@ const ClaimModal = ({
           />
           <label htmlFor="zone-dont-know">I don't Know</label>
         </div>
-        <div className="flex items-center justify-center gap-[20px] text-[14px]">
+      
+
+        <div className="  flex items-center md:justify-center gap-[20px] text-[14px]  my-8">
           <div
             onClick={onCloseModal}
             className="rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer"
@@ -600,7 +610,7 @@ const ClaimModal = ({
           </div>
           <button
             onClick={onClaim}
-            className="rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer"
+            className=" w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
           >
             {claimButtonLoading ? (
               <svg
