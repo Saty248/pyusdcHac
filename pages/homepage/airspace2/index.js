@@ -1196,10 +1196,10 @@ const Airspaces = () => {
   }, [showFailurePopUp]);
 
   useEffect(() => {
-    // if (localStorage.getItem("new")) {
+    if (localStorage.getItem("new")) {
     setIsOpen(true);
-    // localStorage.removeItem("new");
-    // }
+    localStorage.removeItem("new");
+    }
   }, []);
 
   const handleSelectAddress = (placeName) => {
@@ -1304,6 +1304,13 @@ const Airspaces = () => {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setShowMobileMap(false);
+      setShowClaimModal(false);
+    }
+  }, [isOpen]);
+
   return (
     <Fragment>
       <Head>
@@ -1316,7 +1323,8 @@ const Airspaces = () => {
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {((showMobileMap && isMobile) || currentStep === 1) && (
+          {((showMobileMap && isMobile) ||
+            (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               flyToAddress={flyToAddress}
@@ -1346,7 +1354,7 @@ const Airspaces = () => {
               }}
             />
             {((isMobile && showMobileMap && flyToAddress) ||
-              (isOpen && currentStep === 2)) && (
+              (isOpen && currentStep === 2 && isMobile)) && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
@@ -1358,19 +1366,19 @@ const Airspaces = () => {
               </div>
             )}
             {isMobile && (
-              <Fragment>
-                {(showClaimModal || (isOpen && currentStep >= 3)) && (
-                  <ClaimModal
-                    onCloseModal={() => {
-                      setShowClaimModal(false);
-                      setIsLoading(false);
-                    }}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
-                  />
-                )}
+              <Fragment>     
+                  {(showClaimModal || (isOpen && currentStep >= 3)) && (
+                    <ClaimModal
+                      onCloseModal={() => {
+                        setShowClaimModal(false);
+                        setIsLoading(false);
+                      }}
+                      data={data}
+                      setData={setData}
+                      onClaim={onClaim}
+                      claimButtonLoading={claimButtonLoading}
+                    />
+                  )}
               </Fragment>
             )}
             {!isMobile && (

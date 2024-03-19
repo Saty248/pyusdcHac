@@ -40,9 +40,6 @@ export default function App({ Component, pageProps }) {
     }
   }, [isMobile, global.Tawk_API, doItAgain]);
 
-  const mediaQuery = useMediaQuery("(max-width: 1024px)");
-  console.log(mediaQuery, "ttttttt");
-
   return (
     <AuthProvider>
       <Provider store={store}>
