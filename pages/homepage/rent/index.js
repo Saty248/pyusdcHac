@@ -177,10 +177,67 @@ console.log("solanaWallet=",balance)// ui info wrong
     
       
     }, [rentData])
+
+    const getTokenBalance = () => {
+        const data = {
+            jsonrpc: "2.0",
+            id: 1,
+            method: "getTokenAccountsByOwner",
+            params: [
+                user1.blockchainAddress,
+              {
+                mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
+              },
+              {
+                encoding: "jsonParsed",
+              },
+            ],
+          };
+
+          fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((errorData) => {
+                  throw new Error(errorData.error);
+                });
+              }
+
+              return response.json();
+            })
+            .then((result) => {
+
+              if (result.result.value.length < 1) {
+                setTokenBalance("0");
+
+                return;
+              }
+
+              setTokenBalance(
+                result.result.value[0].account.data.parsed.info.tokenAmount
+                  .uiAmountString
+              );
+
+            })
+    }
+
+    useEffect(()=>{
+        getTokenBalance()
+    }, [])
+
+
     
     const handleRentAirspace=async()=>{
 
-
+if (parseInt(tokenBalance) === 0) {
+            return toast.error('Please deposit some funds into your wallet to continue')
+        }
+        
         setIsLoading(true)
         
  
@@ -618,7 +675,11 @@ const onClickRent=() =>{
                                     }}
                                 >
 
-                            <div className="max-w-[60%] "><h3 className="text-black">{item.address}</h3></div><div className="flex justify-end items-center min-w-[30%] gap-[4px]"><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>${item.price}</h1></div><button onClick={onClickRent}className={item.id != selectedAddress ? "bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer  w-[54px] h-[31px]" : "bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer w-[54px] h-[31px]"}> RENT  </button>
+                            <div className="max-w-[60%] ">
+                                <h3 className="text-black">{item.address}</h3>
+                                </div>
+                                <div className="flex justify-end items-center min-w-[30%] gap-[4px]">
+                                    <h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2 flex flex-col item-center justify-center":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2 flex flex-col item-center justify-center"}>${item.price}</h1></div><button onClick={onClickRent}className={item.id != selectedAddress ? "bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer  w-[54px] h-[31px]" : "bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer w-[54px] h-[31px]"}> RENT  </button>
                                 </div>
                             )
                         })}
