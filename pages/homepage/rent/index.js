@@ -22,6 +22,8 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { BalanceLoader } from "@/Components/Wrapped";
+import { toast } from "react-toastify";
+
 const SuccessModal = ({ setShowSuccess,finalAns,rentData,setShowClaimModal}) => {
 const router=useRouter()
        return (
@@ -53,7 +55,7 @@ const router=useRouter()
                <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
              {finalAns?.status ==='Rent SuccessFull' && 
              <div>
-                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">$1</span>  
+                 'You rented'  <span className=" text-[14px] font-bold">{`${rentData.address}`}</span> {` for `}  <span className=" text-[14px] font-bold">${rentData.price}</span>  
              </div>
                  
                  }
@@ -175,10 +177,67 @@ console.log("solanaWallet=",balance)// ui info wrong
     
       
     }, [rentData])
+
+    const getTokenBalance = () => {
+        const data = {
+            jsonrpc: "2.0",
+            id: 1,
+            method: "getTokenAccountsByOwner",
+            params: [
+                user1.blockchainAddress,
+              {
+                mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
+              },
+              {
+                encoding: "jsonParsed",
+              },
+            ],
+          };
+
+          fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((errorData) => {
+                  throw new Error(errorData.error);
+                });
+              }
+
+              return response.json();
+            })
+            .then((result) => {
+
+              if (result.result.value.length < 1) {
+                setTokenBalance("0");
+
+                return;
+              }
+
+              setTokenBalance(
+                result.result.value[0].account.data.parsed.info.tokenAmount
+                  .uiAmountString
+              );
+
+            })
+    }
+
+    useEffect(()=>{
+        getTokenBalance()
+    }, [])
+
+
     
     const handleRentAirspace=async()=>{
 
-
+if (parseInt(tokenBalance) === 0) {
+            return toast.error('Please deposit some funds into your wallet to continue')
+        }
+        
         setIsLoading(true)
         
  
@@ -313,14 +372,19 @@ try {
       })
       res=await res.json()
       console.log("res body",res)
+      if(res && res.errorMessage) {
+        toast.error(res.errorMessage)
+        setIsLoading(false)
+        return;
+      }
       if(res.statusCode==400){
         setShowSuccess(true)
-        setfinalAns({status:'Rent failed',
-        message:res.data.message
-        
-})
-setIsLoading(false)
-return
+        setfinalAns({
+            status:'Rent failed',
+            message:res.errorMessage
+        })
+        setIsLoading(false)
+        return
       }
       const transaction = Transaction.from(Buffer.from(res, 'base64'));
       //let partialsignedTx=transaction.partialSign(solanaWallet);
@@ -415,7 +479,11 @@ if(signedTx){
       );
       ans2=await ans2.json();
 
-
+      if(ans2 && ans2.errorMessage) {
+        toast.error(ans2.errorMessage)
+        setIsLoading(false)
+        return;
+      }
 
 if(ans2) {
     if(ans2.data.status=='success'){
@@ -607,7 +675,7 @@ const onClickRent=() =>{
                                     }}
                                 >
 
-                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>$1</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2"}>RENT</span>
+                                    <h3 className="text-black pt-[0.6rem]">{item.address}</h3><h1 className={item.id!=selectedAddress?" text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2":" text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"}>${item.price}</h1><span onClick={onClickRent} className={item.id!=selectedAddress?"bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center":"bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"}>RENT</span>
                                 </div>
                             )
                         })}
