@@ -95,12 +95,13 @@ const router=useRouter()
 
 
 
-const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
+const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading }) => {
     
     const defaultValueDate =dayjs().add(1,'h').set('minute', 30).startOf('minute');
     const maxDate=dayjs().add(29,'day')
     const [owner,setOwner]=useState({});
     const [landAssetIds,setLandAssetIds]=useState([])
+    const [tokenBalance,setTokenBalance]=useState("0")
     const [date,setDate]=useState(defaultValueDate);
   
     const [showSuccess,setShowSuccess]=useState(false)
@@ -108,7 +109,6 @@ const ClaimModal = ({ setShowClaimModal, rentData,setIsLoading,user1 }) => {
     const [finalAns,setfinalAns]=useState();
     const { user: selectorUser } = useAuth();
 
-    console.log("yo selector user",rentData)
 
     useEffect(() => {
         const authUser = async () => {
@@ -184,7 +184,7 @@ console.log("solanaWallet=",balance)// ui info wrong
             id: 1,
             method: "getTokenAccountsByOwner",
             params: [
-                user1.blockchainAddress,
+                selectorUser.blockchainAddress,
               {
                 mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
               },
@@ -293,7 +293,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
             }
             console.log("reqbody",JSON.stringify(req1Body))
             let signatureObj={}
-            if(user1){
+            if(selectorUser){
                 const chainConfig = {
                     chainNamespace: 'solana',
                     chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -327,7 +327,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
                   const payload = new SIWPayload();
                   payload.domain = domain;
                   payload.uri = origin;
-                  payload.address = user1.blockchainAddress;
+                  payload.address = selectorUser.blockchainAddress;
                   payload.statement = 'Sign in to SkyTrade app.';
                   payload.version = '1';
                   payload.chainId = 1;
@@ -346,7 +346,7 @@ const solanaWallet = new SolanaWallet(web3authProvider);  // web3auth.provider
                   signatureObj.sign = signature;
                   signatureObj.sign_nonce = message.payload.nonce;
                   signatureObj.sign_issue_at = message.payload.issuedAt;
-                  signatureObj.sign_address = user1.blockchainAddress;
+                  signatureObj.sign_address = selectorUser.blockchainAddress;
   
   
 
@@ -371,7 +371,6 @@ try {
         body:JSON.stringify(req1Body)
       })
       res=await res.json()
-      console.log("res body",res)
       if(res && res.errorMessage) {
         toast.error(res.errorMessage)
         setIsLoading(false)
@@ -390,7 +389,6 @@ try {
       //let partialsignedTx=transaction.partialSign(solanaWallet);
       //console.log("is solana wallet partial=",partialsignedTx)
        const signedTx = await solanaWallet.signTransaction(transaction);
- console.log(signedTx); 
 let serializedTx=signedTx.serialize({requireAllSignatures:false})
 let txToString=serializedTx.toString('base64');
 if(signedTx){
@@ -402,7 +400,7 @@ if(signedTx){
     }
     console.log("final exexution",JSON.stringify(req2body))
      signatureObj={}
-    if(user1){
+    if(selectorUser){
         const chainConfig = {
             chainNamespace: 'solana',
             chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
@@ -436,7 +434,7 @@ if(signedTx){
           const payload = new SIWPayload();
           payload.domain = domain;
           payload.uri = origin;
-          payload.address = user1.blockchainAddress;
+          payload.address = selectorUser.blockchainAddress;
           payload.statement = 'Sign in to SkyTrade app.';
           payload.version = '1';
           payload.chainId = 1;
@@ -455,7 +453,7 @@ if(signedTx){
           signatureObj.sign = signature;
           signatureObj.sign_nonce = message.payload.nonce;
           signatureObj.sign_issue_at = message.payload.issuedAt;
-          signatureObj.sign_address = user1.blockchainAddress;
+          signatureObj.sign_address = selectorUser.blockchainAddress;
 
 
 
@@ -1130,7 +1128,7 @@ const Rent = () => {
                             <Explorer loadingReg={loadingRegAddresses} loading={loadingAddresses} address={address} setAddress={setAddress} addresses={addresses} showOptions={showOptions} handleSelectAddress={handleSelectAddress} regAdressShow={regAdressShow} registeredAddress={registeredAddress} map={map} marker={marker} setMarker={setMarker} showClaimModal={showClaimModal} setShowClaimModal={setShowClaimModal} rentData={rentData} setRentData={setRentData} user1={user1} />
                             {/* {showClaimModal &&  */}
 
-                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} user1={user1} />}
+                            {showClaimModal && <ClaimModal setShowClaimModal={setShowClaimModal} rentData={rentData} setIsLoading={setIsLoading} regAdressShow={regAdressShow} registeredAddress={registeredAddress} />}
 
                             {/* } */}
 
