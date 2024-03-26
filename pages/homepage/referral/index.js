@@ -209,23 +209,22 @@ const Share = ({
   };
 
   const shareOnFacebook = (textToShare) => {
-    console.log(encodeURIComponent(textToShare));
     window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(textToShare)}`,
+      `https://www.facebook.com/sharer/sharer.php?u=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnTwitter = (textToShare) => {
     window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(textToShare)}`,
+      `https://twitter.com/intent/tweet?text=${textToShare}`,
       "_blank"
     );
   };
 
   const shareOnLinkedIn = (textToShare) => {
     window.open(
-      `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(textToShare)}`,
+      `https://www.linkedin.com/sharing/share-offsite/?url=${textToShare}`,
       "_blank"
     );
   };
