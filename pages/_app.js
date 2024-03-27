@@ -21,6 +21,7 @@ export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
 
+
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;
     if (!Tawk_API) return;
