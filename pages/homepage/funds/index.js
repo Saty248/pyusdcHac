@@ -970,7 +970,9 @@ const Funds = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, tokenBalance, Solbalance]);
+
+
 
   useEffect(() => {
     if (transactionHistory) {
