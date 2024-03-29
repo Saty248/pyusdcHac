@@ -252,7 +252,7 @@ const DepositAndWithdraw = ({
 
 
       }
-      if (activeSection == 1 && parseFloat(userSolBalc) == 0) {
+      if (activeSection == 1 && parseFloat(userSolBalc) === 0) {
         console.log("amts=", parseFloat(tokenBalance), parseFloat(amount));
         toast.error(
           "You do not have enough SOL"
