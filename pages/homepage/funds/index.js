@@ -356,7 +356,7 @@ const DepositAndWithdraw = ({
         let estimatedGas = await tx.getEstimatedFee(connection);
 
         if (addRentFee) {
-          estimatedGas += process.env.ATA_RENT_FEE * LAMPORTS_PER_SOL;
+          estimatedGas += process.env.NEXT_PUBLIC_ATA_RENT_FEE * LAMPORTS_PER_SOL;
         }
 
         if (Solbalance < estimatedGas) {
