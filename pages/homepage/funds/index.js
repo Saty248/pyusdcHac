@@ -319,7 +319,7 @@ const DepositAndWithdraw = ({
       try {
         await getAccount(connection, recipientUSDCAddr);
       } catch (error) {
-        if (error.name == TokenAccountNotFoundError.name) {
+        if (error.name == "TokenAccountNotFoundError") {
           let createIx = createAssociatedTokenAccountInstruction(
             new PublicKey(user.blockchainAddress),
             recipientUSDCAddr,
