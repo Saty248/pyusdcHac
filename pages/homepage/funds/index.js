@@ -386,7 +386,7 @@ const DepositAndWithdraw = ({
       console.log("pub key ", error);
 
       setIsLoading(false);
-      toast.error(err.message);
+      toast.error(error.message);
     }
   };
 
