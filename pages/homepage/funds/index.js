@@ -362,6 +362,7 @@ const DepositAndWithdraw = ({
         if (Solbalance < estimatedGas) {
           // normalized back to sol hence the division
           toast.error(`At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`);
+          setIsLoading(false);
           return;
         }
 
