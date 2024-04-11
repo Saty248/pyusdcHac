@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }) {
 
     if (isMobile) {
       if (Tawk_API.hideWidget !== undefined) {
-        Tawk_API.hideWidget();
+        Tawk_API?.hideWidget();
       } else if (!doItAgain) {
         setDoItAgain(true);
       }
