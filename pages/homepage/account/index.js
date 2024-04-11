@@ -11,8 +11,10 @@ import { ShieldIcon } from "@/Components/Icons";
 import { useSignature } from "@/hooks/useSignature";
 import useDatabase from "@/hooks/useDatabase";
 import { checkPhoneIsValid } from "@/pages/auth/join/intro";
+import { useRouter } from 'next/router';
 
 const Portfolio = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
