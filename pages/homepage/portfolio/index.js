@@ -9,6 +9,8 @@ import Backdrop from "@/Components/Backdrop";
 import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import Link from 'next/link';
+import { getTokenLink } from "@/hooks/utils";
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -28,7 +30,19 @@ const Modal = ({ airspace: { title, address, id, expirationDate, currentPrice },
                     <div className="w-6 h-6"><LocationPointIcon /></div>
                     <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
                 </div>
-                {Object.entries({ 'ID': id, 'Expiration Date': expirationDate, 'Current Price': currentPrice }).map(([key, value]) => {
+                {typeof id === "string" && (
+                    <div className="flex gap-[15px]">
+                        <p className="text-[14px] font-normal text-[#222222]">ID:</p>
+                        <Link
+                            target="_blank"
+                            href={getTokenLink(id)}
+                            className="text-[14px] font-normal text-[#87878D] underline"
+                        >
+                            {id}
+                        </Link>
+                    </div>
+                )}
+                {Object.entries({'Expiration Date': expirationDate, 'Current Price': currentPrice }).map(([key, value]) => {
                     if (!value) return;
                     return (
                         <div className="flex gap-[15px]">
@@ -156,6 +170,7 @@ const Portfolio = () => {
                     [...rentedAirspaceResp?.items, ...claimedAirspaceResp?.items].map(item => ({
                         address: item.address,
                         name: item.id,
+                        id: item.id,
                         type: item.type,
                         expirationDate: item.type === "land" ? "" : new Date(item.metadata.endTime).toString()
                     }))
