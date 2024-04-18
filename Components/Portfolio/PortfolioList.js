@@ -57,7 +57,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
       const verifiedAirspaces = await getPropertiesByUserAddress(
         user?.blockchainAddress,
-        "LandToken",
+        "landToken",
         10
       );
       setVerifiedAirspaces(verifiedAirspaces);

@@ -92,51 +92,52 @@ const AvailableBalance = ({ loading }) => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [] }) => {
-  console.log({ airspaces });
+const MyAirspaces = ({ airspaces = [], isLoading }) => {
 
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          <span className="text-[15px] font-normal">({airspaces.length})</span>
+          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
-      linkText={"View all airspaces"}
+      linkText={`${!isLoading ? 'View all airspaces' : ''}`}
       href={"/homepage/portfolio"}
-    >
-      <div className="flex flex-col items-center gap-[29px]">
-        <div className="w-[265.81px] h-[131.01px]">
-          <WorldMap coloredCountries={["Spain"]} />
-        </div>
-        <div className="flex flex-col items-center gap-[7px] w-full">
-          {airspaces.length === 0 && (
-            <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
-              Claim your first piece of sky now!
-            </p>
-          )}
-          {airspaces.length !== 0 &&
-            airspaces.slice(0, 3).map((airspace, i) => (
-              <div
-                key={i}
-                className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
-                style={{ border: "1px solid #4285F4" }}
-              >
-                <div className="w-[24px] h-[24px] flex justify-center items-center">
-                  <LocationPointIcon />
+    > 
+      {isLoading ? <BalanceLoader /> : (
+        <div className="flex flex-col items-center gap-[29px]">
+          <div className="w-[265.81px] h-[131.01px]">
+            <WorldMap coloredCountries={["Spain"]} />
+          </div>
+          <div className="flex flex-col items-center gap-[7px] w-full">
+            {airspaces.length === 0 && (
+              <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
+                Claim your first piece of sky now!
+              </p>
+            )}
+            {airspaces.length !== 0 &&
+              airspaces.slice(0, 3).map((airspace, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
+                  style={{ border: "1px solid #4285F4" }}
+                >
+                  <div className="w-[24px] h-[24px] flex justify-center items-center">
+                    <LocationPointIcon />
+                  </div>
+                  <p className="flex-1">
+                    {(airspace.title || airspace.address).substring(0, 15)}
+                  </p>
+                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                    <ChevronRightIcon />
+                  </div>
                 </div>
-                <p className="flex-1">
-                  {(airspace.title || airspace.address).substring(0, 15)}
-                </p>
-                <div className="w-[18px] h-[18px] flex items-center justify-center">
-                  <ChevronRightIcon />
-                </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
-      </div>
+      )}
     </Item>
   );
 };
@@ -222,6 +223,7 @@ const ReferralProgram = () => {
 const Dashboard = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
   const [balanceLoading, setBalanceLoading] = useState(false);
   const { user: selectorUser } = useAuth();
   const [user, setUser] = useState();
@@ -231,7 +233,7 @@ const Dashboard = () => {
   const [airspaces, setAirspaces] = useState([]);
   const dispatch = useDispatch()
 
-  const { getPropertiesByUserAddress } = useDatabase();
+  const { getClaimedPropertiesByUserAddress } = useDatabase();
   // GET USER AND TOKEN
   useEffect(() => {
     if (selectorUser) {
@@ -411,25 +413,22 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       try {
-        console.log({ user });
-        const response = await getPropertiesByUserAddress(
+        setIsLoadingAirspace(true)
+        const response = await getClaimedPropertiesByUserAddress(
           user.blockchainAddress,
-          "landToken"
         );
-        //test
-        //const response =myAirspacesTest;
-        console.log("res landrtoken== ", response);
         if (response) {
-          let retrievedAirspaces = response.items.map((item) => {
+          let retrievedAirspaces = response.map((item) => {
             return {
               address: item.address,
             };
           });
-          console.log("yooooo", retrievedAirspaces);
           setAirspaces(retrievedAirspaces);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoadingAirspace(false)
       }
     })();
   }, [user]);
@@ -473,7 +472,7 @@ const Dashboard = () => {
                       <AvailableBalance
                         loading={balanceLoading}
                       />
-                      <MyAirspaces airspaces={airspaces} />
+                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
                   <ReferralProgram />
