@@ -345,6 +345,36 @@ const useDatabase = () => {
         }
     }
 
+    const getClaimedPropertiesByUserAddress = async (blockchainAddress) => {
+        try {
+            const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(blockchainAddress);
+
+            const response = await fetch(`/api/proxy?${Date.now()}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    uri: `/private/properties/user-properties`,
+                    sign,
+                    time: sign_issue_at,
+                    nonce: sign_nonce,
+                    address: sign_address,
+                },
+            })
+
+            console.log("-----------------------Response----------",response)
+
+            if (!response.ok || response.statusCode === 500) {
+                throw new Error("Error when getting properties by user.");
+            }
+
+            return response.json();
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
     const getRents = async (blockchainAddress) => {
         try {
             const { sign, sign_nonce, sign_issue_at, sign_address } =
@@ -478,7 +508,7 @@ const useDatabase = () => {
         }
     }
 
-    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
+    return { getClaimedPropertiesByUserAddress, getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
 }
 
 export default useDatabase;
