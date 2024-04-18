@@ -28,15 +28,12 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
     if (activeTab === "Verified Airspaces") {
       if (verifiedAirspaces.length < 10) return;
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
-      paginateAirspaces();
     } else if (activeTab === "Rented Airspaces") {
       if (rentedAirspaces.length < 10) return;
       setRentalPageNumber((prevPageNumber) => prevPageNumber + 1);
-      paginateAirspaces();
     } else {
       if (unverifiedAirspaces?.length < 10) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber + 1);
-      paginateAirspaces();
     }
   };
 
@@ -167,7 +164,11 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
     if (user) {
       fetchAirspaces();
     }
-  }, [user]);
+  }, []);
+
+  useEffect(() => {
+    paginateAirspaces();
+  }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
 
   return (
     <div
