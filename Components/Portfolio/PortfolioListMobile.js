@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
+import PortfolioItem from "./PortfolioItem";
+import axios from "axios";
 import { useSignature } from "@/hooks/useSignature";
 import { useAuth } from "@/hooks/useAuth";
 import useDatabase from "@/hooks/useDatabase";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 
-const PortfolioListMobile = ({ title, selectAirspace }) => {
+const PortfolioListMobile = ({
+  title,
+  airspacesList,
+  selectAirspace,
+  address,
+}) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
   const [verifiedAirspaces, setVerifiedAirspaces] = useState([]);
   const [unverifiedAirspaces, setUnverifiedAirspaces] = useState([]);
-  const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
+  const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState(null);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,12 +34,15 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
     if (activeTab === "Verified Airspaces") {
       if (verifiedAirspaces.length < 10) return;
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
+      paginateAirspaces();
     } else if (activeTab === "Rented Airspaces") {
       if (rentedAirspaces.length < 10) return;
       setRentalPageNumber((prevPageNumber) => prevPageNumber + 1);
+      paginateAirspaces();
     } else {
       if (unverifiedAirspaces?.length < 10) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber + 1);
+      paginateAirspaces();
     }
   };
 
@@ -40,19 +50,21 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
     if (activeTab === "Verified Airspaces") {
       if (pageNumber === 1) return;
       setPageNumber((prevPageNumber) => prevPageNumber - 1);
+      paginateAirspaces();
     } else if (activeTab === "Rented Airspaces") {
       if (rentalPageNumber === 1) return;
       setRentalPageNumber((prevPageNumber) => prevPageNumber - 1);
+      paginateAirspaces();
     } else {
       if (unverifiedPageNumber === 1) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber - 1);
+      paginateAirspaces();
     }
   };
 
   const fetchAirspaces = async () => {
     if (user?.blockchainAddress) {
       setLoading(true);
-      console.log("fetching");
 
       const verifiedAirspaces = await getPropertiesByUserAddress(
         user?.blockchainAddress,
@@ -62,96 +74,106 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
       setVerifiedAirspaces(verifiedAirspaces);
       setAllVerifiedAirspaces(verifiedAirspaces);
 
-      const rentedAirspaces = await getPropertiesByUserAddress(
+      setLoading(false);
+    }
+  };
+
+  const fetchVerifiedAirspaces = async () => {
+    setLoading(true);
+    if (pageNumber === 1) {
+      const verified = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "landToken",
+        10
+      );
+      setVerifiedAirspaces(verified);
+    } else if (pageNumber > 1) {
+      const verifiedAirspaces = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "landToken",
+        10,
+        verifiedAirspaces[verifiedAirspaces.length - 1].id
+      );
+      setVerifiedAirspaces(verifiedAirspaces);
+    }
+    setLoading(false);
+  };
+
+  const fetchRentedAirspaces = async () => {
+    setLoading(true);
+    if (rentalPageNumber === 1) {
+      // Fetch data from API
+      const rented = await getPropertiesByUserAddress(
         user?.blockchainAddress,
         "rentalToken",
         10
       );
+      setRentedAirspaces(rented);
+    } else if (rentalPageNumber > 1) {
+      const rentedAirspaces = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "rentalToken",
+        10,
+        rentedAirspaces[rentedAirspaces.length - 1].id
+      );
       setRentedAirspaces(rentedAirspaces);
-      setAllRentedAirspaces(rentedAirspaces);
+    }
+    setLoading(false);
+  };
 
+  const fetchUnverifiedAirspaces = async () => {
+    setLoading(true);
+    if (unverifiedPageNumber === 1) {
       const unverified = await getUnverifiedAirspaces(
         user?.blockchainAddress,
         10,
         unverifiedPageNumber
       );
-      setUnverifiedAirspaces(unverified?.items);
-      setAllUnverifiedAirspaces(unverified?.items);
 
-      setLoading(false);
+      setUnverifiedAirspaces(unverified?.items);
+    } else if (unverifiedPageNumber > 1) {
+      const newUnverifiedAirspaces = await getUnverifiedAirspaces(
+        user?.blockchainAddress,
+        10,
+        unverifiedPageNumber
+      );
+      setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
     }
+    setLoading(false);
   };
 
   const paginateAirspaces = async () => {
     if (user?.blockchainAddress) {
-      setLoading(true);
       if (activeTab === "Verified Airspaces") {
-        if (pageNumber === 1) {
-          const verified = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "landToken",
-            10
-          );
-          setVerifiedAirspaces(verified);
-        } else if (pageNumber > 1) {
-          const verifiedAirspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "landToken",
-            10,
-            verifiedAirspaces[verifiedAirspaces.length - 1].id
-          );
-          setVerifiedAirspaces(verifiedAirspaces);
-        }
+        fetchVerifiedAirspaces();
       } else if (activeTab === "Rented Airspaces") {
-        if (rentalPageNumber === 1) {
-          // Fetch data from API
-          const rented = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken",
-            10
-          );
-          setRentedAirspaces(rented);
-        } else if (rentalPageNumber > 1) {
-          const rentedAirspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken",
-            10,
-            rentedAirspaces[rentedAirspaces.length - 1].id
-          );
-          setRentedAirspaces(rentedAirspaces);
-        }
+        fetchRentedAirspaces();
       } else if (activeTab === "Pending Verification") {
-        if (unverifiedPageNumber === 1) {
-          const unverified = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
-            10,
-            unverifiedPageNumber
-          );
-
-          setUnverifiedAirspaces(unverified?.items);
-        } else if (unverifiedPageNumber > 1) {
-          const newUnverifiedAirspaces = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
-            10,
-            unverifiedPageNumber
-          );
-          setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
-        }
+        fetchUnverifiedAirspaces();
       }
-
-      setLoading(false);
     }
   };
 
+  const handleGetVerifiedAirspaces = async () => {
+    setActiveTab("Verified Airspaces");
+    if (verifiedAirspaces.length === 0) fetchVerifiedAirspaces();
+  };
+
+  const handleGetRentedAirspaces = async () => {
+    setActiveTab("Rented Airspaces");
+    if (rentedAirspaces.length === 0) fetchRentedAirspaces();
+  };
+
+  const handleGetUnVerifiedAirspaces = async () => {
+    setActiveTab("Pending Verification");
+    if (unverifiedAirspaces.length === 0) fetchUnverifiedAirspaces();
+  };
+
   useEffect(() => {
-    fetchAirspaces();
+    if (user) {
+      fetchAirspaces();
+    }
   }, [user]);
-
-  console.log({ user });
-
-  useEffect(() => {
-    paginateAirspaces();
-  }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
 
   return (
     <div className="overflow-x-hidden mb-24">
@@ -161,19 +183,19 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
       >
         <div
           className={`${activeTab === "Verified Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-          onClick={() => setActiveTab("Verified Airspaces")}
+          onClick={handleGetVerifiedAirspaces}
         >
           Verified Airspaces
         </div>
         <div
           className={`${activeTab === "Rented Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-          onClick={() => setActiveTab("Rented Airspaces")}
+          onClick={handleGetRentedAirspaces}
         >
           Rented Airspaces
         </div>
         <div
           className={`${activeTab === "Pending Verification" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-          onClick={() => setActiveTab("Pending Verification")}
+          onClick={handleGetUnVerifiedAirspaces}
         >
           Pending Verification
         </div>

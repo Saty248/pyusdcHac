@@ -150,48 +150,24 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
   const handleGetVerifiedAirspaces = async () => {
     setActiveTab("Verified Airspaces");
+    if (verifiedAirspaces.length === 0) fetchVerifiedAirspaces();
   };
 
   const handleGetRentedAirspaces = async () => {
     setActiveTab("Rented Airspaces");
+    if (rentedAirspaces.length === 0) fetchRentedAirspaces();
   };
 
   const handleGetUnVerifiedAirspaces = async () => {
     setActiveTab("Pending Verification");
+    if (unverifiedAirspaces.length === 0) fetchUnverifiedAirspaces();
   };
 
   useEffect(() => {
     if (user) {
       fetchAirspaces();
     }
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      if (
-        activeTab === "Verified Airspaces" &&
-        verifiedAirspaces.length === 0
-      ) {
-        console.log("triggered active");
-        fetchVerifiedAirspaces();
-      }
-
-      if (activeTab === "Rented Airspaces" && rentedAirspaces.length === 0) {
-        console.log("triggered rented");
-
-        fetchVerifiedAirspaces();
-      }
-
-      if (
-        activeTab === "Pending Verification" &&
-        unverifiedAirspaces.length === 0
-      ) {
-        console.log("triggered pending");
-
-        fetchVerifiedAirspaces();
-      }
-    }
-  }, [activeTab]);
+  }, [user]);
 
   return (
     <div
