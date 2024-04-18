@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { useSignature } from "@/hooks/useSignature";
@@ -7,8 +6,8 @@ import useDatabase from "@/hooks/useDatabase";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 
-const PortfolioListMobile = () => {
-    const [pageNumber, setPageNumber] = useState(1);
+const PortfolioListMobile = ({ title, selectAirspace }) => {
+  const [pageNumber, setPageNumber] = useState(1);
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
@@ -53,7 +52,7 @@ const PortfolioListMobile = () => {
   const fetchAirspaces = async () => {
     if (user?.blockchainAddress) {
       setLoading(true);
-      console.log('fetching')
+      console.log("fetching");
 
       const verifiedAirspaces = await getPropertiesByUserAddress(
         user?.blockchainAddress,
@@ -154,31 +153,31 @@ const PortfolioListMobile = () => {
     paginateAirspaces();
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
 
-
-
-    return ( <div  className="overflow-x-hidden mb-24">
-        <div className=" flex items-center overflow-x-auto border-b border-[#5D7285]/50" style={{ scrollbarWidth: "thin", scrollbarColor: "#ccc #f3f4f6" }}>
-  <div
-    className={`${activeTab === "Verified Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-    onClick={() => setActiveTab("Verified Airspaces")}
-  >
-    Verified Airspaces
-  </div>
-  <div
-    className={`${activeTab === "Rented Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-    onClick={() => setActiveTab("Rented Airspaces")}
-  >
-    Rented Airspaces
-  </div>
-  <div
-    className={`${activeTab === "Pending Verification" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
-    onClick={() => setActiveTab("Pending Verification")}
-  >
-    Pending Verification
-  </div>
-</div>
-
-
+  return (
+    <div className="overflow-x-hidden mb-24">
+      <div
+        className=" flex items-center overflow-x-auto border-b border-[#5D7285]/50"
+        style={{ scrollbarWidth: "thin", scrollbarColor: "#ccc #f3f4f6" }}
+      >
+        <div
+          className={`${activeTab === "Verified Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => setActiveTab("Verified Airspaces")}
+        >
+          Verified Airspaces
+        </div>
+        <div
+          className={`${activeTab === "Rented Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => setActiveTab("Rented Airspaces")}
+        >
+          Rented Airspaces
+        </div>
+        <div
+          className={`${activeTab === "Pending Verification" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => setActiveTab("Pending Verification")}
+        >
+          Pending Verification
+        </div>
+      </div>
 
       {loading ? (
         <div>
@@ -260,7 +259,8 @@ const PortfolioListMobile = () => {
           </div>
         </div>
       )}
-    </div> );
-}
- 
+    </div>
+  );
+};
+
 export default PortfolioListMobile;
