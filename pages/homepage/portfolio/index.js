@@ -22,11 +22,8 @@ let USDollar = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
-const Modal = ({
-  airspace: { title, address, id, expirationDate, currentPrice },
-  onCloseModal,
-  isOffer,
-}) => {
+const Modal = ({ airspace, onCloseModal, isOffer }) => {
+  console.log({ airspace });
   return (
     <Fragment>
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
@@ -38,7 +35,7 @@ const Modal = ({
             <ArrowLeftIcon />
           </div>
           <h2 className="text-[#222222] text-center font-medium text-xl">
-            {title || address}
+            {airspace?.address}
           </h2>
           <div
             onClick={onCloseModal}
@@ -55,13 +52,13 @@ const Modal = ({
             <LocationPointIcon />
           </div>
           <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {address}
+            {airspace?.address}
           </p>
         </div>
         {Object.entries({
-          ID: id,
-          "Expiration Date": expirationDate,
-          "Current Price": currentPrice,
+          ID: airspace?.id,
+          "Expiration Date": airspace?.expirationDate,
+          "Current Price": airspace?.currentPrice,
         }).map(([key, value]) => {
           if (!value) return;
           return (
@@ -164,7 +161,6 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
   );
 };
 
-
 const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
   return (
     <div className="pointer-events-none fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-screen z-[60] bg-white">
@@ -218,8 +214,7 @@ const Portfolio = () => {
     fetchData();
   }, [user?.blockchainAddress]);
 
-  console.log({ claimedAirspaces });
-  console.log({ rentedAirspaces });
+  console.log({ myAirspaces });
 
   const onCloseModal = () => {
     setSelectedAirspace(null);
@@ -244,10 +239,7 @@ const Portfolio = () => {
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           {selectedAirspace !== null && (
-            <Modal
-              airspace={myAirspaces[selectedAirspace]}
-              onCloseModal={onCloseModal}
-            />
+            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />
           )}
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">

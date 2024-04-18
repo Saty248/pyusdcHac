@@ -14,7 +14,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
   const [verifiedAirspaces, setVerifiedAirspaces] = useState([]);
   const [unverifiedAirspaces, setUnverifiedAirspaces] = useState([]);
-  const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
+  const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState(null);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,6 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const fetchAirspaces = async () => {
     if (user?.blockchainAddress) {
       setLoading(true);
-      console.log('fetching')
 
       const verifiedAirspaces = await getPropertiesByUserAddress(
         user?.blockchainAddress,
@@ -63,92 +62,104 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
       setVerifiedAirspaces(verifiedAirspaces);
       setAllVerifiedAirspaces(verifiedAirspaces);
 
-      const rentedAirspaces = await getPropertiesByUserAddress(
+      setLoading(false);
+    }
+  };
+
+  const fetchVerifiedAirspaces = async () => {
+    setLoading(true);
+    if (pageNumber === 1) {
+      const verified = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "landToken",
+        10
+      );
+      setVerifiedAirspaces(verified);
+    } else if (pageNumber > 1) {
+      const verifiedAirspaces = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "landToken",
+        10,
+        verifiedAirspaces[verifiedAirspaces.length - 1].id
+      );
+      setVerifiedAirspaces(verifiedAirspaces);
+    }
+    setLoading(false);
+  };
+
+  const fetchRentedAirspaces = async () => {
+    setLoading(true);
+    if (rentalPageNumber === 1) {
+      // Fetch data from API
+      const rented = await getPropertiesByUserAddress(
         user?.blockchainAddress,
         "rentalToken",
         10
       );
+      setRentedAirspaces(rented);
+    } else if (rentalPageNumber > 1) {
+      const rentedAirspaces = await getPropertiesByUserAddress(
+        user?.blockchainAddress,
+        "rentalToken",
+        10,
+        rentedAirspaces[rentedAirspaces.length - 1].id
+      );
       setRentedAirspaces(rentedAirspaces);
-      setAllRentedAirspaces(rentedAirspaces);
+    }
+    setLoading(false);
+  };
 
+  const fetchUnverifiedAirspaces = async () => {
+    setLoading(true);
+    if (unverifiedPageNumber === 1) {
       const unverified = await getUnverifiedAirspaces(
         user?.blockchainAddress,
         10,
         unverifiedPageNumber
       );
-      setUnverifiedAirspaces(unverified?.items);
-      setAllUnverifiedAirspaces(unverified?.items);
 
-      setLoading(false);
+      setUnverifiedAirspaces(unverified?.items);
+    } else if (unverifiedPageNumber > 1) {
+      const newUnverifiedAirspaces = await getUnverifiedAirspaces(
+        user?.blockchainAddress,
+        10,
+        unverifiedPageNumber
+      );
+      setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
     }
+    setLoading(false);
   };
 
   const paginateAirspaces = async () => {
     if (user?.blockchainAddress) {
-      setLoading(true);
       if (activeTab === "Verified Airspaces") {
-        if (pageNumber === 1) {
-          const verified = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "landToken",
-            10
-          );
-          setVerifiedAirspaces(verified);
-        } else if (pageNumber > 1) {
-          const verifiedAirspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "landToken",
-            10,
-            verifiedAirspaces[verifiedAirspaces.length - 1].id
-          );
-          setVerifiedAirspaces(verifiedAirspaces);
-        }
+        fetchVerifiedAirspaces();
       } else if (activeTab === "Rented Airspaces") {
-        if (rentalPageNumber === 1) {
-          // Fetch data from API
-          const rented = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken",
-            10
-          );
-          setRentedAirspaces(rented);
-        } else if (rentalPageNumber > 1) {
-          const rentedAirspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken",
-            10,
-            rentedAirspaces[rentedAirspaces.length - 1].id
-          );
-          setRentedAirspaces(rentedAirspaces);
-        }
+        fetchRentedAirspaces();
       } else if (activeTab === "Pending Verification") {
-        if (unverifiedPageNumber === 1) {
-          const unverified = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
-            10,
-            unverifiedPageNumber
-          );
-
-          setUnverifiedAirspaces(unverified?.items);
-        } else if (unverifiedPageNumber > 1) {
-          const newUnverifiedAirspaces = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
-            10,
-            unverifiedPageNumber
-          );
-          setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
-        }
+        fetchUnverifiedAirspaces();
       }
-
-      setLoading(false);
     }
+  };
+
+  const handleGetVerifiedAirspaces = async () => {
+    setActiveTab("Verified Airspaces");
+    if (verifiedAirspaces.length === 0) fetchVerifiedAirspaces();
+  };
+
+  const handleGetRentedAirspaces = async () => {
+    setActiveTab("Rented Airspaces");
+    if (rentedAirspaces.length === 0) fetchRentedAirspaces();
+  };
+
+  const handleGetUnVerifiedAirspaces = async () => {
+    setActiveTab("Pending Verification");
+    if (unverifiedAirspaces.length === 0) fetchUnverifiedAirspaces();
   };
 
   useEffect(() => {
     fetchAirspaces();
   }, [user]);
-
-  console.log({ user });
 
   useEffect(() => {
     paginateAirspaces();
@@ -165,19 +176,19 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
       <div className="flex items-center gap-16">
         <div
           className={`${activeTab === "Verified Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
-          onClick={() => setActiveTab("Verified Airspaces")}
+          onClick={handleGetVerifiedAirspaces}
         >
           Verified Airspaces
         </div>
         <div
           className={`${activeTab === "Rented Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
-          onClick={() => setActiveTab("Rented Airspaces")}
+          onClick={handleGetRentedAirspaces}
         >
           Rented Airspaces
         </div>
         <div
           className={`${activeTab === "Pending Verification" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
-          onClick={() => setActiveTab("Pending Verification")}
+          onClick={handleGetUnVerifiedAirspaces}
         >
           Pending Verification
         </div>
@@ -192,49 +203,43 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
         <>
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {rentedAirspaces.map(
-                ({ address, expirationDate, name, type }, index) => (
-                  <PortfolioItem
-                    airspaceName={address}
-                    key={index}
-                    tags={[true, false, false, false]}
-                    type={type}
-                    selectAirspace={() => selectAirspace(index)}
-                  />
-                )
-              )}
+              {rentedAirspaces.map((airspace, index) => (
+                <PortfolioItem
+                  airspaceName={airspace.address}
+                  key={index}
+                  tags={[true, false, false, false]}
+                  type={airspace.type}
+                  selectAirspace={() => selectAirspace(airspace)}
+                />
+              ))}
             </div>
           )}
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {verifiedAirspaces.map(
-                ({ address, expirationDate, name, type }, index) => (
-                  <PortfolioItem
-                    airspaceName={address}
-                    key={index}
-                    tags={[true, false, false, false]}
-                    type={type}
-                    selectAirspace={() => selectAirspace(index)}
-                  />
-                )
-              )}
+              {verifiedAirspaces.map((airspace, index) => (
+                <PortfolioItem
+                  airspaceName={airspace.address}
+                  key={index}
+                  tags={[true, false, false, false]}
+                  type={airspace.type}
+                  selectAirspace={() => selectAirspace(airspace)}
+                />
+              ))}
             </div>
           )}
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {unverifiedAirspaces?.map(
-                ({ address, expirationDate, name, type }, index) => (
-                  <PortfolioItem
-                    airspaceName={address}
-                    key={index}
-                    tags={[true, false, false, false]}
-                    type={type}
-                    selectAirspace={() => selectAirspace(index)}
-                  />
-                )
-              )}
+              {unverifiedAirspaces?.map((airspace, index) => (
+                <PortfolioItem
+                  airspaceName={airspace.address}
+                  key={index}
+                  tags={[true, false, false, false]}
+                  type={airspace.type}
+                  selectAirspace={() => selectAirspace(airspace)}
+                />
+              ))}
             </div>
           )}
 
