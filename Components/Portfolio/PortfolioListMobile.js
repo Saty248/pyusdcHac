@@ -147,8 +147,6 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
     fetchAirspaces();
   }, [user]);
 
-  console.log({ user });
-
   useEffect(() => {
     paginateAirspaces();
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
