@@ -15,7 +15,7 @@ import useDatabase from "@/hooks/useDatabase";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
 import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
-import { PortfolioList } from "@/Components/MyAirspaces";
+import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -164,51 +164,6 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
   );
 };
 
-const PortfolioListMobile = ({ airspacesList, selectAirspace }) => {
-  const [pageNumber, setPageNumber] = useState(0);
-
-  const handleNextPage = () => {
-    setPageNumber((prevPageNumber) => prevPageNumber + 1);
-  };
-
-  const handlePrevPage = () => {
-    if (pageNumber === 0) return;
-    setPageNumber((prevPageNumber) => prevPageNumber - 1);
-  };
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-[11px] w-full">
-        {airspacesList.map(({ title, address, noFlyZone, type }, index) => (
-          <PortfolioItemMobile
-            airspaceName={title || address}
-            tags={[false, false, noFlyZone, false]}
-            type={type}
-            selectAirspace={() => selectAirspace(index)}
-          />
-        ))}
-      </div>
-
-      <div className="flex flex-col w-full text-gray-600">
-        <div className="flex self-end items-center gap-2 w-[5rem]">
-          <div
-            onClick={handlePrevPage}
-            className="p-1 border rounded-lg border-gray-200"
-          >
-            <RxCaretLeft />
-          </div>
-          <div>{pageNumber}</div>
-          <div
-            onClick={handleNextPage}
-            className="p-1 cursor-pointer border rounded-lg border-gray-200"
-          >
-            <RxCaretRight />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const PortfolioSectionMobile = ({ title, airspacesList, onGoBack }) => {
   return (
@@ -285,7 +240,7 @@ const Portfolio = () => {
         createPortal(<Spinner />, document?.getElementById("backdrop-root"))}
       {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           {selectedAirspace !== null && (
@@ -305,14 +260,13 @@ const Portfolio = () => {
               selectAirspace={selectAirspace}
             />
           </section>
-          <section className="relative w-full h-full flex flex-wrap gap-6 py-[20px] md:hidden overflow-y-auto mb-[79px]">
+          <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
             <PortfolioListMobile
               airspacesList={myAirspaces}
               title={"My Airspaces"}
               selectAirspace={selectAirspace}
             />
           </section>
-          {/** TODO: <PortfolioSectionMobile title={'Hola'} airspacesList={myAirspacesToSellAndRent} />*/}
         </div>
       </div>
     </Fragment>
