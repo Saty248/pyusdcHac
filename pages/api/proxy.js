@@ -33,19 +33,16 @@ const handler = async (req, res) => {
       fetchOptions.body = requestBody;
     }
 
-    console.log('This is the server URL', process.env.SERVER_URL);
+    console.log('Request to server',`${process.env.SERVER_URL}${req.headers.uri}`);
 
     const fetchRes = await fetch(
       `${process.env.SERVER_URL}${req.headers.uri}`,
       fetchOptions
     );
 
-    console.log('response from the server', fetchRes);
-
     const resData = await fetchRes.json();
 
-    console.log('response from the server', fetchRes);
-
+    console.log('Response from the server',`${process.env.SERVER_URL}${req.headers.uri}`, ' : ', fetchRes.statusText);
     console.log('This is data from the backend', resData);
 
     if (resData?.data && resData?.data?.statusCode >= 400) {
