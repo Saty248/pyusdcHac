@@ -5,7 +5,6 @@ const handler = async (req, res) => {
   try {
     const method = req.method;
     const { sign, time, nonce, address } = req.headers;
-    console.log('This is the headers', req.headers);
     console.log('This is the signature', sign);
     console.log('This is the issue time', time);
     console.log('This is the nonce', nonce);
@@ -42,8 +41,8 @@ const handler = async (req, res) => {
 
     const resData = await fetchRes.json();
 
-    console.log('Response from the server',`${process.env.SERVER_URL}${req.headers.uri}`, ' : ', fetchRes.statusText);
-    console.log('This is data from the backend', resData);
+    console.log('Response from server',`${process.env.SERVER_URL}${req.headers.uri}`, ' : ', fetchRes.statusText);
+    console.log('Response data', resData);
 
     if (resData?.data && resData?.data?.statusCode >= 400) {
       throw new Error(resData.data.message);
