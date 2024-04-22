@@ -37,7 +37,6 @@ const handler = async (req, res) => {
 
     return res.json(resData);
   } catch (err) {
-    console.error(err);
     // todo: return error from backend server
     return res.status(500).json({ ok: false, errorMessage: err.message });
   }
