@@ -36,10 +36,7 @@ const handler = async (req, res) => {
         throw new Error(resData.data.message);
       }
     } catch (err) {
-      console.error(err);
-      let message = 'Unknown Error';
-      if (err instanceof Error) message = err.message;
-      res.status(400).send(`Webhook Error: ${message}`);
+      res.status(400).send('');
       return;
     }
     res.json({ received: true });
