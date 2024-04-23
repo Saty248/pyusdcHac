@@ -10,16 +10,23 @@ import Backdrop from "@/Components/Backdrop";
 import { ShieldIcon } from "@/Components/Icons";
 import { useSignature } from "@/hooks/useSignature";
 import useDatabase from "@/hooks/useDatabase";
+import { checkPhoneIsValid } from "@/pages/auth/join/intro";
+import { useRouter } from 'next/router';
 
 const Portfolio = () => {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
     const { user: selectorUser, updateProfile } = useAuth();
-    const [user, setUser] = useState()
+    const [user, setUser] = useState(null)
     const [token, setToken] = useState('')
     const { signatureObject } = useSignature();
     const { updateUser } = useDatabase()
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('')
+
+
 
     useEffect(() => {
         if (selectorUser) {
@@ -78,7 +85,14 @@ const Portfolio = () => {
         const { name, email, phoneNumber, newsletter } = personalInformation;
         // TODO: check if data has changed
         // TODO: check if data is valid
+        const check = await  checkPhoneIsValid(phoneNumber)
 
+        if(!check.status){
+            setIsPhoneNumberValid(false)
+            setErrorMessage(check.message )
+            return
+
+        }
         setIsLoading(true);
 
         try {
@@ -133,7 +147,16 @@ const Portfolio = () => {
     };
 
     const onVerifyMyAccount = () => {
-        console.log('Verify my account');
+            setIsLoading(true);
+          const client = new Persona.Client({
+            templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+            referenceId: user?.id.toString(),
+            environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+            onReady: () => {
+              setIsLoading(false);
+              client.open();
+            },
+          });
     }
 
     return (
@@ -141,7 +164,7 @@ const Portfolio = () => {
             {isLoading && createPortal(<Backdrop />, document?.getElementById('backdrop-root'))}
             {isLoading && createPortal(<Spinner />, document?.getElementById('backdrop-root'))}
 
-            <div className="relative rounded bg-[#F0F0FA] h-screen w-screen flex items-center justify-center overflow-hidden">
+            <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
                 <Sidebar />
                 <div className="w-full h-full flex flex-col">
                     <PageHeader pageTitle={'Account'} />
@@ -158,7 +181,7 @@ const Portfolio = () => {
                                 </div>}
                             </div>
                             <p className="font-normal text-base text-[#87878D] pr-[42px]">{personalInformation.KYCStatusId !== 0 ? 'Thank you, your account is successfully verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.' : 'Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.'}</p>
-                            {!(personalInformation.KYCStatusId !== 0) && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>Verify my account</p>}
+                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>Verify my account</p>}
                         </div>
                         <div className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                             <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
@@ -173,7 +196,8 @@ const Portfolio = () => {
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Phone</label>
-                                    <input value={personalInformation.phoneNumber} onChange={(e) => setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="phone" id="phone" />
+                                    <input value={personalInformation.phoneNumber} onChange={(e) => {setIsPhoneNumberValid(true ); setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
+                                    {!isPhoneNumberValid && (<p className='text-[11px] italic text-red-600'>{errorMessage}</p> )}
                                 </div>
                                 <div className="flex flex-col gap-[10px] basis-full">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Newsletter</label>
