@@ -46,6 +46,7 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
+import { useSelector } from "react-redux";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -53,10 +54,10 @@ let USDollar = new Intl.NumberFormat("en-US", {
 });
 
 const AvailableBalance = ({ balance, Solbalance, loading }) => {
-  let { USDCBal, setUSDCBal } = createUSDCBalStore();
-  useEffect(() => {
-    setUSDCBal(balance);
-  }, [balance]);
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
+  );
 
   return (
     <div
@@ -72,7 +73,7 @@ const AvailableBalance = ({ balance, Solbalance, loading }) => {
         ) : (
           <>
             <p className="text-3xl text-[#4285F4] font-medium">
-              {USDollar.format(USDCBal)}
+            ${userUSDWalletBalance}
             </p>
             <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(Solbalance / LAMPORTS_PER_SOL)}`}</p>
           </>

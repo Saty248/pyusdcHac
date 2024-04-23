@@ -26,7 +26,8 @@ import {
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,VersionedTransaction
+  Transaction,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -38,6 +39,8 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
+import Link from 'next/link';
+import { getTokenLink } from "@/hooks/utils";
 
 const SuccessModal = ({
   setShowSuccess,
@@ -54,7 +57,7 @@ const SuccessModal = ({
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent SuccessFull" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -67,13 +70,13 @@ const SuccessModal = ({
         </div>
 
         <div className="w-[54.56px] h-[54.56px]">
-          {finalAns?.status === "Rent SuccessFull" ? (
+          {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
             <CloseIconWhite />
           )}
         </div>
-        {finalAns?.status === "Rent SuccessFull" ? (
+        {finalAns?.status === "Rent Successful" ? (
           <>
             <div className="w-[70%] h-[10%] ">
               <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
@@ -91,9 +94,9 @@ const SuccessModal = ({
           </>
         )}
 
-        <div className="w-[80%] h-[108px] mt-[2rem] ">
+        <div className="w-[80%] mt-[2rem] ">
           <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-            {finalAns?.status === "Rent SuccessFull" && (
+            {finalAns?.status === "Rent Successful" && (
               <div>
                 'You rented'{" "}
                 <span className=" text-[14px] font-bold">{`${rentData.address}`}</span>{" "}
@@ -106,21 +109,33 @@ const SuccessModal = ({
           </div>
 
           <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
-            {finalAns?.status !== "Rent SuccessFull" && (
+            {finalAns?.status !== "Rent Successful" && (
               <div>An error occured, please try again.</div>
             )}
           </div>
         </div>
 
-        {finalAns?.status === "Rent SuccessFull" && (
-          <div className=" w-[75%] h-[10%]  ">
+        {finalAns?.status === "Rent Successful" && (
+          <div className=" w-[75%] ">
             <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">
               A copy of your transaction is availble inside your Portfolio{" "}
             </p>
           </div>
         )}
 
-        {finalAns?.status === "Rent SuccessFull" ? (
+        {finalAns?.status === "Rent Successful" && (
+          <>
+            <Link
+              target="_blank"
+              href={getTokenLink(finalAns.tokenId)}
+                className="py-2 font-boldtext-center text-[#FFFFFF] text-[14px] underline"
+            >
+              Transaction Link
+            </Link>
+          </>
+        )}
+
+        {finalAns?.status === "Rent Successful" ? (
           <>
             <button
               onClick={() => router.push("/homepage/portfolio")}
@@ -513,8 +528,9 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           if (ans2) {
             if (ans2.data.status == "success") {
               setfinalAns({
-                status: "Rent SuccessFull",
+                status: "Rent Successful",
                 message: ans2.data.message,
+                tokenId: ans2.data.message,
               });
             } else {
               setfinalAns({
