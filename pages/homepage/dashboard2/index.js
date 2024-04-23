@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { counterActions } from '@/store/store';
 import Link from "next/link";
 import Script from "next/script";
 import {
@@ -28,6 +29,8 @@ import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { setUserUSDWalletBalance } from "@/store/store";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -59,11 +62,15 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
   );
 };
 
-const AvailableBalance = ({ balance, loading }) => {
-  let { USDCBal, setUSDCBal } = createUSDCBalStore();
-  useEffect(() => {
-    setUSDCBal(balance);
-  }, [balance]);
+const AvailableBalance = ({ loading }) => {
+
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
+  );
+
+
+
   return (
     <Item
       title={"Available Balance"}
@@ -77,7 +84,7 @@ const AvailableBalance = ({ balance, loading }) => {
       ) : (
         <div className="flex items-center justify-between">
           <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">
-            {USDollar.format(USDCBal)}
+            ${userUSDWalletBalance}
           </p>
         </div>
       )}
@@ -85,51 +92,52 @@ const AvailableBalance = ({ balance, loading }) => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [] }) => {
-  console.log({ airspaces });
+const MyAirspaces = ({ airspaces = [], isLoading }) => {
 
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          <span className="text-[15px] font-normal">({airspaces.length})</span>
+          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
-      linkText={"View all airspaces"}
+      linkText={`${!isLoading ? 'View all airspaces' : ''}`}
       href={"/homepage/portfolio"}
-    >
-      <div className="flex flex-col items-center gap-[29px]">
-        <div className="w-[265.81px] h-[131.01px]">
-          <WorldMap coloredCountries={["Spain"]} />
-        </div>
-        <div className="flex flex-col items-center gap-[7px] w-full">
-          {airspaces.length === 0 && (
-            <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
-              Claim your first piece of sky now!
-            </p>
-          )}
-          {airspaces.length !== 0 &&
-            airspaces.slice(0, 3).map((airspace, i) => (
-              <div
-                key={i}
-                className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
-                style={{ border: "1px solid #4285F4" }}
-              >
-                <div className="w-[24px] h-[24px] flex justify-center items-center">
-                  <LocationPointIcon />
+    > 
+      {isLoading ? <BalanceLoader /> : (
+        <div className="flex flex-col items-center gap-[29px]">
+          <div className="w-[265.81px] h-[131.01px]">
+            <WorldMap coloredCountries={["Spain"]} />
+          </div>
+          <div className="flex flex-col items-center gap-[7px] w-full">
+            {airspaces.length === 0 && (
+              <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
+                Claim your first piece of sky now!
+              </p>
+            )}
+            {airspaces.length !== 0 &&
+              airspaces.slice(0, 3).map((airspace, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
+                  style={{ border: "1px solid #4285F4" }}
+                >
+                  <div className="w-[24px] h-[24px] flex justify-center items-center">
+                    <LocationPointIcon />
+                  </div>
+                  <p className="flex-1">
+                    {(airspace.title || airspace.address).substring(0, 15)}
+                  </p>
+                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                    <ChevronRightIcon />
+                  </div>
                 </div>
-                <p className="flex-1">
-                  {(airspace.title || airspace.address).substring(0, 15)}
-                </p>
-                <div className="w-[18px] h-[18px] flex items-center justify-center">
-                  <ChevronRightIcon />
-                </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
-      </div>
+      )}
     </Item>
   );
 };
@@ -215,6 +223,7 @@ const ReferralProgram = () => {
 const Dashboard = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
   const [balanceLoading, setBalanceLoading] = useState(false);
   const { user: selectorUser } = useAuth();
   const [user, setUser] = useState();
@@ -222,8 +231,9 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState("");
   const [signature, setSignature] = useState();
   const [airspaces, setAirspaces] = useState([]);
+  const dispatch = useDispatch()
 
-  const { getPropertiesByUserAddress } = useDatabase();
+  const { getClaimedPropertiesByUserAddress } = useDatabase();
   // GET USER AND TOKEN
   useEffect(() => {
     if (selectorUser) {
@@ -320,15 +330,9 @@ const Dashboard = () => {
 
               return;
             }
-            console.log(
-              "tokenBalance  ==  ",
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
-            setTokenBalance(
-              result.result.value[0].account.data.parsed.info.tokenAmount
-                .uiAmountString
-            );
+            dispatch(counterActions.setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
+              .uiAmountString));
+
             setBalanceLoading(false);
           })
           .catch((error) => {
@@ -409,25 +413,22 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       try {
-        console.log({ user });
-        const response = await getPropertiesByUserAddress(
+        setIsLoadingAirspace(true)
+        const response = await getClaimedPropertiesByUserAddress(
           user.blockchainAddress,
-          "landToken"
         );
-        //test
-        //const response =myAirspacesTest;
-        console.log("res landrtoken== ", response);
         if (response) {
-          let retrievedAirspaces = response.items.map((item) => {
+          let retrievedAirspaces = response.map((item) => {
             return {
               address: item.address,
             };
           });
-          console.log("yooooo", retrievedAirspaces);
           setAirspaces(retrievedAirspaces);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoadingAirspace(false)
       }
     })();
   }, [user]);
@@ -470,9 +471,8 @@ const Dashboard = () => {
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
                       <AvailableBalance
                         loading={balanceLoading}
-                        balance={tokenBalance}
                       />
-                      <MyAirspaces airspaces={airspaces} />
+                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
                   <ReferralProgram />

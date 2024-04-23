@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useSignature } from "./useSignature"
 
 const useDatabase = () => {
@@ -8,7 +9,7 @@ const useDatabase = () => {
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(blockchainAddress);
             const response = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     URI: `/referral-code/referral-code/${id}`,
@@ -101,6 +102,32 @@ const useDatabase = () => {
             return response.json();
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    const sendReferral = async (blockchainAddress, receiverEmail) => {
+        try {
+            const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(blockchainAddress);
+            const response = await fetch(`/api/proxy?${Date.now()}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    URI: `/referral-code/send-referral/${receiverEmail}`,
+                    sign,
+                    time: sign_issue_at,
+                    nonce: sign_nonce,
+                    address: sign_address,
+                },
+            })
+
+            if (!response.ok || response.statusCode === 500) {
+                throw new Error("Error when sending referral.");
+            }
+
+            return response.json();
+        } catch (error) {
+            console.log({hapy: error});
         }
     }
 
@@ -312,24 +339,75 @@ const useDatabase = () => {
         }
     }
 
-    const getPropertiesByUserAddress = async (blockchainAddress,type) => {
+    const getPropertiesByUserAddress = async (callerAddress, type, limit, afterAssetId)=>{
+
+    try {
+        const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(callerAddress);
+        
+
+        const response = await fetch(`/api/proxy?${Date.now()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                URI: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
+                sign,
+                time: sign_issue_at,
+                nonce: sign_nonce,
+                address: sign_address,
+
+            },
+        })
+
+
+        return response.json();
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+}
+
+
+const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
+
+    try {
+        const { sign, sign_nonce, sign_issue_at, sign_address } =
+                await signatureObject(callerAddress);
+
+                const response = await fetch(`/api/proxy?${Date.now()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        URI: `/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`,
+                        sign,
+                        time: sign_issue_at,
+                        nonce: sign_nonce,
+                        address: sign_address,
+
+                    },
+                })
+        return response.json();
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+}
+
+    const getClaimedPropertiesByUserAddress = async (blockchainAddress) => {
         try {
             const { sign, sign_nonce, sign_issue_at, sign_address } =
                 await signatureObject(blockchainAddress);
+
             const response = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    URI: `/private/airspace-rental/retrieve-tokens`,
+                    uri: `/private/properties/user-properties`,
                     sign,
                     time: sign_issue_at,
                     nonce: sign_nonce,
                     address: sign_address,
                 },
-                body:JSON.stringify({
-                    callerAddress:blockchainAddress,
-                    type
-                })
             })
 
             console.log("-----------------------Response----------",response)
@@ -478,7 +556,30 @@ const useDatabase = () => {
         }
     }
 
-    return { getReferralCodeById,retrieveReferralData,getReferralByCode, updateReferral, createUser, getUser, updateUser, deleteUser, createProperty, deleteProperty, getPropertyById, updateProperty, getPropertiesByUserAddress, getRents, getRentById, updateRent, createRent, deleteRent }
+
+    return {
+        getReferralCodeById,
+        retrieveReferralData,
+        getReferralByCode,
+        getUnverifiedAirspaces,
+        updateReferral,
+        createUser,
+        getUser,
+        updateUser,
+        deleteUser,
+        createProperty,
+        deleteProperty,
+        getPropertyById,
+        updateProperty,
+        getPropertiesByUserAddress,
+        getRents,
+        getRentById,
+        updateRent,
+        createRent,
+        deleteRent,
+        sendReferral,
+        getClaimedPropertiesByUserAddress
+    }
 }
 
 export default useDatabase;
