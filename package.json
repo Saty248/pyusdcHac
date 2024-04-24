@@ -54,7 +54,7 @@
     "node-fetch": "^3.3.2",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
-    "postcss": "8.4.27",
+    "postcss": "8.4.31",
     "react": "18.2.0",
     "react-calendar": "^4.6.0",
     "react-copy-to-clipboard": "^5.1.0",
