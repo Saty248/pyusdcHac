@@ -135,7 +135,7 @@ const Sidebar = () => {
         <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
       </aside>
-      <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar'>
+      <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/airspace2'} text={"Airspaces"} children={<EarthIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/marketplace'} text={"Marketplace"} children={<MapIcon />} numberOfUnseenNotifications={0} />
