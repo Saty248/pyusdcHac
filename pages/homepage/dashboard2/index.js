@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-
+import { counterActions } from '@/store/store';
 import Link from "next/link";
 import Script from "next/script";
 import {
@@ -30,8 +30,7 @@ import Head from "next/head";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
-
+import { setUserUSDWalletBalance } from "@/store/store";
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -66,11 +65,8 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 const AvailableBalance = ({ loading }) => {
 
 
-  const {userUSDWalletBalance} = useSelector(
-    (state) => {
-      const {userUSDWalletBalance} = state.userReducer;
-      return {userUSDWalletBalance}
-    }, shallowEqual
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
   );
 
 
@@ -334,7 +330,7 @@ const Dashboard = () => {
 
               return;
             }
-            dispatch(setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
+            dispatch(counterActions.setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
               .uiAmountString));
 
             setBalanceLoading(false);

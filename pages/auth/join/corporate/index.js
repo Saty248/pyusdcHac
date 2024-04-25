@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import swal from 'sweetalert';
 import logo from '../../../../public/images/logo.jpg';
@@ -35,12 +35,7 @@ const CorporateSignup = () => {
     setPageLoad(false);
   }, []);
 
-  const {category} = useSelector((state) =>
-  {
-    const {category} = state.userReducer
-    return {category}
-  }, shallowEqual
-   );
+  const category = useSelector((state) => state.value.category);
 
   const { temporaryToken, signIn } = useAuth();
 
