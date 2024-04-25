@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
@@ -60,16 +60,6 @@ export  const checkPhoneIsValid = async (phone) => {
 
 }
 const IndividualSignup = () => {
-
-    const {category} = useSelector((state) =>
-    {
-      const {category} = state.userReducer
-      return {category}
-    }, shallowEqual );
-
-
-
-
     const [part, setPart] = useState(0);
     const [name,setName] = useState('');
     const [phoneNumber,setPhoneNumber] = useState('');
@@ -104,7 +94,7 @@ const IndividualSignup = () => {
         }
     }, [global?.window]);
 
-
+    const category = useSelector((state) => state.value.category);
 
     useEffect(() => {
         console.log("Category:", category)
