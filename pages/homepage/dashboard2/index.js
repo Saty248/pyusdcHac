@@ -65,8 +65,11 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 const AvailableBalance = ({ loading }) => {
 
 
-  const userUSDWalletBalance = useSelector(
-    (state) => state.value.userUSDWalletBalance
+  const {userUSDWalletBalance} = useSelector(
+    (state) => {
+      const {userUSDWalletBalance} = state.userReducer;
+      return {userUSDWalletBalance}
+    }
   );
 
 
