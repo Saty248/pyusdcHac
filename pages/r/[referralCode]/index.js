@@ -13,7 +13,7 @@ import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { WALLET_ADAPTERS } from '@web3auth/base';
 import { SolanaWallet } from '@web3auth/solana-provider';
 
-
+import { counterActions } from '@/store/store';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
@@ -24,7 +24,6 @@ import useDatabase from '@/hooks/useDatabase';
 import logo from '../../../public/images/logo.jpg';
 
 import { useSignature } from '@/hooks/useSignature';
-import { setCategory } from '@/redux/slices/userSlice';
 
 const chainConfig = {
   chainNamespace: 'solana',
@@ -190,7 +189,7 @@ const ReferralCodeRedirect = () => {
         localStorage.removeItem('openlogin_store');
 
         dispatch(
-          setCategory({
+          counterActions.category({
             email: userInformation.email,
             blockchainAddress: accounts[0],
           })
