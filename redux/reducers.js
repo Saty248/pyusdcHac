@@ -7,7 +7,7 @@ import userReducer from "./slices/userSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["category", "userUSDWalletBalance"],
+  whitelist: ["category"],
 };
 
 const rootReducer = combineReducers({
