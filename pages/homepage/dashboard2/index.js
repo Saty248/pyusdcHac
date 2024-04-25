@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-
 import Link from "next/link";
 import Script from "next/script";
 import {
@@ -70,7 +69,7 @@ const AvailableBalance = ({ loading }) => {
     (state) => {
       const {userUSDWalletBalance} = state.userReducer;
       return {userUSDWalletBalance}
-    }, shallowEqual
+    }
   );
 
 
@@ -330,6 +329,7 @@ const Dashboard = () => {
             console.log(result, " this is result");
             if (result.result.value.length < 1) {
               setTokenBalance("0");
+              dispatch(setUserUSDWalletBalance('0'))
               setBalanceLoading(false);
 
               return;
