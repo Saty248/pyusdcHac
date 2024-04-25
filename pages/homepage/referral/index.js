@@ -171,7 +171,7 @@ const Share = ({
   };
 
   const handleOnChange = (e) => {
-    setTemporalReferralCode(e.target.value);
+    setTemporalReferralCode(e.target.value.toUpperCase());
   };
 
   const handleUpdateReferralCode = async () => {
@@ -198,6 +198,9 @@ const Share = ({
         }));
 
         window.location.reload()
+      } 
+      else if (resp && resp.errorMessage) {
+        toast.error(resp.errorMessage)
       }
       else toast.error("Error when updating referral")
     } catch (error) {
