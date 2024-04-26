@@ -4,6 +4,8 @@ import {
   SuccessIcon,
   chevronDownIcon,
   chevronUpIcon,
+  CopyIcon,
+  Tooltip
 } from "@/Components/Icons";
 import { Fragment, useState, useEffect } from "react";
 import Script from "next/script";
@@ -229,6 +231,7 @@ const DepositAndWithdraw = ({
   const router = useRouter();
   const [amount, setAmount] = useState(null);
   const [copy, setCopy] = useState(false);
+  const [isCopyTooltipVisible,setIsCopyTooltipVisible] = useState(false);
 
   const notifySuccess = () =>
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -431,8 +434,6 @@ const DepositAndWithdraw = ({
     }, 2000);
   };
 
-  const displayWalletId = walletId ? `${walletId.slice(0, 7)}...` : "";
-
   return (
     <div
       className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]"
@@ -525,7 +526,7 @@ const DepositAndWithdraw = ({
 
       {activeSection === 0 && (
         <>
-          <div className="flex items-end gap-[11px]">
+          <div className="flex items-center justify-between w-full">
             <div className="flex flex-col items-start gap-[5px] flex-1">
               <label
                 htmlFor="walletId"
@@ -533,21 +534,7 @@ const DepositAndWithdraw = ({
               >
                 Wallet ID
               </label>
-              <div className="relative w-full">
-                <input
-                  className="bg-[#DFF1FF] text-[#222222] text-[14px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none pr-[95px]"
-                  type="text"
-                  name="walletId"
-                  id="walletId"
-                  value={walletId}
-                  disabled
-                />
-                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-                  <p className="absolute right-[22px] top-1/2 -translate-y-1/2 text-[#0653EA] text-[14px] cursor-pointer">
-                    {copy ? "Copied" : "Copy"}
-                  </p>
-                </CopyToClipboard>
-              </div>
+              
             </div>
             <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
               {walletId && (
@@ -564,7 +551,28 @@ const DepositAndWithdraw = ({
                 />
               )}
             </div>
+            
           </div>
+          <div className="flex bg-[#DFF1FF] w-full justify-between border-2">
+              <input
+                  className=" text-[#222222] text-[13px] rounded-lg w-full py-[14px] pl-[22px] focus:outline-none"
+                  type="text"
+                  name="walletId"
+                  id="walletId"
+                  value={walletId}
+                  disabled
+                />
+                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
+                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                    <div className="relative">
+                      {isCopyTooltipVisible && <Tooltip isCopied={copy}/> }
+                      <div className="border-2" onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
+                        <CopyIcon />
+                      </div>
+                    </div>
+                  </div>
+                </CopyToClipboard>
+            </div>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}
@@ -593,13 +601,13 @@ const DepositAndWithdraw = ({
         <div className="w-6 h-6">
           <WarningIcon />
         </div>
-        <div className="text-[#222222] text-[14px] font-normal w-full">
+        <div className="text-[#222222] text-[13px] font-normal w-full">
           To complete your deposit, please use your crypto wallet to deposit
           USDC to the following address:
-          <span style={{ color: "#0653EA", marginLeft: "4px" }}>
-            {displayWalletId}
-          </span>{" "}
-          Thank you
+          <br/>
+          <span style={{ color: "#0653EA" }}>
+            {walletId}
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
