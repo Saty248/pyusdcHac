@@ -624,10 +624,15 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
             <CloseIcon />
           </div>
         </div>
-      
-        <div className="gap-[5px] touch-manipulation">
-          <span>Owner</span>
-          <span> {owner ? owner.name : "grgr"}</span>
+        <div className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+          style={{ border: "1px solid #4285F4" }}
+        >
+          <div className="w-6 h-6">
+            <LocationPointIcon />
+          </div>
+          <p className="font-normal text-[#222222] text-[14px] flex-1">
+            {rentData ? rentData.address : ""}
+          </p>
         </div>
         <div className="flex touch-manipulation items-center justify-evenly gap-[20px] text-[14px]">
           <div className="flex touch-manipulation flex-col gap-[5px] w-full">
