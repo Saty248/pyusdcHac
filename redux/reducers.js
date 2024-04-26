@@ -1,13 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session"; // defaults to localStorage for web
-
+// import storage from 'redux-persist/lib/storage';
 import userReducer from "./slices/userSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["category"],
+  whitelist: ["category", "isWaitingScreenVisible"],
+  blacklist: ["userUSDWalletBalance"],
 };
 
 const rootReducer = combineReducers({
