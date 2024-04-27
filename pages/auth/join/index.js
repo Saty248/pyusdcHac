@@ -64,6 +64,7 @@ const Signup = () => {
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
           web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
           privateKeyProvider,
+          chainConfig
         });
 
         setWeb3auth(web3auth);
@@ -71,7 +72,7 @@ const Signup = () => {
         const openloginAdapter = new OpenloginAdapter({
           privateKeyProvider,
           adapterSettings: {
-            uxMode: UX_MODE.REDIRECT,
+            uxMode: 'redirect',
           }
         });
         web3auth.configureAdapter(openloginAdapter);
