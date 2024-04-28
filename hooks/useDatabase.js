@@ -553,7 +553,6 @@ const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
         }
     }
 
-
     return {
         getReferralCodeById,
         retrieveReferralData,
@@ -576,7 +575,7 @@ const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
         deleteRent,
         sendReferral,
         getClaimedPropertiesByUserAddress
-    }
+    };
 }
 
 export default useDatabase;

@@ -162,6 +162,7 @@ const Signup = () => {
       web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "google",
       });
+
     }
     dispatch(setIsWaitingScreenVisible(true))
 

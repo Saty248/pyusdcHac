@@ -431,7 +431,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           setIsLoading(false);
           return;
         }
-
         const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(res, "base64"))
         );
