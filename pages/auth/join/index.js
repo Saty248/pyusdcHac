@@ -72,7 +72,7 @@ const Signup = () => {
         const openloginAdapter = new OpenloginAdapter({
           privateKeyProvider,
           adapterSettings: {
-            uxMode: 'redirect',
+            uxMode: UX_MODE.REDIRECT,
           }
         });
         web3auth.configureAdapter(openloginAdapter);
