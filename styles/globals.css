@@ -158,3 +158,9 @@ button {
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
 }
+.fund-table-scrollbar::-webkit-scrollbar-track {
+  margin-top: 56px;
+  background-color: white;
+}
+
+

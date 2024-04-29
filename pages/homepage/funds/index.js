@@ -43,6 +43,7 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
+import { useMobile } from "@/hooks/useMobile";
 
 
 
@@ -92,6 +93,7 @@ const AvailableBalance = ({ solbalance }) => {
 };
 
 const TransactionHistory = ({ transactions, user }) => {
+const { isMobile } = useMobile();
   const [currentPage, setCurrentPage] = useState(1);
   const TRANSACTIONS_PER_PAGE = 8;
   const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
@@ -139,14 +141,19 @@ const TransactionHistory = ({ transactions, user }) => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center overflow-x-auto h-[300px] sm:h-[80%]">
+      <div
+      className={`flex justify-center overflow-x-auto 
+      ${paginatedData?.length > 0 ? "h-[300px]" : "h-auto"} 
+      sm:h-[80%] fund-table-scrollbar`}
+      style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
+      >
         <div className="w-[89%] sm:w-[100%]">
-          <table className="w-[100%]">
-            <thead className="sticky top-0 z-[500]  bg-white opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+          <table className="w-[100%]" style={{direction: "ltr"}} >
+            <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
               <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
               (th) => (
-                <th className="text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
+                <th className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
               )
             )}
               </tr>
@@ -156,7 +163,7 @@ const TransactionHistory = ({ transactions, user }) => {
           {paginatedData.map((transaction, index) => (
             <tr
               key={transaction.id}
-              className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA]"} !rounded-lg`}
+              className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}
             >
               {/* {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })} */}
               <td className={`py-6 px-2 rounded-l-lg text-[#222222]   text-start w-[200px] min-w-[120px] sm:w-[20%] `}>
@@ -553,7 +560,7 @@ const DepositAndWithdraw = ({
             </div>
             
           </div>
-          <div className="flex bg-[#DFF1FF] w-full justify-between border-2">
+          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
               <input
                   className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[8px] focus:outline-none"
                   type="text"
@@ -573,6 +580,7 @@ const DepositAndWithdraw = ({
                   </div>
                 </CopyToClipboard>
             </div>
+                <hr class="border border-black border-opacity-20 h-[1px]  w-full"/>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}
