@@ -27,13 +27,11 @@ import AdditionalAispaceInformation from '@/Components/Modals/AdditionalAirspace
 import Spinner from '@/Components/Spinner';
 import MyAirspaceTab from '@/Components/MyAirspaceTab';
 import EditAispaceModal from '@/Components/Modals/EditAirspaceModal';
-// import { useVerification } from '@/hooks/useVerification';
 import CollapseAirspace from '@/Components/CollapseAirspace';
 import { setAdditionalInfoModal, setAirspaceData, setNewAirspaceModal } from '@/redux/slices/userSlice';
 import PropertiesService from "@/services/PropertiesService";
 
 const Airspace = () => {
-  // const { verificationCheck } = useVerification();
 
   const router = useRouter();
   const dispatch = useDispatch();

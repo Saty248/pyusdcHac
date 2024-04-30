@@ -84,19 +84,6 @@ const useAuth = () => {
   const updateProfile = (updatedUser) => {
     dispatch(setUser(updatedUser));
   };
-
-
-  // useEffect(() => {
-  //   const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-
-  //   if (fetchedToken.sessionId.length !== 64) {
-  //     router.push('/auth/join');
-  //     return;
-  //   }
-
-  //   setToken(fetchedToken.sessionId);
-  //   setUser(selectorUser);
-  // }, []);
   
   return {
     signIn,

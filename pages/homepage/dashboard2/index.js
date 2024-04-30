@@ -224,17 +224,13 @@ const ReferralProgram = () => {
 };
 
 const Dashboard = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
   const { user } = useAuth();
   const [airspaces, setAirspaces] = useState([]);
   const [totalAirspace, setTotalAirspace] = useState(0);
-  const dispatch = useDispatch()
 
   const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
 
-  // GET AIRSPACE LENGTH
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -263,8 +259,6 @@ const Dashboard = () => {
     })();
   }, [user]);
 
-  console.log({ user });
-
   if (!user) {
     return <Spinner />;
   }
@@ -274,10 +268,6 @@ const Dashboard = () => {
       <Head>
         <title>SkyTrade - Dashboard</title>
       </Head>
-      {isLoading &&
-        createPortal(<Backdrop />, document?.getElementById("backdrop-root"))}
-      {isLoading &&
-        createPortal(<Spinner />, document?.getElementById("backdrop-root"))}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
