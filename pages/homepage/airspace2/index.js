@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
+import { useRouter } from 'next/router';
 
 const SuccessModal = ({ setSuccessMobile}) => {
   const router = useRouter();
