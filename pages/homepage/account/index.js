@@ -1,74 +1,24 @@
 import { Fragment, useState, useEffect } from "react";
 import { Web3Auth } from '@web3auth/modal';
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import { createPortal } from "react-dom";
-import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import { ShieldIcon } from "@/Components/Icons";
-import { useSignature } from "@/hooks/useSignature";
-import useDatabase from "@/hooks/useDatabase";
 import { checkPhoneIsValid } from "@/pages/auth/join/intro";
+import UserService from "@/services/UserService";
+import { toast } from "react-toastify";
 
 const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
-    const { user: selectorUser, updateProfile } = useAuth();
-    const [user, setUser] = useState()
-    const [token, setToken] = useState('')
-    const { signatureObject } = useSignature();
-    const { updateUser } = useDatabase()
+    const { user, updateProfile } = useAuth();
+    const { updateUser } = UserService()
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
-
-
-    useEffect(() => {
-        if (selectorUser) {
-            const authUser = async () => {
-                const chainConfig = {
-                    chainNamespace: 'solana',
-                    chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-                    rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-                    displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-                    blockExplorer: 'https://explorer.solana.com',
-                    ticker: 'SOL',
-                    tickerName: 'Solana',
-                };
-                const web3auth = new Web3Auth({
-                    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-                    web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-                    chainConfig: chainConfig,
-                });
-                await web3auth.initModal();
-                // await web3auth.connect();
-                let userInfo;
-                try {
-                    userInfo = await web3auth.getUserInfo();
-                } catch (err) {
-                    localStorage.removeItem('openlogin_store');
-                    router.push('/auth/join');
-                    return;
-                }
-
-                const fetchedToken = JSON.parse(
-                    localStorage.getItem('openlogin_store')
-                );
-
-                if (!selectorUser) {
-                    localStorage.removeItem('openlogin_store');
-                    router.push('/auth/join');
-                    return;
-                }
-
-                setToken(fetchedToken.sessionId);
-                setUser(selectorUser);
-            };
-            authUser();
-        }
-    }, [selectorUser]);
 
     useEffect(() => {
         if (!user) return;
@@ -93,52 +43,32 @@ const Portfolio = () => {
         setIsLoading(true);
 
         try {
-            const { sign, sign_nonce, sign_issue_at, sign_address } =
-                await signatureObject(user.blockchainAddress);
-
-            const res = await fetch(`/api/proxy?${Date.now()}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    userId: user.id,
-                    name,
-                    phoneNumber,
-                    email,
-                    // TODO: newsletter
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    uri: '/private/users/update',
-                    sign,
-                    time: sign_issue_at,
-                    nonce: sign_nonce,
-                    address: sign_address,
-                },
-            });
-
-            if (!res.ok || res.statusCode === 500) {
-                const errorData = await res.json();
-                throw new Error(errorData.errorMessage);
-            }
-
-            const userJsonResponse = await res.json();
-
-            if (userJsonResponse.statusCode === 500) {
-                throw new Error('something went wrong');
-            }
-
-            setIsLoading(false);
-
-
-            const updatedUser = {
-                ...user,
+            const responseData = await updateUser({
+                userId: user.id,
                 name,
                 phoneNumber,
-                newsletter
-            };
+                email,
+            })
 
-            updateProfile(updatedUser);
+            if (responseData && responseData.errorMessage) {
+                toast.error(responseData.errorMessage);
+            } else if (responseData && !responseData.errorMessage) {
+                const updatedUser = {
+                    ...user,
+                    name,
+                    phoneNumber,
+                    newsletter
+                };
+
+                updateProfile(updatedUser);
+                toast.success("Record updated succesfully");
+            } else {
+                toast.error('Something went wrong');
+            }
         } catch (error) {
             console.log(error);
+            toast.error('Something went wrong');
+        } finally {
             setIsLoading(false);
         }
     };

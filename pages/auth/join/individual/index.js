@@ -11,7 +11,8 @@ import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
+import UserService from "@/services/UserService";
 
 const IndividualSignup = () => {
   const newsletterRef = useRef();
@@ -30,6 +31,8 @@ const IndividualSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
 
+  const { createUser } = UserService();
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (!category.categoryId) {
@@ -38,8 +41,6 @@ const IndividualSignup = () => {
       }
 
       const lsReferralCode = localStorage.getItem('referralCode');
-
-      console.log({ lsReferralCode });
 
       if (lsReferralCode) {
         setRefCode(lsReferralCode);
@@ -67,113 +68,100 @@ const IndividualSignup = () => {
     router.push('/auth/join');
   };
 
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = async (e) => {
     e.preventDefault();
 
-    const name = nameRef.current.value;
-    const phoneNumber = phoneNumberRef.current.value;
-    const referralCode = referralCodeRef.current?.value;
+    try {
+      const name = nameRef.current.value;
+      const phoneNumber = phoneNumberRef.current.value;
+      const referralCode = referralCodeRef.current?.value;
 
-    if (!name) {
-      setNameValid(false);
-      swal({
-        title: 'oops!',
-        text: 'Kindly complete all required fields',
-        timer: 2000,
-      });
-      return;
-    }
-
-    if (!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== '+') {
-      setPhoneNumberValid(false);
-      swal({
-        title: 'Oops!',
-        text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
-      });
-      return;
-    }
-
-    if (
-      (refCode && refCode.length !== 6) ||
-      (!refCode && referralCode && referralCode.length !== 6)
-    ) {
-      swal({
-        title: 'Oops!',
-        text: 'Invalid Referral Code. Every referral code needs to be 6 characters',
-      });
-      return;
-    }
-
-    const userInfo = {
-      ...category,
-      categoryId: +category.categoryId,
-      name,
-      phoneNumber,
-      newsletter,
-      ...(refCode && { referralCode: refCode }),
-      ...(referralCode && { referralCode }),
-    };
-
-    setIsLoading(true);
-
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: 'POST',
-      body: JSON.stringify(userInfo),
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/public/users/create',
-        proxy_to_method: 'POST',
-      },
-    })
-      .then((res) => {
-        console.log({ signUpRes: res, ok: res.ok });
-
-        if (!res.ok) {
-          return res.json().then((errorData) => {
-            swal({
-              title: 'Sorry!',
-              text: `${errorData.errorMessage}`,
-            });
-            throw new Error(errorData.errorMessage);
-          });
-        }
-
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error('something went wrong');
-          }
-
-          swal({
-            title: 'Submitted',
-            text: 'User registered successfully. You will now be signed in',
-            icon: 'success',
-            button: 'Ok',
-          }).then(() => {
-            signIn({
-              token: temporaryToken,
-              user: response,
-            });
-
-            nameRef.current.value = '';
-            phoneNumberRef.current.value = '';
-
-            // referralCodeRef.current.value = '';
-            router.replace('/homepage/dashboard');
-          });
+         
+      if (!name) {
+        setNameValid(false);
+        swal({
+          title: 'oops!',
+          text: 'Kindly complete all required fields',
+          timer: 2000,
         });
-      })
-      .catch((error) => {
-        console.log(error);
+        return;
+      }
 
+      if (!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== '+') {
+        setPhoneNumberValid(false);
+        swal({
+          title: 'Oops!',
+          text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
+        });
+        return;
+      }
+
+      if (
+        (refCode && refCode.length !== 6) ||
+        (!refCode && referralCode && referralCode.length !== 6)
+      ) {
+        swal({
+          title: 'Oops!',
+          text: 'Invalid Referral Code. Every referral code needs to be 6 characters',
+        });
+        return;
+      }
+
+      const userInfo = {
+      ...category,
+        categoryId: +category.categoryId,
+        name,
+        phoneNumber,
+        newsletter,
+        ...(refCode && { referralCode: refCode }),
+        ...(referralCode && { referralCode }),
+      };
+
+      setIsLoading(true);
+
+      const responseData = await createUser(userInfo);
+      if (responseData && responseData.errorMessage) {
         swal({
           title: 'Sorry!',
-          text: `Something went wrong, please try again.`,
+          text: `${responseData.errorMessage}`,
         });
+      } else if(responseData) {
+        swal({
+          title: 'Submitted',
+          text: 'User registered successfully. You will now be signed in',
+          icon: 'success',
+          button: 'Ok',
+        }).then(() => {
+          signIn({
+            token: temporaryToken,
+            user: response,
+          });
 
-        setIsLoading(false);
+          nameRef.current.value = '';
+          phoneNumberRef.current.value = '';
 
-        throw new Error(errorData.errorMessage);
+          // referralCodeRef.current.value = '';
+          router.replace('/homepage/dashboard2');
+        });
+      } else {
+        swal({
+          title: 'Sorry!',
+          text: `something went wrong`,
+        });
+      }
+
+
+    } catch (error) {
+      console.error(error);
+
+      swal({
+        title: 'Sorry!',
+        text: `Something went wrong, please try again.`,
       });
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   if (pageLoad) {

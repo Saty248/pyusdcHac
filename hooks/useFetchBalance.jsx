@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 
 import { useDispatch } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";

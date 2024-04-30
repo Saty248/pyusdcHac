@@ -5,11 +5,11 @@ import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
 
-import { AuthProvider } from "@/hooks/useAuth";
 import { msclaritConfig } from "@/hooks/msclaritConfig";
 import { useMobile } from "@/hooks/useMobile";
 import { useEffect, useState } from "react";
 import { SidebarProvider } from "@/hooks/sidebarContext";
+import { Web3authProvider } from "@/providers/web3authProvider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -47,7 +47,7 @@ export default function App({ Component, pageProps }) {
 
 
   return (
-    <AuthProvider>
+    <>
       <Provider store={store}>
       
       <PersistGate loading={null} persistor={persistor}>
@@ -64,14 +64,16 @@ export default function App({ Component, pageProps }) {
                 gtag('config', 'G-C0J4J56QW5');
             `}
           </Script>
-          <SidebarProvider>
-            <ToastContainer style={{ width: "500px" }} />
-            <Component {...pageProps} />
-          </SidebarProvider>
+          <Web3authProvider>
+            <SidebarProvider>
+              <ToastContainer style={{ width: "500px" }} />
+              <Component {...pageProps} />
+            </SidebarProvider>
+          </Web3authProvider>
           <CookieConsent />
         </>
       </PersistGate>
       </Provider>
-    </AuthProvider>
+    </>
   );
 }

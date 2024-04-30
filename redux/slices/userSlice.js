@@ -10,6 +10,7 @@ const initialState = {
   airspaceData: {},
   userUSDWalletBalance: { amount: "0", isLoading: true },
   isWaitingScreenVisible: false,
+  user: {},
 };
 
 const userSlice = createSlice({
@@ -36,6 +37,9 @@ const userSlice = createSlice({
       },
       setIsWaitingScreenVisible: (state, action)=>{
         state.isWaitingScreenVisible = action.payload
+      },
+      setUser: (state, action)=>{
+        state.user = action.payload
       }
   },
 });
@@ -46,6 +50,7 @@ export const {
   setAdditionalInfoModal,
   setAirspaceData,
   setUserUSDWalletBalance,
-  setIsWaitingScreenVisible
+  setIsWaitingScreenVisible,
+  setUser
 } = userSlice.actions;
 export default userSlice.reducer;

@@ -18,18 +18,18 @@ import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import WorldMap from "@/Components/WorldMap";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import { useRouter } from "next/router";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
-import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
+import PropertiesService from "@/services/PropertiesService";
 
 
 let USDollar = new Intl.NumberFormat("en-US", {
@@ -227,128 +227,11 @@ const Dashboard = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
-  const { user: selectorUser } = useAuth();
-  const [user, setUser] = useState();
-  const [token, setToken] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("");
-  const [signature, setSignature] = useState();
+  const { user } = useAuth();
   const [airspaces, setAirspaces] = useState([]);
   const dispatch = useDispatch()
 
-  const { getClaimedPropertiesByUserAddress } = useDatabase();
-  // GET USER AND TOKEN
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem("openlogin_store")
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        console.log({ selectorUser });
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
-  console.log({ selectorUser });
-
-
-  // GET SIGNATURE
-  useEffect(() => {
-    if (user) {
-      const getSignature = async () => {
-        const signatureObj = {};
-
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        const origin = window.location.origin;
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress;
-        payload.statement = "Sign in to SkyTrade app.";
-        payload.version = "1";
-        payload.chainId = 1;
-
-        const header = { t: "sip99" };
-        const network = "solana";
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = user.blockchainAddress;
-        setSignature(signatureObj);
-      };
-
-      getSignature();
-    }
-  }, [user]);
+  const { getClaimedPropertiesByUserAddress } = PropertiesService();
 
   // GET AIRSPACE LENGTH
   useEffect(() => {
@@ -356,11 +239,10 @@ const Dashboard = () => {
     (async () => {
       try {
         setIsLoadingAirspace(true)
-        const response = await getClaimedPropertiesByUserAddress(
-          user.blockchainAddress,
-        );
-        if (response) {
-          let retrievedAirspaces = response.map((item) => {
+        const responseData = await getClaimedPropertiesByUserAddress();
+
+        if (responseData) {
+          const retrievedAirspaces = responseData.map((item) => {
             return {
               address: item.address,
             };
@@ -377,7 +259,7 @@ const Dashboard = () => {
 
   console.log({ user });
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 

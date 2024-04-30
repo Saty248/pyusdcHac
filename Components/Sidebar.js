@@ -1,40 +1,18 @@
-import React, { Fragment, useState, useContext } from 'react';
-import { Web3AuthNoModal } from '@web3auth/no-modal';
+import React, { Fragment, useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { createPortal } from 'react-dom';
-import Spinner from './Spinner';
-import Backdrop from './Backdrop';
+
 import logo from '../public/images/logo.jpg';
 import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
-
-
-const chainConfig = {
-  chainNamespace: 'solana',
-  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-  displayName: 'Solana Mainnet',
-  blockExplorer: 'https://explorer.solana.com',
-  ticker: 'SOL',
-  tickerName: 'Solana',
-};
-
-const web3auth = new Web3AuthNoModal({
-  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-  chainConfig: chainConfig,
-});
-
 
 
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
-  const [isLoading, setIsLoading] = useState(false);
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
 
@@ -98,15 +76,11 @@ const Sidebar = () => {
   }
 
   const logoutHandler = async () => {
-      signOut()
+    await signOut()
   };
 
   return (
     <Fragment>
-      {isLoading &&
-        createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
-      {isLoading &&
-        createPortal(<Spinner />, document.getElementById('backdrop-root'))}
       <aside
         className='md:flex overflow-y-scroll no-scrollbar hidden relative border-e-2 bg-white px-[21.95px] py-[29.27px] items-center flex-col gap-[14.64px]'
         style={{ width: !isCollapsed ? '297.29px' : "98.2833px", height: '100vh', transition: "width 0.3s ease" }}
