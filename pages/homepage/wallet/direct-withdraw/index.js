@@ -1,9 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/router';
 import { useState, useEffect, Fragment } from 'react';
-import swal from 'sweetalert';
-import { Web3Auth } from '@web3auth/modal';
-import Script from 'next/script';
 
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
@@ -11,11 +8,9 @@ import Backdrop from '@/Components/Backdrop';
 
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const Wallet = () => {
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
   const [addCard, setAddCard] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
   const [amount, setAmount] = useState(0);
@@ -24,62 +19,8 @@ const Wallet = () => {
 
   const router = useRouter();
 
-  const { user: selectorUser } = useAuth();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-
-      authUser();
-    }
-  }, [selectorUser]);
 
   useEffect(() => {
     if (user) {
@@ -88,7 +29,7 @@ const Wallet = () => {
         id: 1,
         method: 'getTokenAccountsByOwner',
         params: [
-          user.blockchainAddress,
+          user?.blockchainAddress,
           {
             mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
           },
@@ -146,7 +87,7 @@ const Wallet = () => {
     router.push('/homepage/wallet');
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -164,9 +105,9 @@ const Wallet = () => {
           className='overflow-y-auto'
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'

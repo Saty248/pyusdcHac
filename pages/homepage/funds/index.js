@@ -1,16 +1,15 @@
-"use client";
 import {
   chevronDownIcon,
   chevronUpIcon,
   CopyIcon,
   Tooltip
 } from "@/Components/Icons";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
@@ -43,6 +42,7 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
+import { Web3authContext } from '@/providers/web3authProvider';
 import { useMobile } from "@/hooks/useMobile";
 
 
@@ -254,6 +254,9 @@ const DepositAndWithdraw = ({
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
   const { user } = useAuth();
+
+  const { provider } = useContext(Web3authContext)
+
   let userSolBalc = solbalance;
   const handleWithdraw = async () => {
     try {
@@ -279,27 +282,7 @@ const DepositAndWithdraw = ({
 
       setIsLoading(true);
 
-      const chainConfig = {
-        chainNamespace: "solana",
-        chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-        rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-        displayName: "Solana ",
-        blockExplorer: "https://explorer.solana.com",
-        ticker: "SOL",
-        tickerName: "Solana",
-      };
-
-      const web3auth = new Web3Auth({
-        clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-        web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-        chainConfig: chainConfig,
-      });
-
-      await web3auth.initModal();
-
-      const web3authProvider = await web3auth.connect();
-
-      const solanaWallet = new SolanaWallet(web3authProvider);
+      const solanaWallet = new SolanaWallet(provider);
 
       console.log("solana wallet ", solanaWallet);
       const accounts = await solanaWallet.requestAccounts();
@@ -324,7 +307,7 @@ const DepositAndWithdraw = ({
 
       let senderUSDCAddr = await getAssociatedTokenAddress(
         new PublicKey(mintAccount),
-        new PublicKey(user.blockchainAddress)
+        new PublicKey(user?.blockchainAddress)
       );
       let ix = [];
 
@@ -339,7 +322,7 @@ const DepositAndWithdraw = ({
       } catch (error) {
         if (error.name == "TokenAccountNotFoundError") {
           let createIx = createAssociatedTokenAccountInstruction(
-            new PublicKey(user.blockchainAddress),
+            new PublicKey(user?.blockchainAddress),
             recipientUSDCAddr,
             new PublicKey(recipientWalletAddress),
             new PublicKey(mintAccount)
@@ -355,7 +338,7 @@ const DepositAndWithdraw = ({
       let transferIx = createTransferInstruction(
         senderUSDCAddr,
         recipientUSDCAddr,
-        new PublicKey(user.blockchainAddress),
+        new PublicKey(user?.blockchainAddress),
         parseFloat(amount) * Math.pow(10, 6)
       );
 
@@ -367,7 +350,7 @@ const DepositAndWithdraw = ({
         .blockhash;
 
       tx.recentBlockhash = blockhash;
-      tx.feePayer = new PublicKey(user.blockchainAddress);
+      tx.feePayer = new PublicKey(user?.blockchainAddress);
 
       console.log("transaction obj ", tx);
       try {
@@ -752,86 +735,18 @@ const Funds = () => {
   const [transactions, setTransactions] = useState([]);
   const [transactionHistory, setTransactionHistory] = useState();
   const [refetchBal, setreFetchBal] = useState(true);
-  const { user: selectorUser } = useAuth();
-  const [user, setUser] = useState();
-  const [token, setToken] = useState("");
+  const { user } = useAuth();
   const [tokenBalance, setTokenBalance] = useState("");
   const router = useRouter();
   const [solbalance, setSolBalance] = useState("0");
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem("openlogin_store")
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
+  const { provider } = useContext(Web3authContext)
 
 
   //get sol balance
   useEffect(() => {
     let fetchbalance = async () => {
       if (user) {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
+        const solanaWallet = new SolanaWallet(provider);
 
         console.log("solana wallet ", solanaWallet);
         const accounts = await solanaWallet.requestAccounts();
@@ -857,7 +772,7 @@ const Funds = () => {
   useEffect(() => {
     if (user) {
       fetch(
-        `https://api.solana.fm/v0/accounts/${user.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`
+        `https://api.solana.fm/v0/accounts/${user?.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`
       )
         .then((response) => {
           if (!response.ok) {
@@ -907,7 +822,7 @@ const Funds = () => {
       console.log(collectedTransactions);
       setTransactions(collectedTransactions);
     }
-  }, [transactionHistory]);
+  }, [transactionHistory, user]);
 
   return (
     <Fragment>

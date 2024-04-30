@@ -9,26 +9,23 @@ import Sidebar from '@/Components/Sidebar';
 import swal from 'sweetalert';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
-import { useSignature } from '@/hooks/useSignature';
+import useAuth from '@/hooks/useAuth';
+import UserService from "@/services/UserService";
 
 const Settings = () => {
   const router = useRouter();
 
-  const { signatureObject } = useSignature();
 
   const [nameValid, setNameValid] = useState(true);
   const [phoneValid, setPhoneValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [user, setUser] = useState('');
-  const [token, setToken] = useState('');
-
   const nameRef = useRef();
   const phoneRef = useRef();
   const referralCodeRef = useRef();
 
-  const { user: userLoggedIn, updateProfile } = useAuth();
+  const { user, updateProfile } = useAuth();
+  const { updateUser } = UserService()
 
   const updateDataHandler = async (e) => {
     e.preventDefault();
@@ -76,7 +73,7 @@ const Settings = () => {
       return;
     }
 
-    if (!user.ownedReferralCode.codeChanged && userCodeId !== referralCode) {
+    if (!user?.ownedReferralCode.codeChanged && userCodeId !== referralCode) {
       const modalResponse = await swal({
         title: 'Attention!',
         text: 'You can only change your referral code once; this action is immutable and irreversible.',
@@ -88,9 +85,9 @@ const Settings = () => {
 
       if (!modalResponse) {
         setIsLoading(false);
-        referralCodeRef.current.value = user.ownedReferralCode.code;
-        nameRef.current.value = user.name;
-        phoneRef.current.value = user.phoneNumber;
+        referralCodeRef.current.value = user?.ownedReferralCode.code;
+        nameRef.current.value = user?.name;
+        phoneRef.current.value = user?.phoneNumber;
         return;
       }
     }
@@ -98,138 +95,60 @@ const Settings = () => {
     setIsLoading(true);
 
     try {
-      const { sign, sign_nonce, sign_issue_at, sign_address } =
-        await signatureObject(user.blockchainAddress);
+      const responseData = await updateUser({
+        userId: user?.id,
+        name,
+        phoneNumber,
+        ...(!user?.ownedReferralCode.codeChanged &&
+          userCodeId !== referralCode && { referralCode }),
+      })
 
-      const res = await fetch(`/api/proxy?${Date.now()}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          userId: user.id,
-          name,
-          phoneNumber,
-          ...(!user.ownedReferralCode.codeChanged &&
-            userCodeId !== referralCode && { referralCode }),
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/private/users/update',
-          sign,
-          time: sign_issue_at,
-          nonce: sign_nonce,
-          address: sign_address,
-        },
-      });
+      if (responseData && responseData.errorMessage) {
+        toast.error(responseData.errorMessage);
+      } else if (responseData && !responseData.errorMessage) {
+        swal({
+          title: 'Submitted',
+          text: 'Record Successfully Updated.',
+          icon: 'success',
+          button: 'Ok',
+        }).then(() => {
+          //
+          const updatedUser = {
+            ...user,
+            name,
+            phoneNumber,
+            ...(userCodeId !== referralCode && {
+              ownedReferralCode: {
+                id: user?.ownedReferralCode.id,
+                code: referralCode,
+                codeChanged: true,
+              },
+            }),
+          };
 
-      if (!res.ok || res.statusCode === 500) {
-        const errorData = await res.json();
-        throw new Error(errorData.errorMessage);
+          updateProfile(updatedUser);
+
+        });
+      } else {
+        toast.error('Something went wrong');
       }
-
-      const userJsonResponse = await res.json();
-
-      if (userJsonResponse.statusCode === 500) {
-        throw new Error('something went wrong');
-      }
-
-      setIsLoading(false);
-
-      swal({
-        title: 'Submitted',
-        text: 'Record Successfully Updated.',
-        icon: 'success',
-        button: 'Ok',
-      }).then(() => {
-        //
-        const updatedUser = {
-          ...user,
-          name,
-          phoneNumber,
-          ...(userCodeId !== referralCode && {
-            ownedReferralCode: {
-              id: user.ownedReferralCode.id,
-              code: referralCode,
-              codeChanged: true,
-            },
-          }),
-        };
-
-        updateProfile(updatedUser);
-
-        // router.push('/homepage/dashboard');
-      });
     } catch (err) {
       console.log(err);
       const error = err.toString().split(':');
-      setIsLoading(false);
       swal({
         title: 'Oops!',
         text: `${error[1]}`,
       });
 
-      referralCodeRef.current.value = user.ownedReferralCode.code;
-      nameRef.current.value = user.name;
-      phoneRef.current.value = user.phoneNumber;
+      referralCodeRef.current.value = user?.ownedReferralCode.code;
+      nameRef.current.value = user?.name;
+      phoneRef.current.value = user?.phoneNumber;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (userLoggedIn) {
-      console.log({ userLoggedIn });
-
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: 'Solana Mainnet',
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!userLoggedIn) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(userLoggedIn);
-      };
-
-      authUser();
-    }
-  }, [userLoggedIn]);
-
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -242,9 +161,9 @@ const Settings = () => {
           className='overflow-y-auto overflow-x-hidden'
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           />
           <form
             className='mx-auto bg-white px-10 pb-2 pt-16'
@@ -260,7 +179,7 @@ const Settings = () => {
 
             {/* KYC LOGIC - DO NOT REMOVE */}
 
-            {/* {user.categoryId === 0 && user.KYCStatusId === 0 && (
+            {/* {user?.categoryId === 0 && user?.KYCStatusId === 0 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -282,7 +201,7 @@ const Settings = () => {
               </div>
             )} */}
 
-            {/* {user.categoryId === 0 && user.KYCStatusId === 3 && (
+            {/* {user?.categoryId === 0 && user?.KYCStatusId === 3 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -301,7 +220,7 @@ const Settings = () => {
               </div>
             )}
 
-            {user.KYCStatusId === 2 && (
+            {user?.KYCStatusId === 2 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -318,7 +237,7 @@ const Settings = () => {
               </div>
             )}
 
-            {user.categoryId === 0 && user.KYCStatusId === 1 && (
+            {user?.categoryId === 0 && user?.KYCStatusId === 1 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -335,7 +254,7 @@ const Settings = () => {
               </div>
             )}
 
-            {user.categoryId === 1 && user.KYCStatusId !== 2 && (
+            {user?.categoryId === 1 && user?.KYCStatusId !== 2 && (
               <div
                 className='mt-10 flex flex-row items-center justify-between rounded-md border-2 border-light-blue px-6 py-5'
                 style={{ width: '', height: '124px' }}
@@ -376,7 +295,7 @@ const Settings = () => {
                   ref={nameRef}
                   onChange={() => setNameValid(true)}
                   name='name'
-                  defaultValue={user.name}
+                  defaultValue={user?.name}
                   id='name'
                   className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
                   style={{ width: '660px', height: '37px' }}
@@ -394,7 +313,7 @@ const Settings = () => {
                   style={{ width: '320px', height: '37px' }}
                 >
                   <p className='text-bleach-brown'>Email</p>
-                  <p className='text-black'>{user.email}</p>
+                  <p className='text-black'>{user?.email}</p>
                 </div>
 
                 <div className='relative'>
@@ -407,7 +326,7 @@ const Settings = () => {
                     onChange={() => setPhoneValid(true)}
                     ref={phoneRef}
                     name='number'
-                    defaultValue={user.phoneNumber}
+                    defaultValue={user?.phoneNumber}
                     id='number'
                     className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
                     style={{ width: '320px', height: '37px' }}
@@ -428,7 +347,7 @@ const Settings = () => {
                   >
                     <p className='text-bleach-brown'>Type of Account</p>
                     <p className='text-black'>
-                      {user.categoryId === 0 ? 'Individual' : 'Corporate'}
+                      {user?.categoryId === 0 ? 'Individual' : 'Corporate'}
                     </p>
                   </div>
                 </div>
@@ -440,9 +359,9 @@ const Settings = () => {
                   >
                     <p className='text-bleach-brown'>Referral Code</p>
                     <div className='flex gap-5'>
-                      {user.ownedReferralCode.codeChanged ? (
+                      {user?.ownedReferralCode.codeChanged ? (
                         <p className='text-black'>
-                          {user.ownedReferralCode.code}
+                          {user?.ownedReferralCode.code}
                         </p>
                       ) : (
                         <input
@@ -450,7 +369,7 @@ const Settings = () => {
                           onChange={() => { }}
                           ref={referralCodeRef}
                           name='referral-code'
-                          defaultValue={user.ownedReferralCode.code}
+                          defaultValue={user?.ownedReferralCode.code}
                           id='referral-code'
                           className='rounded-md border-2 border-light-blue ps-3 placeholder:font-medium placeholder:text-dark-brown focus:outline-blue-200'
                           style={{ width: '320px', height: '37px' }}

@@ -6,7 +6,7 @@ import userReducer from "./slices/userSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["category", "isWaitingScreenVisible"],
+  whitelist: ["category", "isWaitingScreenVisible", "user"],
   blacklist: ["userUSDWalletBalance"],
 };
 

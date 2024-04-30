@@ -1,26 +1,24 @@
-import { Fragment, useState, useRef, useEffect } from "react";
+
+import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch } from "react-redux";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
-
-import { Web3AuthNoModal } from "@web3auth/no-modal";
-import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import { WALLET_ADAPTERS, CHAIN_NAMESPACES, UX_MODE } from "@web3auth/base";
+import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 
 import logo from "../../../public/images/logo.jpg";
 
-import { useSignature } from "@/hooks/useSignature";
 import Head from "next/head";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 import { shallowEqual, useSelector } from "react-redux";
+import { Web3authContext } from '@/providers/web3authProvider';
+import UserService from "@/services/UserService";
 
 
 const Signup = () => {
@@ -33,59 +31,18 @@ const Signup = () => {
 
   const emailRef = useRef();
 
-  const { signatureObject } = useSignature();
 
-  const { setTemporaryToken, signIn } = useAuth();
+  const { signIn } = useAuth();
 
-  const [web3auth, setWeb3auth] = useState(null);
-  const [provider, setProvider] = useState(null);
+  const { web3auth, provider, setProvider } = useContext(Web3authContext)
+  const { getUser } = UserService()
+
 
   const {isWaitingScreenVisible} = useSelector((state) => {
     const {isWaitingScreenVisible} = state.userReducer;
     return {isWaitingScreenVisible}
   }, shallowEqual);
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const chainConfig = {
-          chainNamespace: CHAIN_NAMESPACES.SOLANA,
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME,
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana Token",
-        };
-
-        const privateKeyProvider = new SolanaPrivateKeyProvider({ config: { chainConfig } });
-
-        const web3auth = new Web3AuthNoModal({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          privateKeyProvider,
-          chainConfig
-        });
-
-        setWeb3auth(web3auth);
-
-        const openloginAdapter = new OpenloginAdapter({
-          privateKeyProvider,
-          adapterSettings: {
-            uxMode: UX_MODE.REDIRECT,
-          }
-        });
-        web3auth.configureAdapter(openloginAdapter);
-
-        await web3auth.init();
-        setProvider(web3auth.provider);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    init();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -95,28 +52,16 @@ const Signup = () => {
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
           const accounts = await solanaWallet.requestAccounts();
-          const { sign, sign_nonce, sign_issue_at, sign_address } = await signatureObject(accounts[0]);
 
-          const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
-            headers: {
-              uri: "/private/users/session",
-              sign,
-              time: sign_issue_at,
-              nonce: sign_nonce,
-              address: sign_address,
-            },
-          });
+          const responseData = await getUser()
 
-          const user = await userRequest.json();
-
-          if (user.id) {
-            signIn({ user });
+          if (responseData?.id) {
+            signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
             await web3auth.logout();
             setProvider(null);
 
-            setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
             dispatch(
               setCategory({
                 email: userInformation.email,

@@ -18,14 +18,15 @@ import {
   SuccessIconwhite,
   CloseIconWhite,
 } from "@/Components/Icons";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import { useMobile } from "@/hooks/useMobile";
 import Link from "next/link";
 import { useTimezoneSelect, allTimezones } from "react-timezone-select";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from 'next/router';
+import PropertiesService from "@/services/PropertiesService";
+import { toast } from "react-toastify";
 
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
@@ -304,10 +305,8 @@ const ClaimModal = ({
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
-    console.log(inputVal);
     let parsedVal = parseFloat(inputVal);
     if (parsedVal >= 0 && parsedVal != NaN) {
-      console.log("parseVal ", parseFloat(inputVal));
       setData((prev) => {
         return {
           ...prev,
@@ -965,7 +964,6 @@ const FailurePopUp = ({ isVisible }) => {
 };
 
 const HowToModal = ({ goBack }) => {
-  console.log("yoo how too");
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -1105,7 +1103,7 @@ const Airspaces = () => {
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
-  const { createProperty } = useDatabase();
+  const { claimProperty } = PropertiesService();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -1289,8 +1287,10 @@ const Airspaces = () => {
       let { latitude, longitude } = coordinates;
       latitude = Number(latitude);
       longitude = Number(longitude);
+
       if (!name) return;
-      const addProperty = await createProperty(user.blockchainAddress, {
+
+      const postData = {
         address,
         ownerId: user.id,
         propertyStatusId: 0,
@@ -1313,18 +1313,19 @@ const Airspaces = () => {
           { latitude: latitude - 0.0001, longitude: longitude - 0.0001 },
         ],
         weekDayRanges,
-      });
-      console.log("add property results ,", addProperty);
-      if (addProperty === undefined) {
-        setShowFailurePopUp(true);
-      } else {   
-        setShowSuccessPopUp(true);
-      }
+      };
+
+      const responseData = await claimProperty({ postData })
+
+      if (!responseData) setShowFailurePopUp(true);
+      else setShowSuccessPopUp(true);
+      
       setShowClaimModal(false);
       setIsLoading(false);
       setData({ ...defaultData });
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Error when creating property.")
     } finally {
       setClaimButtonLoading(false);
     }
