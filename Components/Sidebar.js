@@ -102,7 +102,7 @@ const Sidebar = () => {
   };
 
   return (
-    <Fragment>
+    <div className={"relative z-50"}>
       {isLoading &&
         createPortal(<Backdrop />, document.getElementById('backdrop-root'))}
       {isLoading &&
@@ -157,7 +157,7 @@ const Sidebar = () => {
         <SidebarItemMobile href={'https://skytrade.tawk.help'} text={"HelpCenter"} children={<HelpQuestionIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile onClick={logoutHandler}  text={"Logout"} children={<LogoutIcon />} />
       </nav>
-    </Fragment >
+    </div>
   );
 };
 
