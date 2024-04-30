@@ -142,13 +142,15 @@ const { isMobile } = useMobile();
         </div>
       </div>
       <div
-      className={`flex justify-center overflow-x-auto 
+      className={`flex justify-center overflow-y-auto fund-table-scrollbar
       ${paginatedData?.length > 0 ? "h-[300px]" : "h-auto"} 
       sm:h-[80%] fund-table-scrollbar`}
       style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
       >
-        <div className="w-[89%] sm:w-[100%]">
-          <table className="w-[100%]" style={{direction: "ltr"}} >
+        <div style={{direction: "ltr"}} className="w-[89%] sm:w-[100%] " >
+          <div className="overflow-x-auto fund-table-scrollbar">
+
+          <table className="w-[100%]" >
             <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
               <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
@@ -193,6 +195,8 @@ const { isMobile } = useMobile();
           ))} 
         </tbody>
       </table>
+      </div>
+
       <div className="flex items-center justify-end">
         <div className="mx-auto flex gap-[11.71px]">
           {getPaginationNumbers().map((pageNumber) => (
@@ -562,7 +566,7 @@ const DepositAndWithdraw = ({
           </div>
           <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
               <input
-                  className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[8px] focus:outline-none"
+                  className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
                   type="text"
                   name="walletId"
                   id="walletId"
@@ -580,7 +584,7 @@ const DepositAndWithdraw = ({
                   </div>
                 </CopyToClipboard>
             </div>
-                <hr class="border border-black border-opacity-20 h-[1px]  w-full"/>
+                <hr class=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}
@@ -609,20 +613,31 @@ const DepositAndWithdraw = ({
         <div className="w-6 h-6">
           <WarningIcon />
         </div>
-        <div className="text-[#222222] text-[14px] sm:text-[13px] font-normal w-full ">
-            To complete your deposit, please use your crypto wallet to deposit
-            USDC to the following address:
-          <br/>
-          <div className="w-full">
-          <p 
-          className="break-words w-[250px] text-[10px]"
-          style={{ color: "#0653EA" }}
-          >
-            {walletId}  
-          </p>
-          </div>
+        <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
+          {
+            selectedMethod.name == "Stripe" ? (
+              <p>
+                Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
+              </p>
+            ):
+            <div >
+                To complete your deposit, please use your crypto wallet to deposit
+                USDC to the following address:
+              <br/>
+              <div className="w-full">
+                <p 
+                  className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                  style={{ color: "#0653EA" }}
+                >
+                  {walletId}  
+                </p>
+              </div>
+            </div>
+          }
         </div>
       </div>
+        {
+          selectedMethod.name == "Native" &&
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
         <div className="w-6 h-6">
           <WarningIcon />
@@ -635,6 +650,7 @@ const DepositAndWithdraw = ({
           loss.
         </div>
       </div>
+        }
     </div>
   );
 };
@@ -900,12 +916,12 @@ const Funds = () => {
       </Head>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
-      <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+      <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex  gap-[50px] flex-wrap ">
+            <div className="flex  sm:gap-[50px] flex-wrap ">
               <div className="flex flex-col gap-5 items-center sm:items-start">
                 <AvailableBalance
                   solbalance={solbalance}
