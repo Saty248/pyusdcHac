@@ -150,7 +150,9 @@ const Sidebar = () => {
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/airspace2'} text={"Airspaces"} children={<EarthIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/marketplace'} text={"Marketplace"} children={<MapIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/rent'} text={'Rent'} children={<DroneIcon />}  numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
+        <SidebarItemMobile href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/referral'} text={"Referral"} children={<GiftIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'https://skytrade.tawk.help'} text={"HelpCenter"} children={<HelpQuestionIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile onClick={logoutHandler}  text={"Logout"} children={<LogoutIcon />} />

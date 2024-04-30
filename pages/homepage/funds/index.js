@@ -43,6 +43,7 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import { toast } from "react-toastify";
 import { getPriorityFeeIx } from "@/hooks/utils";
 import { shallowEqual, useSelector } from "react-redux";
+import { useMobile } from "@/hooks/useMobile";
 
 
 
@@ -55,12 +56,19 @@ const AvailableBalance = ({ solbalance }) => {
 
   return (
     <div
-      className="relative bg-white flex items-center px-[32px] py-[37px] rounded-[30px] justify-between w-[468px]"
+      className="relative bg-white flex items-center px-[20px] sm:px-[32px] py-[37px] rounded-[30px] justify-between w-[89%] sm:w-[468px]"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
-      <div className="flex flex-col justify-between h-full">
-        <p className="text-xl font-medium text-[#222222]">Available Balance</p>
-        {userUSDWalletBalance.isLoading ? (
+      <div className="flex flex-col justify-between w-full h-full ">
+        <div className="flex justify-between">
+          <p className="text-xl font-medium text-[#222222]">Available Balance</p>
+          <div className="sm:hidden  rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
+            <div className="sm:hidden h-6 w-6">
+              <WalletIcon isActive={true} />
+            </div>
+          </div>
+        </div>
+        {userUSDWalletBalance.isLoading  ? (
           <div className="my-4">
             <BalanceLoader />
           </div>
@@ -69,11 +77,13 @@ const AvailableBalance = ({ solbalance }) => {
             <p className="text-3xl text-[#4285F4] font-medium">
             ${userUSDWalletBalance.amount}
             </p>
-            <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(solbalance / LAMPORTS_PER_SOL)}`}</p>
+            <div className="flex">
+              <p className=" text-sml text-[#838187] font-normal leading-[21px]">{`Solana Balance ${parseFloat(solbalance / LAMPORTS_PER_SOL)}`}</p>
+            </div>
           </>
         )}
       </div>
-      <div className="absolute top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] flex items-center justify-center p-[10px]">
+      <div className="hidden  top-3 right-[9px] rounded-[50%] bg-[#CCE3FC] sm:absolute sm:flex items-center justify-center p-[10px]">
         <div className="h-6 w-6">
           <WalletIcon isActive={true} />
         </div>
@@ -83,6 +93,7 @@ const AvailableBalance = ({ solbalance }) => {
 };
 
 const TransactionHistory = ({ transactions, user }) => {
+const { isMobile } = useMobile();
   const [currentPage, setCurrentPage] = useState(1);
   const TRANSACTIONS_PER_PAGE = 8;
   const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
@@ -109,13 +120,13 @@ const TransactionHistory = ({ transactions, user }) => {
   };
 
   return (
-    <div className="flex flex-col gap-5 flex-1 min-w-[600px]">
-      <div className="flex justify-between items-center">
-        <p className="font-medium text-xl text-[#222222]">
+    <div className="flex flex-col  gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
+      <div className="flex flex-col sm:flex-row justify-start sm:justify-between items-center">
+        <p className="font-medium text-xl pt-[14px] pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
         <div
-          className="relative px-[22px] py-[16px] bg-white w-[272px] rounded-lg"
+          className="relative px-[22px] py-[16px] bg-white w-[89%] sm:w-[272px] rounded-lg"
           style={{ border: "1px solid #87878D" }}
         >
           <input
@@ -130,27 +141,37 @@ const TransactionHistory = ({ transactions, user }) => {
           </div>
         </div>
       </div>
-      <table className="table-auto">
-        <thead className="text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
-          <tr>
+      <div
+      className={`flex justify-center overflow-y-auto fund-table-scrollbar
+      ${paginatedData?.length > 0 ? "h-[300px]" : "h-auto"} 
+      sm:h-[80%] fund-table-scrollbar`}
+      style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
+      >
+        <div style={{direction: "ltr"}} className="w-[89%] sm:w-[100%] " >
+          <div className="overflow-x-auto fund-table-scrollbar">
+
+          <table className="w-[100%]" >
+            <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+              <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
               (th) => (
-                <th className="text-start py-5 px-5">{th}</th>
+                <th className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
               )
             )}
-          </tr>
-        </thead>
-        <tbody>
+              </tr>
+            </thead>
+          <tbody>
+
           {paginatedData.map((transaction, index) => (
             <tr
               key={transaction.id}
-              className={`${index % 2 === 0 && "bg-white"}`}
+              className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}
             >
               {/* {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })} */}
-              <td className={`py-6 text-[#222222] px-5 w-2/12`}>
+              <td className={`py-6 px-2 rounded-l-lg text-[#222222]   text-start w-[200px] min-w-[120px] sm:w-[20%] `}>
                 {transaction.date}
               </td>
-              <td className={`py- text-[#222222] text-clip px-5 w-2/12`}>
+              <td className={`py-6 px-2 text-[#222222]  text-clip text-start w-1/2 min-w-[120px] sm:w-[20%] `}>
                 <a
                   className=""
                   target="_blank"
@@ -159,21 +180,23 @@ const TransactionHistory = ({ transactions, user }) => {
                   {transaction.hash}
                 </a>
               </td>
-              <td className={`py-6 text-[#222222] px-5 w-2/12`}>
-                {transaction.destination !== user.blockchainAddress
+              <td className={`py-6 px-2 text-[#222222]  text-start  w-1/2 min-w-[120px] sm:w-[20%] `}>
+                {transaction?.destination !== user?.blockchainAddress
                   ? "withdraw"
                   : "deposit"}
               </td>
-              <td className={`py-6 text-[#222222] px-5 w-2/12`}>
+              <td className={`py-6 px-2 text-[#222222]  text-start w-1/2 min-w-[120px] sm:w-[20%] `}>
                 ${transaction.amount / 1000000}
               </td>
-              <td className={`py-6 text-[#222222] px-5 w-2/12`}>
+              <td className={`py-6 px-2 rounded-r-lg text-[#222222] text-center sm:text-startw-1/2 min-w-[120px] sm:w-[20%] `}>
                 {transaction.status}
               </td>
             </tr>
-          ))}
+          ))} 
         </tbody>
       </table>
+      </div>
+
       <div className="flex items-center justify-end">
         <div className="mx-auto flex gap-[11.71px]">
           {getPaginationNumbers().map((pageNumber) => (
@@ -202,6 +225,9 @@ const TransactionHistory = ({ transactions, user }) => {
           </div>
         )}
       </div>
+      </div>
+      </div>
+
     </div>
   );
 };
@@ -421,12 +447,8 @@ const DepositAndWithdraw = ({
 
   return (
     <div
-      className="flex flex-col gap-[15px] items-center w-[468px] bg-white rounded-[30px] py-[30px] px-[29px]"
-      style={{
-        boxShadow: "0px 12px 34px -10px #3A4DE926",
-      }}
+      className="flex flex-col gap-[15px] items-center w-[89%] sm:w-[468px] bg-white rounded-[30px] py-[30px] sm:px-[29px] sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]"
     >
-      <div></div>
       <div className="flex gap-[5px] w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
           <div
@@ -439,6 +461,10 @@ const DepositAndWithdraw = ({
             {text}
           </div>
         ))}
+      </div>
+      <div className="flex sm:hidden text-[#838187] text-[14px] w-full">
+        <p>Choose your payment method</p>
+
       </div>
       <div className="flex flex-col gap-[5px] w-full">
         {activeSection === 0 && (
@@ -517,7 +543,7 @@ const DepositAndWithdraw = ({
                 htmlFor="walletId"
                 className="text-[14px] font-normal text-[#838187]"
               >
-                Wallet ID
+                Deposit Wallet ID
               </label>
               
             </div>
@@ -538,9 +564,9 @@ const DepositAndWithdraw = ({
             </div>
             
           </div>
-          <div className="flex bg-[#DFF1FF] w-full justify-between border-2">
+          <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
               <input
-                  className=" text-[#222222] text-[13px] rounded-lg w-full py-[14px] pl-[8px] focus:outline-none"
+                  className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
                   type="text"
                   name="walletId"
                   id="walletId"
@@ -551,13 +577,14 @@ const DepositAndWithdraw = ({
                   <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
                     <div className="relative">
                       {isCopyTooltipVisible && <Tooltip isCopied={copy}/> }
-                      <div className="border-2" onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
+                      <div onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
                         <CopyIcon />
                       </div>
                     </div>
                   </div>
                 </CopyToClipboard>
             </div>
+                <hr class=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}
@@ -582,19 +609,35 @@ const DepositAndWithdraw = ({
           )}
         </>
       )}
-      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
         <div className="w-6 h-6">
           <WarningIcon />
         </div>
-        <div className="text-[#222222] text-[13px] font-normal w-full">
-          To complete your deposit, please use your crypto wallet to deposit
-          USDC to the following address:
-          <br/>
-          <span style={{ color: "#0653EA" }}>
-            {walletId}
-          </span>
+        <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
+          {
+            selectedMethod.name == "Stripe" ? (
+              <p>
+                Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
+              </p>
+            ):
+            <div >
+                To complete your deposit, please use your crypto wallet to deposit
+                USDC to the following address:
+              <br/>
+              <div className="w-full">
+                <p 
+                  className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                  style={{ color: "#0653EA" }}
+                >
+                  {walletId}  
+                </p>
+              </div>
+            </div>
+          }
         </div>
       </div>
+        {
+          selectedMethod.name == "Native" &&
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
         <div className="w-6 h-6">
           <WarningIcon />
@@ -607,6 +650,7 @@ const DepositAndWithdraw = ({
           loss.
         </div>
       </div>
+        }
     </div>
   );
 };
@@ -872,13 +916,13 @@ const Funds = () => {
       </Head>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+      <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
-          <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll pl-[68.82px] pr-[55px]">
-            <div className="flex gap-[50px] flex-wrap">
-              <div className="flex flex-col gap-5">
+          <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
+            <div className="flex  sm:gap-[50px] flex-wrap ">
+              <div className="flex flex-col gap-5 items-center sm:items-start">
                 <AvailableBalance
                   solbalance={solbalance}
                 />
