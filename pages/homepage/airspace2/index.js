@@ -63,6 +63,7 @@ const SuccessModal = ({ setSuccessMobile}) => {
   )
 }
 
+
 const Toggle = ({ checked, setChecked }) => {
   return (
     <label className="relative inline-flex cursor-pointer items-center">
