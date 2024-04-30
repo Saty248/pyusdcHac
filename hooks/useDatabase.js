@@ -362,7 +362,31 @@ const useDatabase = () => {
         console.error(error);
         return [];
       }
-}
+  }
+  
+  const getTotalAirspacesByUserAddress = async (callerAddress) => {
+    try {
+      const { sign, sign_nonce, sign_issue_at, sign_address } =
+        await signatureObject(callerAddress);
+
+      const response = await fetch(`/api/proxy?${Date.now()}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          URI: `/private/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
+          sign,
+          time: sign_issue_at,
+          nonce: sign_nonce,
+          address: sign_address,
+        },
+      });
+
+      return response.json();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
 
 
 const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
@@ -575,7 +599,8 @@ const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
         createRent,
         deleteRent,
         sendReferral,
-        getClaimedPropertiesByUserAddress
+      getClaimedPropertiesByUserAddress,
+      getTotalAirspacesByUserAddress
     }
 }
 
