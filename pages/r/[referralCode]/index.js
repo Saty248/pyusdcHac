@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch, shallowEqual, useSelector } from "react-redux";

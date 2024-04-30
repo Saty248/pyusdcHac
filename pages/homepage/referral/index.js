@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useEffect, useState } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -131,7 +129,6 @@ const Share = ({
   const [temporalReferralCode, setTemporalReferralCode] =
     useState(referralCode);
   const { updateReferral } = ReferralCodeService();
-  const { updateProfile } = useAuth();
   const origin = useOrigin();
 
   useEffect(() => {
@@ -454,23 +451,16 @@ const Referral = () => {
   const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
   useEffect(() => {
-    if (!user) return;
-
-    const {
-      id,
-      blockchainAddress,
-      ownedReferralCode: { code },
-    } = user;
-
     (async () => {
       try {
+        if (!user) return;
         const responseData = await retrieveUserReferralData();
         setData(responseData);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [user]);
+  }, [user?.blockchainAddress]);
 
   return (
     <Fragment>
