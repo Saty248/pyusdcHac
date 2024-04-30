@@ -131,7 +131,7 @@ const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
                     <LocationPointIcon />
                   </div>
                   <p className="flex-1">
-                    {(airspace.title || airspace.address).substring(0, 15)}
+                    {airspace.title || airspace.address}
                   </p>
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     <ChevronRightIcon />
