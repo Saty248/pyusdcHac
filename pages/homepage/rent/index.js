@@ -860,7 +860,7 @@ const ExplorerMobile = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute top-[55px] left-0 bg-white w-full flex-col z-[50]">
+          <div className="absolute overflow-y-auto max-h-[240px] top-[55px] left-0 bg-white w-full flex-col z-[50]">
             {loading ? (
               <div className="pt-8 flex justify-center items-center">
                 <BalanceLoader />
