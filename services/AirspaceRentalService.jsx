@@ -27,6 +27,18 @@ const AirspaceRentalService = () => {
     }
   }
 
+  const getTotalAirspacesByUserAddress = async (callerAddress)=>{
+    try {
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
+      })
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   const createMintRentalToken = async ({ postData })=>{
     try {
       const response = await postRequest({
@@ -57,6 +69,7 @@ const AirspaceRentalService = () => {
     getUnverifiedAirspaces,
     createMintRentalToken,
     executeMintRentalToken,
+    getTotalAirspacesByUserAddress
   };
 };
 

@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, forwardRef, useContext } from "react";
+import { Fragment, useState, useEffect, forwardRef ,useRef} from "react";
 import mapboxgl, { Map } from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
@@ -51,9 +51,25 @@ const SuccessModal = ({
   rentData,
   setShowClaimModal,
 }) => {
-  const router = useRouter();
+  const modalRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setShowSuccess(false);
+        setShowClaimModal(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setShowSuccess, setShowClaimModal]);
+
   return (
     <div
+      ref={modalRef}
       className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
@@ -187,9 +203,8 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
     async function getUsersFromBE() {
       try {
         setOwner(rentData.owner);
-        console.log("user if this land", owner);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
     getUsersFromBE();
@@ -382,7 +397,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-        className="touch-manipulation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto  md:w-[689px] z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px]  md:h-auto  md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
           className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
@@ -391,7 +406,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
-              console.log("ggdgdgdg");
+              setShowClaimModal(false);
             }}
           >
             <ArrowLeftIcon />
@@ -490,7 +505,6 @@ const Explorer = ({
   user1,
 }) => {
   const [selectedAddress, setSelectedAddress] = useState();
-  console.log({ loading });
   return (
     <div
       className="hidden md:flex bg-[#FFFFFFCC] py-[43px] px-[29px] rounded-[30px] flex-col items-center gap-[15px] max-w-[362px] max-h-full z-20 m-[39px]"
@@ -561,8 +575,6 @@ const Explorer = ({
             //add popup to black ones
             const rentCLickHandler = () => {
               let el1 = document.createElement("div");
-
-              console.log("am rrent clickedd", item.id);
               setSelectedAddress(item.id);
 
               el1.id = "marker2";
@@ -580,7 +592,157 @@ const Explorer = ({
             };
 
             const onClickRent = () => {
-              console.log("hello rent data==", rentData);
+              setRentData(item);
+              setShowClaimModal(true);
+            };
+
+            return (
+              <div
+                key={item.id}
+                value={item.address}
+                onClick={rentCLickHandler}
+                className={
+                  item.id != selectedAddress
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
+                }
+                style={{
+                  borderTop: "5px solid #FFFFFFCC",
+                }}
+              >
+                <h3 className={item.id != selectedAddress ? `text-black pt-[0.6rem] `: ` text-white `}>{item.address}</h3>
+                <h1
+                  className={
+                    item.id != selectedAddress
+                      ? " text-black font-black text-center text-[15px]  cursor-pointer py-2 px-2"
+                      : " text-white font-black text-center text-[15px]  cursor-pointer py-2 px-2"
+                  }
+                >
+                  ${item.price}
+                </h1>
+                <span
+                  onClick={onClickRent}
+                  className={
+                    item.id != selectedAddress
+                      ? "bg-[#0653EA] text-white rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
+                      : "bg-[#e8e9eb] text-[#0653EA] rounded-lg  text-center text-[15px] font-normal cursor-pointer py-2 px-2 flex flex-col item-center justify-center"
+                  }
+                >
+                  RENT
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ExplorerMobile = ({
+  loadingReg,
+  loading,
+  address,
+  setAddress,
+  addresses,
+  showOptions,
+  handleSelectAddress,
+  regAdressShow,
+  registeredAddress,
+  map,
+  marker,
+  setMarker,
+  showClaimModal,
+  setShowClaimModal,
+  rentData,
+  setRentData,
+  user1
+}) => {
+  const [selectedAddress, setSelectedAddress] = useState();
+  return (
+    <div>
+    <div className="flex bg-white items-center gap-[15px] pt-[8px] pb-[10px] px-[21px] z-[40]">
+      <div
+        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
+        style={{ border: "1px solid #87878D" }}
+      >
+        <input
+          autoComplete="off"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          type="text"
+          name="searchAirspaces"
+          id="searchAirspaces"
+          placeholder="Search Airspaces"
+          className="outline-none w-full pr-[20px]"
+        />
+        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+          <MagnifyingGlassIcon />
+        </div>
+        {showOptions && (
+          <div className="absolute overflow-y-auto max-h-[240px] top-[55px] left-0 bg-white w-full flex-col z-[50]">
+            {loading ? (
+              <div className="pt-8 flex justify-center items-center">
+                <BalanceLoader />
+              </div>
+            ) : (
+              addresses.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    value={item.place_name}
+                    onClick={() => handleSelectAddress(item.place_name)}
+                    className="p-5 text-left text-[#222222] w-full"
+                    style={{
+                      borderTop: "0.2px solid #222222",
+                    }}
+                  >
+                    {item.place_name}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+        <div>
+
+      </div>
+      </div>
+    </div>
+    <div className="flex justify-center items-center mt-1">
+      
+        {loadingReg && (
+        <div className={`flex h-8 items-center mt-${loadingReg} ? 4 : 0`}>
+          <BalanceLoader />
+        </div>
+      )}
+    </div>
+      {regAdressShow && (
+        <div
+          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+          className=" mt-1 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll rounded-b-3xl"
+        >
+          {registeredAddress.map((item) => {
+            //add popup to black ones
+            const rentCLickHandler = () => {
+              let el1 = document.createElement("div");
+              setSelectedAddress(item.id);
+
+              el1.id = "marker2";
+              let lat1 = item.latitude;
+              let lng1 = item.longitude;
+              let ans2 = new mapboxgl.LngLat(lng1, lat1);
+              let newMap = map;
+              if (marker) {
+                marker.remove();
+              }
+              let marker1 = new maplibregl.Marker({ color: "#0653EA" })
+                .setLngLat(ans2)
+                .addTo(map);
+              setMarker(marker1);
+            };
+
+            const onClickRent = () => {
               setRentData(item);
               setShowClaimModal(true);
             };
@@ -624,65 +786,7 @@ const Explorer = ({
           })}
         </div>
       )}
-    </div>
-  );
-};
-
-const ExplorerMobile = ({
-  loadingReg,
-  loading,
-  address,
-  setAddress,
-  addresses,
-  showOptions,
-  handleSelectAddress,
-}) => {
-  return (
-    <div className="flex bg-white items-center gap-[15px] pb-[19px] px-[21px] z-[40]">
-      <div
-        className="relative px-[22px] py-[16px] bg-white rounded-lg w-full"
-        style={{ border: "1px solid #87878D" }}
-      >
-        <input
-          autoComplete="off"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          type="text"
-          name="searchAirspaces"
-          id="searchAirspaces"
-          placeholder="Search Airspaces"
-          className="outline-none w-full pr-[20px]"
-        />
-        <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
-          <MagnifyingGlassIcon />
-        </div>
-        {showOptions && (
-          <div className="absolute top-[55px] left-0 bg-white w-full flex-col">
-            {loading ? (
-              <div className="pt-8 flex justify-center items-center">
-                <BalanceLoader />
-              </div>
-            ) : (
-              addresses.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    value={item.place_name}
-                    onClick={() => handleSelectAddress(item.place_name)}
-                    className="p-5 text-left text-[#222222] w-full"
-                    style={{
-                      borderTop: "0.2px solid #222222",
-                    }}
-                  >
-                    {item.place_name}
-                  </div>
-                );
-              })
-            )}
-          </div>
-        )}
       </div>
-    </div>
   );
 };
 
@@ -867,7 +971,7 @@ const Rent = () => {
             setLoadingAddresses(false);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
           setLoadingAddresses(false);
         }
       }, 500);
@@ -947,30 +1051,40 @@ const Rent = () => {
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
       </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
+      {isLoading && <Backdrop />}
+      {isLoading && <Spinner />}
           <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
           {isMobile && (
             <ExplorerMobile
-              loadingReg={loadingRegAddresses}
-              loading={loadingAddresses}
-              address={address}
-              setAddress={setAddress}
-              addresses={addresses}
+            loadingReg={loadingRegAddresses}
+            loading={loadingAddresses}
+            address={address}
+            setAddress={setAddress}
+            addresses={addresses}
               showOptions={showOptions}
               handleSelectAddress={handleSelectAddress}
+              regAdressShow={regAdressShow}
+              registeredAddress={registeredAddress}
+              map={map}
+              marker={marker}
+              setMarker={setMarker}
+              showClaimModal={showClaimModal}
+              setShowClaimModal={setShowClaimModal}
+              rentData={rentData}
+              setRentData={setRentData}
+              user1={user1}
             />
           )}
           <section
             className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-full !h-screen !m-0 `}
+              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
               //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
 
               id="map"
@@ -1000,18 +1114,18 @@ const Rent = () => {
                 />
                 {/* {showClaimModal &&  */}
 
-                {showClaimModal && (
-                  <ClaimModal
-                    setShowClaimModal={setShowClaimModal}
-                    rentData={rentData}
-                    setIsLoading={setIsLoading}
-                    regAdressShow={regAdressShow}
-                    registeredAddress={registeredAddress}
-                  />
-                )}
 
                 {/* } */}
               </div>
+            )}
+            {showClaimModal && (
+              <ClaimModal
+                setShowClaimModal={setShowClaimModal}
+                rentData={rentData}
+                setIsLoading={setIsLoading}
+                regAdressShow={regAdressShow}
+                registeredAddress={registeredAddress}
+              />
             )}
           </section>
         </div>

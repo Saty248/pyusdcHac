@@ -29,7 +29,7 @@ import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
-import PropertiesService from "@/services/PropertiesService";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
 
 
 let USDollar = new Intl.NumberFormat("en-US", {
@@ -95,14 +95,14 @@ const AvailableBalance = () => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [], isLoading }) => {
+const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
 
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
+          {!isLoading && <span className="text-[15px] font-normal">({totalAirspace})</span>}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
@@ -131,7 +131,7 @@ const MyAirspaces = ({ airspaces = [], isLoading }) => {
                     <LocationPointIcon />
                   </div>
                   <p className="flex-1">
-                    {(airspace.title || airspace.address).substring(0, 15)}
+                    {airspace.title || airspace.address}
                   </p>
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     <ChevronRightIcon />
@@ -229,25 +229,31 @@ const Dashboard = () => {
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
   const { user } = useAuth();
   const [airspaces, setAirspaces] = useState([]);
+  const [totalAirspace, setTotalAirspace] = useState(0);
   const dispatch = useDispatch()
 
-  const { getClaimedPropertiesByUserAddress } = PropertiesService();
+  const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
 
   // GET AIRSPACE LENGTH
   useEffect(() => {
     if (!user) return;
     (async () => {
       try {
-        setIsLoadingAirspace(true)
-        const responseData = await getClaimedPropertiesByUserAddress();
+        setIsLoadingAirspace(true);
+        const airspaces = await getTotalAirspacesByUserAddress(
+          user?.blockchainAddress
+        );
 
-        if (responseData) {
-          const retrievedAirspaces = responseData.map((item) => {
-            return {
-              address: item.address,
-            };
-          });
-          setAirspaces(retrievedAirspaces);
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item) => ({
+            address: item.address,
+          }));
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
+          } else {
+            console.info("No airspaces found.");
+          }
         }
       } catch (error) {
         console.log(error);
@@ -294,7 +300,7 @@ const Dashboard = () => {
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
                       <AvailableBalance />
-                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
+                      <MyAirspaces airspaces={airspaces} totalAirspace={totalAirspace} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
                   <ReferralProgram />
