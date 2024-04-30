@@ -78,7 +78,7 @@ const AvailableBalance = ({ solbalance }) => {
             ${userUSDWalletBalance.amount}
             </p>
             <div className="flex">
-              <p className=" text-lg text-gray-600 font-medium">{`Solana balance ${parseFloat(solbalance / LAMPORTS_PER_SOL)}`}</p>
+              <p className=" text-sml text-[#838187] font-normal leading-[21px]">{`Solana Balance ${parseFloat(solbalance / LAMPORTS_PER_SOL)}`}</p>
             </div>
           </>
         )}
