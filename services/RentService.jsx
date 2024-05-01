@@ -8,7 +8,7 @@ const RentService = () => {
       const response = await getRequest({
         uri: `/private/rents`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -19,7 +19,7 @@ const RentService = () => {
       const response = await getRequest({
         uri: `/private/rents/find-one/${rentId}`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -31,7 +31,7 @@ const RentService = () => {
         uri: `/private/rents/update`,
         postData: rent
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -43,7 +43,7 @@ const RentService = () => {
         uri: `/private/rents/create`,
         postData: rent
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -55,7 +55,7 @@ const RentService = () => {
         uri: `/private/rents/delete`,
         postData: rentId
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }

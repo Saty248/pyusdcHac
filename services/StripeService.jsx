@@ -10,7 +10,7 @@ const StripeService = () => {
         postData,
         isPublic: true,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }

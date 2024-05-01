@@ -569,7 +569,7 @@ const DepositAndWithdraw = ({
                   </div>
                 </CopyToClipboard>
             </div>
-                <hr class=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
+                <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
           {selectedMethod.name == "Stripe" && (
             <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
               COMING SOON{" "}

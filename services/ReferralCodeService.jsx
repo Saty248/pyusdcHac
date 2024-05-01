@@ -9,7 +9,7 @@ const ReferralCodeService = () => {
         uri: `/public/referral-code/${referralCode}`,
         isPublic: true,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -20,7 +20,7 @@ const ReferralCodeService = () => {
       const response = await getRequest({
         uri: `/referral-code/send-referral/${receiverEmail}`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -31,7 +31,7 @@ const ReferralCodeService = () => {
       const response = await getRequest({
         uri: `/referral-code/referral-code/${id}`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -43,7 +43,7 @@ const ReferralCodeService = () => {
         uri:  `/referral-code`,
         postData,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
