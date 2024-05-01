@@ -48,7 +48,7 @@ const Wallet = () => {
     transactionHistory &&
     Math.ceil(transactionHistory.length / transactionsPerPage);
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { createStripe } = StripeService();
 
 
@@ -110,7 +110,7 @@ const Wallet = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     if(transactions) {
@@ -191,7 +191,7 @@ const Wallet = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     if (tokenAccount && searchValue.length < 1) {

@@ -737,7 +737,7 @@ const Funds = () => {
   const [transactions, setTransactions] = useState([]);
   const [transactionHistory, setTransactionHistory] = useState();
   const [refetchBal, setreFetchBal] = useState(true);
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const [tokenBalance, setTokenBalance] = useState("");
   const router = useRouter();
   const [solbalance, setSolBalance] = useState("0");
@@ -768,7 +768,7 @@ const Funds = () => {
     fetchbalance()
       // make sure to catch any error
       .catch(console.error);
-  }, [solbalance, user]);
+  }, [solbalance, user, web3authStatus]);
 
   // GET TRANSACTION HISTORY
   useEffect(() => {
@@ -794,7 +794,7 @@ const Funds = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     if (transactionHistory) {
@@ -824,7 +824,7 @@ const Funds = () => {
       console.log(collectedTransactions);
       setTransactions(collectedTransactions);
     }
-  }, [transactionHistory, user]);
+  }, [transactionHistory, user, web3authStatus]);
 
   return (
     <Fragment>

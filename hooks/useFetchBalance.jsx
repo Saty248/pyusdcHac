@@ -7,7 +7,7 @@ import axios from "axios";
 import { shallowEqual, useSelector } from "react-redux";
 
 const useFetchBalance = () => {
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const dispatch = useDispatch();
 
   const {userUSDWalletBalance} = useSelector((state) => {
@@ -50,7 +50,7 @@ const useFetchBalance = () => {
 
       return () => clearInterval(interval);
     }
-  }, [user?.blockchainAddress]);
+  }, [user, web3authStatus]);
 
 
   return null;

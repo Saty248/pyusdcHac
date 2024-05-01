@@ -225,7 +225,7 @@ const ReferralProgram = () => {
 
 const Dashboard = () => {
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const [airspaces, setAirspaces] = useState([]);
   const [totalAirspace, setTotalAirspace] = useState(0);
 
@@ -257,7 +257,7 @@ const Dashboard = () => {
         setIsLoadingAirspace(false)
       }
     })();
-  }, [user]);
+  }, [user, web3authStatus]);
 
   if (!user) {
     return <Spinner />;

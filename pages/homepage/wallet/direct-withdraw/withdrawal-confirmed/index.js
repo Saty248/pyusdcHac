@@ -15,7 +15,7 @@ const WithdrawalConfirm = () => {
 
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -64,7 +64,7 @@ const WithdrawalConfirm = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const returnToWallet = () => {
     router.push('/homepage/wallet');

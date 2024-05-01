@@ -20,7 +20,7 @@ const Wallet = () => {
   const [copy, setCopy] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
 
 
   useEffect(() => {
@@ -70,7 +70,7 @@ const Wallet = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const copyTextHandler = () => {
     setCopy(true);
