@@ -1,4 +1,3 @@
-
 import Service from "./Service"
 
 const UserService = () => {
@@ -11,7 +10,7 @@ const UserService = () => {
         postData: user,
         isPublic: true,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -23,7 +22,7 @@ const UserService = () => {
         uri: `/private/users/update`,
         postData: user
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -34,7 +33,7 @@ const UserService = () => {
       const response = await getRequest({
         uri: `/private/users/retrieve-referral-data`,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -46,7 +45,7 @@ const UserService = () => {
         uri: `/private/users/session`,
       });
 
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -57,7 +56,7 @@ const UserService = () => {
       const response = await deleteRequest({
         uri: `/private/users/delete`,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }

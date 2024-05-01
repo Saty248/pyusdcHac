@@ -8,7 +8,7 @@ const PropertiesService = () => {
       const response = await getRequest({
         uri: `/private/properties/find-one/${propertyId}`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
       return [];
@@ -20,7 +20,7 @@ const PropertiesService = () => {
       const response = await getRequest({
         uri: `/private/properties/user-properties`
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
       return [];
@@ -34,7 +34,7 @@ const PropertiesService = () => {
         postData,
         isPublic: true,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -46,7 +46,7 @@ const PropertiesService = () => {
         uri:  '/private/properties/update',
         postData,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -58,7 +58,7 @@ const PropertiesService = () => {
         uri: '/private/properties/claim',
         postData,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +70,7 @@ const PropertiesService = () => {
         uri: `/private/properties/delete`,
         postData,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }
