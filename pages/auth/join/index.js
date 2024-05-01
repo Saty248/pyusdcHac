@@ -48,6 +48,7 @@ const Signup = () => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
+          dispatch(setIsWaitingScreenVisible(true))
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -108,8 +109,6 @@ const Signup = () => {
         loginProvider: "google",
       });
     }
-    dispatch(setIsWaitingScreenVisible(true))
-
     setProvider(web3authProvider);
   };
 

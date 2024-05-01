@@ -162,7 +162,6 @@ const IndividualSignup = () => {
 
             if(responseData && !responseData.errorMessage) {
                 signIn({
-                    token: temporaryToken,
                     user: responseData,
                 });
                 setName('');

@@ -1037,7 +1037,6 @@ const Rent = () => {
 
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
-    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
   }, [flyToAddress, address]);
 
   const handleSelectAddress = (placeName) => {

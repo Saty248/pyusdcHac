@@ -21,6 +21,7 @@ import Head from "next/head";
 import { toast } from "react-toastify";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import UserService from "@/services/UserService";
+import { useRouter } from 'next/router';
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -130,6 +131,7 @@ const Share = ({
     useState(referralCode);
   const { updateReferral } = ReferralCodeService();
   const origin = useOrigin();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isCopied.code) return;
@@ -200,7 +202,7 @@ const Share = ({
           },
         }));
 
-        window.location.reload()
+        router.reload()
       } 
       else if (resp && resp.errorMessage) {
         toast.error(resp.errorMessage)
