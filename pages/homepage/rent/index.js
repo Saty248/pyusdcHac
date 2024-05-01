@@ -1111,10 +1111,6 @@ const Rent = () => {
                   setRentData={setRentData}
                   user1={user}
                 />
-                {/* {showClaimModal &&  */}
-
-
-                {/* } */}
               </div>
             )}
             {showClaimModal && (

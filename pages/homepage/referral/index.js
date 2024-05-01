@@ -1,5 +1,5 @@
+"use client";
 import { Fragment, useEffect, useState } from "react";
-import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import {
@@ -143,7 +143,7 @@ const Share = ({
     })();
 
     return () => timeoutId && clearTimeout(timeoutId);
-  }, [isCopied.code]);
+  }, [isCopied.code, user]);
 
   useEffect(() => {
     if (!isCopied.link) return;
@@ -159,7 +159,7 @@ const Share = ({
 
   useEffect(() => {
     setTemporalReferralCode(referralCode);
-  }, [referralCode]);
+  }, [referralCode, user]);
 
   const handleCopy = (e, text, isCode) => {
     e.preventDefault();
@@ -457,7 +457,9 @@ const Referral = () => {
       try {
         if (!user) return;
         const responseData = await retrieveUserReferralData();
-        setData(responseData);
+        if (responseData) {
+          setData(responseData);
+        }
       } catch (error) {
         console.log(error);
       }

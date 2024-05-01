@@ -28,6 +28,10 @@ const Service = () => {
           'Content-Type': 'application/json'
         }
       }
+      if (!provider) {
+        console.log("No provider", {uri});
+        return;
+      }
       const solanaWallet = new SolanaWallet(provider);
       const accounts = await solanaWallet.requestAccounts();
 
