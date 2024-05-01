@@ -58,7 +58,7 @@ const Airspace = () => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { getClaimedPropertiesByUserAddress } = PropertiesService();
 
 
@@ -97,7 +97,7 @@ const Airspace = () => {
 
       setMap(newMap);
     }
-  }, [token, user]);
+  }, [token, user, web3authStatus]);
 
   // FLY TO ADDRESS
   useEffect(() => {
@@ -210,7 +210,7 @@ const Airspace = () => {
     };
 
     getUserAirspace();
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const {newAirspaceModal} = useSelector((state) => {
     const {newAirspaceModal} =  state.userReducer;

@@ -69,8 +69,8 @@ export default function App({ Component, pageProps }) {
               <ToastContainer style={{ width: "500px" }} />
               <Component {...pageProps} />
             </SidebarProvider>
+            <CookieConsent />
           </Web3authProvider>
-          <CookieConsent />
         </>
       </PersistGate>
       </Provider>

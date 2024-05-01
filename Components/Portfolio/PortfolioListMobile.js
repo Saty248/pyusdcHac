@@ -18,7 +18,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { getPropertiesByUserAddress, getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleNextPage = () => {
@@ -143,7 +143,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
 
   useEffect(() => {
     fetchAirspaces();
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     paginateAirspaces();

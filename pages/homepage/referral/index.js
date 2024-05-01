@@ -449,7 +449,7 @@ const Referral = () => {
     validatedProperties: 0,
   });
   const { isMobile } = useMobile();
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
   useEffect(() => {
@@ -464,7 +464,7 @@ const Referral = () => {
         console.log(error);
       }
     })();
-  }, [user?.blockchainAddress]);
+  }, [user, web3authStatus]);
 
   return (
     <Fragment>

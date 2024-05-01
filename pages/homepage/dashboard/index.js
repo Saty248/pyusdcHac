@@ -162,7 +162,7 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState('');
   const [airspaceLength, setAirspaceLength] = useState();
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { getNewsLetters } = NewslettersService();
   const { provider } = useContext(Web3authContext)
   const { getClaimedPropertiesByUserAddress } = PropertiesService();
@@ -216,7 +216,7 @@ const Dashboard = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     const getUserAirspaceLength = async () => {
@@ -233,7 +233,7 @@ const Dashboard = () => {
     };
 
     getUserAirspaceLength();
-  }, [user]);
+  }, [user, web3authStatus]);
 
   useEffect(() => {
     (async () => {
@@ -321,7 +321,7 @@ const Dashboard = () => {
         },
       });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const navigationHandler = (route) => {
     router.push(route);

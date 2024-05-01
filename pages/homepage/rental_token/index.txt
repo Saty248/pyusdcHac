@@ -59,7 +59,7 @@ const Rental_Airspace = () => {
     setcity(e.target.value)
   }
  
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
  
 
 useEffect(() => {
@@ -103,7 +103,7 @@ useEffect(() => {
 
       
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
 
   useEffect(()=>{
