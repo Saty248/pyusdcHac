@@ -60,6 +60,7 @@ const ReferralCodeRedirect = () => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
+          dispatch(setIsWaitingScreenVisible(true))
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -83,7 +84,6 @@ const ReferralCodeRedirect = () => {
 
             router.replace(`/auth/join/intro`);
           }
-          setIsRedirecting(true)
           dispatch(setIsWaitingScreenVisible(false))
         }
       } catch (error) {
@@ -120,7 +120,6 @@ const ReferralCodeRedirect = () => {
         loginProvider: "google",
       });
     }
-    dispatch(setIsWaitingScreenVisible(true))
 
     setProvider(web3authProvider);
   };
