@@ -15,7 +15,7 @@ const Portfolio = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
-    const { user, updateProfile } = useAuth();
+    const { user, updateProfile, web3authStatus } = useAuth();
     const { updateUser } = UserService()
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
@@ -24,7 +24,7 @@ const Portfolio = () => {
         if (!user) return;
         const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
         setPersonalInformation({ name, email, phoneNumber, newsletter, KYCStatusId })
-    }, [user]);
+    }, [user, web3authStatus]);
 
     const updateDataHandler = async (e) => {
         e.preventDefault();

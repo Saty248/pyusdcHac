@@ -19,7 +19,7 @@ const Wallet = () => {
 
   const router = useRouter();
 
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
 
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const Wallet = () => {
           console.error(error);
         });
     }
-  }, [user]);
+  }, [user, web3authStatus]);
 
   const amountChangeHandler = (e) => {
     setAmount(e.target.value);

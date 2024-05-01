@@ -24,7 +24,7 @@ const Portfolio = () => {
   const [myAirspaces, setMyAirspaces] = useState([]);
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
   const [claimedAirspaces, setClaimedAirspaces] = useState([]);
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
 
   useEffect(() => {
     if (!user) return;
@@ -39,7 +39,7 @@ const Portfolio = () => {
       }
     };
     fetchData();
-  }, [user?.blockchainAddress]);
+  }, [user, web3authStatus]);
 
   const onCloseModal = () => {
     setSelectedAirspace(null);
