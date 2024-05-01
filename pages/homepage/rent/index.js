@@ -1076,7 +1076,7 @@ const Rent = () => {
               setShowClaimModal={setShowClaimModal}
               rentData={rentData}
               setRentData={setRentData}
-              user1={user1}
+              user1={user}
             />
           )}
           <section
@@ -1111,10 +1111,6 @@ const Rent = () => {
                   setRentData={setRentData}
                   user1={user}
                 />
-                {/* {showClaimModal &&  */}
-
-
-                {/* } */}
               </div>
             )}
             {showClaimModal && (
