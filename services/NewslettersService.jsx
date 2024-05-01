@@ -9,7 +9,7 @@ const NewslettersService = () => {
         uri: `/public/newsletters`,
         isPublic: true,
       })
-      return response.data;
+      return response?.data;
     } catch (error) {
       console.error(error);
     }

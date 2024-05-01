@@ -28,10 +28,8 @@ const Service = () => {
           'Content-Type': 'application/json'
         }
       }
-      if (!provider) {
-        console.log("No provider", {uri});
-        return;
-      }
+      if (!provider) return;
+
       const solanaWallet = new SolanaWallet(provider);
       const accounts = await solanaWallet.requestAccounts();
 
@@ -80,6 +78,8 @@ const Service = () => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
+      if (!isPublic && !headers) return null;
+
       return await axios({
         method: "get",
         url: `/api/proxy?${Date.now()}`,
@@ -93,6 +93,8 @@ const Service = () => {
   const postRequest = async ({ uri, postData, isPublic }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
+
+      if (!isPublic && !headers) return null;
 
       return await axios({
         method: "post",
@@ -110,6 +112,8 @@ const Service = () => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
+      if (!isPublic && !headers) return null;
+
       return await axios({
         method: "patch",
         url: `/api/proxy?${Date.now()}`,
@@ -125,6 +129,8 @@ const Service = () => {
   const deleteRequest = async ({ uri, postData, isPublic }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
+
+      if (!isPublic && !headers) return null;
 
       return await axios({
         method: "delete",

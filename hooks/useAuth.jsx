@@ -19,7 +19,6 @@ const useAuth = () => {
 
   useEffect(() => {
     const init = async () => {
-      console.log(web3auth?.status)
      if (web3auth && web3auth?.status === "connected") {
       setWeb3authStatus(true);
     } else {
