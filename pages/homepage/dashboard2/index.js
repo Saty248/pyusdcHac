@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { counterActions } from '@/store/store';
 import Link from "next/link";
 import Script from "next/script";
 import {
@@ -19,18 +18,19 @@ import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
 import WorldMap from "@/Components/WorldMap";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import { useRouter } from "next/router";
 import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
-import useDatabase from "@/hooks/useDatabase";
 import Head from "next/head";
 import { createUSDCBalStore } from "@/zustand/store";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { setUserUSDWalletBalance } from "@/store/store";
+import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
+
 
 let USDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -62,11 +62,14 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
   );
 };
 
-const AvailableBalance = ({ loading }) => {
+const AvailableBalance = () => {
 
 
-  const userUSDWalletBalance = useSelector(
-    (state) => state.value.userUSDWalletBalance
+  const {userUSDWalletBalance} = useSelector(
+    (state) => {
+      const {userUSDWalletBalance} = state.userReducer;
+      return {userUSDWalletBalance}
+    }
   );
 
 
@@ -79,12 +82,12 @@ const AvailableBalance = ({ loading }) => {
       href={"/homepage/funds"}
       style="h-fit"
     >
-      {loading ? (
+      {userUSDWalletBalance.isLoading ? (
         <BalanceLoader />
       ) : (
         <div className="flex items-center justify-between">
           <p className="absolute bottom-[12px] left-[26px] text-3xl text-[#4285F4] font-medium">
-            ${userUSDWalletBalance}
+            ${userUSDWalletBalance.amount}
           </p>
         </div>
       )}
@@ -92,14 +95,14 @@ const AvailableBalance = ({ loading }) => {
   );
 };
 
-const MyAirspaces = ({ airspaces = [], isLoading }) => {
+const MyAirspaces = ({ airspaces = [], totalAirspace, isLoading }) => {
 
   return (
     <Item
       title={
         <Fragment>
           My Airspaces{" "}
-          {!isLoading && <span className="text-[15px] font-normal">({airspaces.length})</span>}
+          {!isLoading && <span className="text-[15px] font-normal">({totalAirspace})</span>}
         </Fragment>
       }
       icon={<DroneIcon isActive />}
@@ -128,7 +131,7 @@ const MyAirspaces = ({ airspaces = [], isLoading }) => {
                     <LocationPointIcon />
                   </div>
                   <p className="flex-1">
-                    {(airspace.title || airspace.address).substring(0, 15)}
+                    {airspace.title || airspace.address}
                   </p>
                   <div className="w-[18px] h-[18px] flex items-center justify-center">
                     <ChevronRightIcon />
@@ -221,209 +224,32 @@ const ReferralProgram = () => {
 };
 
 const Dashboard = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const { user: selectorUser } = useAuth();
-  const [user, setUser] = useState();
-  const [token, setToken] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("");
-  const [signature, setSignature] = useState();
+  const { user } = useAuth();
   const [airspaces, setAirspaces] = useState([]);
-  const dispatch = useDispatch()
+  const [totalAirspace, setTotalAirspace] = useState(0);
 
-  const { getClaimedPropertiesByUserAddress } = useDatabase();
-  // GET USER AND TOKEN
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+  const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
 
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem("openlogin_store")
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem("openlogin_store");
-          router.push("/auth/join");
-          return;
-        }
-
-        console.log({ selectorUser });
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
-  console.log({ selectorUser });
-
-  // GET TOKEN BALANCE
-  useEffect(() => {
-    setBalanceLoading(true);
-    if (user) {
-      setInterval(() => {
-        console.log("set interval function called");
-        console.log({ user });
-        const data = {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getTokenAccountsByOwner",
-          params: [
-            user.blockchainAddress,
-            {
-              mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
-            },
-            {
-              encoding: "jsonParsed",
-            },
-          ],
-        };
-
-        fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.json().then((errorData) => {
-                throw new Error(errorData.error);
-              });
-            }
-
-            return response.json();
-          })
-          .then((result) => {
-            console.log(result, " this is result");
-            if (result.result.value.length < 1) {
-              setTokenBalance("0");
-              setBalanceLoading(false);
-
-              return;
-            }
-            dispatch(counterActions.setUserUSDWalletBalance(result.result.value[0].account.data.parsed.info.tokenAmount
-              .uiAmountString));
-
-            setBalanceLoading(false);
-          })
-          .catch((error) => {
-            setTokenBalance("");
-            setBalanceLoading(false);
-
-            console.error(error);
-          });
-      }, 5000);
-    }
-  }, [user]);
-
-  // GET SIGNATURE
-  useEffect(() => {
-    if (user) {
-      const getSignature = async () => {
-        const signatureObj = {};
-
-        const chainConfig = {
-          chainNamespace: "solana",
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: "Solana Mainnet",
-          blockExplorer: "https://explorer.solana.com",
-          ticker: "SOL",
-          tickerName: "Solana",
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        const web3authProvider = await web3auth.connect();
-
-        const solanaWallet = new SolanaWallet(web3authProvider);
-
-        // const userInfo = await web3auth.getUserInfo();
-
-        const domain = window.location.host;
-        const origin = window.location.origin;
-
-        const payload = new SIWPayload();
-        payload.domain = domain;
-        payload.uri = origin;
-        payload.address = user.blockchainAddress;
-        payload.statement = "Sign in to SkyTrade app.";
-        payload.version = "1";
-        payload.chainId = 1;
-
-        const header = { t: "sip99" };
-        const network = "solana";
-
-        let message = new SIWWeb3({ header, payload, network });
-
-        const messageText = message.prepareMessage();
-        const msg = new TextEncoder().encode(messageText);
-        const result = await solanaWallet.signMessage(msg);
-
-        const signature = base58.encode(result);
-
-        signatureObj.sign = signature;
-        signatureObj.sign_nonce = message.payload.nonce;
-        signatureObj.sign_issue_at = message.payload.issuedAt;
-        signatureObj.sign_address = user.blockchainAddress;
-        setSignature(signatureObj);
-      };
-
-      getSignature();
-    }
-  }, [user]);
-
-  // GET AIRSPACE LENGTH
   useEffect(() => {
     if (!user) return;
     (async () => {
       try {
-        setIsLoadingAirspace(true)
-        const response = await getClaimedPropertiesByUserAddress(
-          user.blockchainAddress,
+        setIsLoadingAirspace(true);
+        const airspaces = await getTotalAirspacesByUserAddress(
+          user?.blockchainAddress
         );
-        if (response) {
-          let retrievedAirspaces = response.map((item) => {
-            return {
-              address: item.address,
-            };
-          });
-          setAirspaces(retrievedAirspaces);
+
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item) => ({
+            address: item.address,
+          }));
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
+          } else {
+            console.info("No airspaces found.");
+          }
         }
       } catch (error) {
         console.log(error);
@@ -433,9 +259,7 @@ const Dashboard = () => {
     })();
   }, [user]);
 
-  console.log({ user });
-
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -444,10 +268,6 @@ const Dashboard = () => {
       <Head>
         <title>SkyTrade - Dashboard</title>
       </Head>
-      {isLoading &&
-        createPortal(<Backdrop />, document?.getElementById("backdrop-root"))}
-      {isLoading &&
-        createPortal(<Spinner />, document?.getElementById("backdrop-root"))}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
@@ -469,10 +289,8 @@ const Dashboard = () => {
                 <div className="flex flex-col md:flex-row justify-evenly gap-2">
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col-reverse md:flex-col gap-[22px]">
-                      <AvailableBalance
-                        loading={balanceLoading}
-                      />
-                      <MyAirspaces airspaces={airspaces} isLoading={isLoadingAirspace} />
+                      <AvailableBalance />
+                      <MyAirspaces airspaces={airspaces} totalAirspace={totalAirspace} isLoading={isLoadingAirspace} />
                     </div>
                   </div>
                   <ReferralProgram />

@@ -1,18 +1,17 @@
-"use client";
-
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
 import logo from '../../../../public/images/logo.jpg';
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import * as Yup from 'yup'
+import UserService from "@/services/UserService";
 
 const PartOne = ({ setPart }) => {
     return (
@@ -60,6 +59,16 @@ export  const checkPhoneIsValid = async (phone) => {
 
 }
 const IndividualSignup = () => {
+
+    const {category} = useSelector((state) =>
+    {
+      const {category} = state.userReducer
+      return {category}
+    }, shallowEqual );
+
+
+
+
     const [part, setPart] = useState(0);
     const [name,setName] = useState('');
     const [phoneNumber,setPhoneNumber] = useState('');
@@ -78,10 +87,8 @@ const IndividualSignup = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoad, setPageLoad] = useState(true);
     const [referralDisabled,setReferralDisabled] = useState(false);
-    useEffect(() => {
-        console.log(status);
-        console.log(typeof status);
-    }, [status])
+
+    const { createUser } = UserService();
 
     useEffect(() => {
         setPageLoad(false);
@@ -94,11 +101,6 @@ const IndividualSignup = () => {
         }
     }, [global?.window]);
 
-    const category = useSelector((state) => state.value.category);
-
-    useEffect(() => {
-        console.log("Category:", category)
-    }, [category])
 
     const { temporaryToken, signIn } = useAuth();
 
@@ -126,82 +128,57 @@ const IndividualSignup = () => {
     const formSubmitHandler = async (e) => {
         e.preventDefault();
 
-        const [  referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
+        try {
+            const [referralCode] = [, referralCodeRef].map(ref => ref.current?.value);
 
-        if (!checkNameIsValid(name)) {
-            setIsNameValid(false);
-            return;
-        }
-        console.log(checkPhoneIsValid(phoneNumber), "checkPhoneIsValid(phoneNumber)")
+            if (!checkNameIsValid(name)) {
+                setIsNameValid(false);
+                return;
+            }
 
-        const phoneCheck = await checkPhoneIsValid(phoneNumber)
-        if (!phoneCheck.status) {
-            setIsPhoneNumberValid(false);
-            setErrorMessage(phoneCheck.message)
-            return;
-        }
+            const phoneCheck = await checkPhoneIsValid(phoneNumber)
+            if (!phoneCheck.status) {
+                setIsPhoneNumberValid(false);
+                setErrorMessage(phoneCheck.message)
+                return;
+            }
 
-        if (!checkReferralCodeIsValid(referralCode1)) {
-            setIsReferralCodeValid(false);
-            return;
-        }
-        console.log("ref code state ",referralCode1)
-        const userInfo = {
-            ...category,
-            name,
-            newsletter,
-            categoryId: status,
-            phoneNumber,
-            referralCode:referralCode1.code
-        };
-        console.log("userInfo    ",userInfo)
+            if (!checkReferralCodeIsValid(referralCode1)) {
+                setIsReferralCodeValid(false);
+                return;
+            }
+            const userInfo = {
+                ...category,
+                name,
+                newsletter,
+                categoryId: status,
+                phoneNumber,
+                referralCode:referralCode1.code
+            };
 
-        setIsLoading(true);
+            setIsLoading(true);
 
-        fetch(`/api/proxy?${Date.now()}`, {
-            method: 'POST',
-            body: JSON.stringify(userInfo),
-            headers: {
-                'Content-Type': 'application/json',
-                uri: '/public/users/create',
-                proxy_to_method: 'POST',
-            },
-        })
-            .then((res) => {
-                console.log({ signUpRes: res, ok: res.ok });
+            const responseData = await createUser(userInfo);
 
-                if (!res.ok) {
-                    return res.json().then((errorData) => {
-                        throw new Error(errorData.errorMessage);
-                    });
-                }
-
-                return res.json().then((response) => {
-                    if (response.statusCode === 500) {
-                        throw new Error('something went wrong');
-                    }
-
-                    signIn({
-                        token: temporaryToken,
-                        user: response,
-                    });
-                    setName('');
-                    setPhoneNumber('');
-                    referralCodeRef.current.value = '';
-
-
-                    router.replace('/homepage/dashboard2');
+            if(responseData && !responseData.errorMessage) {
+                signIn({
+                    user: responseData,
                 });
-            })
-            .catch((error) => {
-                console.log(error);
-                swal({
-                    title: 'Sorry!',
-                    text: error.message,
-                });
+                setName('');
+                setPhoneNumber('');
+                referralCodeRef.current.value = '';
 
-                setIsLoading(false);
+                router.replace('/homepage/dashboard2');
+            } 
+        } catch (error) {
+            console.log(error);
+            swal({
+                title: 'Sorry!',
+                text: error.message,
             });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (pageLoad) {
@@ -320,7 +297,7 @@ const IndividualSignup = () => {
                                         ref={referralCodeRef}
                                         value={referralCode1.code}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value });console.log("on change ref code val",referralCode1.code)}}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value })}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}

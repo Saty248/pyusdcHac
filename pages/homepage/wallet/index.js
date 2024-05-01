@@ -15,15 +15,14 @@ import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import WalletModal from '@/Components/Modals/WalletModal';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
+import StripeService from "@/services/StripeService";
 
 const Wallet = () => {
   const url = process.env.NEXT_PUBLIC_SOLANA_API;
 
   const router = useRouter();
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
   const [tokenAccount, setTokenAccount] = useState('');
   const [transactionHistory, setTransactionHistory] = useState();
@@ -49,86 +48,32 @@ const Wallet = () => {
     transactionHistory &&
     Math.ceil(transactionHistory.length / transactionsPerPage);
 
-  const { user: selectorUser } = useAuth();
+  const { user } = useAuth();
+  const { createStripe } = StripeService();
+
 
   useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName: `Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-        await web3auth.initModal();
-        // await web3auth.connect();
-        let userInfo;
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
+    (async () => {
+      if (showStripeModal) {
+        const stripeOnrampPromise = loadStripeOnramp(
+          `${process.env.STRIPEONRAMP_APIKEY}`
         );
+  
+        setStripeOnRamp(stripeOnrampPromise);
+        try {
+          const responseData = await createStripe({
+            blockchainAddress: user?.blockchainAddress,
+          })
 
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-      authUser();
-    }
-  }, [selectorUser]);
-
-  useEffect(() => {
-    if (showStripeModal) {
-      const stripeOnrampPromise = loadStripeOnramp(
-        `${process.env.STRIPEONRAMP_APIKEY}`
-      );
-
-      setStripeOnRamp(stripeOnrampPromise);
-
-      fetch(`/api/proxy?${Date.now()}`, {
-        method: 'POST',
-        body: JSON.stringify({
-          blockchainAddress: user.blockchainAddress,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          uri: '/public/stripe/create',
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          setClientSecret(data.data.client_secret);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
+          if (responseData) {
+            setClientSecret(responseData.data.client_secret);
+          }
+        } catch (error) {
+          console.error(error);
           setClientSecret('');
-        });
-    }
+        }
+      }
+    })()
   }, [showStripeModal]);
 
   useEffect(() => {
@@ -202,7 +147,7 @@ const Wallet = () => {
         id: 1,
         method: 'getTokenAccountsByOwner',
         params: [
-          user.blockchainAddress,
+          user?.blockchainAddress,
           {
             mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
           },
@@ -341,13 +286,13 @@ const Wallet = () => {
           .then((resData) => {
             const postBalances = resData.result.meta.postTokenBalances.filter(
               (sender) => {
-                return sender.owner === user.blockchainAddress;
+                return sender.owner === user?.blockchainAddress;
               }
             );
 
             const preBalances = resData.result.meta.preTokenBalances.filter(
               (sender) => {
-                return sender.owner === user.blockchainAddress;
+                return sender.owner === user?.blockchainAddress;
               }
             );
 
@@ -363,12 +308,12 @@ const Wallet = () => {
             } else {
               const senderPreBalances =
                 resData.result.meta.preTokenBalances.filter((sender) => {
-                  return sender.owner !== user.blockchainAddress;
+                  return sender.owner !== user?.blockchainAddress;
                 });
 
               const senderPostBalances =
                 resData.result.meta.postTokenBalances.filter((sender) => {
-                  return sender.owner !== user.blockchainAddress;
+                  return sender.owner !== user?.blockchainAddress;
                 });
 
               const oldBalance =
@@ -460,7 +405,7 @@ const Wallet = () => {
     setShowDepositModal(false);
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -517,9 +462,9 @@ const Wallet = () => {
           className='overflow-y-auto overflow-x-hidden'
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'

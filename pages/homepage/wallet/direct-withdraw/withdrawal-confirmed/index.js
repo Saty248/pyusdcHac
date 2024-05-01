@@ -8,71 +8,14 @@ import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 const WithdrawalConfirm = () => {
   const router = useRouter();
 
-  const [user, setUser] = useState();
-  const [token, setToken] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
 
-  const { user: selectorUser } = useAuth();
-
-  useEffect(() => {
-    if (selectorUser) {
-      const authUser = async () => {
-        const chainConfig = {
-          chainNamespace: 'solana',
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-          rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-          displayName:`Solana ${process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME}`,
-          blockExplorer: 'https://explorer.solana.com',
-          ticker: 'SOL',
-          tickerName: 'Solana',
-        };
-
-        const web3auth = new Web3Auth({
-          clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-
-          web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-          chainConfig: chainConfig,
-        });
-
-        await web3auth.initModal();
-
-        // await web3auth.connect();
-
-        let userInfo;
-
-        try {
-          userInfo = await web3auth.getUserInfo();
-        } catch (err) {
-          localStorage.removeItem('openlogin_store');
-          swal({
-            title: 'oops!',
-            text: 'Something went wrong. Kindly try again',
-          }).then(() => router.push('/auth/join'));
-          return;
-        }
-
-        const fetchedToken = JSON.parse(
-          localStorage.getItem('openlogin_store')
-        );
-
-        if (!selectorUser) {
-          localStorage.removeItem('openlogin_store');
-          router.push('/auth/join');
-          return;
-        }
-
-        setToken(fetchedToken.sessionId);
-        setUser(selectorUser);
-      };
-
-      authUser();
-    }
-  }, [selectorUser]);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -81,7 +24,7 @@ const WithdrawalConfirm = () => {
         id: 1,
         method: 'getTokenAccountsByOwner',
         params: [
-          user.blockchainAddress,
+          user?.blockchainAddress,
           {
             mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
           },
@@ -127,7 +70,7 @@ const WithdrawalConfirm = () => {
     router.push('/homepage/wallet');
   };
 
-  if (!user || !token) {
+  if (!user) {
     return <Spinner />;
   }
 
@@ -140,9 +83,9 @@ const WithdrawalConfirm = () => {
           className='overflow-y-auto'
         >
           <Navbar
-            name={user.name}
-            categoryId={user.categoryId}
-          // status={user.KYCStatusId}
+            name={user?.name}
+            categoryId={user?.categoryId}
+          // status={user?.KYCStatusId}
           />
           <div
             className='relative mx-auto mt-5 flex flex-col items-center rounded-lg bg-bleach-green p-7'
@@ -233,7 +176,7 @@ const WithdrawalConfirm = () => {
               <p className='mb-16'>Your Transfer is Pending</p>
               <div className='flex w-11/12 flex-row justify-between gap-10'>
                 <p className=''>Wallet ID:</p>
-                <p className=''>{user.blockchainAddress}</p>
+                <p className=''>{user?.blockchainAddress}</p>
               </div>
               <div className='mt-2 flex w-11/12 flex-row justify-between gap-10'>
                 <p>Amount:</p>

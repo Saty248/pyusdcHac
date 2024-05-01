@@ -11,8 +11,7 @@ import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import Head from "next/head";
 import { RxCaretRight, RxCaretLeft } from "react-icons/rx";
 import { PortfolioList, PortfolioListMobile } from "@/Components/Portfolio";
@@ -22,7 +21,6 @@ import { Modal } from "@/Components/Wrapped";
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);
-  const { getPropertiesByUserAddress } = useDatabase();
   const [myAirspaces, setMyAirspaces] = useState([]);
   const [rentedAirspaces, setRentedAirspaces] = useState([]);
   const [claimedAirspaces, setClaimedAirspaces] = useState([]);

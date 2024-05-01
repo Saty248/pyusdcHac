@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import PortfolioItem from "./PortfolioItem";
-import axios from "axios";
-import { useSignature } from "@/hooks/useSignature";
-import { useAuth } from "@/hooks/useAuth";
-import useDatabase from "@/hooks/useDatabase";
+import useAuth from '@/hooks/useAuth';
 import Spinner from "../Spinner";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
 
 const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -20,9 +18,8 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
-  const { signatureObject } = useSignature();
   const { user } = useAuth();
-  const { getPropertiesByUserAddress, getUnverifiedAirspaces } = useDatabase();
+  const { getPropertiesByUserAddress, getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleNextPage = () => {
     if (activeTab === "Verified Airspaces") {

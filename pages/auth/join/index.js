@@ -1,346 +1,115 @@
-import { Fragment, useState, useRef, useEffect } from "react";
+
+import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch } from "react-redux";
-import { createPortal } from "react-dom";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
-
-import { Web3AuthNoModal } from "@web3auth/no-modal";
-import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-import { counterActions } from "@/store/store";
-import Backdrop from "@/Components/Backdrop";
-import Spinner from "@/Components/Spinner";
-
-import { useAuth } from "@/hooks/useAuth";
-
-import swal from "sweetalert";
+import useAuth from '@/hooks/useAuth';
 
 import logo from "../../../public/images/logo.jpg";
 
-import { useSignature } from "@/hooks/useSignature";
 import Head from "next/head";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
+import { shallowEqual, useSelector } from "react-redux";
+import { Web3authContext } from '@/providers/web3authProvider';
+import UserService from "@/services/UserService";
 
-const chainConfig = {
-  chainNamespace: "solana",
-  chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
-  rpcTarget: process.env.NEXT_PUBLIC_RPC_TARGET,
-  displayName: "Solana Mainnet",
-  blockExplorer: "https://explorer.solana.com",
-  ticker: "SOL",
-  tickerName: "Solana",
-};
-
-const web3auth = new Web3AuthNoModal({
-  clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
-  web3AuthNetwork: process.env.NEXT_PUBLIC_AUTH_NETWORK,
-  chainConfig: chainConfig,
-});
-
-const privateKeyProvider = new SolanaPrivateKeyProvider({
-  config: { chainConfig },
-});
-
-const openLoginAdapter = new OpenloginAdapter({
-  privateKeyProvider,
-});
-
-web3auth.configureAdapter(openLoginAdapter);
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
-  const [categorySect, setCategorySect] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [isVisitYourInboxVisible, setIsVisitYourInboxVisible] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
   const emailRef = useRef();
 
-  const { signatureObject } = useSignature();
 
-  const { setTemporaryToken, signIn } = useAuth();
+  const { signIn } = useAuth();
+
+  const { web3auth, provider, setProvider } = useContext(Web3authContext)
+  const { getUser } = UserService()
+
+
+  const {isWaitingScreenVisible} = useSelector((state) => {
+    const {isWaitingScreenVisible} = state.userReducer;
+    return {isWaitingScreenVisible}
+  }, shallowEqual);
+
 
   useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-
-    if (fetchedToken?.sessionId) {
-      router.push("/homepage/dashboard2");
-      return;
-    }
-  }, []);
-
-  useEffect(() => {
-    const init = async () => {
-      await web3auth.init();
-    };
-
-    init();
-  }, []);
-
-  const loginHandler = async (provider, e) => {
-    e.preventDefault();
-
-    const email = emailRef.current.value;
-    const regex = /^\S+@\S+\.\S+$/;
-    const emailIsValid = regex.test(email);
-
-    if (!provider && !emailIsValid) {
-      setEmailValid(false);
-      return;
-    }
-
-    // setIsLoading(true);
-    setIsVisitYourInboxVisible(true);
-
-    let web3authProvider;
-
-    if (!provider) {
+    (async () => {
       try {
-        web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-          loginProvider: "email_passwordless",
-          extraLoginOptions: {
-            login_hint: email,
-          },
-        });
-      } catch (err) {
-        localStorage.removeItem("openlogin_store");
-        router.push("/");
-        return;
-      }
-    } else {
-      try {
-        web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-          loginProvider: provider,
-        });
-      } catch (err) {
-        localStorage.removeItem("openlogin_store");
-        router.push("/");
-        return;
-      }
-    }
+        if (web3auth?.status === "connected" && provider) {
+          dispatch(setIsWaitingScreenVisible(true))
 
-    let userInformation;
+          const userInformation = await web3auth.getUserInfo();
+          const solanaWallet = new SolanaWallet(provider);
+          const accounts = await solanaWallet.requestAccounts();
 
-    try {
-      userInformation = await web3auth.getUserInfo();
-    } catch (err) {
-      localStorage.removeItem("openlogin_store");
-      router.push("/");
+          const responseData = await getUser()
+
+          if (responseData?.id) {
+            signIn({ user: responseData });
+            router.push("/homepage/dashboard2");
+          } else {
+            await web3auth.logout();
+            setProvider(null);
+
+            dispatch(
+              setCategory({
+                email: userInformation.email,
+                blockchainAddress: accounts[0],
+              })
+            );
+
+            router.replace(`/auth/join/intro`);
+          }
+          setIsRedirecting(true)
+          dispatch(setIsWaitingScreenVisible(false))
+        }
+      } catch (error) {
+        console.error(error)
+        dispatch(setIsWaitingScreenVisible(false))
+      } 
+    })()
+  },[web3auth?.status])
+
+  const loginUser = async (isEmail) => {
+    if (!web3auth) {
+      toast.error("Web3auth not initialized yet");
       return;
     }
 
-    const solanaWallet = new SolanaWallet(web3authProvider);
+    let web3authProvider = null;
 
-    let accounts;
-
-    try {
-      accounts = await solanaWallet.requestAccounts();
-    } catch (err) {
-      localStorage.removeItem("openlogin_store");
-      router.push("/");
-      return;
-    }
-
-    const { sign, sign_nonce, sign_issue_at, sign_address } =
-      await signatureObject(accounts[0]);
-
-    try {
-      const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
-        headers: {
-          uri: "/private/users/session",
-          sign,
-          time: sign_issue_at,
-          nonce: sign_nonce,
-          address: sign_address,
-        },
-      });
-
-      const user = await userRequest.json();
-
-      if (user.id) {
-        signIn({ user });
-        // dispatch(counterActions.userAuth(user));
-        // localStorage.setItem('user', JSON.stringify(user));
-        router.push("/homepage/dashboard2");
-        return user;
-      }
-
-      if (user.errorMessage === "UNAUTHORIZED") {
-        setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
-        // const token = localStorage.getItem('openlogin_store');
-
-        // dispatch(
-        //   counterActions.web3({
-        //     token: JSON.parse(token),
-        //   })
-        // );
-
-        localStorage.removeItem("openlogin_store");
-
-        dispatch(
-          counterActions.category({
-            email: userInformation.email,
-            blockchainAddress: accounts[0],
-          })
-        );
-
-        // setIsLoading(false);
-        setIsVisitYourInboxVisible(false);
-        router.replace(`/auth/join/intro`);
-
-        // router.replace('/homepage/dashboard');
+    if (isEmail) {
+      const email = emailRef.current.value;
+  
+      if (!isEmailValid(email)) {
+        toast.error("Login: email is not valid", email);
         return;
       }
-    } catch (e) {
-      console.error(e);
-      swal({
-        title: "Oops!",
-        text: e.message || "Something went wrong. Kindly try again",
-      });
-      throw e;
-    }
-  };
-
-  const loginHandlerGood = async () => {
-    const email = emailRef.current.value;
-    console.log({ email });
-
-    if (!isEmailValid(email)) {
-      toast.error("Login: email is not valid", email);
-      return;
-    }
-    console.log("Login: email is valid", email);
-
-    setIsVisitYourInboxVisible(true);
-
-    let provider;
-
-    try {
-      console.log("Login: creating provider...");
-      provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+  
+      web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "email_passwordless",
         extraLoginOptions: {
           login_hint: email,
         },
       });
-    } catch (error) {
-      console.log("Login: ERROR while creating provider...", { error });
-      localStorage.removeItem("openlogin_store");
-      setIsVisitYourInboxVisible(false);
-      return;
-    }
-
-    console.log("Login: provider created");
-
-    let userInformation;
-
-    try {
-      console.log("Login: getting user information...");
-      userInformation = await web3auth.getUserInfo();
-      console.log("Login: user information is", userInformation);
-    } catch (err) {
-      console.log("Login: ERROR while getting user information...", { err });
-      localStorage.removeItem("openlogin_store");
-      setIsVisitYourInboxVisible(false);
-      // router.push("/");
-      return;
-    }
-
-    console.log("Login: creatinng solana wallet...");
-    const solanaWallet = new SolanaWallet(provider);
-    console.log("Login: solana wallet created...");
-    let accounts;
-    console.log("Login: getting accounts of wallet");
-    try {
-      accounts = await solanaWallet.requestAccounts();
-      console.log("Login: accounts", accounts);
-    } catch (err) {
-      console.log("Login: error getting accounts", { err });
-      localStorage.removeItem("openlogin_store");
-      setIsVisitYourInboxVisible(true);
-      // router.push("/");
-      return;
-    }
-
-    console.log("Login: constructing object of signatures...");
-
-    const { sign, sign_nonce, sign_issue_at, sign_address } =
-      await signatureObject(accounts[0]);
-    console.log("Login: signature created", {
-      sign,
-      sign_nonce,
-      sign_issue_at,
-      sign_address,
-    });
-
-    try {
-      console.log("Login: fetching...");
-      const userRequest = await fetch(`/api/proxy?${Date.now()}`, {
-        headers: {
-          uri: "/private/users/session",
-          sign,
-          time: sign_issue_at,
-          nonce: sign_nonce,
-          address: sign_address,
-        },
+    } else {
+      web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+        loginProvider: "google",
       });
-
-      console.log("Login: fetched done");
-      const user = await userRequest.json();
-      console.log("Login: json done", user);
-
-      if (user.id) {
-        console.log("Login: user has id and we use the auth hook");
-        signIn({ user });
-        console.log("Login: done!");
-        router.push("/homepage/dashboard2");
-        // dispatch(counterActions.userAuth(user));
-        // localStorage.setItem('user', JSON.stringify(user));
-        // router.push('/homepage/dashboard');
-        return user;
-      }
-      console.log("Login: user has no ID");
-
-      if (user.errorMessage === "UNAUTHORIZED") {
-        console.log("Login: UNAUTHORIZED");
-        setTemporaryToken(JSON.parse(localStorage.getItem("openlogin_store")));
-        // const token = localStorage.getItem('openlogin_store');
-
-        // dispatch(
-        //   counterActions.web3({
-        //     token: JSON.parse(token),
-        //   })
-        // );
-
-        localStorage.removeItem("openlogin_store");
-
-        dispatch(
-          counterActions.category({
-            email: userInformation.email,
-            blockchainAddress: accounts[0],
-          })
-        );
-
-        // setIsLoading(false);
-        router.replace(`/auth/join/intro`);
-
-        // router.replace('/homepage/dashboard');
-        return;
-      }
-    } catch (error) {
-      setIsVisitYourInboxVisible(false);
-      console.error(error);
-      throw error;
     }
+    setProvider(web3authProvider);
   };
 
   const handleSwitchingBetweenLoginAndRegister = () => {
@@ -353,32 +122,12 @@ const Signup = () => {
     return regex.test(email);
   };
 
-  const getProvider = async () => {
-    try {
-      console.log("Login: creating provider...");
-      provider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-        loginProvider: "email_passwordless",
-        extraLoginOptions: {
-          login_hint: email,
-        },
-      });
-    } catch (error) {
-      console.log("Login: ERROR while creating provider");
-      localStorage.removeItem("openlogin_store");
-      return;
-    }
-  };
-
   return (
     <Fragment>
       <Head>
         <title>SkyTrade - Login</title>
       </Head>
-      {isLoading &&
-        createPortal(<Backdrop />, document.getElementById("backdrop-root"))}
-      {isLoading &&
-        createPortal(<Spinner />, document.getElementById("backdrop-root"))}
-      {!categorySect && !isVisitYourInboxVisible && (
+      {!isWaitingScreenVisible && !isRedirecting && (
         <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
           <form
             className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
@@ -442,7 +191,8 @@ const Signup = () => {
               </label>
             )}
             <button
-              onClick={loginHandlerGood}
+              onClick={() => loginUser(true)}
+              type="button"
               className="w-full rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
             >
               Get started
@@ -465,7 +215,8 @@ const Signup = () => {
               />
             </div>
             <button
-              onClick={loginHandler.bind(null, "google")}
+              onClick={() => loginUser(false)}
+              type="button"
               className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
               style={{
                 border: "1px solid #595959",
@@ -481,7 +232,8 @@ const Signup = () => {
               <p className="mx-auto text-[#595959]">Connect with Google</p>
             </button>
             <button
-              onClick={loginHandler.bind(null, "google")}
+              onClick={() => loginUser(false)}
+              type="button"
               className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue"
               style={{
                 border: "1px solid #595959",
@@ -523,7 +275,7 @@ const Signup = () => {
           </form>
         </div>
       )}
-      {isVisitYourInboxVisible && (
+      {isWaitingScreenVisible && (
         <div className="relative flex h-screen w-screen flex-col items-center justify-center gap-[21.5px] overflow-hidden rounded bg-[#F6FAFF] max-sm:bg-[white]">
           <div
             className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
@@ -536,15 +288,9 @@ const Signup = () => {
               Welcome to SkyTrade
             </p>
             <p className="text-center text-[14px] font-normal text-light-grey">
-              Visit your inbox to access the app using the verification code
-              received via email. Click the code link, it will refresh this
-              page, logging you in instantly.
+              Thanks for waiting. We're moving you to a new page. Please don't refresh while we do this.
             </p>
           </div>
-          <p className="text-[14px] text-light-grey">
-            Didn't receive the email?{" "}
-            <span className="cursor-pointer text-[#0653EA]">Resend</span>
-          </p>
         </div>
       )}
     </Fragment>

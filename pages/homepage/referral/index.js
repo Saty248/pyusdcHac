@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useEffect, useState } from "react";
 import Script from "next/script";
 import Sidebar from "@/Components/Sidebar";
@@ -16,12 +14,14 @@ import {
   PropertyIcon,
 } from "@/Components/Icons";
 import { useMobile } from "@/hooks/useMobile";
-import useDatabase from "@/hooks/useDatabase";
-import { useAuth } from "@/hooks/useAuth";
+import useAuth from '@/hooks/useAuth';
 import useOrigin from "@/hooks/useOrigin";
 
 import Head from "next/head";
 import { toast } from "react-toastify";
+import ReferralCodeService from "@/services/ReferralCodeService";
+import UserService from "@/services/UserService";
+import { useRouter } from 'next/router';
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -129,9 +129,9 @@ const Share = ({
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
   const [temporalReferralCode, setTemporalReferralCode] =
     useState(referralCode);
-  const { updateReferral } = useDatabase();
-  const { updateProfile } = useAuth();
+  const { updateReferral } = ReferralCodeService();
   const origin = useOrigin();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isCopied.code) return;
@@ -183,7 +183,12 @@ const Share = ({
       const {
         ownedReferralCode: { id },
       } = user;
-      const resp = await updateReferral(blockchainAddress, temporalReferralCode);
+
+      const postData = {
+        code: temporalReferralCode
+      }
+
+      const resp = await updateReferral({ postData });
       if (resp && resp.codeChanged) {
         toast.success("Referral code updated successfully");
         const user = JSON.parse(localStorage.getItem('user'));
@@ -197,7 +202,7 @@ const Share = ({
           },
         }));
 
-        window.location.reload()
+        router.reload()
       } 
       else if (resp && resp.errorMessage) {
         toast.error(resp.errorMessage)
@@ -445,29 +450,19 @@ const Referral = () => {
   });
   const { isMobile } = useMobile();
   const { user } = useAuth();
-  const { retrieveReferralData } = useDatabase();
+  const { retrieveUserReferralData } = UserService();
   const sections = ["The Program", "Share", "My Referrals"];
-  console.log("userss ", user);
   useEffect(() => {
-    if (!user) return;
-
-    const {
-      id,
-      blockchainAddress,
-      ownedReferralCode: { code },
-    } = user;
-
     (async () => {
       try {
-        const response = await retrieveReferralData(blockchainAddress);
-        console.log("from the reff page", user, response);
-        setData(response);
-        console.log("the data  ", data);
+        if (!user) return;
+        const responseData = await retrieveUserReferralData();
+        setData(responseData);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [user]);
+  }, [user?.blockchainAddress]);
 
   return (
     <Fragment>

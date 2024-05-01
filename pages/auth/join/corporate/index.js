@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import swal from 'sweetalert';
 import logo from '../../../../public/images/logo.jpg';
@@ -10,13 +10,15 @@ import Script from 'next/script';
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
+import UserService from "@/services/UserService";
 
 const CorporateSignup = () => {
   const router = useRouter();
   const newsletterRef = useRef();
   const nameRef = useRef();
   const phoneNumberRef = useRef();
+  const { createUser } = UserService();
 
   const [newsletter, setNewsletter] = useState(false);
   const [nameValid, setNameValid] = useState(true);
@@ -35,7 +37,12 @@ const CorporateSignup = () => {
     setPageLoad(false);
   }, []);
 
-  const category = useSelector((state) => state.value.category);
+  const {category} = useSelector((state) =>
+  {
+    const {category} = state.userReducer
+    return {category}
+  }, shallowEqual
+   );
 
   const { temporaryToken, signIn } = useAuth();
 
@@ -48,100 +55,82 @@ const CorporateSignup = () => {
     router.push('/auth/join');
   };
 
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const name = nameRef.current.value;
+      const phoneNumber = phoneNumberRef.current.value;
 
-    const name = nameRef.current.value;
-    const phoneNumber = phoneNumberRef.current.value;
-
-    if (!name) {
-      setNameValid(false);
-      swal({
-        title: 'oops!',
-        text: 'Kindly complete all required fields',
-        timer: 2000,
-      });
-      return;
-    }
-
-    if (!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== '+') {
-      setPhoneNumberValid(false);
-      swal({
-        title: 'Oops!',
-        text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
-        // timer: 3000
-      });
-      return;
-    }
-
-    const userInfo = {
-      ...category,
-      categoryId: +category.categoryId,
-      name,
-      phoneNumber: phoneNumber,
-      newsletter,
-    };
-
-    setIsLoading(true);
-
-    fetch(`/api/proxy?${Date.now()}`, {
-      method: 'POST',
-      body: JSON.stringify(userInfo),
-      headers: {
-        'Content-Type': 'application/json',
-        uri: '/public/users/create',
-        proxy_to_method: 'POST',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((errorData) => {
-            console.log('This is the errordata', errorData);
-            swal({
-              title: '',
-              text: `${errorData.errorMessage}`,
-            });
-            throw new Error(errorData.errorMessage);
-          });
-        }
-
-        return res.json().then((response) => {
-          if (response.statusCode === 500) {
-            throw new Error('something went wrong');
-          }
-
-          swal({
-            title: 'Submitted',
-            text: 'User registered successfully. You will now be signed in',
-            icon: 'success',
-            button: 'Ok',
-          }).then(() => {
-            signIn({
-              token: temporaryToken,
-              user: response,
-            });
-
-            // localStorage.setItem(
-            //   'openlogin_store',
-            //   JSON.stringify({
-            //     sessionId: temporaryToken.sessionId,
-            //   })
-            // );
-
-            // localStorage.setItem('user', JSON.stringify(response));
-
-            // setIsLoading(false);
-            nameRef.current.value = '';
-            phoneNumberRef.current.value = '';
-            // dispatch(counterActions.userAuth(response));
-            router.replace('/homepage/dashboard');
-          });
+      if (!name) {
+        setNameValid(false);
+        swal({
+          title: 'oops!',
+          text: 'Kindly complete all required fields',
+          timer: 2000,
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        setIsLoading(false);
+        return;
+      }
+
+      if (!phoneNumber || isNaN(+phoneNumber) || phoneNumber.charAt(0) !== '+') {
+        setPhoneNumberValid(false);
+        swal({
+          title: 'Oops!',
+          text: "Invalid phone number. Ensure to include country code starting with '+' (e.g +12124567890).",
+          // timer: 3000
+        });
+        return;
+      }
+
+      const userInfo = {
+        ...category,
+        categoryId: +category.categoryId,
+        name,
+        phoneNumber: phoneNumber,
+        newsletter,
+      };
+
+      setIsLoading(true);
+
+      const responseData = await createUser(userInfo);
+
+      if (responseData && responseData.errorMessage) {
+        swal({
+          title: 'Sorry!',
+          text: `${responseData.errorMessage}`,
+        });
+      } else if(responseData) {
+        swal({
+          title: 'Submitted',
+          text: 'User registered successfully. You will now be signed in',
+          icon: 'success',
+          button: 'Ok',
+        }).then(() => {
+          signIn({
+            token: temporaryToken,
+            user: response,
+          });
+
+          nameRef.current.value = '';
+          phoneNumberRef.current.value = '';
+          router.replace('/homepage/dashboard2');
+        });
+      } else {
+        swal({
+          title: 'Sorry!',
+          text: `something went wrong`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      swal({
+        title: 'Sorry!',
+        text: `Something went wrong, please try again.`,
       });
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   if (pageLoad) {
