@@ -209,7 +209,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
         <>
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces?.map((airspace, index) => (
+              {rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
@@ -223,7 +223,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces?.map((airspace, index) => (
+              {verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
@@ -237,7 +237,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map((airspace, index) => (
+              {unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
