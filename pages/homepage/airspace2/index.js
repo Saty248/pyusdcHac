@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";

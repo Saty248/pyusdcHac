@@ -18,7 +18,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { getPropertiesByUserAddress, getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleNextPage = () => {
@@ -158,14 +158,18 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (web3authStatus) {
       fetchAirspaces();
     }
-  }, []);
+  }, [web3authStatus]);
 
   useEffect(() => {
-    paginateAirspaces();
-  }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
+    if (web3authStatus) {
+      paginateAirspaces();
+    }
+  }, [pageNumber, rentalPageNumber, unverifiedPageNumber, web3authStatus]);
+
+  console.log({ verifiedAirspaces, rentedAirspaces, unverifiedAirspaces })
 
   return (
     <div
@@ -205,7 +209,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
         <>
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {rentedAirspaces?.map((airspace, index) => (
+              {rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
@@ -219,7 +223,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {verifiedAirspaces?.map((airspace, index) => (
+              {verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
@@ -233,7 +237,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {unverifiedAirspaces?.map((airspace, index) => (
+              {unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}

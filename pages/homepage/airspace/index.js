@@ -281,16 +281,6 @@ const Airspace = () => {
   const confirmAddressHandler = (e) => {
     setIsLoading(true);
 
-    // if (user?.categoryId === 1 && user?.KYCStatusId !== 2) {
-    //   swal({
-    //     title: 'Sorry!',
-    //     text: 'Your KYB is yet to be completed. A member of our team will be in contact with you soon',
-    //   });
-
-    //   setIsLoading(false);
-    //   return;
-    // }
-
     const vertexes = [];
 
     if (addressData.geojson && addressData.geojson.type === 'Polygon') {

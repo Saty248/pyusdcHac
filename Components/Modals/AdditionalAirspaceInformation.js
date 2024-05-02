@@ -168,7 +168,7 @@ const AdditionalAispaceInformation = (props) => {
 
       const responseData = await claimProperty({ postData })
 
-      if (!responseData.errorMessage) { 
+      if (responseData && !responseData.errorMessage) { 
         swal({
           title: 'Submitted',
           text: 'Airspace Registered Successfully',
@@ -179,7 +179,7 @@ const AdditionalAispaceInformation = (props) => {
           // setIsLoading(false);
           router.push('/homepage/dashboard2');
         });
-      } else if (responseData.errorMessage) {
+      } else if (responseData && responseData.errorMessage) {
         toast.error(responseData.errorMessage);
       } else {
         swal({
