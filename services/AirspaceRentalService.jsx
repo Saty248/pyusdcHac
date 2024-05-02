@@ -7,7 +7,10 @@ const AirspaceRentalService = () => {
     try {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
-      })
+      });
+      if (!response) {
+        return [];
+      }
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -20,6 +23,9 @@ const AirspaceRentalService = () => {
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
       })
+      if (!response) {
+        return [];
+      }
       return response?.data;
     } catch (error) {
       console.error(error);

@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useState, useEffect } from "react";
 import { Web3Auth } from '@web3auth/modal';
 import useAuth from '@/hooks/useAuth';

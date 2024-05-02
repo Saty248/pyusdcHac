@@ -18,7 +18,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
   const { getPropertiesByUserAddress, getUnverifiedAirspaces } = AirspaceRentalService();
 
   const handleNextPage = () => {
@@ -158,14 +158,16 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (web3authStatus) {
       fetchAirspaces();
     }
-  }, []);
+  }, [web3authStatus]);
 
   useEffect(() => {
-    paginateAirspaces();
-  }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
+    if (web3authStatus) {
+      paginateAirspaces();
+    }
+  }, [pageNumber, rentalPageNumber, unverifiedPageNumber, web3authStatus]);
 
   return (
     <div
