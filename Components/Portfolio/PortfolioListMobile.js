@@ -148,8 +148,12 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
   }, [user, web3authStatus]);
 
   useEffect(() => {
-    paginateAirspaces();
+    if(web3authStatus) {
+      paginateAirspaces();
+    }
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
+
+  console.log({ verifiedAirspaces, rentedAirspaces, unverifiedAirspaces })
 
   return (
     <div className="overflow-x-hidden mb-24">
@@ -186,7 +190,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
         <div className="w-screen ">
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem] ">
-              {rentedAirspaces.map(
+              {rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -202,7 +206,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem]">
-              {verifiedAirspaces.map(
+              {verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -218,7 +222,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[2px] pb-2 min-h-[20rem]">
-              {unverifiedAirspaces?.map(
+              {unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}

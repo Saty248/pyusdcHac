@@ -5,6 +5,7 @@ const AirspaceRentalService = () => {
 
   const getPropertiesByUserAddress = async (callerAddress, type, limit, afterAssetId)=>{
     try {
+      if (!callerAddress) return [];
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
       });
@@ -20,6 +21,7 @@ const AirspaceRentalService = () => {
 
   const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
     try {
+      if (!callerAddress) return [];
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
       })
@@ -35,6 +37,7 @@ const AirspaceRentalService = () => {
 
   const getTotalAirspacesByUserAddress = async (callerAddress)=>{
     try {
+      if (!callerAddress) return [];
       const response = await getRequest({
         uri: `/private/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
       })
