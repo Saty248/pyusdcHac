@@ -9,7 +9,7 @@ const useAuth = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [web3authStatus, setWeb3authStatus] = useState();
-  const { web3auth, setProvider, setWeb3auth } = useContext(Web3authContext);
+  const { web3auth, setProvider } = useContext(Web3authContext);
 
   const {userData} = useSelector((state) => {
     const {user} = state.userReducer;

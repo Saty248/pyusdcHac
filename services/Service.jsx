@@ -17,7 +17,9 @@ const Service = () => {
       error.response.status === 500 && 
       error.response?.data?.errorMessage
     ) {
-      toast.error(error.response?.data?.errorMessage)
+      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
+        toast.error(error.response?.data?.errorMessage)
+      }
     }
   }
 
