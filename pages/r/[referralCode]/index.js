@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch, shallowEqual, useSelector } from "react-redux";
@@ -74,9 +72,6 @@ const ReferralCodeRedirect = () => {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            await web3auth.logout();
-            setProvider(null);
-
             dispatch(
               setCategory({
                 email: userInformation.email,

@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch } from "react-redux";
@@ -55,15 +53,12 @@ const Signup = () => {
           const solanaWallet = new SolanaWallet(provider);
           const accounts = await solanaWallet.requestAccounts();
 
-          const responseData = await getUser()
+          const responseData = await getUser();
 
           if (responseData?.id) {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            await web3auth.logout();
-            setProvider(null);
-
             dispatch(
               setCategory({
                 email: userInformation.email,

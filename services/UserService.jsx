@@ -43,6 +43,7 @@ const UserService = () => {
     try {
       const response = await getRequest({
         uri: `/private/users/session`,
+        suppressErrorReporting: true,
       });
 
       return response?.data;

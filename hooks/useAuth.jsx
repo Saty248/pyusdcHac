@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { setUser } from '@/redux/slices/userSlice';
+import { setUser, setClearState } from '@/redux/slices/userSlice';
 import { Web3authContext } from '@/providers/web3authProvider';
 import { useRouter } from 'next/router';
 
@@ -9,7 +9,7 @@ const useAuth = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [web3authStatus, setWeb3authStatus] = useState();
-  const { web3auth, setProvider } = useContext(Web3authContext);
+  const { web3auth, setProvider, setWeb3auth } = useContext(Web3authContext);
 
   const {userData} = useSelector((state) => {
     const {user} = state.userReducer;
@@ -37,10 +37,12 @@ const useAuth = () => {
       await web3auth?.logout();
     } 
     else console.error("web3auth not initialized yet");
-
+    
     setProvider(null);
-    localStorage.clear();
+    dispatch(setClearState({}));
+
     sessionStorage.clear();
+    localStorage.clear();
     router.push('/auth/join')
   };
 
