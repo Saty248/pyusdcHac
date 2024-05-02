@@ -40,6 +40,10 @@ const userSlice = createSlice({
       },
       setUser: (state, action)=>{
         state.user = action.payload
+      },
+      setClearState: (state, action)=>{
+        state.user = {};
+        state.category = {};
       }
   },
 });
@@ -51,6 +55,7 @@ export const {
   setAirspaceData,
   setUserUSDWalletBalance,
   setIsWaitingScreenVisible,
-  setUser
+  setUser,
+  setClearState
 } = userSlice.actions;
 export default userSlice.reducer;
