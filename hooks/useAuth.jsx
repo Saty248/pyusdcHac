@@ -33,11 +33,6 @@ const useAuth = () => {
   };
 
   const signOut = async () => {
-    if (web3auth && typeof web3auth.logout === "function") {
-      await web3auth?.logout();
-    } 
-    else console.error("web3auth not initialized yet");
-    
     setProvider(null);
     dispatch(setClearState({}));
 
