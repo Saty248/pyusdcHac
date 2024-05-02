@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { setUser } from '@/redux/slices/userSlice';
+import { setUser, setClearState } from '@/redux/slices/userSlice';
 import { Web3authContext } from '@/providers/web3authProvider';
 import { useRouter } from 'next/router';
 
@@ -33,14 +33,11 @@ const useAuth = () => {
   };
 
   const signOut = async () => {
-    if (web3auth && typeof web3auth.logout === "function") {
-      await web3auth?.logout();
-    } 
-    else console.error("web3auth not initialized yet");
-
     setProvider(null);
-    localStorage.clear();
+    dispatch(setClearState({}));
+
     sessionStorage.clear();
+    localStorage.clear();
     router.push('/auth/join')
   };
 

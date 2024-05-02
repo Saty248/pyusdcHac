@@ -9,14 +9,17 @@ import { toast } from 'react-toastify';
 const Service = () => {
   const { provider } = useContext(Web3authContext)
 
-  const toastError = (error) => {
+  const toastError = (error, suppressErrorReporting) => {
     console.error(error);
     if ( 
+      !suppressErrorReporting &&
       error.response &&
       error.response.status === 500 && 
       error.response?.data?.errorMessage
     ) {
-      toast.error(error.response?.data?.errorMessage)
+      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
+        toast.error(error.response?.data?.errorMessage)
+      }
     }
   }
 
@@ -74,7 +77,7 @@ const Service = () => {
     }
   }
 
-  const getRequest = async ({ uri, isPublic }) => {
+  const getRequest = async ({ uri, isPublic, suppressErrorReporting }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
@@ -86,11 +89,11 @@ const Service = () => {
         headers
       });
     } catch (error) {
-      toastError(error);
+      toastError(error, suppressErrorReporting);
     }
   }
 
-  const postRequest = async ({ uri, postData, isPublic }) => {
+  const postRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
@@ -104,11 +107,11 @@ const Service = () => {
       });
 
     } catch (error) {
-      toastError(error);
+      toastError(error, suppressErrorReporting);
     }
   }
 
-  const patchRequest = async ({ uri, postData, isPublic }) => {
+  const patchRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
@@ -122,11 +125,11 @@ const Service = () => {
       });
 
     } catch (error) {
-      toastError(error);
+      toastError(error, suppressErrorReporting);
     }
   }
 
-  const deleteRequest = async ({ uri, postData, isPublic }) => {
+  const deleteRequest = async ({ uri, postData, isPublic, suppressErrorReporting }) => {
     try {
       const headers = await createHeader({ uri, isPublic })
 
@@ -140,7 +143,7 @@ const Service = () => {
       });
 
     } catch (error) {
-      toastError(error);
+      toastError(error, suppressErrorReporting);
     }
   }
   return { getRequest, postRequest, patchRequest, deleteRequest };

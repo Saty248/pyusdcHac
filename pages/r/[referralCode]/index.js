@@ -74,9 +74,6 @@ const ReferralCodeRedirect = () => {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            await web3auth.logout();
-            setProvider(null);
-
             dispatch(
               setCategory({
                 email: userInformation.email,
