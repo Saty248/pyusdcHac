@@ -142,7 +142,9 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
   };
 
   useEffect(() => {
-    fetchAirspaces();
+    if(web3authStatus) {
+      fetchAirspaces();
+    }
   }, [user, web3authStatus]);
 
   useEffect(() => {
