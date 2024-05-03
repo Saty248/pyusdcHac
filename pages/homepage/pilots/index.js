@@ -2,9 +2,6 @@ import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Web3Auth } from '@web3auth/modal';
-import swal from 'sweetalert';
-import Script from 'next/script';
 
 import useAuth from '@/hooks/useAuth';
 

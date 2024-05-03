@@ -21,7 +21,6 @@ import Backdrop from "@/Components/Backdrop";
 import useAuth from '@/hooks/useAuth';
 import { useMobile } from "@/hooks/useMobile";
 import DatePicker from "react-datepicker";
-import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import {
   Connection,
