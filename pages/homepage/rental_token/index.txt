@@ -8,7 +8,6 @@ import swal from 'sweetalert';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 
-import { Web3Auth } from '@web3auth/modal';
 import Script from 'next/script';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 const BN = require('bn.js');

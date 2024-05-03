@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, Fragment } from 'react';
 import { useRouter } from 'next/router';
-import { Web3Auth } from '@web3auth/modal';
 
 import Script from 'next/script';
 

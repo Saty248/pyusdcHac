@@ -20,6 +20,7 @@ import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice
 import { shallowEqual, useSelector } from "react-redux";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
+import useInitAuth from '@/hooks/useInitAuth';
 
 
 const Signup = () => {
@@ -31,6 +32,7 @@ const Signup = () => {
   const dispatch = useDispatch();
 
   const emailRef = useRef();
+  const { init } = useInitAuth();
 
 
   const { signIn } = useAuth();
@@ -81,6 +83,8 @@ const Signup = () => {
   },[web3auth?.status])
 
   const loginUser = async (isEmail) => {
+
+    await init();
     if (!web3auth) {
       toast.error("Web3auth not initialized yet");
       return;

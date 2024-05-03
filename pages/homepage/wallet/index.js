@@ -6,8 +6,6 @@ import ReactPaginate from 'react-paginate';
 import swal from 'sweetalert';
 import { loadStripeOnramp } from '@stripe/crypto';
 import { CryptoElements, OnrampElement } from '@/hooks/stripe';
-import { Web3Auth } from '@web3auth/modal';
-import Script from 'next/script';
 
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';
