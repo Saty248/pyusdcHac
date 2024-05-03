@@ -605,14 +605,14 @@ const Explorer = ({
                 onClick={rentCLickHandler}
                 className={
                   item.id != selectedAddress
-                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[12px]`
                 }
                 style={{
                   borderTop: "5px solid #FFFFFFCC",
                 }}
               >
-                <h3 className={item.id != selectedAddress ? `text-black pt-[0.6rem] `: ` text-white `}>{item.address}</h3>
+                <h3 className={`w-[65%] ${item.id != selectedAddress ? `text-black `: ` text-white `}`}>{item.address}</h3>
                 <h1
                   className={
                     item.id != selectedAddress
