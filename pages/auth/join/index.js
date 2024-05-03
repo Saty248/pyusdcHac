@@ -137,7 +137,12 @@ const Signup = () => {
               maxWidth: "449px",
             }}
             id="login"
-            name="login"
+            name="login" 
+            onSubmit={(e)=>{
+            
+              e.preventDefault()
+              loginUser(true)
+            }}
           >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
             <p className="mt-[25px] text-xl font-medium text-light-black">
@@ -162,6 +167,7 @@ const Signup = () => {
                 Email<span className="text-[#E04F64]">*</span>
               </label>{" "}
               <input
+                
                 type="email"
                 name="email"
                 id="email"
