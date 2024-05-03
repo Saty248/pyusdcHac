@@ -60,8 +60,8 @@ const SuccessModal = ({ closePopUp, isSuccess}) => {
         ):(
           <div className="mt-20">
             <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
-                Claim Failed! Please review your submission and ensure all information
-                is correct.
+            Claim Failed! Please review your submission and ensure all information is correct. 
+            Also, make sure you've provided input for all the required fields!
             </h1>
           </div>
         )}
@@ -954,13 +954,13 @@ const PopUp = ({ isVisible }) => {
 const FailurePopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] w-[650px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
       {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
 					<FailureIcon />
 				</div> */}
-      🛑 Claim Failed! Please review your submission and ensure all information
-      is correct.
+      🛑 Claim Failed! Please review your submission and ensure all information is correct. 
+      Also, make sure you've provided input for all the required fields!
     </div>
   );
 };
@@ -1258,7 +1258,7 @@ const Airspaces = () => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
-    }, 4000);
+    }, 6000);
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
@@ -1316,9 +1316,10 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       };
-
-      const responseData = await claimProperty({ postData })
-
+      let responseData;
+      if((rent && data?.sell) && (hasLandingDeck || hasChargingStation || hasStorageHub )){
+        responseData = await claimProperty({ postData })
+      }
       if (!responseData) setShowFailurePopUp(true);
       else setShowSuccessPopUp(true);
       
