@@ -44,6 +44,7 @@ const userSlice = createSlice({
       setClearState: (state, action)=>{
         state.user = {};
         state.category = {};
+        state.isWaitingScreenVisible = false;
       }
   },
 });

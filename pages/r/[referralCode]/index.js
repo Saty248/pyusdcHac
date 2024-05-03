@@ -20,6 +20,7 @@ import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
+import useInitAuth from '@/hooks/useInitAuth';
 
 const ReferralCodeRedirect = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -36,6 +37,7 @@ const ReferralCodeRedirect = () => {
   const { getReferralByCode } = ReferralCodeService();
   const { web3auth, provider, setProvider } = useContext(Web3authContext)
   const { getUser } = UserService()
+  const { init } = useInitAuth();
 
   useEffect(() => {
     if (!referralCode) return;
@@ -93,6 +95,8 @@ const ReferralCodeRedirect = () => {
   },[web3auth?.status])
 
   const loginUser = async (isEmail) => {
+    await init();
+
     if (!web3auth) {
       toast.error("Web3auth not initialized yet");
       return;

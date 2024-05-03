@@ -1,8 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/router';
-import swal from 'sweetalert';
-import { Web3Auth } from '@web3auth/modal';
-import Script from 'next/script';
 
 import Sidebar from '@/Components/Sidebar';
 import Navbar from '@/Components/Navbar';

@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useState, useEffect } from "react";
-import { Web3Auth } from '@web3auth/modal';
 import useAuth from '@/hooks/useAuth';
 import { createPortal } from "react-dom";
 import Sidebar from "@/Components/Sidebar";

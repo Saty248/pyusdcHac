@@ -2,9 +2,6 @@ import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { useState, useEffect, Fragment } from 'react';
 import QRCode from 'react-qr-code';
-import swal from 'sweetalert';
-import { Web3Auth } from '@web3auth/modal';
-import Script from 'next/script';
 
 import Navbar from '@/Components/Navbar';
 import Sidebar from '@/Components/Sidebar';

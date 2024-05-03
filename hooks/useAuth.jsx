@@ -18,14 +18,14 @@ const useAuth = () => {
 
 
   useEffect(() => {
-    const init = async () => {
+    const initStatus = async () => {
      if (web3auth && web3auth?.status === "connected") {
       setWeb3authStatus(true);
     } else {
       setWeb3authStatus(false);
      }
     };
-    init();
+    initStatus();
   }, [web3auth?.status]);
 
   const signIn = ({ user }) => {
