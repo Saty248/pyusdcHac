@@ -155,7 +155,7 @@ const { isMobile } = useMobile();
               <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
               (th) => (
-                <th className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
+                <th key={th} className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
               )
             )}
               </tr>
@@ -167,7 +167,6 @@ const { isMobile } = useMobile();
               key={transaction.id}
               className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}
             >
-              {/* {Object.values(transaction).map((value, secondIndex, array) => { return (<td className={`${secondIndex === 0 ? 'rounded-l-lg' : ''} py-6 ${secondIndex === array.length - 1 ? 'rounded-r-lg' : ''} text-[#222222] px-5`}>{value}</td>) })} */}
               <td className={`py-6 px-2 rounded-l-lg text-[#222222]   text-start w-[200px] min-w-[120px] sm:w-[20%] `}>
                 {transaction.date}
               </td>
@@ -434,7 +433,7 @@ const DepositAndWithdraw = ({
     >
       <div className="flex gap-[5px] w-full">
         {["Deposit", "Withdraw"].map((text, index) => (
-          <div
+          <div key={index}
             onClick={() => {
               setActiveSection(index);
               setAmount("");
@@ -745,7 +744,7 @@ const Funds = () => {
   //get sol balance
   useEffect(() => {
     let fetchbalance = async () => {
-      if (user) {
+      if (user && provider) {
         const solanaWallet = new SolanaWallet(provider);
 
         console.log("solana wallet ", solanaWallet);
