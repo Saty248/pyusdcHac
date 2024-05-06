@@ -20,10 +20,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-
-    sessionStorage.setItem("VARIABLE_A", "HELLO A");
-    localStorage.setItem("VARIABLE_B", "HELLO B");
-
     if (web3auth) {
       if (web3auth.status === "not_ready") return;
       if (web3auth.status === "connected") {
@@ -34,6 +30,8 @@ export default function Home() {
         }
       } else {
         logout()
+        sessionStorage.setItem("VARIABLE_A", "HELLO A");
+        localStorage.setItem("VARIABLE_B", "HELLO B");
       }
     }
   }, [web3auth?.status]);
