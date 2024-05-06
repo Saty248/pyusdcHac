@@ -26,6 +26,7 @@ const useAutoLogout = () => {
   useEffect(() => {
     console.log("web3auth status", web3auth?.status)
     console.log("web3auth connected", web3auth?.connected)
+    console.log("router", router)
 
     const loadingStates = ["connecting", "not_ready"];
     const nonLoadingStates = ["disconnected", "errored"];
@@ -39,7 +40,7 @@ const useAutoLogout = () => {
     }
 
     if (web3auth?.status === "ready") {
-      if (web3auth.connected === false) {
+      if (!web3auth.connected && router.pathname !== '/auth/join') {
         logout();
       }
     }
