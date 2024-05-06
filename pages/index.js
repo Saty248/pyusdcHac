@@ -22,7 +22,7 @@ export default function Home() {
   useEffect(() => {
 
     sessionStorage.setItem("VARIABLE_A", "HELLO A");
-    localStorage.setItem("VARIABLE_A", "HELLO A");
+    localStorage.setItem("VARIABLE_B", "HELLO B");
 
     if (web3auth) {
       if (web3auth.status === "not_ready") return;
