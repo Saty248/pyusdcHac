@@ -415,9 +415,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
               Airspace Details
               
             </h2>
-            <div className="w-[20px] h-[20px] ml-3">
-            <InfoIcon/>
-             </div>
           </div>
 
           <div
