@@ -54,7 +54,7 @@ export default function App({ Component, pageProps }) {
       <PersistGate loading={null} persistor={persistor}>
         <>
           <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
-          <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
+          {/* <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} /> */}
           <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
           <Script id="google-analytics">
             {`
