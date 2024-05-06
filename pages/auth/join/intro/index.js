@@ -10,7 +10,7 @@ import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
 import Spinner from '@/Components/Spinner';
 import { Fragment } from 'react';
-import logo from '../../../../public/images/logo.jpg';
+import logo from '../../../../public/images/logo.svg';
 import useAuth from '@/hooks/useAuth';
 import * as Yup from 'yup'
 import UserService from "@/services/UserService";

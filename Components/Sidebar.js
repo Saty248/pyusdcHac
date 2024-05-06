@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import logo from '../public/images/logo.jpg';
+import logo from '../public/images/logo.svg';
 import logoNoChars from '../public/images/logo-no-chars.png';
 import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
 import useAuth from '@/hooks/useAuth';
@@ -96,14 +96,14 @@ const Sidebar = () => {
         />
         </Link>
         <Link href={'/homepage/dashboard2'}>
-          <Image
-            src={logo}
-            alt="Company's logo"
-            width={isCollapsed ? 0 : 147}
-            height={isCollapsed ? 0 : 58}
-            className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-[147px] h-[58px]'}`}
-            style={{ transition: "all 0.3s ease" }}
-          />
+        <Image
+          src={logo}
+          alt="Company's logo"
+          width={isCollapsed ? 0 : 147}
+          height={isCollapsed ? 0 : 58}
+          className={`${isCollapsed ? 'opacity-0 mb-0 w-0 h-0' : 'opacity-100 mt-[-14.64px] mb-[29.27px] w-52 h-16 flex justify-center items-center'}`}
+          style={{ transition: "all 0.3s ease" }}
+        />
         </Link>
        
         <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />} />
