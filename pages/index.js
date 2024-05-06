@@ -11,16 +11,25 @@ export default function Home() {
   const router = useRouter();
 
   const { web3auth } = useContext(Web3authContext);
-  const { user, web3authStatus } = useAuth();
+  const { user } = useAuth();
+
+  const logout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    router.push('/auth/join');
+  }
 
   useEffect(() => {
-    if (web3auth && web3auth.status === "ready") {
-      if (user?.blockchainAddress && web3authStatus) {
-        router.push('/homepage/dashboard2');
+    if (web3auth) {
+      if (web3auth.status === "not_ready") return;
+      if (web3auth.status === "connected") {
+        if (user?.blockchainAddress) {
+          logout()
+        } else {
+          router.push('/homepage/dashboard2');
+        }
       } else {
-        sessionStorage.clear();
-        localStorage.clear();
-        router.push('/auth/join')
+        logout()
       }
     }
   }, [web3auth?.status]);
