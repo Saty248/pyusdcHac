@@ -1,23 +1,38 @@
-import Head from 'next/head';
-import { Fragment, useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
-import Script from 'next/script';
 import Spinner from '@/Components/Spinner';
+import useAutoLogout from '@/hooks/useAutoLogout';
+import { Web3authContext } from '@/providers/web3authProvider';
+import useAuth from '@/hooks/useAuth';
 
 
 export default function Home() {
+  useAutoLogout();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
+  const { web3auth } = useContext(Web3authContext);
+  const { user } = useAuth();
 
-    if (fetchedToken?.sessionId) {
-      router.push('/homepage/dashboard2');
-      return;
-    } else {
-      router.push("/auth/join");
+  const logout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    router.push('/auth/join');
+  }
+
+  useEffect(() => {
+    if (web3auth) {
+      if (web3auth.status === "not_ready") return;
+      if (web3auth.status === "connected") {
+        if (!user?.blockchainAddress) {
+          logout()
+        } else {
+          router.push('/homepage/dashboard2');
+        }
+      } else {
+        logout()
+      }
     }
-  }, []);
+  }, [web3auth?.status]);
 
   return <Spinner />
 }
