@@ -23,7 +23,7 @@ export default function Home() {
     if (web3auth) {
       if (web3auth.status === "not_ready") return;
       if (web3auth.status === "connected") {
-        if (user?.blockchainAddress) {
+        if (!user?.blockchainAddress) {
           logout()
         } else {
           router.push('/homepage/dashboard2');
