@@ -154,8 +154,8 @@ const { isMobile } = useMobile();
             <thead className="sticky top-0 z-[500]  bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
               <tr className="w-full">
             {["date", "transaction id", "type", "amount", "status"].map(
-              (th) => (
-                <th key={th} className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
+              (th,index) => (
+                <th key={index} className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
               )
             )}
               </tr>
