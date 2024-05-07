@@ -19,22 +19,7 @@ export default function Home() {
     router.push('/auth/join');
   }
 
-  useEffect(() => {
-    if (web3auth) {
-      if (web3auth.status === "not_ready") return;
-      if (web3auth.status === "connected") {
-        if (!user?.blockchainAddress) {
-          logout()
-        } else {
-          router.push('/homepage/dashboard2');
-        }
-      } else {
-        logout()
-        sessionStorage.setItem("VARIABLE_A", "HELLO A");
-        localStorage.setItem("VARIABLE_B", "HELLO B");
-      }
-    }
-  }, [web3auth?.status]);
+ 
 
   return <Spinner />
 }
