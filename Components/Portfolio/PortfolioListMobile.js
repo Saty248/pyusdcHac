@@ -240,6 +240,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <div
                 onClick={handlePrevPage}
+                disabled={activeTab === "Verified Airspaces" && pageNumber === 1 ? true : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? true : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? true : false}
                 className={`${activeTab === "Verified Airspaces" && pageNumber === 1 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretLeft />
@@ -253,7 +254,8 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
               </div>
               <div
                 onClick={handleNextPage}
-                className={`${activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? "cursor-not-allowed" : "cursor-pointer"} p-1 cursor-pointer border rounded-lg border-gray-200`}
+                disabled={activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? true : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? true : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? true : false }
+                className={`${activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretRight />
               </div>
