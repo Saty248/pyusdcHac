@@ -872,6 +872,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
+        newMap.setZoom(5)
       });
 
       let timeoutId;
