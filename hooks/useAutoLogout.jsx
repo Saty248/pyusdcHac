@@ -40,13 +40,11 @@ const useAutoLogout = () => {
     }
 
     if (web3auth?.status === "ready") {
-      if (!web3auth.connected && router.pathname !== '/auth/join') {
-        logout();
-      }
-    }
-
-    if (web3auth?.status === "connected" && !user?.blockchainAddress) {
-      logout();
+      const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
+      console.log({fetchedToken})
+      if (!fetchedToken?.sessionId) {
+        router.push("/auth/join");
+      } 
     }
 
   }, [web3auth?.status, user]);
