@@ -19,7 +19,16 @@ export default function Home() {
     router.push('/auth/join');
   }
 
- 
+  useEffect(() => {
+    if (web3auth) {
+      if (web3auth.status === "connected") {
+        if (user?.blockchainAddress) {
+          router.push('/homepage/dashboard2');
+        } 
+      }
+    }
+  }, [web3auth?.status]);
+
 
   return <Spinner />
 }
