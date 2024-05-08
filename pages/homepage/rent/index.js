@@ -261,17 +261,21 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
 
   const handleRentAirspace = async () => {
     try {
+        const currentDate = new Date();
+        let startDate = new Date(date.toString());
+        let endDate = new Date(startDate.getTime());
+        endDate.setMinutes(endDate.getMinutes() + 30);
+      if (currentDate > endDate) {
+        return toast.error(
+          "Rental Tokens can't be booked in the past"
+        );
+      }
       if (parseFloat(tokenBalance) === 0) {
         return toast.error(
           "Please deposit some funds into your wallet to continue"
         );
       }
       setIsLoading(true);
-
-      let startDate = new Date(date.toString());
-      let endDate = new Date(startDate.getTime());
-      endDate.setMinutes(endDate.getMinutes() + 30);
-
       if (startDate.getMinutes() % 30 != 0) {
         setfinalAns({
           status: "Rent failed",
