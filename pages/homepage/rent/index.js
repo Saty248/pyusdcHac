@@ -10,7 +10,8 @@ import {
   SuccessIcon,
   SuccessIconwhite,
   CloseIconWhitesm,
-  InfoIcon
+  InfoIcon,
+  FailedIconwhite
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -91,7 +92,7 @@ const SuccessModal = ({
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
-            <CloseIconWhite />
+            <FailedIconwhite />
           )}
         </div>
         {finalAns?.status === "Rent Successful" ? (
