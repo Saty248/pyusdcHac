@@ -918,10 +918,17 @@ const Rent = () => {
               const popup = new maplibregl.Popup().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               );
-              new maplibregl.Marker(el)
+              const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
                 .setPopup(popup)
                 .addTo(newMap);
+                console.log(marker, "markers")
+              
+                const filteredData = responseData.filter(item => item.type === 'rent');
+                console.log(filteredData,"filteredData")
+                marker.getElement().addEventListener('click', function() {
+                  onClickRent();
+              });
             }
           }
         }, 3000);
