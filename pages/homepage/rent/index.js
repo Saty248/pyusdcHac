@@ -70,13 +70,13 @@ const SuccessModal = ({
   return (
     <div
       ref={modalRef}
-      className={`w-[100%] md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
+      className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={`w-[100%] h-[100%]  py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -90,7 +90,7 @@ const SuccessModal = ({
           </div>       
         </div>
 
-        <div className="w-[w-16] h-[w-16] mt-6">
+        <div className="w-[w-16] h-[w-16] md:mt-6 mt-32">
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
@@ -100,23 +100,23 @@ const SuccessModal = ({
         {finalAns?.status === "Rent Successful" ? (
           <>
             <div className="w-[70%] h-[10%] ">
-              <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
+              <h1 className=" font-[500]  text-3xl text-center text-[#FFFFFF] font-poppins">
                 Your rental order is complete
               </h1>
             </div>
           </>
         ) : (
           <>
-            <div className="w-[70%] h-[10%]  mt-6 ">
-              <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
+            <div className="w-[70%] h-[10%] md:mt-6 mt-9">
+              <h1 className=" font-[500]  text-3xl text-center text-[#FFFFFF] font-poppins">
                 Rent failed
               </h1>
             </div>
           </>
         )}
 
-        <div className="md:w-[80%] w-[60%]  mt-[2rem] ">
-          <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+        <div className="md:w-[90%] w-[65%]  md:mt-[2rem] ">
+          <div className="font-normal text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status === "Rent Successful" && (
               <div>
                 'You rented'{" "}
@@ -129,7 +129,7 @@ const SuccessModal = ({
             )}
           </div>
 
-          <div className="font-[400]  text-base leading-7 text-center text-[#FFFFFF] font-poppins">
+          <div className="font-normal  text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status !== "Rent Successful" && (
               <div>Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.</div>
             )}
@@ -138,7 +138,7 @@ const SuccessModal = ({
 
         {finalAns?.status === "Rent Successful" && (
           <div className=" w-[75%] ">
-            <p className="font-[400] text-[10px] text-center text-[#FFFFFF]">
+            <p className="font-normal text-[10px] text-center text-[#FFFFFF]">
               A copy of your transaction is availble inside your Portfolio{" "}
             </p>
           </div>
