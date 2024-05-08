@@ -1082,7 +1082,6 @@ const Rent = () => {
               user1={user}
             />
           )}
-          <SuccessModal/>
           <section
             className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
           >
