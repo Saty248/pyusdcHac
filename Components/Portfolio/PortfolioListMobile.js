@@ -153,8 +153,6 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
     }
   }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
 
-  console.log({ verifiedAirspaces, rentedAirspaces, unverifiedAirspaces })
-
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -240,8 +238,8 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <div
                 onClick={handlePrevPage}
-                disabled={activeTab === "Verified Airspaces" && pageNumber === 1 ? true : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? true : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? true : false}
-                className={`${activeTab === "Verified Airspaces" && pageNumber === 1 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+                disabled={pageNumber === 1 && (activeTab === "Verified Airspaces" || activeTab === "Rented Airspaces" || activeTab === "Pending Verification")}
+                className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretLeft />
               </div>
@@ -254,8 +252,8 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
               </div>
               <div
                 onClick={handleNextPage}
-                disabled={activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? true : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? true : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? true : false }
-                className={`${activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+                disabled={(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10)}
+                className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretRight />
               </div>
