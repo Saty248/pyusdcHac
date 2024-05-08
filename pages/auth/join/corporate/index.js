@@ -6,7 +6,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import swal from 'sweetalert';
-import logo from '../../../../public/images/logo.jpg';
+import logo from '../../../../public/images/logo.svg';
 import Script from 'next/script';
 
 import Backdrop from '@/Components/Backdrop';
