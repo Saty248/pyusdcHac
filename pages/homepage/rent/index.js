@@ -70,13 +70,13 @@ const SuccessModal = ({
   return (
     <div
       ref={modalRef}
-      className={`w-[100%] max-w-[20rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
+      className={`w-[100%] max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40`}
     >
       {/* <div className=" text-xl text-black text-center"> {finalAns?.status} </div>
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={` w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -85,10 +85,12 @@ const SuccessModal = ({
           }}
           className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
+          <div className="hidden sm:block absolute top-[10px] right-[10px]">
           <CloseIconWhite />
+          </div>       
         </div>
 
-        <div className="w-[54.56px] h-[54.56px]">
+        <div className="w-[w-16] h-[w-16]">
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
@@ -1080,6 +1082,7 @@ const Rent = () => {
               user1={user}
             />
           )}
+          <SuccessModal/>
           <section
             className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
           >
