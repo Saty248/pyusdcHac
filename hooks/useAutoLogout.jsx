@@ -8,6 +8,7 @@ const useAutoLogout = () => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
+  const publicAccessRoutes=['/homepage/rent','/homepage/airspace2']
 
   const logout = () => {
     sessionStorage.clear();
@@ -45,10 +46,18 @@ const useAutoLogout = () => {
       const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
       console.log({ fetchedToken });
       if (!fetchedToken?.sessionId) {
-        router.push("/auth/join");
-      }
+        if(publicAccessRoutes.includes(router.pathname) && !user.blockchainAddress){
+          console.log('entered unchecked phase',user.blockchainAddress)
+          return
+        }else{
+          console.log('entered redirection phase')
+          router.push("/auth/join");
+        }
+        
+      } 
     }
-  }, [web3auth?.status, user]);
+
+  }, [web3auth?.status, user,router.pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
 
   return null;
 };

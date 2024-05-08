@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
@@ -1035,6 +1035,7 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
+
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState(false);
   //
@@ -1086,6 +1087,9 @@ const Airspaces = () => {
   // database
   const { claimProperty } = PropertiesService();
   const { user } = useAuth();
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
+
 
   useEffect(() => {
     if (map) return;
@@ -1250,6 +1254,11 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
+
+
+
+      customAuth(router,user,web3auth);
+
       setClaimButtonLoading(true);
       const {
         address,
