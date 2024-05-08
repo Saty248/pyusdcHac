@@ -117,8 +117,8 @@ const Sidebar = () => {
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
-        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
-        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
+        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />}className="hover:bg-gray-200 hover:text-[#5D7285]"/>
+        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"}className="hover:bg-gray-200 hover:text-gray-900" />
       </aside>
       <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
