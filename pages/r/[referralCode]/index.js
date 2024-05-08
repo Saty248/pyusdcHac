@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
@@ -21,6 +21,7 @@ import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
 import useInitAuth from '@/hooks/useInitAuth';
+import { counterActions } from "@/store/store";
 
 const ReferralCodeRedirect = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -54,17 +55,21 @@ const ReferralCodeRedirect = () => {
     })();
   }, [referralCode]);
 
-  const {isWaitingScreenVisible} = useSelector((state) => {
-    const {isWaitingScreenVisible} = state.userReducer;
-    return {isWaitingScreenVisible}
-  }, shallowEqual);
+  // const {isWaitingScreenVisible} = useSelector((state) => {
+  //   const {isWaitingScreenVisible} = state.userReducer;
+  //   return {isWaitingScreenVisible}
+  // }, shallowEqual);
+
+  const isWaitingScreenVisible = useSelector(
+    (state) => state.value.isWaitingScreenVisible
+  );
 
 
   useEffect(() => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true))
+          dispatch(counterActions.setIsWaitingScreenVisible(true))
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -76,7 +81,7 @@ const ReferralCodeRedirect = () => {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            dispatch(
+            dispatch(counterActions.
               setCategory({
                 email: userInformation.email,
                 blockchainAddress: accounts[0],
@@ -85,11 +90,11 @@ const ReferralCodeRedirect = () => {
 
             router.replace(`/auth/join/intro`);
           }
-          dispatch(setIsWaitingScreenVisible(false))
+          dispatch(counterActions.setIsWaitingScreenVisible(false))
         }
       } catch (error) {
         console.error(error)
-        dispatch(setIsWaitingScreenVisible(false))
+        dispatch(counterActions.setIsWaitingScreenVisible(false))
       } 
     })()
   },[web3auth?.status])

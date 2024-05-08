@@ -1,29 +1,30 @@
+import { useEffect, useState } from "react";
 import "@/styles/globals.css";
 import { Provider } from "react-redux";
-// import store from "@/store/store";
-import Script from "next/script";
+import store from "@/store/store";
+// import Script from "next/script";
 
 import CookieConsent from "@/Components/CookieConsent";
 
 import { msclaritConfig } from "@/hooks/msclaritConfig";
 import { useMobile } from "@/hooks/useMobile";
-import { useEffect, useState } from "react";
 import { SidebarProvider } from "@/hooks/sidebarContext";
 import { Web3authProvider } from "@/providers/web3authProvider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore } from "redux-persist";
-import store from "@/redux/store";
+// import { PersistGate } from "redux-persist/integration/react";
+// import { persistStore } from "redux-persist";
+// import store from "@/redux/store";
 import ErrorBoundary from "@/Components/ErrorBoundary";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }) {
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
 
-  const persistor = persistStore(store);
+  // const persistor = persistStore(store);
 
 
   useEffect(() => {
@@ -51,21 +52,8 @@ export default function App({ Component, pageProps }) {
     <>
       <Provider store={store}>
       
-      <PersistGate loading={null} persistor={persistor}>
-        <>
-          <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
-          <Script id="show-banner" dangerouslySetInnerHTML={msclaritConfig} />
-          <Script src="https://www.googletagmanager.com/gtag/js?id=G-C0J4J56QW5" />
-          <Script id="google-analytics">
-            {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-        
-                gtag('config', 'G-C0J4J56QW5');
-            `}
-          </Script>
-          <Web3authProvider>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
+      <Web3authProvider>         
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
               <ErrorBoundary>
@@ -73,9 +61,10 @@ export default function App({ Component, pageProps }) {
               </ErrorBoundary>
             </SidebarProvider>
             <CookieConsent />
-          </Web3authProvider>
-        </>
-      </PersistGate>
+          
+
+        </Web3authProvider>
+      {/* </PersistGate> */}
       </Provider>
     </>
   );

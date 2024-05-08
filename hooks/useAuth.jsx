@@ -4,17 +4,39 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { setUser, setClearState } from '@/redux/slices/userSlice';
 import { Web3authContext } from '@/providers/web3authProvider';
 import { useRouter } from 'next/router';
+import { counterActions } from '@/store/store';
 
 const useAuth = () => {
+  const [user, setUser] = useState({})
   const router = useRouter();
   const dispatch = useDispatch();
   const [web3authStatus, setWeb3authStatus] = useState();
   const { web3auth, setProvider } = useContext(Web3authContext);
 
+
+
+
+
   const {userData} = useSelector((state) => {
-    const {user} = state.userReducer;
+    const {user} = state.value;
     return {userData: user}
   }, shallowEqual);
+
+
+
+
+
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const currentUser = JSON.parse(userData);
+      dispatch(counterActions.setUser(currentUser));
+      setUser(currentUser)
+    }
+}, []);
+  
+  
 
 
   useEffect(() => {
@@ -29,12 +51,14 @@ const useAuth = () => {
   }, [web3auth?.status]);
 
   const signIn = ({ user }) => {
-    dispatch(setUser(user));
+    if (user)
+    dispatch(counterActions.setUser(user));
+
   };
 
   const signOut = async () => {
     setProvider(null);
-    dispatch(setClearState({}));
+    // dispatch(counterActions.setClearState({}));
 
     sessionStorage.clear();
     localStorage.clear();
@@ -42,7 +66,7 @@ const useAuth = () => {
   };
 
   const updateProfile = (updatedUser) => {
-    dispatch(setUser(updatedUser));
+    dispatch(counterActions.setUser(updatedUser));
   };
   
   return {

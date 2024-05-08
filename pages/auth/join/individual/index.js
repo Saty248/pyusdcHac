@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -52,12 +52,17 @@ const IndividualSignup = () => {
     setPageLoad(false);
   }, []);
 
-  const {category} = useSelector((state) =>
-  {
-    const {category} = state.userReducer
-    return {category}
-  }, shallowEqual
-   );
+  // const {category} = useSelector((state) =>
+  // {
+  //   const {category} = state.userReducer
+  //   return {category}
+  // }, shallowEqual
+  //  );
+
+  const category = useSelector(
+    (state) => state.value.category
+  );
+
 
   const { temporaryToken, signIn } = useAuth();
 

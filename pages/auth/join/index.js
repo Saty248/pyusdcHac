@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
@@ -21,6 +21,7 @@ import { shallowEqual, useSelector } from "react-redux";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
 import useInitAuth from '@/hooks/useInitAuth';
+import { counterActions } from "@/store/store";
 
 
 const Signup = () => {
@@ -41,17 +42,32 @@ const Signup = () => {
   const { getUser } = UserService()
 
 
-  const {isWaitingScreenVisible} = useSelector((state) => {
-    const {isWaitingScreenVisible} = state.userReducer;
-    return {isWaitingScreenVisible}
-  }, shallowEqual);
+  // const {isWaitingScreenVisible} = useSelector((state) => {
+  //   const {isWaitingScreenVisible} = state.userReducer;
+  //   return {isWaitingScreenVisible}
+  // }, shallowEqual);
+
+
+  const isWaitingScreenVisible = useSelector(
+    (state) => state.value.isWaitingScreenVisible
+  );
+
+
+  useEffect(() => {
+    const categoryData = localStorage.getItem('category');
+    if (categoryData) {
+      const currentCategory = JSON.parse(categoryData);
+      dispatch(counterActions.setCategory(currentCategory));
+    }
+}, []);
 
 
   useEffect(() => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true))
+          dispatch(counterActions.setIsWaitingScreenVisible(true))
+          localStorage.setItem('isWaitingScreenVisible', JSON.stringify(true));
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -59,28 +75,40 @@ const Signup = () => {
 
           const responseData = await getUser();
 
+          console.log({responseData})
+          localStorage.setItem('user', JSON.stringify(responseData));
+
+
           if (responseData?.id) {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            dispatch(
-              setCategory({
-                email: userInformation.email,
-                blockchainAddress: accounts[0],
-              })
-            );
+            const categoryData = {
+              email: userInformation.email,
+              blockchainAddress: accounts[0],
+            };
+  
+            dispatch(counterActions.setCategory(categoryData));
+  
+
+            localStorage.setItem('category', JSON.stringify(categoryData));
 
             router.replace(`/auth/join/intro`);
           }
           setIsRedirecting(true)
-          dispatch(setIsWaitingScreenVisible(false))
+          dispatch(counterActions.setIsWaitingScreenVisible(false))
+          localStorage.setItem('isWaitingScreenVisible', JSON.stringify(false));
         }
       } catch (error) {
         console.error(error)
-        dispatch(setIsWaitingScreenVisible(false))
+        dispatch(counterActions.setIsWaitingScreenVisible(false))
+        localStorage.setItem('isWaitingScreenVisible', JSON.stringify(false));
       } 
     })()
   },[web3auth?.status])
+
+console.log('web3auth.status', web3auth?.status)
+
 
   const loginUser = async (isEmail) => {
 
@@ -123,6 +151,16 @@ const Signup = () => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
   };
+
+
+  useEffect(() => {
+    const isWaitingScreen = localStorage.getItem('isWaitingScreenVisible');
+    if (isWaitingScreen) {
+      const isWaiting = JSON.parse(isWaitingScreen);
+      dispatch(counterActions.setCategory(isWaiting));
+    }
+
+}, []);
 
   return (
     <Fragment>

@@ -49,10 +49,16 @@ import { useMobile } from "@/hooks/useMobile";
 
 const AvailableBalance = ({ solbalance }) => {
 
-  const {userUSDWalletBalance} = useSelector((state) => {
-    const {userUSDWalletBalance} = state.userReducer;
-    return {userUSDWalletBalance}
-  }, shallowEqual);
+  // const {userUSDWalletBalance} = useSelector((state) => {
+  //   const {userUSDWalletBalance} = state.userReducer;
+  //   return {userUSDWalletBalance}
+  // }, shallowEqual);
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
+  );
+
+
 
   return (
     <div

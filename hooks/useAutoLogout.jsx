@@ -19,7 +19,8 @@ const useAutoLogout = () => {
   useEffect(() => {
     const oldUser = JSON.parse(localStorage.getItem('user'));
     const checkSessionStorageUser = JSON.parse(sessionStorage.getItem('persist:root'));
-    if (oldUser || checkSessionStorageUser) {
+    if ( checkSessionStorageUser) {
+      console.log('oldUser || checkSessionStorageUser triggered')
       logout();
     }
   }, [web3auth?.status]);
@@ -51,7 +52,7 @@ const useAutoLogout = () => {
 
   }, [web3auth?.status, user]);
 
-  return null;
+  // return null;
 };
 
 export default useAutoLogout;
