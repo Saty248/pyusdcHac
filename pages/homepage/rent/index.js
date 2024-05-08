@@ -76,7 +76,7 @@ const SuccessModal = ({
             <div className=" text-xl text-black text-center"> {finalAns?.message}</div>
  */}
       <div
-        className={` w-[100%] h-[500px] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={` w-[100%] h-[100%] py-10 z-40 flex flex-col gap-[15px] items-center  rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -105,7 +105,7 @@ const SuccessModal = ({
           </>
         ) : (
           <>
-            <div className="w-[70%] h-[10%] ">
+            <div className="w-[70%] h-[10%]  mt-6 ">
               <h1 className=" font-[500]  text-[22px] text-center text-[#FFFFFF] font-poppins">
                 Rent failed
               </h1>
@@ -127,9 +127,9 @@ const SuccessModal = ({
             )}
           </div>
 
-          <div className="font-[400] text-[14px] leading-7 text-center text-[#FFFFFF] font-poppins">
+          <div className="font-[400] text-base leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status !== "Rent Successful" && (
-              <div>An error occured, please try again.</div>
+              <div>Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.</div>
             )}
           </div>
         </div>
@@ -359,6 +359,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
       
 
   };
+
   if (showSuccess) {
     return (
       <SuccessModal
