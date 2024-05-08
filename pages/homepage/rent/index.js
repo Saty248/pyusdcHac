@@ -849,7 +849,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 15,
+        zoom: 4,
         // attributionControl: false
       });
 
@@ -872,7 +872,6 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
-        newMap.setZoom(5)
       });
 
       let timeoutId;
