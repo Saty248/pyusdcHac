@@ -4,6 +4,7 @@ import PortfolioItem from "./PortfolioItem";
 import useAuth from '@/hooks/useAuth';
 import Spinner from "../Spinner";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
+import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 
 const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -129,20 +130,6 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
     }
     setLoading(false);
   };
-
-  
-const AirspacesEmptyMessage = () => {
-    return (
-      <div>
-        <div className="flex justify-center">
-            <div className="flex items-end justify-center w-[144px] h-[95px] text-[#5D7285] opacity-50 font-bold text-base leading-[19.2px] font-lato">
-              No Airspace yet
-            </div>
-        </div>
-      </div>
-    )
-  }
-  
 
   const paginateAirspaces = async () => {
     if (user?.blockchainAddress) {
