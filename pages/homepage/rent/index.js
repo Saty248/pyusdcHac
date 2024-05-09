@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
   ArrowLeftIcon,
@@ -1052,6 +1052,7 @@ const Rent = () => {
     <Fragment>
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
+       
       </Head>
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
