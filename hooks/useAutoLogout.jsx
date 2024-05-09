@@ -37,8 +37,7 @@ const useAutoLogout = () => {
     }
 
     if (web3auth?.status === "ready") {
-      const fetchedToken = JSON.parse(localStorage.getItem("skySessionId"));
-      console.log({ fetchedToken });
+      const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
       if (!fetchedToken?.sessionId) {
         router.push("/auth/join");
       }
