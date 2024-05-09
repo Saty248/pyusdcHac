@@ -1055,7 +1055,7 @@ const Rent = () => {
        
       </Head>
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+      { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
@@ -1084,13 +1084,11 @@ const Rent = () => {
             />
           )}
           <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
+            className={'relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] '}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
-              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-
-              id="map"
+              className={'!absolute !top-0 !left-0 !m-0 !w-screen !h-screen'}
+             id="map"
               style={{ zIndex: "20" }}
             />
 
@@ -1128,7 +1126,9 @@ const Rent = () => {
             )}
           </section>
         </div>
-      </div>
+      </div> }
+
+
     </Fragment>
   );
 };
