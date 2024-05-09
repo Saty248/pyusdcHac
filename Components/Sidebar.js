@@ -21,7 +21,7 @@ const Sidebar = () => {
 
     if (onClick !== undefined) {
       return (
-        <div onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div title={text} onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
@@ -117,8 +117,8 @@ const Sidebar = () => {
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
-        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
-        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
+        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />}/>
+        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />}/>
       </aside>
       <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
