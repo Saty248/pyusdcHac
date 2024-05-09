@@ -296,6 +296,10 @@ const ClaimModal = ({
   claimButtonLoading,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+
+  const airSpaceData=data;
+  let ans= localStorage.setItem('airSpaceData',JSON.stringify(airSpaceData));
+console.log('anss claim ',ans)
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -1090,7 +1094,7 @@ const Airspaces = () => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
-
+// new map is created if not rendered
   useEffect(() => {
     if (map) return;
 
@@ -1131,11 +1135,18 @@ const Airspaces = () => {
       });
 
       setMap(newMap);
-      flyToUserIpAddress(newMap);
+      let inintialAirSpaceData=localStorage.getItem('airSpaceData')
+      if(inintialAirSpaceData?.length<2){
+        console.log('visisted here')
+        flyToUserIpAddress(newMap);
+      }
+      
     };
     createMap();
   }, []);
 
+
+  //gets address suggestions 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
@@ -1170,6 +1181,7 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [address]);
 
+  //flies to the new address
   useEffect(() => {
     if (!flyToAddress) return;
 
@@ -1223,6 +1235,7 @@ const Airspaces = () => {
     goToAddress();
   }, [flyToAddress, map]);
 
+  //adds address for the new address
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
     if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
@@ -1245,6 +1258,24 @@ const Airspaces = () => {
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
+    const parsedInitialAirspaceData=JSON.parse(inintialAirSpaceDataString);
+    console.log('initial state')
+    console.log(parsedInitialAirspaceData,parsedInitialAirspaceData.address)
+    if(parsedInitialAirspaceData?.address?.length>2){
+      console.log(parsedInitialAirspaceData?.address)
+      setData(parsedInitialAirspaceData);
+      setFlyToAddress(parsedInitialAirspaceData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  
+  
+  }, [])
+  
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -1314,6 +1345,10 @@ const Airspaces = () => {
       toast.error("Error when creating property.")
     } finally {
       setClaimButtonLoading(false);
+    }
+    let initialData=localStorage.getItem('airSpaceData')
+    if(initialData.length>2){
+      localStorage.removeItem('airSpaceData')
     }
   };
   const flyToUserIpAddress = async (map) => {
