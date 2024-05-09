@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import ZoomControllers from "@/Components/ZoomControllers";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -1497,6 +1498,7 @@ const Airspaces = () => {
                       </p>
                     </Link>
                   </div>
+                  
                   <div
                     onClick={() => setShowHowToModal(true)}
                     className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
@@ -1509,6 +1511,9 @@ const Airspaces = () => {
                 </div>
               </div>
             )}
+            <div>
+              <ZoomControllers map={map}/>
+            </div>
           </section>
         </div>
       </div>

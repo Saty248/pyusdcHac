@@ -43,6 +43,7 @@ import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
+import ZoomControllers from "@/Components/ZoomControllers";
 
 const SuccessModal = ({
   setShowSuccess,
@@ -1126,6 +1127,9 @@ const Rent = () => {
               />
             )}
           </section>
+          <div>
+            <ZoomControllers map={map}/>
+          </div>
         </div>
       </div>
     </Fragment>
