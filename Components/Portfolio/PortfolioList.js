@@ -130,6 +130,20 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
     setLoading(false);
   };
 
+  
+const AirspacesEmptyMessage = () => {
+    return (
+      <div>
+        <div className="flex justify-center">
+            <div className="flex items-end justify-center w-[144px] h-[95px] text-[#5D7285] opacity-50 font-bold text-base leading-[19.2px] font-lato">
+              No Airspace yet
+            </div>
+        </div>
+      </div>
+    )
+  }
+  
+
   const paginateAirspaces = async () => {
     if (user?.blockchainAddress) {
       if (activeTab === "Verified Airspaces") {
@@ -208,8 +222,9 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
       ) : (
         <>
           {activeTab === "Rented Airspaces" && (
+            <>
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces?.map((airspace, index) => (
+              {(rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address) ? rentedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
@@ -217,35 +232,43 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
                   type={airspace?.type}
                   selectAirspace={() => selectAirspace(airspace)}
                 />
-              ))}
+              ))
+              :
+              <AirspacesEmptyMessage />
+              }
             </div>
+            </>
           )}
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces?.map((airspace, index) => (
+              {(verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address) ? verifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
                   selectAirspace={() => selectAirspace(airspace)}
-                />
-              ))}
+                />))
+                :
+              <AirspacesEmptyMessage />
+            }
             </div>
           )}
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[15px] min-h-[20rem]">
-              {unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map((airspace, index) => (
+              {(unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address) ? unverifiedAirspaces?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
                   selectAirspace={() => selectAirspace(airspace)}
-                />
-              ))}
+                />))
+                :
+                <AirspacesEmptyMessage />
+              }
             </div>
           )}
 
