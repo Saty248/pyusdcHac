@@ -11,7 +11,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 
 import useAuth from "@/hooks/useAuth";
 
-import logo from "../../../public/images/logo.jpg";
+import logo from "../../../public/images/logo.svg";
 
 import Head from "next/head";
 import Link from "next/link";

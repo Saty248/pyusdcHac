@@ -14,7 +14,7 @@ import Spinner from "@/Components/Spinner";
 
 import useAuth from '@/hooks/useAuth';
 
-import logo from "../../../public/images/logo.jpg";
+import logo from "../../../public/images/logo.svg";
 
 import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 import ReferralCodeService from "@/services/ReferralCodeService";

@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
   ArrowLeftIcon,
@@ -261,17 +261,21 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
 
   const handleRentAirspace = async () => {
     try {
+        const currentDate = new Date();
+        let startDate = new Date(date.toString());
+        let endDate = new Date(startDate.getTime());
+        endDate.setMinutes(endDate.getMinutes() + 30);
+      if (currentDate > endDate) {
+        return toast.error(
+          "Rental Tokens can't be booked in the past"
+        );
+      }
       if (parseFloat(tokenBalance) === 0) {
         return toast.error(
           "Please deposit some funds into your wallet to continue"
         );
       }
       setIsLoading(true);
-
-      let startDate = new Date(date.toString());
-      let endDate = new Date(startDate.getTime());
-      endDate.setMinutes(endDate.getMinutes() + 30);
-
       if (startDate.getMinutes() % 30 != 0) {
         setfinalAns({
           status: "Rent failed",
@@ -849,7 +853,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 15,
+        zoom: 4,
         // attributionControl: false
       });
 
@@ -1048,9 +1052,10 @@ const Rent = () => {
     <Fragment>
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
+       
       </Head>
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+      { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
@@ -1079,13 +1084,11 @@ const Rent = () => {
             />
           )}
           <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
+            className={'relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] '}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
-              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-
-              id="map"
+              className={'!absolute !top-0 !left-0 !m-0 !w-screen !h-screen'}
+             id="map"
               style={{ zIndex: "20" }}
             />
 
@@ -1123,7 +1126,9 @@ const Rent = () => {
             )}
           </section>
         </div>
-      </div>
+      </div> }
+
+
     </Fragment>
   );
 };
