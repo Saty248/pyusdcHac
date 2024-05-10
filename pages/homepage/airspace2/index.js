@@ -27,6 +27,7 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
+import MobileNavbar from "@/Components/MobileNavbar";
 
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
@@ -1105,6 +1106,7 @@ const Airspaces = () => {
   // database
   const { claimProperty } = PropertiesService();
   const { user } = useAuth();
+  const [showMobileNavbar, setShowMobileNavbar] = useState(false);
 
   useEffect(() => {
     if (map) return;
@@ -1355,6 +1357,10 @@ const Airspaces = () => {
     }
   };
 
+  const handleMenuClick = () => {
+    setShowMobileNavbar(true);
+ };
+
   return (
     <Fragment>
       <Head>
@@ -1384,6 +1390,9 @@ const Airspaces = () => {
           )}
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} />
+          )}
+          {showMobileNavbar && isMobile && (
+            <MobileNavbar setShowMobileNavbar={showMobileNavbar} />
           )}
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
