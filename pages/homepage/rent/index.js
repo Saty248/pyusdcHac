@@ -180,7 +180,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -476,12 +476,13 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           >
             Cancel
           </div>
-          <div
+          <button
+            disabled={isLoading}
             onClick={handleRentAirspace}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </div>
+          </button>
         </div>
       </div>
     </LocalizationProvider>
@@ -1120,6 +1121,7 @@ const Rent = () => {
                 setShowClaimModal={setShowClaimModal}
                 rentData={rentData}
                 setIsLoading={setIsLoading}
+                isLoading={isLoading}
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
               />
