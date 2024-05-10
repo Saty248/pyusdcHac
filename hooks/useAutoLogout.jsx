@@ -16,15 +16,21 @@ const useAutoLogout = () => {
   };
 
   useEffect(() => {
+    const oldUser = JSON.parse(localStorage.getItem("user"));
     const checkSessionStorageUser = JSON.parse(
       sessionStorage.getItem("persist:root")
     );
-    if (checkSessionStorageUser) {
+    if (oldUser || checkSessionStorageUser) {
       logout();
     }
   }, [web3auth?.status]);
 
   useEffect(() => {
+    console.log("user", user);
+    console.log("web3auth status", web3auth?.status);
+    console.log("web3auth connected", web3auth?.connected);
+    console.log("router", router);
+
     const loadingStates = ["connecting", "not_ready"];
     const nonLoadingStates = ["disconnected", "errored"];
 
@@ -38,11 +44,14 @@ const useAutoLogout = () => {
 
     if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+      console.log({ fetchedToken });
       if (!fetchedToken?.sessionId) {
         router.push("/auth/join");
       }
     }
   }, [web3auth?.status, user]);
+
+  return null;
 };
 
 export default useAutoLogout;

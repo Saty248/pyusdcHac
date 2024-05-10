@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { setUser, setClearState } from "@/redux/slices/userSlice";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/router";
 import { counterActions } from "@/store/store";
 
 const useAuth = () => {
-  const [user, setUser] = useState({});
   const router = useRouter();
   const dispatch = useDispatch();
   const [web3authStatus, setWeb3authStatus] = useState();
@@ -20,10 +18,9 @@ const useAuth = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    if (userData) {
+    if (userData && userData !== "undefined") {
       const currentUser = JSON.parse(userData);
       dispatch(counterActions.setUser(currentUser));
-      setUser(currentUser);
     }
   }, []);
 
