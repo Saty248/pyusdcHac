@@ -1,8 +1,8 @@
-import { useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
+import { useEffect, useContext } from "react";
+import { useRouter } from "next/router";
 
-import { Web3authContext } from '@/providers/web3authProvider';
-import useAuth from '@/hooks/useAuth';
+import { Web3authContext } from "@/providers/web3authProvider";
+import useAuth from "@/hooks/useAuth";
 
 const useAutoLogout = () => {
   const router = useRouter();
@@ -12,43 +12,42 @@ const useAutoLogout = () => {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push('/auth/join');
-  }
-
+    router.push("/auth/join");
+  };
 
   useEffect(() => {
-    const oldUser = JSON.parse(localStorage.getItem('user'));
-    if (oldUser) {
+    const checkSessionStorageUser = JSON.parse(
+      sessionStorage.getItem("persist:root")
+    );
+    if (checkSessionStorageUser) {
       logout();
     }
   }, [web3auth?.status]);
 
   useEffect(() => {
-    console.log("web3auth status", web3auth?.status)
-    console.log("web3auth connected", web3auth?.connected)
-    console.log("router", router)
+    console.log("user", user);
+    console.log("web3auth status", web3auth?.status);
+    console.log("web3auth connected", web3auth?.connected);
+    console.log("router", router);
 
     const loadingStates = ["connecting", "not_ready"];
     const nonLoadingStates = ["disconnected", "errored"];
 
     if (!web3auth) return;
 
-    if (loadingStates.includes(web3auth.status)) return;
-    if (nonLoadingStates.includes(web3auth.status)) {
-      logout();
-      return;
-    }
+    // if (loadingStates.includes(web3auth.status)) return;
+    // if (nonLoadingStates.includes(web3auth.status)) {
+    //   logout();
+    //   return;
+    // }
 
     if (web3auth?.status === "ready") {
-      if (!web3auth.connected && router.pathname !== '/auth/join') {
-        logout();
+      const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
+      console.log({ fetchedToken });
+      if (!fetchedToken?.sessionId) {
+        router.push("/auth/join");
       }
     }
-
-    if (web3auth?.status === "connected" && !user?.blockchainAddress) {
-      logout();
-    }
-
   }, [web3auth?.status, user]);
 
   return null;

@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Spinner from '@/Components/Spinner';
 import useAutoLogout from '@/hooks/useAutoLogout';
 import { Web3authContext } from '@/providers/web3authProvider';
-import useAuth from '@/hooks/useAuth';
 
 
 export default function Home() {
@@ -11,7 +10,6 @@ export default function Home() {
   const router = useRouter();
 
   const { web3auth } = useContext(Web3authContext);
-  const { user } = useAuth();
 
   const logout = () => {
     sessionStorage.clear();
@@ -21,20 +19,17 @@ export default function Home() {
 
   useEffect(() => {
     if (web3auth) {
-      if (web3auth.status === "not_ready") return;
       if (web3auth.status === "connected") {
-        if (!user?.blockchainAddress) {
-          logout()
-        } else {
+        const userData = localStorage.getItem("user");
+        if (userData && userData !== "undefined") {
           router.push('/homepage/dashboard2');
+        } else {
+          logout();
         }
-      } else {
-        logout()
-        sessionStorage.setItem("VARIABLE_A", "HELLO A");
-        localStorage.setItem("VARIABLE_B", "HELLO B");
       }
     }
   }, [web3auth?.status]);
+
 
   return <Spinner />
 }
