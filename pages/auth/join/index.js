@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
@@ -9,19 +9,22 @@ import Image from "next/image";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
-import useAuth from '@/hooks/useAuth';
+import useAuth from "@/hooks/useAuth";
 
 import logo from "../../../public/images/logo.svg";
 
 import Head from "next/head";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
+import {
+  setCategory,
+  setIsWaitingScreenVisible,
+} from "@/redux/slices/userSlice";
 import { shallowEqual, useSelector } from "react-redux";
-import { Web3authContext } from '@/providers/web3authProvider';
+import { Web3authContext } from "@/providers/web3authProvider";
 import UserService from "@/services/UserService";
-import useInitAuth from '@/hooks/useInitAuth';
-
+import useInitAuth from "@/hooks/useInitAuth";
+import { counterActions } from "@/store/store";
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -34,24 +37,34 @@ const Signup = () => {
   const emailRef = useRef();
   const { init } = useInitAuth();
 
-
   const { signIn } = useAuth();
 
-  const { web3auth, provider, setProvider } = useContext(Web3authContext)
-  const { getUser } = UserService()
+  const { web3auth, provider, setProvider } = useContext(Web3authContext);
+  const { getUser } = UserService();
 
+  // const {isWaitingScreenVisible} = useSelector((state) => {
+  //   const {isWaitingScreenVisible} = state.userReducer;
+  //   return {isWaitingScreenVisible}
+  // }, shallowEqual);
 
-  const {isWaitingScreenVisible} = useSelector((state) => {
-    const {isWaitingScreenVisible} = state.userReducer;
-    return {isWaitingScreenVisible}
-  }, shallowEqual);
+  const isWaitingScreenVisible = useSelector(
+    (state) => state.value.isWaitingScreenVisible
+  );
 
+  useEffect(() => {
+    const categoryData = localStorage.getItem("category");
+    if (categoryData) {
+      const currentCategory = JSON.parse(categoryData);
+      dispatch(counterActions.setCategory(currentCategory));
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true))
+          dispatch(counterActions.setIsWaitingScreenVisible(true));
+          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -60,30 +73,37 @@ const Signup = () => {
           const responseData = await getUser();
 
           if (responseData?.id) {
+            console.log({ responseData });
+            localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            dispatch(
-              setCategory({
-                email: userInformation.email,
-                blockchainAddress: accounts[0],
-              })
-            );
+            const categoryData = {
+              email: userInformation.email,
+              blockchainAddress: accounts[0],
+            };
+
+            dispatch(counterActions.setCategory(categoryData));
+
+            localStorage.setItem("category", JSON.stringify(categoryData));
 
             router.replace(`/auth/join/intro`);
           }
-          setIsRedirecting(true)
-          dispatch(setIsWaitingScreenVisible(false))
+          setIsRedirecting(true);
+          dispatch(counterActions.setIsWaitingScreenVisible(false));
+          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
         }
       } catch (error) {
-        console.error(error)
-        dispatch(setIsWaitingScreenVisible(false))
-      } 
-    })()
-  },[web3auth?.status])
+        console.error(error);
+        dispatch(counterActions.setIsWaitingScreenVisible(false));
+        localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
+      }
+    })();
+  }, [web3auth?.status]);
+
+  console.log("web3auth.status", web3auth?.status);
 
   const loginUser = async (isEmail) => {
-
     await init();
     if (!web3auth) {
       toast.error("Web3auth not initialized yet");
@@ -94,12 +114,12 @@ const Signup = () => {
 
     if (isEmail) {
       const email = emailRef.current.value;
-  
+
       if (!isEmailValid(email)) {
         toast.error("Login: email is not valid", email);
         return;
       }
-  
+
       web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         loginProvider: "email_passwordless",
         extraLoginOptions: {
@@ -124,6 +144,14 @@ const Signup = () => {
     return regex.test(email);
   };
 
+  useEffect(() => {
+    const isWaitingScreen = localStorage.getItem("isWaitingScreenVisible");
+    if (isWaitingScreen) {
+      const isWaiting = JSON.parse(isWaitingScreen);
+      dispatch(counterActions.setCategory(isWaiting));
+    }
+  }, []);
+
   return (
     <Fragment>
       <Head>
@@ -137,11 +165,10 @@ const Signup = () => {
               maxWidth: "449px",
             }}
             id="login"
-            name="login" 
-            onSubmit={(e)=>{
-            
-              e.preventDefault()
-              loginUser(true)
+            name="login"
+            onSubmit={(e) => {
+              e.preventDefault();
+              loginUser(true);
             }}
           >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
@@ -167,7 +194,6 @@ const Signup = () => {
                 Email<span className="text-[#E04F64]">*</span>
               </label>{" "}
               <input
-                
                 type="email"
                 name="email"
                 id="email"
@@ -296,7 +322,8 @@ const Signup = () => {
               Welcome to SkyTrade
             </p>
             <p className="text-center text-[14px] font-normal text-light-grey">
-              Thanks for waiting. We're moving you to a new page. Please don't refresh while we do this.
+              Thanks for waiting. We're moving you to a new page. Please don't
+              refresh while we do this.
             </p>
           </div>
         </div>

@@ -43,7 +43,8 @@ module.exports = {
         "dark-grey":"#D9D9D9",
       },
       fontFamily: {
-        "sans": ['poppins', 'sans-serif'] 
+        "sans": ['poppins', 'sans-serif'] ,
+        'lato': ['Lato'],
       },
       fontSize: {
         'xxs': "8px",
