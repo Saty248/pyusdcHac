@@ -35,11 +35,11 @@ const useAutoLogout = () => {
 
     if (!web3auth) return;
 
-    if (loadingStates.includes(web3auth.status)) return;
-    if (nonLoadingStates.includes(web3auth.status)) {
-      logout();
-      return;
-    }
+    // if (loadingStates.includes(web3auth.status)) return;
+    // if (nonLoadingStates.includes(web3auth.status)) {
+    //   logout();
+    //   return;
+    // }
 
     if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
