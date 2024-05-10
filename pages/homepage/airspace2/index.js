@@ -27,7 +27,6 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
-import MobileNavbar from "@/Components/MobileNavbar";
 
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
@@ -1055,7 +1054,7 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
-const Airspaces = () => {
+const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1386,9 +1385,7 @@ const Airspaces = () => {
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} />
           )}
-          {showMobileNavbar && isMobile && (
-            <MobileNavbar setShowMobileNavbar={showMobileNavbar} />
-          )}
+          
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
