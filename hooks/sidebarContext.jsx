@@ -11,7 +11,7 @@ export const SidebarProvider = ({ children }) => {
   useFetchBalance();
 
   useAutoLogout();
-  console.log('checkssss')
+
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
