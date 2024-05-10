@@ -4,7 +4,6 @@ import useAuth from '@/hooks/useAuth';
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
-import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 
 const PortfolioListMobile = ({ title, selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -189,7 +188,7 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
         <div className="w-screen ">
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem] ">
-              {(rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address) ? rentedAirspaces.map(
+              {rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address && rentedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -199,16 +198,13 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+              )}
             </div>
           )}
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[20rem]">
-              {(verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address) ? verifiedAirspaces.map(
+              {verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address && verifiedAirspaces.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -218,16 +214,13 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+              )}
             </div>
           )}
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[2px] pb-2 min-h-[20rem]">
-              {(unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address) ? unverifiedAirspaces?.map(
+              {unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address && unverifiedAirspaces?.map(
                 ({ address, expirationDate, name, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
@@ -237,22 +230,19 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     selectAirspace={() => selectAirspace(index)}
                   />
                 )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+              )}
             </div>
           )}
 
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
-              <div
+              <button
                 onClick={handlePrevPage}
-                disabled={pageNumber === 1}
+                disabled={(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)}
                 className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretLeft />
-              </div>
+              </button>
               <div>
                 {activeTab === "Verified Airspaces"
                   ? pageNumber
@@ -260,13 +250,13 @@ const PortfolioListMobile = ({ title, selectAirspace }) => {
                     ? rentalPageNumber
                     : unverifiedPageNumber}
               </div>
-              <div
+              <button
                 onClick={handleNextPage}
                 disabled={(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10)}
                 className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretRight />
-              </div>
+              </button>
             </div>
           </div>
         </div>
