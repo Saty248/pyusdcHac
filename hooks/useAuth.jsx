@@ -52,6 +52,7 @@ const useAuth = () => {
 
   const updateProfile = (updatedUser) => {
     dispatch(counterActions.setUser(updatedUser));
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   return {
