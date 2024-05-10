@@ -47,13 +47,9 @@ const useAutoLogout = () => {
       console.log({fetchedToken})
       let userBlockchainAddress=user?.blockchainAddress
       if (!fetchedToken?.sessionId) {
-        console.log(router.pathname,userBlockchainAddress)
-       
         if(publicAccessRoutes.includes(router.pathname) && userBlockchainAddress==undefined){
-          console.log('entered unchecked phase',user.blockchainAddress)
           return
         }else{
-          console.log('entered redirection phase')
           router.push("/auth/join");
         }
         

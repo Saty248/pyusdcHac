@@ -205,9 +205,9 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext)
 
-  console.log('rent data',rentData)
+
   localStorage.setItem('rentData',JSON.stringify(rentData));
-  console.log('anss claim ',localStorage.getItem('rentData'))
+  
 
 
   // setting rentData owner
@@ -239,7 +239,6 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
       ],
     };
     if(user?.blockchainAddress){
-      console.log('user isss',user)
       fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
         method: "POST",
         headers: {
@@ -380,7 +379,6 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
     }    
     let initialData=localStorage.getItem('rentData')
     if(initialData.length>2 && user?.blockchainAddress){
-      console.log('deleting the localStorage',user?.blockchainAddress)
       localStorage.removeItem('rentData')
     }
 
@@ -452,7 +450,6 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
             onClick={() => {
               let initialData=localStorage.getItem('rentData')
               if(initialData.length>2 && user?.blockchainAddress){
-                console.log('deleting the localStorage',user?.blockchainAddress)
                 localStorage.removeItem('rentData')
               }
               setShowClaimModal(false);
@@ -500,7 +497,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
             onClick={() => {
               let initialData=localStorage.getItem('rentData')
               if(initialData.length>2 && user?.blockchainAddress){
-                console.log('deleting the localStorage',user?.blockchainAddress)
+
                 localStorage.removeItem('rentData')
               }
               setShowClaimModal(false);
@@ -1081,10 +1078,8 @@ const Rent = () => {
   useEffect(()=>{
     const inintialRentDataString=localStorage.getItem('rentData')
     const parsedInitialRentData=JSON.parse(inintialRentDataString);
-    console.log('initial state')
-    console.log(parsedInitialRentData,parsedInitialRentData?.address)
     if(parsedInitialRentData?.address?.length>2){
-      console.log(parsedInitialRentData?.address)
+
       setRentData(parsedInitialRentData);
       setFlyToAddress(parsedInitialRentData.address)
       setShowClaimModal(true)
