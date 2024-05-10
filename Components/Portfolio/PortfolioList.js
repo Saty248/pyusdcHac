@@ -250,7 +250,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <div
                 onClick={handlePrevPage}
-                disabled={pageNumber === 1 && (activeTab === "Verified Airspaces" || activeTab === "Rented Airspaces" || activeTab === "Pending Verification")}
+                disabled={pageNumber === 1}
                 className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
               >
                 <RxCaretLeft />
