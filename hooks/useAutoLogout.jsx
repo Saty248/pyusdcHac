@@ -16,11 +16,10 @@ const useAutoLogout = () => {
   };
 
   useEffect(() => {
-    const oldUser = JSON.parse(localStorage.getItem("user"));
     const checkSessionStorageUser = JSON.parse(
       sessionStorage.getItem("persist:root")
     );
-    if (oldUser || checkSessionStorageUser) {
+    if (checkSessionStorageUser) {
       logout();
     }
   }, [web3auth?.status]);
