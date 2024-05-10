@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useEffect } from "react";
 import useAuth from '@/hooks/useAuth';

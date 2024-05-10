@@ -1,10 +1,10 @@
-"use client";
+// "use client";
 
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
@@ -14,6 +14,7 @@ import logo from '../../../../public/images/logo.svg';
 import useAuth from '@/hooks/useAuth';
 import * as Yup from 'yup'
 import UserService from "@/services/UserService";
+import { counterActions } from '@/store/store';
 
 const PartOne = ({ setPart }) => {
     return (
@@ -62,12 +63,27 @@ export  const checkPhoneIsValid = async (phone) => {
 }
 const IndividualSignup = () => {
 
-    const {category} = useSelector((state) =>
-    {
-      const {category} = state.userReducer
-      return {category}
-    }, shallowEqual );
+    // const {category} = useSelector((state) =>
+    // {
+    //   const {category} = state.userReducer
+    //   return {category}
+    // }, shallowEqual );
 
+    const dispatch = useDispatch()
+
+
+    const category = useSelector(
+        (state) => state.value.category
+      );
+    
+
+      useEffect(() => {
+        const categoryData = localStorage.getItem("category");
+        if (categoryData) {
+          const currentCategory = JSON.parse(categoryData);
+          dispatch(counterActions.setCategory(currentCategory));
+        }
+      }, []);
 
 
 
