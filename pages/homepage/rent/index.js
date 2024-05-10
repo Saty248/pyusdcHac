@@ -1127,7 +1127,7 @@ const Rent = () => {
               />
             )}
           </section>
-          <div>
+          <div className="hidden sm:block">
             <ZoomControllers map={map}/>
           </div>
         </div>

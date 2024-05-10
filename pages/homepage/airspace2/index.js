@@ -1511,7 +1511,7 @@ const Airspaces = () => {
                 </div>
               </div>
             )}
-            <div>
+            <div className="hidden sm:block">
               <ZoomControllers map={map}/>
             </div>
           </section>
