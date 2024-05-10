@@ -14,7 +14,9 @@ const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
-  const { signOut } = useAuth();
+  const { signOut } = useAuth();  
+  const [showMobileNavbar, setShowMobileNavbar] = useState(false);
+
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
     const isActive = href ? asPath.includes(href) : false;
@@ -79,6 +81,10 @@ const Sidebar = () => {
     await signOut()
   };
 
+  
+  const handleMenuClick = () => {
+    setShowMobileNavbar(true);
+ };
  
   return (
     <div className={"relative z-50"}>

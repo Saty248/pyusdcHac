@@ -1106,8 +1106,6 @@ const Airspaces = () => {
   // database
   const { claimProperty } = PropertiesService();
   const { user } = useAuth();
-  const [showMobileNavbar, setShowMobileNavbar] = useState(false);
-
   useEffect(() => {
     if (map) return;
 
@@ -1357,9 +1355,6 @@ const Airspaces = () => {
     }
   };
 
-  const handleMenuClick = () => {
-    setShowMobileNavbar(true);
- };
 
   return (
     <Fragment>
