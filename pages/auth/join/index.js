@@ -116,7 +116,7 @@ const Signup = () => {
       }
   
       let web3authProvider = null;
-  
+      setIsLoading(true);
       if (isEmail) {
         const email = emailRef.current.value;
   
@@ -125,7 +125,6 @@ const Signup = () => {
           return;
         }
   
-      setIsLoading(true);
         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
           loginProvider: "email_passwordless",
           extraLoginOptions: {
