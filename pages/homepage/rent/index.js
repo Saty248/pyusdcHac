@@ -46,6 +46,7 @@ import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import ZoomControllers from "@/Components/ZoomControllers";
 import useAutoLogout from "@/hooks/useAutoLogout";
+import { removeFromLocalStorage } from "@/Components/helper/localStorage";
 
 
 const SuccessModal = ({
