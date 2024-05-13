@@ -43,10 +43,13 @@ const useAutoLogout = () => {
     // }
 
     if (web3auth?.status === "ready") {
-      const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-      console.log({ fetchedToken });
+      const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
+      console.log({fetchedToken})
+      let userBlockchainAddress=user?.blockchainAddress
       if (!fetchedToken?.sessionId) {
-        if(publicAccessRoutes.includes(router.pathname) && !user.blockchainAddress){
+        console.log(router.pathname,userBlockchainAddress)
+       
+        if(publicAccessRoutes.includes(router.pathname) && userBlockchainAddress==undefined){
           console.log('entered unchecked phase',user.blockchainAddress)
           return
         }else{
