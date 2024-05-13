@@ -132,7 +132,7 @@ const SuccessModal = ({
 
           <div className="font-normal  text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status !== "Rent Successful" && (
-              <div>Invalid time input. Please enter a time that is either a fixed hour or 30 minutes after the hour. For example, 1:00, 1:30, 2:00, 2:30, and so on.</div>
+              <div>{finalAns.message}</div>
             )}
           </div>
         </div>
