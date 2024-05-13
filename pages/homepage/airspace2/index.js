@@ -944,7 +944,7 @@ const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
       </div>
-        <div className="text-light-green text-sm gap-3">
+        <div className="text-light-green text-base gap-3">
         Congratulations on claiming your piece of the sky successfully!
         </div>
        <div className="w-4 h-5 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
@@ -957,7 +957,7 @@ const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
 const FailurePopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
 					<FailureIcon />
@@ -1250,11 +1250,6 @@ const Airspaces = () => {
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 8000);
-
-    return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
   useEffect(() => {
