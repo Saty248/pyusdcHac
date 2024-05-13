@@ -369,3 +369,61 @@ export const Tooltip = ({ isCopied }) => (
     </div>
   );
   
+  export const ZoomInIcon = () => {
+    return (
+
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="24" height="24" rx="8" fill="white" />
+      <circle
+        cx="12"
+        cy="12"
+        r="5"
+        stroke="black"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10 12H12M14 12H12M12 12V10M12 12V14"
+        stroke="black"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    )
+  };
+  
+  export const ZoomOutIcon = () => {
+    return (
+
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="24" height="24" rx="8" fill="white" />
+      <circle
+        cx="12"
+        cy="12"
+        r="5"
+        stroke="black"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10 12H12H14"
+        stroke="black"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    )
+  };
+  
