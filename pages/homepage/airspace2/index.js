@@ -60,18 +60,19 @@ const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
         ):(
           <div className="mt-20">
             {
-              errorMessages?.length >= 0 ? 
+              errorMessages?.length > 0 ? 
                 <>
-                  {errorMessages?.map((error)=>{
+                  {errorMessages?.map((error)=>(
                     <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
                       {error}
                     </h1>
-                  })}
+                  ))}
                 </>
-              :
+              :<div className="border-2">
               <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
                 Claim Failed! Please review your submission and ensure all information is correct.
               </h1>
+              </div>
             }
           </div>
         )}
@@ -962,13 +963,14 @@ const PopUp = ({ isVisible }) => {
 };
 
 const FailurePopUp = ({ isVisible, errorMessages }) => {
+  console.log(errorMessages,"errorMessages")
   return (
     <div
       className={` z-20 absolute top-[14px] w-[650px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
         🛑
       <div>
-        {errorMessages?.length >= 0 ? (
+        {errorMessages?.length > 0 ? (
           <div >
             {errorMessages?.map((error) => (
               <h1 className="text-black">{error}</h1>
