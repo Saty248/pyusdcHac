@@ -30,7 +30,7 @@ import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 
-const SuccessModal = ({ closePopUp, isSuccess}) => {
+const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
   const handleButtonClick = () => {
     router.push("/homepage/referral");
@@ -59,10 +59,20 @@ const SuccessModal = ({ closePopUp, isSuccess}) => {
         </div>
         ):(
           <div className="mt-20">
-            <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
-            Claim Failed! Please review your submission and ensure all information is correct. 
-            Also, make sure you've provided input for all the required fields!
-            </h1>
+            {
+              errorMessages?.length >= 0 ? 
+                <>
+                  {errorMessages?.map((error)=>{
+                    <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                      {error}
+                    </h1>
+                  })}
+                </>
+              :
+              <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                Claim Failed! Please review your submission and ensure all information is correct.
+              </h1>
+            }
           </div>
         )}
             
@@ -951,19 +961,29 @@ const PopUp = ({ isVisible }) => {
   );
 };
 
-const FailurePopUp = ({ isVisible }) => {
+const FailurePopUp = ({ isVisible, errorMessages }) => {
   return (
     <div
       className={` z-20 absolute top-[14px] w-[650px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
-      {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
-					<FailureIcon />
-				</div> */}
-      🛑 Claim Failed! Please review your submission and ensure all information is correct. 
-      Also, make sure you've provided input for all the required fields!
+        🛑
+      <div>
+        {errorMessages?.length >= 0 ? (
+          <div >
+            {errorMessages?.map((error) => (
+              <h1 className="text-black">{error}</h1>
+            ))}
+          </div>
+        ) : (
+          <div> Claim Failed! Please review your submission and ensure all
+            information is correct.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
 
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
@@ -1102,6 +1122,7 @@ const Airspaces = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
+  const [errorMessages,setErrorMessages] = useState([]);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
@@ -1258,6 +1279,7 @@ const Airspaces = () => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
+      setErrorMessages([]);
     }, 6000);
 
     return () => clearTimeout(timeoutId);
@@ -1317,10 +1339,24 @@ const Airspaces = () => {
         weekDayRanges,
       };
       let responseData;
-      if((rent && data?.sell) && (hasLandingDeck || hasChargingStation || hasStorageHub )){
+      let errors = [];
+      if (!rent) {
+        errors.push('Please ensure to check the rental checkbox before claiming airspace.');
+      }
+      if (!(hasLandingDeck || hasChargingStation || hasStorageHub)) {
+        errors.push('Please select at least one of the following: Landing Deck, Charging Station, or Storage Hub.');
+      }
+      if (!weekDayRanges.some(item => item.isAvailable)) {
+        errors.push('Kindly ensure that at least one day is made available.');
+      }
+
+      if(errors.length === 0){
         responseData = await claimProperty({ postData })
       }
-      if (!responseData) setShowFailurePopUp(true);
+      if (!responseData) {
+        setErrorMessages(errors);
+        setShowFailurePopUp(true);
+      }
       else setShowSuccessPopUp(true);
       
       setShowClaimModal(false);
@@ -1424,7 +1460,7 @@ const Airspaces = () => {
                       claimButtonLoading={claimButtonLoading}
                     />
                   )}
-                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal isSuccess={showSuccessPopUp} closePopUp={() => {
+                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
                     showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
                   }} />}
               </Fragment>
@@ -1445,7 +1481,7 @@ const Airspaces = () => {
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
-                <FailurePopUp isVisible={showFailurePopUp} />
+                <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />
 
                 {showClaimModal && (
                   <ClaimModal
