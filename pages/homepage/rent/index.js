@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
+
 import {
   ArrowLeftIcon,
   CloseIcon,
@@ -43,7 +44,11 @@ import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
+<<<<<<< HEAD
 import ZoomControllers from "@/Components/ZoomControllers";
+=======
+import customAuth from "@/Components/Rent/customAuth";
+>>>>>>> f249722 (update: adding rent chagnes)
 
 const SuccessModal = ({
   setShowSuccess,
@@ -191,7 +196,8 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
   const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState("0");
   const [date, setDate] = useState(defaultValueDate);
-
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [finalAns, setfinalAns] = useState();
@@ -211,6 +217,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
   }, [rentData]);
 
   const getTokenBalance = () => {
+
     const data = {
       jsonrpc: "2.0",
       id: 1,
@@ -225,35 +232,38 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
         },
       ],
     };
-
-    fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.error);
-          });
-        }
-
-        return response.json();
+    if(user?.blockchainAddress){
+      console.log('user isss',user)
+      fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       })
-      .then((result) => {
-        if (result.result.value.length < 1) {
-          setTokenBalance("0");
-
-          return;
-        }
-
-        setTokenBalance(
-          result.result.value[0].account.data.parsed.info.tokenAmount
-            .uiAmountString
-        );
-      });
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((errorData) => {
+              throw new Error(errorData.error);
+            });
+          }
+  
+          return response.json();
+        })
+        .then((result) => {
+          if (result.result.value.length < 1) {
+            setTokenBalance("0");
+  
+            return;
+          }
+  
+          setTokenBalance(
+            result.result.value[0].account.data.parsed.info.tokenAmount
+              .uiAmountString
+          );
+        });
+    }
+    
   };
 
   useEffect(() => {
@@ -262,6 +272,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
 
   const handleRentAirspace = async () => {
     try {
+      customAuth(router,user,web3auth)
         const currentDate = new Date();
         let startDate = new Date(date.toString());
         let endDate = new Date(startDate.getTime());

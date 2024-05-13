@@ -1254,11 +1254,7 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
-
-
-
       customAuth(router,user,web3auth);
-
       setClaimButtonLoading(true);
       const {
         address,
