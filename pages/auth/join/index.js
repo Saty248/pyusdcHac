@@ -86,9 +86,7 @@ const Signup = () => {
 
   const loginUser = async (isEmail) => {
     
-    try {
-      setIsLoading(true);
-  
+    try {  
       await init();
       if (!web3auth) {
         toast.error("Web3auth not initialized yet");
@@ -105,6 +103,7 @@ const Signup = () => {
           return;
         }
   
+      setIsLoading(true);
         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
           loginProvider: "email_passwordless",
           extraLoginOptions: {
