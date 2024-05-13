@@ -298,8 +298,8 @@ const ClaimModal = ({
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   const airSpaceData=data;
-  let ans= localStorage.setItem('airSpaceData',JSON.stringify(airSpaceData));
-console.log('anss claim ',ans)
+ localStorage.setItem('airSpaceData',JSON.stringify(airSpaceData));
+console.log('anss claim ',localStorage.getItem('airSpaceData'))
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -1135,6 +1135,8 @@ const Airspaces = () => {
       });
 
       setMap(newMap);
+
+      //doesnt move the map to iplocation when user persisted initial state in 
       let inintialAirSpaceData=localStorage.getItem('airSpaceData')
       if(inintialAirSpaceData?.length<2){
         console.log('visisted here')
@@ -1263,7 +1265,7 @@ const Airspaces = () => {
     const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
     const parsedInitialAirspaceData=JSON.parse(inintialAirSpaceDataString);
     console.log('initial state')
-    console.log(parsedInitialAirspaceData,parsedInitialAirspaceData.address)
+    console.log(parsedInitialAirspaceData,parsedInitialAirspaceData?.address)
     if(parsedInitialAirspaceData?.address?.length>2){
       console.log(parsedInitialAirspaceData?.address)
       setData(parsedInitialAirspaceData);
@@ -1347,7 +1349,8 @@ const Airspaces = () => {
       setClaimButtonLoading(false);
     }
     let initialData=localStorage.getItem('airSpaceData')
-    if(initialData.length>2){
+    if(initialData.length>2 && user?.blockchainAddress){
+      console.log('deleting the localStorage',user?.blockchainAddress)
       localStorage.removeItem('airSpaceData')
     }
   };
@@ -1433,6 +1436,11 @@ const Airspaces = () => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
+                        let initialData=localStorage.getItem('airSpaceData')
+                        if(initialData.length>2 && user?.blockchainAddress){
+                        console.log('deleting the localStorage',user?.blockchainAddress)
+                           localStorage.removeItem('airSpaceData')
+                             }
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1468,6 +1476,11 @@ const Airspaces = () => {
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
+                      let initialData=localStorage.getItem('airSpaceData')
+                       if(initialData.length>2 && user?.blockchainAddress){
+                           console.log('deleting the localStorage',user?.blockchainAddress)
+                      localStorage.removeItem('airSpaceData')
+                            }
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}

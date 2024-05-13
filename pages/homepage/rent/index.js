@@ -186,7 +186,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -205,6 +205,12 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
   const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext)
 
+  console.log('rent data',rentData)
+  localStorage.setItem('rentData',JSON.stringify(rentData));
+  console.log('anss claim ',localStorage.getItem('rentData'))
+
+
+  // setting rentData owner
   useEffect(() => {
     async function getUsersFromBE() {
       try {
@@ -266,6 +272,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
     
   };
 
+  // get token balance if user is there
   useEffect(() => {
     getTokenBalance();
   }, []);
@@ -371,7 +378,11 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
     } finally {
       setIsLoading(false);
     }    
-      
+    let initialData=localStorage.getItem('rentData')
+    if(initialData.length>2 && user?.blockchainAddress){
+      console.log('deleting the localStorage',user?.blockchainAddress)
+      localStorage.removeItem('rentData')
+    }
 
   };
   if (showSuccess) {
@@ -421,6 +432,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
+             
               setShowClaimModal(false);
             }}
           >
@@ -438,6 +450,11 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
 
           <div
             onClick={() => {
+              let initialData=localStorage.getItem('rentData')
+              if(initialData.length>2 && user?.blockchainAddress){
+                console.log('deleting the localStorage',user?.blockchainAddress)
+                localStorage.removeItem('rentData')
+              }
               setShowClaimModal(false);
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -481,7 +498,13 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
+              let initialData=localStorage.getItem('rentData')
+              if(initialData.length>2 && user?.blockchainAddress){
+                console.log('deleting the localStorage',user?.blockchainAddress)
+                localStorage.removeItem('rentData')
+              }
               setShowClaimModal(false);
+
             }}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
             style={{ border: "1px solid #0653EA" }}
@@ -1055,6 +1078,21 @@ const Rent = () => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
 
+  useEffect(()=>{
+    const inintialRentDataString=localStorage.getItem('rentData')
+    const parsedInitialRentData=JSON.parse(inintialRentDataString);
+    console.log('initial state')
+    console.log(parsedInitialRentData,parsedInitialRentData?.address)
+    if(parsedInitialRentData?.address?.length>2){
+      console.log(parsedInitialRentData?.address)
+      setRentData(parsedInitialRentData);
+      setFlyToAddress(parsedInitialRentData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  },[])
+
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
@@ -1132,6 +1170,7 @@ const Rent = () => {
               <ClaimModal
                 setShowClaimModal={setShowClaimModal}
                 rentData={rentData}
+                setRentData={setRentData}
                 setIsLoading={setIsLoading}
                 isLoading={isLoading}
                 regAdressShow={regAdressShow}

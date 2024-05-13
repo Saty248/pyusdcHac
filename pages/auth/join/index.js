@@ -79,7 +79,17 @@ const Signup = () => {
             console.log({ responseData });
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
+            const initialAirspaceData=localStorage.getItem('airSpaceData');
+            const initialRentData=localStorage.getItem('rentData');
+            if(initialAirspaceData?.length>2){
+              router.push("/homepage/airspace2");
+            }else if(initialRentData?.length>2){
+              router.push("/homepage/rent");
+            }
+            else{
+              router.push("/homepage/dashboard2");
+            }
+            
           } else {
             const categoryData = {
               email: userInformation.email,
