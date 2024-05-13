@@ -1,10 +1,9 @@
-"use client";
-
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import ZoomControllers from "@/Components/ZoomControllers";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -29,6 +28,7 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
@@ -336,7 +336,7 @@ const ClaimModal = ({
     }
   };
   return (
-    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -690,35 +690,14 @@ const ClaimModal = ({
             >
               Cancel
             </div>
-            <button
-              onClick={onClaim}
-              className=" w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
-            >
-              {claimButtonLoading ? (
-                <svg
-                  className="animate-spin -ml-1 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                "Claim Airspace"
-              )}
-            </button>
+            
+            <div className="w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
+              <div className="flex justify-center items-center w-full ">
+                <LoadingButton onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
+                  Claim Airspace
+                </LoadingButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1538,6 +1517,7 @@ const Airspaces = () => {
                       </p>
                     </Link>
                   </div>
+                  
                   <div
                     onClick={() => setShowHowToModal(true)}
                     className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
@@ -1550,6 +1530,9 @@ const Airspaces = () => {
                 </div>
               </div>
             )}
+            <div className="hidden sm:block">
+              <ZoomControllers map={map}/>
+            </div>
           </section>
         </div>
       </div>

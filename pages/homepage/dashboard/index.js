@@ -5,7 +5,6 @@ import Script from 'next/script';
 
 import Chart from 'chart.js/auto';
 
-import { Web3Auth } from '@web3auth/modal';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Payload as SIWPayload, SIWWeb3 } from '@web3auth/sign-in-with-web3';
 

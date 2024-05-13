@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
@@ -14,12 +14,14 @@ import Spinner from "@/Components/Spinner";
 
 import useAuth from '@/hooks/useAuth';
 
-import logo from "../../../public/images/logo.jpg";
+import logo from "../../../public/images/logo.svg";
 
 import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
+import useInitAuth from '@/hooks/useInitAuth';
+import { counterActions } from "@/store/store";
 
 const ReferralCodeRedirect = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -36,6 +38,7 @@ const ReferralCodeRedirect = () => {
   const { getReferralByCode } = ReferralCodeService();
   const { web3auth, provider, setProvider } = useContext(Web3authContext)
   const { getUser } = UserService()
+  const { init } = useInitAuth();
 
   useEffect(() => {
     if (!referralCode) return;
@@ -52,17 +55,21 @@ const ReferralCodeRedirect = () => {
     })();
   }, [referralCode]);
 
-  const {isWaitingScreenVisible} = useSelector((state) => {
-    const {isWaitingScreenVisible} = state.userReducer;
-    return {isWaitingScreenVisible}
-  }, shallowEqual);
+  // const {isWaitingScreenVisible} = useSelector((state) => {
+  //   const {isWaitingScreenVisible} = state.userReducer;
+  //   return {isWaitingScreenVisible}
+  // }, shallowEqual);
+
+  const isWaitingScreenVisible = useSelector(
+    (state) => state.value.isWaitingScreenVisible
+  );
 
 
   useEffect(() => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true))
+          dispatch(counterActions.setIsWaitingScreenVisible(true))
 
           const userInformation = await web3auth.getUserInfo();
           const solanaWallet = new SolanaWallet(provider);
@@ -74,7 +81,7 @@ const ReferralCodeRedirect = () => {
             signIn({ user: responseData });
             router.push("/homepage/dashboard2");
           } else {
-            dispatch(
+            dispatch(counterActions.
               setCategory({
                 email: userInformation.email,
                 blockchainAddress: accounts[0],
@@ -83,16 +90,18 @@ const ReferralCodeRedirect = () => {
 
             router.replace(`/auth/join/intro`);
           }
-          dispatch(setIsWaitingScreenVisible(false))
+          dispatch(counterActions.setIsWaitingScreenVisible(false))
         }
       } catch (error) {
         console.error(error)
-        dispatch(setIsWaitingScreenVisible(false))
+        dispatch(counterActions.setIsWaitingScreenVisible(false))
       } 
     })()
   },[web3auth?.status])
 
   const loginUser = async (isEmail) => {
+    await init();
+
     if (!web3auth) {
       toast.error("Web3auth not initialized yet");
       return;

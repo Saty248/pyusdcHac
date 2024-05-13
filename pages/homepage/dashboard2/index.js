@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -22,7 +22,6 @@ import Backdrop from "@/Components/Backdrop";
 import WorldMap from "@/Components/WorldMap";
 import useAuth from '@/hooks/useAuth';
 import { useRouter } from "next/router";
-import { Web3Auth } from "@web3auth/modal";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import base58 from "bs58";
@@ -67,12 +66,17 @@ const Item = ({ children, title, icon, linkText, href, style }) => {
 const AvailableBalance = () => {
 
 
-  const {userUSDWalletBalance} = useSelector(
-    (state) => {
-      const {userUSDWalletBalance} = state.userReducer;
-      return {userUSDWalletBalance}
-    }
+  // const {userUSDWalletBalance} = useSelector(
+  //   (state) => {
+  //     const {userUSDWalletBalance} = state.userReducer;
+  //     return {userUSDWalletBalance}
+  //   }
+  // );
+
+  const userUSDWalletBalance = useSelector(
+    (state) => state.value.userUSDWalletBalance
   );
+
 
 
 
