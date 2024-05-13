@@ -1344,10 +1344,7 @@ const Airspaces = () => {
     } finally {
       setClaimButtonLoading(false);
     }
-    let initialData=localStorage.getItem('airSpaceData')
-    if(initialData.length>2 && user?.blockchainAddress){
-      localStorage.removeItem('airSpaceData')
-    }
+    removeFromLocalStorage('airSpaceData',user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
