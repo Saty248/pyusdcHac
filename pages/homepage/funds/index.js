@@ -242,6 +242,7 @@ const DepositAndWithdraw = ({
   activeSection,
   setActiveSection,
   setIsLoading,
+  isLoading,
   setreFetchBal,
   refetchBal,
   setTokenBalance,
@@ -588,12 +589,13 @@ const DepositAndWithdraw = ({
               COMING SOON{" "}
             </div>
           ) : (
-            <div
+            <button
+              disabled={isLoading}
               className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg"
               onClick={handleWithdraw}
             >
               withdraw
-            </div>
+            </button>
           )}
         </>
       )}
@@ -851,6 +853,7 @@ const Funds = () => {
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
                   setIsLoading={setIsLoading}
+                  isLoading={isLoading}
                   setreFetchBal={setreFetchBal}
                   refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}
