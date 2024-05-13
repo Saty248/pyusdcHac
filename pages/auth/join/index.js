@@ -25,12 +25,9 @@ import { Web3authContext } from "@/providers/web3authProvider";
 import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
-<<<<<<< HEAD
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
-=======
 import customRedirect from "@/Components/auth_intro/customRedirect";
->>>>>>> ce0f72a (fix:added changes according to the feedback. DRY)
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);

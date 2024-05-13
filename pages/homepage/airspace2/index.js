@@ -28,13 +28,10 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
-=======
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAutoLogout from "@/hooks/useAutoLogout";
->>>>>>> ce0f72a (fix:added changes according to the feedback. DRY)
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
