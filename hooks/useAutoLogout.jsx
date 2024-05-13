@@ -41,24 +41,40 @@ const useAutoLogout = () => {
     //   logout();
     //   return;
     // }
-
-    if (web3auth?.status === "ready") {
+    const userBlockchainAddress=user?.blockchainAddress
+    if(publicAccessRoutes.includes(router.pathname) && userBlockchainAddress==undefined){
+      return
+    }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
       console.log({fetchedToken})
-      let userBlockchainAddress=user?.blockchainAddress
       if (!fetchedToken?.sessionId) {
-        if(publicAccessRoutes.includes(router.pathname) && userBlockchainAddress==undefined){
-          return
-        }else{
-          router.push("/auth/join");
-        }
+        router.push("/auth/join");
         
       } 
     }
 
   }, [web3auth?.status, user,router.pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
 
-  return null;
+
+  //added this in for rent and airspace
+  const customAuth=()=>{
+    if (!web3auth){
+      router.push("/auth/join");
+    }
+  
+    if (web3auth?.status === "ready") {
+      const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
+      console.log({fetchedToken})
+      if (!fetchedToken?.sessionId) {     
+          router.push("/auth/join");
+        return;
+        } 
+    }
+  }
+
+  return customAuth;
 };
+
+
 
 export default useAutoLogout;

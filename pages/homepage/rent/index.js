@@ -44,11 +44,9 @@ import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
-<<<<<<< HEAD
 import ZoomControllers from "@/Components/ZoomControllers";
-=======
-import customAuth from "@/Components/Rent/customAuth";
->>>>>>> f249722 (update: adding rent chagnes)
+import useAutoLogout from "@/hooks/useAutoLogout";
+
 
 const SuccessModal = ({
   setShowSuccess,
@@ -275,10 +273,10 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   useEffect(() => {
     getTokenBalance();
   }, []);
-
+  const customAuth=useAutoLogout()
   const handleRentAirspace = async () => {
     try {
-      customAuth(router,user,web3auth)
+      customAuth()
         const currentDate = new Date();
         let startDate = new Date(date.toString());
         let endDate = new Date(startDate.getTime());
@@ -377,10 +375,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
     } finally {
       setIsLoading(false);
     }    
-    let initialData=localStorage.getItem('rentData')
-    if(initialData.length>2 && user?.blockchainAddress){
-      localStorage.removeItem('rentData')
-    }
+    removeFromLocalStorage('rentData',user)
 
   };
   if (showSuccess) {
@@ -448,10 +443,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
 
           <div
             onClick={() => {
-              let initialData=localStorage.getItem('rentData')
-              if(initialData.length>2 && user?.blockchainAddress){
-                localStorage.removeItem('rentData')
-              }
+              removeFromLocalStorage('rentData',user)
               setShowClaimModal(false);
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -495,11 +487,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
-              let initialData=localStorage.getItem('rentData')
-              if(initialData.length>2 && user?.blockchainAddress){
-
-                localStorage.removeItem('rentData')
-              }
+              removeFromLocalStorage('rentData',user)
               setShowClaimModal(false);
 
             }}

@@ -25,8 +25,12 @@ import { Web3authContext } from "@/providers/web3authProvider";
 import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
+<<<<<<< HEAD
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
+=======
+import customRedirect from "@/Components/auth_intro/customRedirect";
+>>>>>>> ce0f72a (fix:added changes according to the feedback. DRY)
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -79,16 +83,7 @@ const Signup = () => {
             console.log({ responseData });
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            const initialAirspaceData=localStorage.getItem('airSpaceData');
-            const initialRentData=localStorage.getItem('rentData');
-            if(initialAirspaceData?.length>2){
-              router.push("/homepage/airspace2");
-            }else if(initialRentData?.length>2){
-              router.push("/homepage/rent");
-            }
-            else{
-              router.push("/homepage/dashboard2");
-            }
+            customRedirect(router)
             
           } else {
             const categoryData = {

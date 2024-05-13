@@ -14,6 +14,7 @@ import Spinner from "@/Components/Spinner";
 
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
+import customRedirect from "@/Components/auth_intro/customRedirect";
 
 const CorporateSignup = () => {
   const router = useRouter();
@@ -121,16 +122,7 @@ const CorporateSignup = () => {
           nameRef.current.value = '';
           phoneNumberRef.current.value = '';
          
-          const initialAirspaceData=localStorage.getItem('airSpaceData');
-          const initialRentData=localStorage.getItem('rentData');
-          if(initialAirspaceData?.length>2){
-            router.replace("/homepage/airspace2");
-          }else if(initialRentData?.length>2){
-            router.replace("/homepage/rent");
-          }
-          else{
-            router.replace("/homepage/dashboard2");
-          }
+         customRedirect(router)
 
 
         });

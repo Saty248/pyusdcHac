@@ -28,8 +28,13 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
+=======
+import { Web3authContext } from "@/providers/web3authProvider";
+import useAutoLogout from "@/hooks/useAutoLogout";
+>>>>>>> ce0f72a (fix:added changes according to the feedback. DRY)
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -296,9 +301,7 @@ const ClaimModal = ({
   claimButtonLoading,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-
-  const airSpaceData=data;
- localStorage.setItem('airSpaceData',JSON.stringify(airSpaceData));
+ localStorage.setItem('airSpaceData',JSON.stringify(data));
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -1272,6 +1275,7 @@ const Airspaces = () => {
   
   
   }, [])
+  const customAuth=useAutoLogout()
   
 
   const handleSelectAddress = (placeName) => {
@@ -1282,7 +1286,7 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
-      customAuth(router,user,web3auth);
+      customAuth();
       setClaimButtonLoading(true);
       const {
         address,
@@ -1430,10 +1434,7 @@ const Airspaces = () => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
-                        let initialData=localStorage.getItem('airSpaceData')
-                        if(initialData.length>2 && user?.blockchainAddress){
-                           localStorage.removeItem('airSpaceData')
-                             }
+                        removeFromLocalStorage('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1469,10 +1470,7 @@ const Airspaces = () => {
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
-                      let initialData=localStorage.getItem('airSpaceData')
-                       if(initialData.length>2 && user?.blockchainAddress){
-                      localStorage.removeItem('airSpaceData')
-                            }
+                      removeFromLocalStorage('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}
