@@ -18,7 +18,6 @@ import {
   EarthIcon,
   SuccessIconwhite,
   CloseIconWhite,
-  LoadingIcon
 } from "@/Components/Icons";
 import useAuth from '@/hooks/useAuth';
 import { useMobile } from "@/hooks/useMobile";
