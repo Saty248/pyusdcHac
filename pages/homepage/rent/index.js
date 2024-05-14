@@ -9,7 +9,7 @@ import {
   MagnifyingGlassIcon,
   SuccessIcon,
   SuccessIconwhite,
-  CloseIconWhitesm,
+  CanlceIconWhite,
   InfoIcon
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
@@ -80,9 +80,9 @@ const SuccessModal = ({
             setShowSuccess(false);
             setShowClaimModal(false);
           }}
-          className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
+          className="w-4 h-4 absolute top-[10px] right-[10px] "
         >
-          <CloseIconWhite />
+          <CanlceIconWhite />
         </div>
 
         <div className="w-[54.56px] h-[54.56px]">
@@ -353,7 +353,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
         }
       }
     } catch (error) {
-      setfinalAns({ status: "Rent failed", message: error });
+      setfinalAns({ status: "Rent failed", message: error }); 
       setShowSuccess(true);
     } finally {
       setIsLoading(false);
