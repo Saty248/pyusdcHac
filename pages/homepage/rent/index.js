@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import {
   ArrowLeftIcon,
@@ -43,6 +43,7 @@ import { getTokenLink } from "@/hooks/utils";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
+import ZoomControllers from "@/Components/ZoomControllers";
 
 const SuccessModal = ({
   setShowSuccess,
@@ -180,7 +181,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -261,17 +262,21 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
 
   const handleRentAirspace = async () => {
     try {
+        const currentDate = new Date();
+        let startDate = new Date(date.toString());
+        let endDate = new Date(startDate.getTime());
+        endDate.setMinutes(endDate.getMinutes() + 30);
+      if (currentDate > endDate) {
+        return toast.error(
+          "Rental Tokens can't be booked in the past"
+        );
+      }
       if (parseFloat(tokenBalance) === 0) {
         return toast.error(
           "Please deposit some funds into your wallet to continue"
         );
       }
       setIsLoading(true);
-
-      let startDate = new Date(date.toString());
-      let endDate = new Date(startDate.getTime());
-      endDate.setMinutes(endDate.getMinutes() + 30);
-
       if (startDate.getMinutes() % 30 != 0) {
         setfinalAns({
           status: "Rent failed",
@@ -472,12 +477,13 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading }) => {
           >
             Cancel
           </div>
-          <div
+          <button
+            disabled={isLoading}
             onClick={handleRentAirspace}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </div>
+          </button>
         </div>
       </div>
     </LocalizationProvider>
@@ -602,14 +608,14 @@ const Explorer = ({
                 onClick={rentCLickHandler}
                 className={
                   item.id != selectedAddress
-                    ? ` p-5 text-left text-[#913636] w-full flex justify-between text-[12px]`
-                    : `bg-[#0653EA] p-5 text-left text-white w-full flex justify-between text-[12px]`
+                    ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
+                    : `bg-[#0653EA] p-5 text-left text-white w-full flex items-center justify-between text-[12px]`
                 }
                 style={{
                   borderTop: "5px solid #FFFFFFCC",
                 }}
               >
-                <h3 className={item.id != selectedAddress ? `text-black pt-[0.6rem] `: ` text-white `}>{item.address}</h3>
+                <h3 className={`w-[65%] ${item.id != selectedAddress ? `text-black `: ` text-white `}`}>{item.address}</h3>
                 <h1
                   className={
                     item.id != selectedAddress
@@ -849,7 +855,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 15,
+        zoom: 4,
         // attributionControl: false
       });
 
@@ -1048,9 +1054,10 @@ const Rent = () => {
     <Fragment>
       <Head>
         <title>SkyTrade - Marketplace : Rent</title>
+       
       </Head>
 
-      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+      { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
@@ -1079,13 +1086,11 @@ const Rent = () => {
             />
           )}
           <section
-            className={`flex relative w-full h-full justify-start items-start md:mb-0 mb-[79px] `}
+            className={'relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] '}
           >
             <div
-              className={`!absolute !top-0 !left-0 !w-screen !h-screen !m-0 `}
-              //className={`position: absolute; top: 0; bottom: 0; width: 100%`}
-
-              id="map"
+              className={'!absolute !top-0 !left-0 !m-0 !w-screen !h-screen'}
+             id="map"
               style={{ zIndex: "20" }}
             />
 
@@ -1117,13 +1122,19 @@ const Rent = () => {
                 setShowClaimModal={setShowClaimModal}
                 rentData={rentData}
                 setIsLoading={setIsLoading}
+                isLoading={isLoading}
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
               />
             )}
           </section>
+          <div className="hidden sm:block">
+            <ZoomControllers map={map}/>
+          </div>
         </div>
-      </div>
+      </div> }
+
+
     </Fragment>
   );
 };
