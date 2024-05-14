@@ -449,8 +449,8 @@ const SkyPointBalance = () => {
                 <div className="w-6 h-6"><GiftIcon isActive={true} /></div>
             </div>
         </div>
-        <div className="text-lg md:text-2xl font-semibold">SKY Points Balance</div>
-        <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-6">50 SKY Points</div>
+        <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
+        <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">50 SKY Points</div>
     </div>
 </div>
 
