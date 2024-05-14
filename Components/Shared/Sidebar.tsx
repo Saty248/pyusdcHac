@@ -1,10 +1,10 @@
 import React, { Fragment, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
-import logo from "../public/images/logo.svg";
-import logoNoChars from "../public/images/logo-no-chars.png";
+// import logo from "../public/images/logo.svg";
+// import logoNoChars from "../public/images/logo-no-chars.png";
 import {
   ArrowCompressIcon,
   ArrowExpandIcon,
@@ -17,13 +17,13 @@ import {
   MapIcon,
   ShoppingBagsIcon,
   WalletIcon,
-} from "./Icons";
+} from "../Icons";
 import useAuth from "@/hooks/useAuth";
 import { SidebarContext } from "@/hooks/sidebarContext";
 
 const Sidebar = () => {
   const router = useRouter();
-  const { asPath } = router;
+  const asPath = usePathname();
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext);
   const { signOut } = useAuth();
 
@@ -154,7 +154,7 @@ const Sidebar = () => {
       >
         <Link href={"/homepage/dashboard2"}>
           <Image
-            src={logoNoChars}
+            src={"/images/logo-no-chars.png"}
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
@@ -164,7 +164,7 @@ const Sidebar = () => {
         </Link>
         <Link href={"/homepage/dashboard2"}>
           <Image
-            src={logo}
+            src={"/images/logo.svg"}
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}

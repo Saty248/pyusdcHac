@@ -1,9 +1,8 @@
-import { useEffect, useContext } from 'react';
-import { useRouter } from 'next/router';
-import Spinner from '@/Components/Spinner';
-import useAutoLogout from '@/hooks/useAutoLogout';
-import { Web3authContext } from '@/providers/web3authProvider';
-
+import { useEffect, useContext } from "react";
+import { useRouter } from "next/router";
+import Spinner from "@/Components/Spinner";
+import useAutoLogout from "@/hooks/useAutoLogout";
+import { Web3authContext } from "@/providers/web3authProvider";
 
 export default function Home() {
   useAutoLogout();
@@ -14,15 +13,15 @@ export default function Home() {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push('/auth/join');
-  }
+    router.push("/auth/join");
+  };
 
   useEffect(() => {
     if (web3auth) {
       if (web3auth.status === "connected") {
         const userData = localStorage.getItem("user");
         if (userData && userData !== "undefined") {
-          router.push('/homepage/dashboard2');
+          router.push("/homepage/dashboard2");
         } else {
           logout();
         }
@@ -30,6 +29,5 @@ export default function Home() {
     }
   }, [web3auth?.status]);
 
-
-  return <Spinner />
+  return <Spinner />;
 }

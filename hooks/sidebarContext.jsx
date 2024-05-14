@@ -1,7 +1,8 @@
-import React, { createContext, useState } from 'react';
-import useFetchBalance from './useFetchBalance';
-import useInitAuth from '@/hooks/useInitAuth';
-import useAutoLogout from '@/hooks/useAutoLogout';
+"use client";
+import React, { createContext, useState } from "react";
+import useFetchBalance from "./useFetchBalance";
+import useInitAuth from "@/hooks/useInitAuth";
+import useAutoLogout from "@/hooks/useAutoLogout";
 
 export const SidebarContext = createContext();
 

@@ -1,8 +1,8 @@
 import { useEffect, useContext } from "react";
-import { useRouter } from "next/router";
 
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const useAutoLogout = () => {
   const router = useRouter();

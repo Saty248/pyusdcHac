@@ -2,8 +2,9 @@ import { useContext, useEffect, useState } from "react";
 
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
-import { useRouter } from "next/router";
+
 import { counterActions } from "@/store/store";
+import { useRouter } from "next/navigation";
 
 const useAuth = () => {
   const router = useRouter();
