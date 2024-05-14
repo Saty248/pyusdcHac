@@ -27,10 +27,9 @@ import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
-
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
-  const[isLoading,setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -107,24 +106,24 @@ const Signup = () => {
   console.log("web3auth.status", web3auth?.status);
 
   const loginUser = async (isEmail) => {
-    
-    try {  
+    try {
       await init();
       if (!web3auth) {
         toast.error("Web3auth not initialized yet");
         return;
       }
-  
+
       let web3authProvider = null;
       setIsLoading(true);
       if (isEmail) {
         const email = emailRef.current.value;
-  
+        console.log({ email });
+
         if (!isEmailValid(email)) {
           toast.error("Login: email is not valid", email);
           return;
         }
-  
+
         web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
           loginProvider: "email_passwordless",
           extraLoginOptions: {
@@ -138,7 +137,7 @@ const Signup = () => {
       }
       setProvider(web3authProvider);
     } catch (error) {
-      console.error('Error occurred:', error);
+      console.error("Error occurred:", error);
       toast.error("An error occurred while logging in.");
     } finally {
       setIsLoading(false);
@@ -235,10 +234,14 @@ const Signup = () => {
                 Send me newsletter to keep me updated
               </label>
             )}
-            <LoadingButton onClick={() => loginUser(true)} isLoading={isLoading} className="w-full flex justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600">
+            <LoadingButton
+              onClick={() => loginUser(true)}
+              isLoading={isLoading}
+              className="w-full flex justify-center rounded-md bg-dark-blue px-24 py-4 text-[15px] text-white transition-all duration-500 ease-in-out hover:bg-blue-600"
+            >
               Get started
             </LoadingButton>
-            
+
             <div className="relative flex w-full items-center gap-[15px] text-center align-middle text-[#00000033]">
               <div
                 style={{
@@ -256,9 +259,12 @@ const Signup = () => {
                 }}
               />
             </div>
-            <LoadingButton onClick={() => loginUser(true)} isLoading={isLoading} className={"w-full flex justify-center"} >
-              <div
-                className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]">
+            <LoadingButton
+              onClick={() => loginUser(true)}
+              isLoading={isLoading}
+              className={"w-full flex justify-center"}
+            >
+              <div className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]">
                 <Image
                   src="/images/google-logo.png"
                   alt="Google's logo"
@@ -266,12 +272,13 @@ const Signup = () => {
                   height={24}
                   className=""
                 />
-              <p className="mx-auto text-[#595959]">Connect with Google</p>
+                <p className="mx-auto text-[#595959]">Connect with Google</p>
               </div>
             </LoadingButton>
-            <LoadingButton onClick={() => loginUser(false)} isLoading={isLoading}
+            <LoadingButton
+              onClick={() => loginUser(false)}
+              isLoading={isLoading}
               className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]"
-            
             >
               More Options
             </LoadingButton>
