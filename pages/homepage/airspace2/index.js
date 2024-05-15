@@ -1040,7 +1040,7 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
-const Airspaces = () => {
+const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1091,7 +1091,6 @@ const Airspaces = () => {
   // database
   const { claimProperty } = PropertiesService();
   const { user } = useAuth();
-
   useEffect(() => {
     if (map) return;
 
@@ -1336,6 +1335,7 @@ const Airspaces = () => {
     }
   };
 
+
   return (
     <Fragment>
       <Head>
@@ -1366,6 +1366,7 @@ const Airspaces = () => {
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} />
           )}
+          
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
