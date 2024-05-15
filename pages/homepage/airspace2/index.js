@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
@@ -8,6 +8,7 @@ import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
+
 import {
   HelpQuestionIcon,
   ArrowLeftIcon,
@@ -30,6 +31,9 @@ import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
+import { Web3authContext } from "@/providers/web3authProvider";
+import useAutoLogout from "@/hooks/useAutoLogout";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -296,6 +300,7 @@ const ClaimModal = ({
   claimButtonLoading,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+ localStorage.setItem('airSpaceData',JSON.stringify(data));
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -1048,7 +1053,9 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
+
 const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
+
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1098,7 +1105,13 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   const [data, setData] = useState({ ...defaultData });
   // database
   const { claimProperty } = PropertiesService();
-  const { user } = useAuth();
+
+  const { user,publicAccessAuth } = useAuth();
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
+
+// new map is created if not rendered
+
   useEffect(() => {
     if (map) return;
 
@@ -1139,11 +1152,19 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
       });
 
       setMap(newMap);
-      flyToUserIpAddress(newMap);
+
+      //doesnt move the map to iplocation when user persisted initial state in 
+      let inintialAirSpaceData=localStorage.getItem('airSpaceData')
+      if(inintialAirSpaceData?.length<2){
+        flyToUserIpAddress(newMap);
+      }
+      
     };
     createMap();
   }, []);
 
+
+  //gets address suggestions 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
@@ -1168,7 +1189,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
             setAddresses([]);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }, 500);
     };
@@ -1178,6 +1199,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     return () => clearTimeout(timeoutId);
   }, [address]);
 
+  //flies to the new address
   useEffect(() => {
     if (!flyToAddress) return;
 
@@ -1231,6 +1253,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     goToAddress();
   }, [flyToAddress, map]);
 
+  //adds address for the new address
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
     if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
@@ -1249,6 +1272,21 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
 
+  useEffect(() => {
+    const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
+    const parsedInitialAirspaceData=JSON.parse(inintialAirSpaceDataString);
+    if(parsedInitialAirspaceData?.address?.length>2){
+      setData(parsedInitialAirspaceData);
+      setFlyToAddress(parsedInitialAirspaceData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  
+  
+  }, [])
+
+
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
@@ -1257,6 +1295,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   const onClaim = async () => {
     try {
+      publicAccessAuth();
       setClaimButtonLoading(true);
       const {
         address,
@@ -1317,6 +1356,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     } finally {
       setClaimButtonLoading(false);
     }
+    removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1402,6 +1442,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
+                        removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1437,6 +1478,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
+                      removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}
