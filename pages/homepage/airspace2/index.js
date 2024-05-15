@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
@@ -8,6 +8,7 @@ import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
+
 import {
   HelpQuestionIcon,
   ArrowLeftIcon,
@@ -29,8 +30,10 @@ import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-
-const SuccessModal = ({ closePopUp, isSuccess}) => {
+import { Web3authContext } from "@/providers/web3authProvider";
+import useAutoLogout from "@/hooks/useAutoLogout";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
+const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
   const handleButtonClick = () => {
     router.push("/homepage/referral");
@@ -59,10 +62,21 @@ const SuccessModal = ({ closePopUp, isSuccess}) => {
         </div>
         ):(
           <div className="mt-20">
-            <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
-                Claim Failed! Please review your submission and ensure all information
-                is correct.
-            </h1>
+            {
+              errorMessages?.length > 0 ? 
+                <>
+                  {errorMessages?.map((error)=>(
+                    <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                      {error}
+                    </h1>
+                  ))}
+                </>
+              :<div className="border-2">
+              <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                Claim Failed! Please review your submission and ensure all information is correct.
+              </h1>
+              </div>
+            }
           </div>
         )}
             
@@ -296,6 +310,7 @@ const ClaimModal = ({
   claimButtonLoading,
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+ localStorage.setItem('airSpaceData',JSON.stringify(data));
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -943,19 +958,29 @@ const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
   );
 };
 
-const FailurePopUp = ({ isVisible }) => {
+const FailurePopUp = ({ isVisible, errorMessages }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
+      className={` z-20 absolute top-[14px] w-[650px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
-      {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
-					<FailureIcon />
-				</div> */}
-      🛑 Claim Failed! Please review your submission and ensure all information
-      is correct.
+        🛑
+      <div>
+        {errorMessages?.length > 0 ? (
+          <div >
+            {errorMessages?.map((error) => (
+              <h1 className="text-black">{error}</h1>
+            ))}
+          </div>
+        ) : (
+          <div> Claim Failed! Please review your submission and ensure all
+            information is correct.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
 
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
@@ -1048,7 +1073,9 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
+
 const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
+
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1094,11 +1121,18 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
+  const [errorMessages,setErrorMessages] = useState([]);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
   const { claimProperty } = PropertiesService();
-  const { user } = useAuth();
+
+  const { user,publicAccessAuth } = useAuth();
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
+
+// new map is created if not rendered
+
   useEffect(() => {
     if (map) return;
 
@@ -1139,11 +1173,19 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
       });
 
       setMap(newMap);
-      flyToUserIpAddress(newMap);
+
+      //doesnt move the map to iplocation when user persisted initial state in 
+      let inintialAirSpaceData=localStorage.getItem('airSpaceData')
+      if(inintialAirSpaceData?.length<2){
+        flyToUserIpAddress(newMap);
+      }
+      
     };
     createMap();
   }, []);
 
+
+  //gets address suggestions 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
@@ -1168,7 +1210,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
             setAddresses([]);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }, 500);
     };
@@ -1178,6 +1220,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     return () => clearTimeout(timeoutId);
   }, [address]);
 
+  //flies to the new address
   useEffect(() => {
     if (!flyToAddress) return;
 
@@ -1231,6 +1274,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     goToAddress();
   }, [flyToAddress, map]);
 
+  //adds address for the new address
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
     if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
@@ -1244,10 +1288,26 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
-    }, 4000);
+      setErrorMessages([]);
+    }, 6000);
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
+    const parsedInitialAirspaceData=JSON.parse(inintialAirSpaceDataString);
+    if(parsedInitialAirspaceData?.address?.length>2){
+      setData(parsedInitialAirspaceData);
+      setFlyToAddress(parsedInitialAirspaceData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  
+  
+  }, [])
+
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -1257,6 +1317,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   const onClaim = async () => {
     try {
+      publicAccessAuth();
       setClaimButtonLoading(true);
       const {
         address,
@@ -1302,10 +1363,25 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
         ],
         weekDayRanges,
       };
+      let responseData;
+      let errors = [];
+      if (!rent) {
+        errors.push('Please ensure to check the rental checkbox before claiming airspace.');
+      }
+      if (!(hasLandingDeck || hasChargingStation || hasStorageHub)) {
+        errors.push('Please select at least one of the following: Landing Deck, Charging Station, or Storage Hub.');
+      }
+      if (!weekDayRanges.some(item => item.isAvailable)) {
+        errors.push('Kindly ensure that at least one day is made available.');
+      }
 
-      const responseData = await claimProperty({ postData })
-
-      if (!responseData) setShowFailurePopUp(true);
+      if(errors.length === 0){
+        responseData = await claimProperty({ postData })
+      }
+      if (!responseData) {
+        setErrorMessages(errors);
+        setShowFailurePopUp(true);
+      }
       else setShowSuccessPopUp(true);
       
       setShowClaimModal(false);
@@ -1317,6 +1393,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     } finally {
       setClaimButtonLoading(false);
     }
+    removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1402,6 +1479,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
+                        removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1411,7 +1489,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                       claimButtonLoading={claimButtonLoading}
                     />
                   )}
-                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal isSuccess={showSuccessPopUp} closePopUp={() => {
+                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
                     showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
                   }} />}
               </Fragment>
@@ -1431,12 +1509,13 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   }}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}  />
-                <FailurePopUp isVisible={showFailurePopUp} />
+                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}/>
+                <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages}/>
 
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
+                      removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}
