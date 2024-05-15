@@ -9,7 +9,6 @@ import {
   MagnifyingGlassIcon,
   SuccessIconwhite,
   CanlceIconWhite,
-  InfoIcon
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -68,11 +67,8 @@ const SuccessModal = ({
 
   return (
     <div
-    ref={modalRef}
-    className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
-  >
-    <div
-      className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+      ref={modalRef}
+      className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
     >
       <div
         onClick={() => {
@@ -173,7 +169,6 @@ const SuccessModal = ({
         </>
       )}
     </div>
-  </div>
 );
 };;
 
@@ -360,6 +355,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
       
 
   };
+
   if (showSuccess) {
     return (
       <SuccessModal
@@ -417,9 +413,6 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
               Airspace Details
               
             </h2>
-            <div className="w-[20px] h-[20px] ml-3">
-            <InfoIcon/>
-             </div>
           </div>
 
           <div
@@ -852,7 +845,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 4,
+        zoom: 5,
         // attributionControl: false
       });
 
@@ -875,6 +868,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
+        newMap.zoomOut(4);
       });
 
       let timeoutId;
