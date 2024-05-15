@@ -343,8 +343,16 @@ const ClaimModal = ({
             <h2 className="text-[#222222] text-center font-medium text-xl">
               Claim Airspace
             </h2>
-            <div className="hidden md:block w-[20px] h-[20px] ">
+            <div onClick={() => setIsInfoVisible((prev) => !prev)}
+             className="hidden md:block w-[20px] h-[20px] relative tems-center justify-center">
               <InfoIcon />
+                  {isInfoVisible && (
+                    <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
+                      Note that we store your data securely with advanced encryption and
+                      strict authentication measures to ensure utmost privacy and
+                      protection.
+                    </div>
+                  )}
             </div>
           </div>
 
@@ -922,15 +930,20 @@ const Slider = () => {
   );
 };
 
-const PopUp = ({ isVisible }) => {
+const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-3.5 ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
       </div>
-      Congratulations on claiming your piece of the sky successfully!
+        <div className="text-light-green text-base gap-3">
+        Congratulations on claiming your piece of the sky successfully!
+        </div>
+       <div className="w-4 h-5 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
+         <CloseIcon  />
+        </div>
     </div>
   );
 };
@@ -938,7 +951,7 @@ const PopUp = ({ isVisible }) => {
 const FailurePopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
 					<FailureIcon />
@@ -1041,7 +1054,8 @@ const HowToModal = ({ goBack }) => {
 };
 
 
-const Airspaces = () => {
+const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
+
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1091,11 +1105,13 @@ const Airspaces = () => {
   const [data, setData] = useState({ ...defaultData });
   // database
   const { claimProperty } = PropertiesService();
+
   const { user,publicAccessAuth } = useAuth();
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
 // new map is created if not rendered
+
   useEffect(() => {
     if (map) return;
 
@@ -1245,11 +1261,6 @@ const Airspaces = () => {
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 4000);
-
-    return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
   useEffect(() => {
@@ -1372,6 +1383,7 @@ const Airspaces = () => {
     }
   };
 
+
   return (
     <Fragment>
       <Head>
@@ -1402,6 +1414,7 @@ const Airspaces = () => {
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} />
           )}
+          
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
@@ -1459,7 +1472,7 @@ const Airspaces = () => {
                   }}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
+                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}  />
                 <FailurePopUp isVisible={showFailurePopUp} />
 
                 {showClaimModal && (
