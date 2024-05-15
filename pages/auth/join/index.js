@@ -28,6 +28,7 @@ import { counterActions } from "@/store/store";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 
+
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
   const[isLoading,setIsLoading] = useState(false);
@@ -40,7 +41,7 @@ const Signup = () => {
   const emailRef = useRef();
   const { init } = useInitAuth();
 
-  const { signIn } = useAuth();
+  const { signIn,customRedirect } = useAuth();
 
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
   const { getUser } = UserService();
@@ -79,7 +80,8 @@ const Signup = () => {
             console.log({ responseData });
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
+            customRedirect()
+            
           } else {
             const categoryData = {
               email: userInformation.email,

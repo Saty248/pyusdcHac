@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, forwardRef ,useRef, useContext} from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
+
 import {
   ArrowLeftIcon,
   CloseIcon,
@@ -45,6 +46,9 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import ZoomControllers from "@/Components/ZoomControllers";
+import useAutoLogout from "@/hooks/useAutoLogout";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
+
 
 const SuccessModal = ({
   setShowSuccess,
@@ -184,7 +188,7 @@ const SuccessModal = ({
   );
 };
 
-const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => {
+const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLoading }) => {
   const defaultValueDate = dayjs()
     .add(1, "h")
     .set("minute", 30)
@@ -194,14 +198,21 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
   const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState("0");
   const [date, setDate] = useState(defaultValueDate);
-
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [finalAns, setfinalAns] = useState();
-  const { user } = useAuth();
+  const { user,publicAccessAuth } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext)
 
+
+  localStorage.setItem('rentData',JSON.stringify(rentData));
+  
+
+
+  // setting rentData owner
   useEffect(() => {
     async function getUsersFromBE() {
       try {
@@ -214,6 +225,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
   }, [rentData]);
 
   const getTokenBalance = () => {
+
     const data = {
       jsonrpc: "2.0",
       id: 1,
@@ -228,43 +240,47 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
         },
       ],
     };
-
-    fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((errorData) => {
-            throw new Error(errorData.error);
-          });
-        }
-
-        return response.json();
+    if(user?.blockchainAddress){
+      fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       })
-      .then((result) => {
-        if (result.result.value.length < 1) {
-          setTokenBalance("0");
-
-          return;
-        }
-
-        setTokenBalance(
-          result.result.value[0].account.data.parsed.info.tokenAmount
-            .uiAmountString
-        );
-      });
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((errorData) => {
+              throw new Error(errorData.error);
+            });
+          }
+  
+          return response.json();
+        })
+        .then((result) => {
+          if (result.result.value.length < 1) {
+            setTokenBalance("0");
+  
+            return;
+          }
+  
+          setTokenBalance(
+            result.result.value[0].account.data.parsed.info.tokenAmount
+              .uiAmountString
+          );
+        });
+    }
+    
   };
 
+  // get token balance if user is there
   useEffect(() => {
     getTokenBalance();
   }, []);
 
   const handleRentAirspace = async () => {
     try {
+      publicAccessAuth()
         const currentDate = new Date();
         let startDate = new Date(date.toString());
         let endDate = new Date(startDate.getTime());
@@ -363,7 +379,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
     } finally {
       setIsLoading(false);
     }    
-      
+    removePubLicUserDetailsFromLocalStorage('rentData',user)
 
   };
 
@@ -414,6 +430,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
+             
               setShowClaimModal(false);
             }}
           >
@@ -428,6 +445,7 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
 
           <div
             onClick={() => {
+              removePubLicUserDetailsFromLocalStorage('rentData',user)
               setShowClaimModal(false);
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -471,7 +489,9 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
+              removePubLicUserDetailsFromLocalStorage('rentData',user)
               setShowClaimModal(false);
+
             }}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
             style={{ border: "1px solid #0653EA" }}
@@ -1046,6 +1066,19 @@ const Rent = () => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
 
+  useEffect(()=>{
+    const inintialRentDataString=localStorage.getItem('rentData')
+    const parsedInitialRentData=JSON.parse(inintialRentDataString);
+    if(parsedInitialRentData?.address?.length>2){
+
+      setRentData(parsedInitialRentData);
+      setFlyToAddress(parsedInitialRentData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  },[])
+
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
     setFlyToAddress(placeName);
@@ -1123,6 +1156,7 @@ const Rent = () => {
               <ClaimModal
                 setShowClaimModal={setShowClaimModal}
                 rentData={rentData}
+                setRentData={setRentData}
                 setIsLoading={setIsLoading}
                 isLoading={isLoading}
                 regAdressShow={regAdressShow}
