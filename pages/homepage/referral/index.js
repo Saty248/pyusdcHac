@@ -440,7 +440,7 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
   );
 };
 
-const SkyPointBalance = ({ registeredFriends, user }) => {
+const SkyPointBalance = ({ registeredFriends}) => {
   const [hasUsedReferralCode, setHasUsedReferralCode] = useState(false);
 
   useEffect(() => {
@@ -451,7 +451,8 @@ const SkyPointBalance = ({ registeredFriends, user }) => {
     }
   }, []);
 
-  const skyPoints = hasUsedReferralCode ? 50 : 50 * registeredFriends;
+  const hasUsedReferralCodePoint = hasUsedReferralCode ? 50 : 0;
+  const skyPoints = (50 * registeredFriends) + hasUsedReferralCodePoint;
 
   return (
     <div className="w-full md:w-[35%] px-4 md:px-[44px]">
