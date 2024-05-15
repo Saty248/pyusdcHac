@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import ZoomControllers from "@/Components/ZoomControllers";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
@@ -27,6 +28,7 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
@@ -677,35 +679,14 @@ const ClaimModal = ({
             >
               Cancel
             </div>
-            <button
-              onClick={onClaim}
-              className=" w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
-            >
-              {claimButtonLoading ? (
-                <svg
-                  className="animate-spin -ml-1 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                "Claim Airspace"
-              )}
-            </button>
+            
+            <div className="w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
+              <div className="flex justify-center items-center w-full ">
+                <LoadingButton onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
+                  Claim Airspace
+                </LoadingButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -936,15 +917,20 @@ const Slider = () => {
   );
 };
 
-const PopUp = ({ isVisible }) => {
+const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-3.5 ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
       </div>
-      Congratulations on claiming your piece of the sky successfully!
+        <div className="text-light-green text-base gap-3">
+        Congratulations on claiming your piece of the sky successfully!
+        </div>
+       <div className="w-4 h-5 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
+         <CloseIcon  />
+        </div>
     </div>
   );
 };
@@ -952,7 +938,7 @@ const PopUp = ({ isVisible }) => {
 const FailurePopUp = ({ isVisible }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
 					<FailureIcon />
@@ -1244,11 +1230,6 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 4000);
-
-    return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
   useEffect(() => {
@@ -1442,7 +1423,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   }}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
+                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}  />
                 <FailurePopUp isVisible={showFailurePopUp} />
 
                 {showClaimModal && (
@@ -1498,6 +1479,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                       </p>
                     </Link>
                   </div>
+                  
                   <div
                     onClick={() => setShowHowToModal(true)}
                     className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
@@ -1510,6 +1492,9 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 </div>
               </div>
             )}
+            <div className="hidden sm:block">
+              <ZoomControllers map={map}/>
+            </div>
           </section>
         </div>
       </div>
