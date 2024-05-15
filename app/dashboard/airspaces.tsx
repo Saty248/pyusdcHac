@@ -29,7 +29,8 @@ import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-
+import Toggle from "@/Components/Airspace/Toggle";
+import TimeZoneSelect from "@/Components/Airspace/TimeZoneSelect";
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -92,72 +93,57 @@ const SuccessModal = ({ closePopUp, isSuccess}) => {
 }
 
 
-const Toggle = ({ checked, setChecked }) => {
-  return (
-    <label className="relative inline-flex cursor-pointer items-center">
-      <input
-        type="checkbox"
-        value=""
-        className="peer sr-only"
-        checked={checked}
-        onClick={setChecked}
-      />
-      <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 peer-focus:ring-blue-300 rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-    </label>
-  );
-};
+// const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
+//   const labelStyle = "original";
+//   const timezones = {
+//     ...allTimezones,
+//     "Europe/Berlin": "Frankfurt",
+//   };
 
-const TimeZoneSelect = ({ timeZone, setTimeZone }) => {
-  const labelStyle = "original";
-  const timezones = {
-    ...allTimezones,
-    "Europe/Berlin": "Frankfurt",
-  };
+//   const { options, parseTimezone } = useTimezoneSelect({
+//     labelStyle,
+//     timezones,
+//   });
+//   const [selectedLabel, setSelectedLabel] = useState("Europe/London");
+//   const handleTimeZoneChange = (event) => {
+//     const selectedTimeZone = event.target.value;
+//     const parsedTimeZone = parseTimezone(selectedTimeZone);
+//     const gmtOffset = parsedTimeZone.offset;
+//     const gmtString =
+//       parseInt(gmtOffset) >= 0 ? `GMT+${gmtOffset}` : `GMT${gmtOffset}`;
 
-  const { options, parseTimezone } = useTimezoneSelect({
-    labelStyle,
-    timezones,
-  });
-  const [selectedLabel, setSelectedLabel] = useState("Europe/London");
-  const handleTimeZoneChange = (event) => {
-    const selectedTimeZone = event.target.value;
-    const parsedTimeZone = parseTimezone(selectedTimeZone);
-    const gmtOffset = parsedTimeZone.offset;
-    const gmtString =
-      parseInt(gmtOffset) >= 0 ? `GMT+${gmtOffset}` : `GMT${gmtOffset}`;
+//     setTimeZone(gmtString);
+//     setSelectedLabel(selectedTimeZone);
+//   };
 
-    setTimeZone(gmtString);
-    setSelectedLabel(selectedTimeZone);
-  };
-
-  return (
-    <Fragment>
-      <label
-        htmlFor="timeZone"
-        className="text-[14px] font-normal text-[#838187] leading-[2rem] md:leading-none "
-      >
-        Time Zone<span className="text-[#E04F64]">*</span>
-      </label>
-      <select
-        value={selectedLabel}
-        onChange={handleTimeZoneChange}
-        name="timeZone"
-        id="timeZone"
-        className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
-        style={{ border: "1px solid #87878D" }}
-      >
-        {options.map((geographicTimeZone) => (
-          <option
-            key={geographicTimeZone.value}
-            value={geographicTimeZone.value}
-          >
-            {`${geographicTimeZone.label} ${geographicTimeZone.value}`}
-          </option>
-        ))}
-      </select>
-    </Fragment>
-  );
-};
+//   return (
+//     <Fragment>
+//       <label
+//         htmlFor="timeZone"
+//         className="text-[14px] font-normal text-[#838187] leading-[2rem] md:leading-none "
+//       >
+//         Time Zone<span className="text-[#E04F64]">*</span>
+//       </label>
+//       <select
+//         value={selectedLabel}
+//         onChange={handleTimeZoneChange}
+//         name="timeZone"
+//         id="timeZone"
+//         className="w-full appearance-none rounded-lg px-[22px] py-[16px] text-[14px] font-normal text-[#222222] focus:outline-none"
+//         style={{ border: "1px solid #87878D" }}
+//       >
+//         {options.map((geographicTimeZone) => (
+//           <option
+//             key={geographicTimeZone.value}
+//             value={geographicTimeZone.value}
+//           >
+//             {`${geographicTimeZone.label} ${geographicTimeZone.value}`}
+//           </option>
+//         ))}
+//       </select>
+//     </Fragment>
+//   );
+// };
 
 const VariableFeeRentalRangesSelect = ({ fee, setFee }) => {
   const handleVariableFeeRentalRangeChange = (event) => {
@@ -217,7 +203,7 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
     setWeekDayRanges(defaultWeekDayRanges);
   }, []);
 
-  const handleToggle = (day) => {
+  const handleToggle = (day: number) => {
     const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].isAvailable = !weekDayRangesCopy[day].isAvailable;
     setWeekDayRanges(weekDayRangesCopy);
