@@ -3,13 +3,17 @@ import { useRouter } from "next/router";
 
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAuth from "@/hooks/useAuth";
+import publicAccessRouteRedirection from "@/Components/helper/publicAccessRoutesRedirection";
 
 const useAutoLogout = () => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
-  const publicAccessRoutes=['/homepage/rent','/homepage/airspace2']
-
+  const publicAccessRoutes=[];
+  for(let item of publicAccessRouteRedirection ){
+    publicAccessRoutes.push(item.redirectTo)
+  }
+  
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
@@ -41,8 +45,8 @@ const useAutoLogout = () => {
     //   logout();
     //   return;
     // }
-    const userBlockchainAddress=user?.blockchainAddress
-    if(publicAccessRoutes.includes(router.pathname) && userBlockchainAddress==undefined){
+
+    if(publicAccessRoutes.includes(router.pathname)){
       return
     }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
@@ -56,23 +60,9 @@ const useAutoLogout = () => {
   }, [web3auth?.status, user,router.pathname]); //included router.pathname in the dependency array so that it checks for autologout on every page..  
 
 
-  //added this in for rent and airspace
-  const customAuth=()=>{
-    if (!web3auth){
-      router.push("/auth/join");
-    }
-  
-    if (web3auth?.status === "ready") {
-      const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
-      console.log({fetchedToken})
-      if (!fetchedToken?.sessionId) {     
-          router.push("/auth/join");
-        return;
-        } 
-    }
-  }
 
-  return customAuth;
+
+  return null;
 };
 
 

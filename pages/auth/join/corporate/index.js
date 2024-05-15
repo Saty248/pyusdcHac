@@ -14,7 +14,6 @@ import Spinner from "@/Components/Spinner";
 
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
-import customRedirect from "@/Components/auth_intro/customRedirect";
 
 const CorporateSignup = () => {
   const router = useRouter();
@@ -49,7 +48,7 @@ const CorporateSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const { temporaryToken, signIn } = useAuth();
+  const { temporaryToken, signIn,customRedirect } = useAuth();
 
   const newsletterHandler = () => {
     setNewsletter((prev) => !prev);

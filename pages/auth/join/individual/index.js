@@ -15,7 +15,7 @@ import logo from '../../../../public/images/logo.svg';
 
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
-import customRedirect from "@/Components/auth_intro/customRedirect";
+
 
 const IndividualSignup = () => {
   const newsletterRef = useRef();
@@ -62,7 +62,7 @@ const IndividualSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const { temporaryToken, signIn } = useAuth();
+  const { temporaryToken, signIn,customRedirect } = useAuth();
 
   const newsletterHandler = () => {
     setNewsletter((prev) => !prev);

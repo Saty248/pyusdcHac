@@ -8,6 +8,7 @@ import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
+
 import {
   HelpQuestionIcon,
   ArrowLeftIcon,
@@ -32,6 +33,7 @@ import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAutoLogout from "@/hooks/useAutoLogout";
+import { removeFromLocalStorage } from "@/Components/helper/localStorage";
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -1089,7 +1091,7 @@ const Airspaces = () => {
   const [data, setData] = useState({ ...defaultData });
   // database
   const { claimProperty } = PropertiesService();
-  const { user } = useAuth();
+  const { user,publicAccessAuth } = useAuth();
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
@@ -1272,8 +1274,7 @@ const Airspaces = () => {
   
   
   }, [])
-  const customAuth=useAutoLogout()
-  
+
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -1283,7 +1284,7 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
-      customAuth();
+      publicAccessAuth();
       setClaimButtonLoading(true);
       const {
         address,

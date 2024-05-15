@@ -4,6 +4,7 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/router";
 import { counterActions } from "@/store/store";
+import publicAccessRouteRedirection from "@/Components/helper/publicAccessRoutesRedirection";
 
 const useAuth = () => {
   const router = useRouter();
@@ -54,6 +55,32 @@ const useAuth = () => {
     dispatch(counterActions.setUser(updatedUser));
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
+ 
+  function customRedirect(router){
+    if(publicAccessRouteRedirection?.length > 0){
+      for(let item of publicAccessRouteRedirection){
+        console.log(item.localStorageKey , item.redirectTo)
+        const initialKeyData = localStorage.getItem(item.localStorageKey)
+        if(initialKeyData?.length > 2){
+          router.replace(item.redirectTo)
+        }
+      }
+    }else{
+      router.replace("/homepage/dashboard2");
+    }
+    
+
+}
+  //added this in for rent and airspace
+  const publicAccessAuth=()=>{
+    if(web3auth && web3auth.status==="connected"){
+      //all good
+      return
+    }else{
+      router.push("/auth/join");
+    }
+  }
+
 
   return {
     signIn,
@@ -61,6 +88,8 @@ const useAuth = () => {
     updateProfile,
     user: userData,
     web3authStatus,
+    customRedirect,
+    publicAccessAuth
   };
 };
 

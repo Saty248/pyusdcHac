@@ -15,7 +15,7 @@ import useAuth from '@/hooks/useAuth';
 import * as Yup from 'yup'
 import UserService from "@/services/UserService";
 import { counterActions } from '@/store/store';
-import customRedirect from '@/Components/auth_intro/customRedirect';
+
 
 const PartOne = ({ setPart }) => {
     return (
@@ -121,7 +121,7 @@ const IndividualSignup = () => {
     }, [global?.window]);
 
 
-    const { temporaryToken, signIn } = useAuth();
+    const { temporaryToken, signIn,customRedirect } = useAuth();
 
     const newsletterHandler = () => {
         setNewsletter((prev) => !prev);

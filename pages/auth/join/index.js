@@ -27,7 +27,7 @@ import useInitAuth from "@/hooks/useInitAuth";
 import { counterActions } from "@/store/store";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
-import customRedirect from "@/Components/auth_intro/customRedirect";
+
 
 const Signup = () => {
   const [emailValid, setEmailValid] = useState(true);
@@ -41,7 +41,7 @@ const Signup = () => {
   const emailRef = useRef();
   const { init } = useInitAuth();
 
-  const { signIn } = useAuth();
+  const { signIn,customRedirect } = useAuth();
 
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
   const { getUser } = UserService();

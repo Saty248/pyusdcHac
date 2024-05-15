@@ -200,7 +200,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [finalAns, setfinalAns] = useState();
-  const { user } = useAuth();
+  const { user,publicAccessAuth } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext)
 
@@ -274,10 +274,10 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   useEffect(() => {
     getTokenBalance();
   }, []);
-  const customAuth=useAutoLogout()
+
   const handleRentAirspace = async () => {
     try {
-      customAuth()
+      publicAccessAuth()
         const currentDate = new Date();
         let startDate = new Date(date.toString());
         let endDate = new Date(startDate.getTime());
