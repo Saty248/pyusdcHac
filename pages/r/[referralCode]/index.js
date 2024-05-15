@@ -21,6 +21,7 @@ import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import UserService from "@/services/UserService";
 import useInitAuth from '@/hooks/useInitAuth';
+import Link from "next/link";
 import { counterActions } from "@/store/store";
 
 const ReferralCodeRedirect = () => {
@@ -310,23 +311,25 @@ const ReferralCodeRedirect = () => {
                 />
                 <p className="text-[#595959] mx-auto">Connect with Google</p>
               </button>
-              <p className="text-[#87878D] text-sm text-center">
-                By creating an account I agree with{" "}
-                <span
-                  onClick={onTermsAndConditionsClicked}
-                  className="text-[#0653EA] cursor-pointer"
-                >
-                  Terms and Conditions
-                </span>{" "}
-                and{" "}
-                <span
-                  onClick={onPrivacyPolicyClicked}
-                  className="text-[#0653EA] cursor-pointer"
-                >
-                  Privacy Policy
-                </span>{" "}
-                agreement
-              </p>
+              <p className="text-center text-sm text-[#87878D]">
+              By creating an account I agree with{" "}
+              <Link
+                target="_blank"
+                href="https://docs.sky.trade/terms.pdf"
+                className="cursor-pointer text-[#0653EA]"
+              >
+                Terms and Conditions
+              </Link>{" "}
+              and{" "}
+              <Link
+                target="_blank"
+                href="https://docs.sky.trade/privacy.pdf"
+                className="cursor-pointer text-[#0653EA]"
+              >
+                Privacy Policy
+              </Link>{" "}
+              agreement
+            </p>
             </form>
           </div>
         </div>

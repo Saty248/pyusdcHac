@@ -338,8 +338,16 @@ const ClaimModal = ({
             <h2 className="text-[#222222] text-center font-medium text-xl">
               Claim Airspace
             </h2>
-            <div className="hidden md:block w-[20px] h-[20px] ">
+            <div onClick={() => setIsInfoVisible((prev) => !prev)}
+             className="hidden md:block w-[20px] h-[20px] relative tems-center justify-center">
               <InfoIcon />
+                  {isInfoVisible && (
+                    <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
+                      Note that we store your data securely with advanced encryption and
+                      strict authentication measures to ensure utmost privacy and
+                      protection.
+                    </div>
+                  )}
             </div>
           </div>
 
