@@ -8,7 +8,7 @@ import {
   LocationPointIcon,
   MagnifyingGlassIcon,
   SuccessIconwhite,
-  CanlceIconWhite,
+  FailureIconWhite,
 } from "@/Components/Icons";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -73,6 +73,9 @@ import ZoomControllers from "@/Components/ZoomControllers";
       ref={modalRef}
       className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
     >
+       <div
+         className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+       >
       <div
         onClick={() => {
           setShowSuccess(false);
@@ -81,7 +84,7 @@ import ZoomControllers from "@/Components/ZoomControllers";
         className="w-4 h-4 absolute top-[10px] right-[10px] "
       >
         <div className="hidden sm:block absolute top-[10px] right-[10px]">
-        <CanlceIconWhite />
+        <CloseIconWhite />
         </div>       
       </div>
 
@@ -89,7 +92,7 @@ import ZoomControllers from "@/Components/ZoomControllers";
         {finalAns?.status === "Rent Successful" ? (
           <SuccessIconwhite />
         ) : (
-          <CloseIconWhite />
+          <FailureIconWhite />
         )}
       </div>
       {finalAns?.status === "Rent Successful" ? (
@@ -171,6 +174,7 @@ import ZoomControllers from "@/Components/ZoomControllers";
           </button>
         </>
       )}
+    </div>
     </div>
 );
 };
@@ -352,7 +356,9 @@ const ClaimModal = ({ setShowClaimModal, rentData, setIsLoading,isLoading }) => 
     } catch (error) {
       setfinalAns({ status: "Rent failed", message: error }); 
       setShowSuccess(true);
-    }   
+    } finally {
+      setIsLoading(false)
+    } 
   };
 
 
