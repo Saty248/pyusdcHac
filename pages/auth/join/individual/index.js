@@ -148,7 +148,7 @@ const IndividualSignup = () => {
           nameRef.current.value = "";
           phoneNumberRef.current.value = "";
           
-          customRedirect(router)
+          customRedirect()
         });
       } else {
         swal({

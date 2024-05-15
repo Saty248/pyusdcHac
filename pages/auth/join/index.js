@@ -80,7 +80,7 @@ const Signup = () => {
             console.log({ responseData });
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });
-            customRedirect(router)
+            customRedirect()
             
           } else {
             const categoryData = {

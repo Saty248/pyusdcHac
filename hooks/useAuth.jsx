@@ -56,29 +56,28 @@ const useAuth = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
  
-  function customRedirect(router){
+  function customRedirect() {
     let isRedirect=false
     if(publicAccessRouteRedirection?.length > 0){
       
-        for(let item of publicAccessRouteRedirection){
-          const initialKeyData = localStorage.getItem(item.localStorageKey)
-          if(initialKeyData?.length > 2){
-            isRedirect=true;
-            router.replace(item.redirectTo)
-            return
-          }
+      for(let item of publicAccessRouteRedirection){
+        const initialKeyData = localStorage.getItem(item.localStorageKey)
+        if(initialKeyData?.length > 2){
+          isRedirect=true;
+          router.replace(item.redirectTo)
+          return
         }
-      if(isRedirect==false){
+      }
+
+      if(!isRedirect){
         router.replace("/homepage/dashboard2");
         return
       }
       
     }else{
-      isRedirect=true
       router.replace("/homepage/dashboard2");
       return
     }
-    
 
 }
   //added this in for rent and airspace

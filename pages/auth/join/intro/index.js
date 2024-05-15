@@ -187,7 +187,7 @@ const IndividualSignup = () => {
                 setPhoneNumber('');
                 referralCodeRef.current.value = '';
 
-               customRedirect(router)
+               customRedirect()
             
             } 
         } catch (error) {
