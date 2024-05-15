@@ -57,16 +57,26 @@ const useAuth = () => {
   };
  
   function customRedirect(router){
+    let isRedirect=false
     if(publicAccessRouteRedirection?.length > 0){
-      for(let item of publicAccessRouteRedirection){
-        console.log(item.localStorageKey , item.redirectTo)
-        const initialKeyData = localStorage.getItem(item.localStorageKey)
-        if(initialKeyData?.length > 2){
-          router.replace(item.redirectTo)
+      
+        for(let item of publicAccessRouteRedirection){
+          const initialKeyData = localStorage.getItem(item.localStorageKey)
+          if(initialKeyData?.length > 2){
+            isRedirect=true;
+            router.replace(item.redirectTo)
+            return
+          }
         }
+      if(isRedirect==false){
+        router.replace("/homepage/dashboard2");
+        return
       }
+      
     }else{
+      isRedirect=true
       router.replace("/homepage/dashboard2");
+      return
     }
     
 
