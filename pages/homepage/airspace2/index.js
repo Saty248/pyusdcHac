@@ -33,7 +33,7 @@ import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAutoLogout from "@/hooks/useAutoLogout";
-import { removeFromLocalStorage } from "@/Components/helper/localStorage";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
 const SuccessModal = ({ closePopUp, isSuccess}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -1345,7 +1345,7 @@ const Airspaces = () => {
     } finally {
       setClaimButtonLoading(false);
     }
-    removeFromLocalStorage('airSpaceData',user)
+    removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1429,7 +1429,7 @@ const Airspaces = () => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
-                        removeFromLocalStorage('airSpaceData',user)
+                        removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1465,7 +1465,7 @@ const Airspaces = () => {
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
-                      removeFromLocalStorage('airSpaceData',user)
+                      removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}

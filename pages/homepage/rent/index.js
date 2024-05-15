@@ -46,7 +46,7 @@ import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import ZoomControllers from "@/Components/ZoomControllers";
 import useAutoLogout from "@/hooks/useAutoLogout";
-import { removeFromLocalStorage } from "@/Components/helper/localStorage";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
 
 
 const SuccessModal = ({
@@ -376,7 +376,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
     } finally {
       setIsLoading(false);
     }    
-    removeFromLocalStorage('rentData',user)
+    removePubLicUserDetailsFromLocalStorage('rentData',user)
 
   };
   if (showSuccess) {
@@ -444,7 +444,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
 
           <div
             onClick={() => {
-              removeFromLocalStorage('rentData',user)
+              removePubLicUserDetailsFromLocalStorage('rentData',user)
               setShowClaimModal(false);
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -488,7 +488,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-[14px]">
           <div
             onClick={() => {
-              removeFromLocalStorage('rentData',user)
+              removePubLicUserDetailsFromLocalStorage('rentData',user)
               setShowClaimModal(false);
 
             }}
