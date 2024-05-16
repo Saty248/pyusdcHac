@@ -35,7 +35,7 @@ const Sidebar = () => {
     onClick,
     numberOfUnseenNotifications,
   }) => {
-    const isActive = href ? asPath.includes(href) : false;
+    const isActive = href ? asPath?.includes(href) : false;
 
     if (onClick !== undefined) {
       return (
@@ -98,7 +98,7 @@ const Sidebar = () => {
     onClick,
     numberOfUnseenNotifications,
   }) => {
-    const isActive = asPath.includes(href);
+    const isActive = asPath?.includes(href);
 
     if (onClick !== undefined) {
       return (
