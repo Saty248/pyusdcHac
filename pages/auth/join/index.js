@@ -258,7 +258,7 @@ const Signup = () => {
                 }}
               />
             </div>
-            <LoadingButton onClick={() => loginUser(true)} isLoading={isLoading} className={"w-full flex justify-center"} >
+            <LoadingButton onClick={() => loginUser(false)} isLoading={isLoading} className={"w-full flex justify-center"} >
               <div
                 className="flex w-full items-center justify-between rounded-lg py-4 pl-[18px] pr-[42px] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]">
                 <Image
@@ -273,7 +273,6 @@ const Signup = () => {
             </LoadingButton>
             <LoadingButton onClick={() => loginUser(false)} isLoading={isLoading}
               className="flex w-full items-center justify-center rounded-lg py-4 pl-[18px] text-[#595959] transition-all duration-500 ease-in-out hover:bg-bleach-blue border border-[#595959]"
-            
             >
               More Options
             </LoadingButton>
