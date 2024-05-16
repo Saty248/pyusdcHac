@@ -69,9 +69,6 @@ import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/loc
     };
   }, [setShowSuccess, setShowClaimModal]);
 
-
-  console.log(finalAns)
-
   return (
     <div
       ref={modalRef}
