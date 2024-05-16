@@ -1,6 +1,6 @@
 
 import React, { FormEvent } from 'react';
-import { PersonalInformationType } from '../../types/index';
+import { PersonalInformationType } from '../../types';
 
 interface PersonalInformationProps {
     personalInformation: PersonalInformationType;
@@ -46,7 +46,7 @@ const PersonalInformation= ({
                 </div>
             </div>
             <div className="flex items-center justify-end flex-1">
-                <p className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={updateDataHandler}>Save changes</p>
+                <p className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={ ()=> updateDataHandler}>Save changes</p>
             </div>
         </div>
     </div>
