@@ -1096,7 +1096,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   });
   const [marker, setMarker] = useState();
   const defaultData = {
-    address: flyToAddress,
+    address: address,
     name: "",
     rent: true,
     sell: false,
@@ -1249,6 +1249,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setAddressData(data.features[0].properties);
         setIsLoading(false);
+        setAddress(data.features[0]?.place_name)
 
         map.flyTo({
           center: endPoint,
@@ -1269,7 +1270,8 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
         setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(err);
+        console.error(error);
+        toast.error("invalid address")
       }
     };
 
@@ -1278,9 +1280,19 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   //adds address for the new address
   useEffect(() => {
+    let {propertyAddress,geoLocation}=router.query;
+
+    if(((propertyAddress)|| (geoLocation)) && (propertyAddress!=address)){// this condition prevent rerenderings,
+      if(!geoLocation){// incase on coOrdinates we get the coOrdinates               
+          setFlyToAddress(propertyAddress)                  
+      }else{//in case there are coOrdinates and address both or only corOrdinate,we get the address relevent to the mapbox
+        setFlyToAddress(geoLocation)
+         propertyAddress=address
+      }  
+    }
     if (flyToAddress === address) setShowOptions(false);
-    if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
-  }, [flyToAddress, address]);
+    if (flyToAddress) setData((prev) => ({ ...prev, address: address }));
+  }, [flyToAddress, address,router.query]);
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
@@ -1295,6 +1307,8 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+
 
   useEffect(() => {
     const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
