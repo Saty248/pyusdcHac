@@ -31,7 +31,6 @@ import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { Web3authContext } from "@/providers/web3authProvider";
-import useAutoLogout from "@/hooks/useAutoLogout";
 import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
 const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
@@ -309,8 +308,10 @@ const ClaimModal = ({
   onClaim,
   claimButtonLoading,
 }) => {
+  const { setAndClearOtherPublicRouteData } = useAuth();
+
   const [isInfoVisible, setIsInfoVisible] = useState(false);
- localStorage.setItem('airSpaceData',JSON.stringify(data));
+
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -319,6 +320,7 @@ const ClaimModal = ({
         name: airSpaceName[0],
       };
     });
+    setAndClearOtherPublicRouteData("airSpaceData", data)
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
@@ -961,14 +963,14 @@ const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
 const FailurePopUp = ({ isVisible, errorMessages }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] w-[650px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
         🛑
       <div>
         {errorMessages?.length > 0 ? (
           <div >
             {errorMessages?.map((error) => (
-              <h1 className="text-black">{error}</h1>
+              <h1 className="text-black text-base">{error}</h1>
             ))}
           </div>
         ) : (
@@ -1127,7 +1129,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user,publicAccessAuth } = useAuth();
+  const { user, redirectIfUnauthenticated } = useAuth();
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
@@ -1300,6 +1302,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     if(parsedInitialAirspaceData?.address?.length>2){
       setData(parsedInitialAirspaceData);
       setFlyToAddress(parsedInitialAirspaceData.address)
+      setAddress(parsedInitialAirspaceData.address)
       setShowClaimModal(true)
     }else{
       console.log('no initial datta')
@@ -1317,7 +1320,9 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   const onClaim = async () => {
     try {
-      publicAccessAuth();
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
+
       setClaimButtonLoading(true);
       const {
         address,
@@ -1336,8 +1341,11 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
       let { latitude, longitude } = coordinates;
       latitude = Number(latitude);
       longitude = Number(longitude);
+      let errors = [];
 
-      if (!name) return;
+      if (!name) {
+        errors.push('Please enter a name for the Airspace');
+      }
 
       const postData = {
         address,
@@ -1363,23 +1371,21 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
         ],
         weekDayRanges,
       };
-      let responseData;
-      let errors = [];
       if (!rent) {
         errors.push('Please ensure to check the rental checkbox before claiming airspace.');
-      }
-      if (!(hasLandingDeck || hasChargingStation || hasStorageHub)) {
-        errors.push('Please select at least one of the following: Landing Deck, Charging Station, or Storage Hub.');
       }
       if (!weekDayRanges.some(item => item.isAvailable)) {
         errors.push('Kindly ensure that at least one day is made available.');
       }
-
-      if(errors.length === 0){
-        responseData = await claimProperty({ postData })
-      }
-      if (!responseData) {
+      if (errors.length > 0) {
         setErrorMessages(errors);
+        setShowFailurePopUp(true);
+        return;
+      }
+
+      const responseData = await claimProperty({ postData })
+
+      if (!responseData) {
         setShowFailurePopUp(true);
       }
       else setShowSuccessPopUp(true);
@@ -1393,7 +1399,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     } finally {
       setClaimButtonLoading(false);
     }
-    removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
+    removePubLicUserDetailsFromLocalStorage('airSpaceData', user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
