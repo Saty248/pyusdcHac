@@ -242,6 +242,7 @@ const DepositAndWithdraw = ({
   activeSection,
   setActiveSection,
   setIsLoading,
+  isLoading,
   setreFetchBal,
   refetchBal,
   setTokenBalance,
@@ -588,12 +589,13 @@ const DepositAndWithdraw = ({
               COMING SOON{" "}
             </div>
           ) : (
-            <div
+            <button
+              disabled={isLoading}
               className="w-full py-2 bg-[#0653EA] cursor-pointer text-white flex items-center justify-center rounded-lg"
               onClick={handleWithdraw}
             >
               withdraw
-            </div>
+            </button>
           )}
         </>
       )}
@@ -841,8 +843,8 @@ const Funds = () => {
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
-            <div className="flex  sm:gap-[50px] flex-wrap ">
-              <div className="flex flex-col gap-5 items-center sm:items-start">
+            <div className="flex  sm:gap-[50px] flex-wrap justify-center">
+              <div className="flex flex-col gap-5 items-center sm:items-start ">
                 <AvailableBalance
                   solbalance={solbalance}
                 />
@@ -851,6 +853,7 @@ const Funds = () => {
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
                   setIsLoading={setIsLoading}
+                  isLoading={isLoading}
                   setreFetchBal={setreFetchBal}
                   refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}

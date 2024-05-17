@@ -16,6 +16,7 @@ import * as Yup from 'yup'
 import UserService from "@/services/UserService";
 import { counterActions } from '@/store/store';
 
+
 const PartOne = ({ setPart }) => {
     return (
         <Fragment>
@@ -120,7 +121,7 @@ const IndividualSignup = () => {
     }, [global?.window]);
 
 
-    const { temporaryToken, signIn } = useAuth();
+    const { temporaryToken, signIn,customRedirect } = useAuth();
 
     const newsletterHandler = () => {
         setNewsletter((prev) => !prev);
@@ -186,7 +187,8 @@ const IndividualSignup = () => {
                 setPhoneNumber('');
                 referralCodeRef.current.value = '';
 
-                router.replace('/homepage/dashboard2');
+               customRedirect()
+            
             } 
         } catch (error) {
             console.log(error);

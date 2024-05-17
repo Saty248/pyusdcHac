@@ -48,7 +48,7 @@ const CorporateSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const { temporaryToken, signIn } = useAuth();
+  const { temporaryToken, signIn,customRedirect } = useAuth();
 
   const newsletterHandler = () => {
     setNewsletter((prev) => !prev);
@@ -118,9 +118,12 @@ const CorporateSignup = () => {
             user: response,
           });
 
-          nameRef.current.value = "";
-          phoneNumberRef.current.value = "";
-          router.replace("/homepage/dashboard2");
+          nameRef.current.value = '';
+          phoneNumberRef.current.value = '';
+         
+         customRedirect()
+
+
         });
       } else {
         swal({

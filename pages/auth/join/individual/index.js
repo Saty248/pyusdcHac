@@ -16,6 +16,7 @@ import logo from '../../../../public/images/logo.svg';
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
 
+
 const IndividualSignup = () => {
   const newsletterRef = useRef();
   const nameRef = useRef();
@@ -61,7 +62,7 @@ const IndividualSignup = () => {
 
   const category = useSelector((state) => state.value.category);
 
-  const { temporaryToken, signIn } = useAuth();
+  const { temporaryToken, signIn,customRedirect } = useAuth();
 
   const newsletterHandler = () => {
     setNewsletter((prev) => !prev);
@@ -146,9 +147,8 @@ const IndividualSignup = () => {
 
           nameRef.current.value = "";
           phoneNumberRef.current.value = "";
-
-          // referralCodeRef.current.value = '';
-          router.replace("/homepage/dashboard2");
+          
+          customRedirect()
         });
       } else {
         swal({
