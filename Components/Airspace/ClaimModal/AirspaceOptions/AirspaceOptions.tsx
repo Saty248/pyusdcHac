@@ -1,15 +1,17 @@
 import React from "react";
+import Checkbox from "./Checkbox";
 
 interface AirspaceOptionsProps {
-  data: any
+  isRentableAirspace:boolean;
+  sell:boolean | undefined;
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ data, setData }) => {
+const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace,sell, setData }) => {
   const handleRentChange = () => {
     setData((prev) => ({
       ...prev,
-      rent: !prev.rent,
+      isRentableAirspace: !prev.isRentableAirspace,
       sell: false,
     }));
   };
@@ -30,12 +32,12 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ data, setData }) => {
       <div className="flex items-center gap-[7px]">
         <Checkbox
           label="Rent"
-          checked={data.rent}
+          checked={isRentableAirspace}
           onChange={handleRentChange}
         />
         <Checkbox
           label="Sell"
-          checked={data.sell}
+          checked={sell}
           disabled
           onChange={handleSellChange}
         />
@@ -44,26 +46,5 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ data, setData }) => {
   );
 };
 
-interface CheckboxProps {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: () => void;
-}
-
-const Checkbox: React.FC<CheckboxProps> = ({ label, checked, disabled, onChange }) => {
-  return (
-    <>
-      <input
-        className="h-[18px] w-[18px] cursor-pointer"
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={onChange}
-      />
-      <label htmlFor={label}>{label}</label>
-    </>
-  );
-};
 
 export default AirspaceOptions;

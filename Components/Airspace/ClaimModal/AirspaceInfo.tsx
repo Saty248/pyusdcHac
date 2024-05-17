@@ -1,14 +1,15 @@
 import React from "react";
-import { LocationPointIcon } from "../Icons";
+import { LocationPointIcon } from "@/Components/Icons";
 
 interface AirspaceInfoProps {
-  data: any
+  address:string;
+  title:string
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ data, setData }) => {
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData((prev) => ({ ...prev, name: e.target.value }));
+const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ address,title, setData }) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setData((prev) => ({ ...prev, title: e.target.value }));
   };
 
   return (
@@ -17,20 +18,20 @@ const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ data, setData }) => {
         <div className="w-6 h-6">
           <LocationPointIcon />
         </div>
-        <p className="font-normal text-[#222222] text-[14px] flex-1">{data.address}</p>
+        <p className="font-normal text-[#222222] text-[14px] flex-1">{address}</p>
       </div>
       <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
-        <label htmlFor="name">
+        <label htmlFor="title">
           Name of airspace<span className="text-[#E04F64]">*</span>
         </label>
         <input
-          value={data.name}
-          onChange={handleNameChange}
+          value={title}
+          onChange={handleTitleChange}
           className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
           style={{ border: "1px solid #87878D" }}
           type="text"
-          name="name"
-          id="name"
+          name="title"
+          id="title"
           autoComplete="off"
         />
       </div>

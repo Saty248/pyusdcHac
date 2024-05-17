@@ -1,19 +1,17 @@
 import React, { useState } from "react";
-import { InfoIcon, MagnifyingGlassIcon } from "../Icons";
-
-interface Address {
-  id: string;
-  place_name: string;
-}
+import { InfoIcon } from "../../Icons";
+import SearchInput from "./SearchInput";
 
 interface ExplorerProps {
-  address: string;
-  setAddress: React.Dispatch<React.SetStateAction<string>>;
-  addresses: Address[];
+  address: string; 
+  setAddress: React.Dispatch<React.SetStateAction<string>>; 
+  addresses: { id: string; place_name: string; }[];
   showOptions: boolean;
-  handleSelectAddress: (address: string) => void;
-  onClaimAirspace: () => void;
-  flyToAddress: boolean;
+  setFlyToAddress: React.Dispatch<React.SetStateAction<string>>;
+  setShowOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  onClaimAirspace: () => void; 
+  flyToAddress: string; 
+
 }
 
 const Explorer: React.FC<ExplorerProps> = ({
@@ -21,9 +19,10 @@ const Explorer: React.FC<ExplorerProps> = ({
   setAddress,
   addresses,
   showOptions,
-  handleSelectAddress,
+  setFlyToAddress,
+  setShowOptions,
   onClaimAirspace,
-  flyToAddress,
+  flyToAddress
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState<boolean>(false);
 
@@ -52,44 +51,16 @@ const Explorer: React.FC<ExplorerProps> = ({
         Ready to claim your airspace? No registered airspace yet, but exciting
         times ahead!
       </p>
-      <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
-        style={{ border: "1px solid #87878D" }}
-      >
-        <input
-          autoComplete="off"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          type="text"
-          name="searchAirspaces"
-          id="searchAirspaces"
-          placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
-        />
-        <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
-          <MagnifyingGlassIcon />
-        </div>
-        {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
-            {addresses.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  value={item.place_name}
-                  onClick={() => handleSelectAddress(item.place_name)}
-                  className="w-full p-5 text-left text-[#222222]"
-                  style={{
-                    borderTop: "0.2px solid #222222",
-                  }}
-                >
-                  {item.place_name}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-      {flyToAddress && (
+      <SearchInput
+            address={address}
+            setAddress={setAddress}
+            showOptions={showOptions}
+            addresses={addresses}
+            setFlyToAddress={setFlyToAddress}
+            setShowOptions={setShowOptions}
+          />
+
+      {flyToAddress && flyToAddress !== "" && (
         <div
           onClick={onClaimAirspace}
           className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"

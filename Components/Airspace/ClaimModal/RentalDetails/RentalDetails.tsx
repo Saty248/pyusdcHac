@@ -4,13 +4,18 @@ import VariableFeeRentalRangesSelect from "./VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./TimeZoneSelect";
 import WeekDayRangesForm from "./WeekDayRangesForm";
 import FacilityFeaturesSelect from "./FacilityFeaturesSelect";
-
+import { WeekDayRange } from "@/types";
 interface RentalDetailsProps {
-  data: any
+  transitFee:string;
+  timezone:string;
+  weekDayRanges:WeekDayRange[];
+  hasLandingDeck:boolean;
+  hasChargingStation:boolean;
+  hasStorageHub:boolean;
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const RentalDetails: React.FC<RentalDetailsProps> = ({ data, setData }) => {
+  const RentalDetails: React.FC<RentalDetailsProps> = ({ transitFee, timezone,weekDayRanges,hasLandingDeck,hasChargingStation,hasStorageHub,setData }) => {
   return (
     <Fragment>
       <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem]">
@@ -26,7 +31,7 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({ data, setData }) => {
       <div className="md:flex items-center justify-between gap-[15px] mt-4">
         <div className="flex-1">
           <VariableFeeRentalRangesSelect
-            fee={data.transitFee}
+            fee={transitFee}
             setFee={(fee) =>
               setData((prev) => ({ ...prev, transitFee: "" + fee }))
             }
@@ -34,7 +39,7 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({ data, setData }) => {
         </div>
         <div className="flex-1 mt-4 md:mt-0">
           <TimeZoneSelect
-            timeZone={data.timezone}
+            timeZone={timezone}
             setTimeZone={(timezone) => setData((prev) => ({ ...prev, timezone }))}
           />
         </div>
@@ -44,14 +49,14 @@ const RentalDetails: React.FC<RentalDetailsProps> = ({ data, setData }) => {
           Select extra features your facility provides
           <span className="text-[#E04F64]">*</span>
         </p>
-        <FacilityFeaturesSelect data={data} setData={setData} />
+        <FacilityFeaturesSelect hasLandingDeck={hasLandingDeck} hasChargingStation={hasChargingStation} hasStorageHub={hasStorageHub} setData={setData} />
       </div>
       <div className="flex flex-col gap-[15px] mt-2">
         <p>
           Availability<span className="text-[#E04F64]">*</span>
         </p>
         <WeekDayRangesForm
-          weekDayRanges={data.weekDayRanges}
+          weekDayRanges={weekDayRanges}
           setWeekDayRanges={(weekDayRanges) =>
             setData((prev) => ({ ...prev, weekDayRanges }))
           }

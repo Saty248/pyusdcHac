@@ -33,6 +33,7 @@ const PortfolioList = ({ title, airspacesList, selectAirspace, address }) => {
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber + 1);
     }
   };
+  useEffect(()=>{console.log(unverifiedAirspaces,"unver")},[unverifiedAirspaces])
 
   const handlePrevPage = () => {
     if (activeTab === "Verified Airspaces") {

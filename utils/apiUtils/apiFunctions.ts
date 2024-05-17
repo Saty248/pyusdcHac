@@ -1,11 +1,9 @@
 import axios from "axios";
 import  { Map, Marker } from "mapbox-gl";
 import { Dispatch, SetStateAction } from "react";
-// import { Coordinates } from "@/types/RemoteIdentifierDrone";
 import {Coordinates} from "@/types/index"
 export const flyToUserIpAddress = async (map: Map| null): Promise<void> => {
   if (!map) return;
-console.log(process.env.NEXT_PUBLIC_IPGEOLOCATION,'here checker 24')
   try {
     const ipResponse = await axios.get<{ ip: string }>("https://api.ipify.org/?format=json");
     const ipAddress: string = ipResponse.data.ip;

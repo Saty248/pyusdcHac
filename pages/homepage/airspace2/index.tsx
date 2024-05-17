@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Map, Marker } from "mapbox-gl";
 import ZoomControllers from "@/Components/ZoomControllers";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
@@ -9,43 +9,43 @@ import useAuth from "@/hooks/useAuth";
 import { useMobile } from "@/hooks/useMobile";
 import Head from "next/head";
 import PropertiesService from "@/services/PropertiesService";
-import { toast } from "react-toastify";
-import ClaimModal from "@/Components/Airspace/ClaimModal";
-import Explorer from "@/Components/Airspace/Explorer";
-import ExplorerMobile from "@/Components/Airspace/ExplorerMobile";
+import ClaimModal from "@/Components/Airspace/ClaimModal/ClaimModal";
+import Explorer from "@/Components/Airspace/Explorer/Explorer";
+import ExplorerMobile from "@/Components/Airspace/Explorer/ExplorerMobile";
 import Slider from "@/Components/Airspace/Slider";
 import HowToModal from "@/Components/Airspace/HowToModal";
-import SuccessModal from "@/Components/Airspace/SuccessModal";
-import PopUp from "@/Components/Airspace/PopUp";
+import MobileSuccessModal from "@/Components/Airspace/MobileSuccessModal";
+import PopUp from "@/Components/Airspace/SuccessPopUp";
 import FailurePopUp from "@/Components/Airspace/FailurePopUp";
 import {
   flyToUserIpAddress,
   getAddresses,
   goToAddress,
 } from "@/utils/apiUtils/apiFunctions";
-import { Coordinates } from "@/types";
+import { Coordinates, PropertyData } from "@/types";
 import { claimAirspaceProperty } from "@/utils/propertyUtils/propertyUtils";
 import MobileMapSection from "@/Components/Airspace/MobileMapSection";
 
 const Airspaces = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [claimButtonLoading, setClaimButtonLoading] = useState(false);
-  const [map, setMap] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState(false);
-  const [showHowToModal, setShowHowToModal] = useState(false);
-  const [address, setAddress] = useState("");
+  const [showMobileMap, setShowMobileMap] = useState<boolean>(false);
+  const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
+  const [address, setAddress] = useState<string>("");
   const [addressData, setAddressData] = useState<any>();
-  const [addresses, setAddresses] = useState([]);
-  const [flyToAddress, setFlyToAddress] = useState("");
+  const [addresses, setAddresses] = useState<
+    { id: string; place_name: string }[]
+  >([]);
+  const [flyToAddress, setFlyToAddress] = useState<string>("");
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-  const [marker, setMarker] = useState();
+  const [marker, setMarker] = useState<Marker | null>(null);
   const defaultData = {
     address: flyToAddress,
     title: "",
     isRentableAirspace: true,
     sell: false,
-    hasPlanningPermission: null,
+    isActive: null,
     hasChargingStation: false,
     hasLandingDeck: false,
     hasStorageHub: false,
@@ -64,21 +64,17 @@ const Airspaces = () => {
       { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
     ],
   };
-  // showing
-  const [showOptions, setShowOptions] = useState(false);
-  const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
-  const [showFailurePopUp, setShowFailurePopUp] = useState(false);
-  const [showClaimModal, setShowClaimModal] = useState(false);
-  const [data, setData] = useState({ ...defaultData });
-  // database
+  const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState<boolean>(false);
+  const [showFailurePopUp, setShowFailurePopUp] = useState<boolean>(false);
+  const [showClaimModal, setShowClaimModal] = useState<boolean>(false);
+  const [data, setData] = useState<PropertyData>({ ...defaultData });
   const { user } = useAuth();
   const { claimProperty } = PropertiesService();
   useEffect(() => {
     if (map) return;
-
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
-
       const newMap = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
@@ -88,9 +84,7 @@ const Airspaces = () => {
           [-73.9876, 40.7661],
           [-73.9397, 40.8002],
         ],
-        // attributionControl: false
       });
-
       newMap.on("load", function () {
         newMap.addLayer({
           id: "maine",
@@ -111,7 +105,6 @@ const Airspaces = () => {
           },
         });
       });
-
       setMap(newMap);
       flyToUserIpAddress(newMap);
     };
@@ -153,7 +146,6 @@ const Airspaces = () => {
     const timeoutId = setTimeout(() => {
       setShowSuccessPopUp(false);
     }, 4000);
-
     return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
@@ -162,33 +154,10 @@ const Airspaces = () => {
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
     }, 4000);
-
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
-  //will take out later
 
-  const handleSelectAddress = (placeName) => {
-    setAddress(placeName);
-    setFlyToAddress(placeName);
-    setShowOptions(false);
-  };
-
-  const onClaim = async () => {
-    await claimAirspaceProperty(
-      claimProperty,
-      data,
-      coordinates,
-      user,
-      setShowFailurePopUp,
-      setShowSuccessPopUp,
-      setShowClaimModal,
-      setIsLoading,
-      setData,
-      setClaimButtonLoading,
-      toast,
-      defaultData
-    );
-  };
+  
   return (
     <Fragment>
       <Head>
@@ -204,16 +173,12 @@ const Airspaces = () => {
           {showMobileMap && isMobile && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
-              flyToAddress={flyToAddress}
               address={address}
               setAddress={setAddress}
               addresses={addresses}
               showOptions={showOptions}
-              handleSelectAddress={handleSelectAddress}
-              onClaimAirspace={() => {
-                setShowClaimModal(true);
-                setIsLoading(true);
-              }}
+              setFlyToAddress={setFlyToAddress}
+              setShowOptions={setShowOptions}
             />
           )}
           {showHowToModal && (
@@ -230,6 +195,23 @@ const Airspaces = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
+            {showClaimModal && (
+              <ClaimModal
+                onCloseModal={() => {
+                  setShowClaimModal(false);
+                  setIsLoading(false);
+                }}
+                data={data}
+                setData={setData}
+                coordinates={coordinates}
+                defaultData={defaultData}
+                setIsLoading={setIsLoading}
+                setShowClaimModal={setShowClaimModal}
+                setShowFailurePopUp={setShowFailurePopUp}
+                setShowSuccessPopUp={setShowSuccessPopUp}
+                user={user}
+              />
+            )}
             {isMobile && showMobileMap && flyToAddress && (
               <div
                 onClick={() => {
@@ -243,20 +225,8 @@ const Airspaces = () => {
             )}
             {isMobile && (
               <Fragment>
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => {
-                      setShowClaimModal(false);
-                      setIsLoading(false);
-                    }}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
-                  />
-                )}
                 {(showSuccessPopUp || showFailurePopUp) && (
-                  <SuccessModal
+                  <MobileSuccessModal
                     isSuccess={showSuccessPopUp}
                     closePopUp={() => {
                       showFailurePopUp
@@ -275,31 +245,23 @@ const Airspaces = () => {
                   setAddress={setAddress}
                   addresses={addresses}
                   showOptions={showOptions}
-                  handleSelectAddress={handleSelectAddress}
                   onClaimAirspace={() => {
                     setShowClaimModal(true);
                     setIsLoading(true);
                   }}
+                  setFlyToAddress={setFlyToAddress}
+                  setShowOptions={setShowOptions}
                 />
                 <Slider />
                 <PopUp isVisible={showSuccessPopUp} />
                 <FailurePopUp isVisible={showFailurePopUp} />
-
-                {showClaimModal && (
-                  <ClaimModal
-                    onCloseModal={() => {
-                      setShowClaimModal(false);
-                      setIsLoading(false);
-                    }}
-                    data={data}
-                    setData={setData}
-                    onClaim={onClaim}
-                    claimButtonLoading={claimButtonLoading}
-                  />
-                )}
               </div>
             )}
-            <MobileMapSection setShowHowToModal={setShowHowToModal}/>
+            <MobileMapSection
+              setShowHowToModal={setShowHowToModal}
+              setShowMobileMap={setShowMobileMap}
+              showMobileMap={showMobileMap}
+            />
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>

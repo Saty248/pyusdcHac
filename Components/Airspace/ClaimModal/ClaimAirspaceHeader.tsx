@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeftIcon, CloseIcon, InfoIcon } from "../Icons";
+import { ArrowLeftIcon, CloseIcon, InfoIcon } from "@/Components/Icons";
 
 interface ClaimAirspaceHeaderProps {
   onCloseModal: () => void;

@@ -1,17 +1,36 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { InfoIcon } from "../Icons";
+import { InfoIcon } from "../../Icons";
 
 interface SellingDetailsProps {
-  data: any
-  handleSellPrice: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  sellingPrice: string | undefined;
+  setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const SellingDetails: React.FC<SellingDetailsProps> = ({
-  data,
-  handleSellPrice,
+  sellingPrice,
+  setData
 }) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const handleSellPrice = (e) => {
+    let inputVal = e.target.value;
+    let parsedVal = parseFloat(inputVal);
+    if (parsedVal >= 0 && !Number.isNaN(parsedVal)) {
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: inputVal,
+        };
+      });
+    } else {
+      setData((prev) => {
+        return {
+          ...prev,
+          sellingPrice: "0",
+        };
+      });
+    }
+  };
 
   return (
     <>
@@ -55,7 +74,7 @@ const SellingDetails: React.FC<SellingDetailsProps> = ({
             autoComplete="off"
             type="number"
             min={0}
-            value={data.sellingPrice}
+            value={sellingPrice}
             onChange={handleSellPrice}
             name="sellingPrice"
             id="sellingPrice"
