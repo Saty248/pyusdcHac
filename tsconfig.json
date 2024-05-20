@@ -22,6 +22,6 @@
     ],
     "strictNullChecks": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "Components/ZoomControllers/index.jsx", "Components/LoadingButton/LoadingButton.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "Components/ZoomControllers/index.jsx", "Components/LoadingButton/LoadingButton.jsx", "pages/homepage/airspace2/index.js"],
   "exclude": ["node_modules"]
 }

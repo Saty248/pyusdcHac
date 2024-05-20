@@ -35,7 +35,7 @@ interface AddressData {
 export const goToAddress = async (
   flyToAddress: string,
   setCoordinates: React.Dispatch<Coordinates | null>,
-  setAddressData: React.Dispatch<React.SetStateAction<AddressData>>,
+  setAddressData: React.Dispatch<React.SetStateAction<AddressData | null | undefined>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setMarker: React.Dispatch<React.SetStateAction<Marker | null>>,
   map: Map | null,
