@@ -1,10 +1,11 @@
 import React from "react";
 import Checkbox from "./Checkbox";
+import { PropertyData } from "@/types";
 
 interface AirspaceOptionsProps {
   isRentableAirspace:boolean;
   sell:boolean | undefined;
-  setData: React.Dispatch<React.SetStateAction<any>>;
+  setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
 const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace,sell, setData }) => {
@@ -37,7 +38,7 @@ const AirspaceOptions: React.FC<AirspaceOptionsProps> = ({ isRentableAirspace,se
         />
         <Checkbox
           label="Sell"
-          checked={sell}
+          checked={sell ? sell : false}
           disabled
           onChange={handleSellChange}
         />

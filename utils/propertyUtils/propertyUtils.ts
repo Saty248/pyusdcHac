@@ -1,7 +1,7 @@
 import { PropertyData, Coordinates, User } from "@/types";
+import { toast } from "react-toastify";
 
-
-export const claimAirspaceProperty = async (claimProperty: ( postData:any ) => Promise<any>, data: PropertyData, coordinates: Coordinates | null, user: User, setShowFailurePopUp: (value: boolean) => void, setShowSuccessPopUp: (value: boolean) => void, setShowClaimModal: (value: boolean) => void, setIsLoading: (value: boolean) => void, setData: (data: any) => void, setClaimButtonLoading: (value: boolean) => void, toast: any, defaultData: any) => {
+export const claimAirspaceProperty = async (claimProperty: ( postData:any ) => Promise<any>, data: PropertyData, coordinates: Coordinates | null, user: User, setShowFailurePopUp: (value: boolean) => void, setShowSuccessPopUp: (value: boolean) => void, setShowClaimModal: (value: boolean) => void, setIsLoading: (value: boolean) => void, setData: (data: PropertyData) => void, setClaimButtonLoading: (value: boolean) => void, defaultData: PropertyData) => {
     try {
         const {
             address,

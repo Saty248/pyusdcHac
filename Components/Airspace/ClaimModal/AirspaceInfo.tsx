@@ -1,10 +1,11 @@
 import React from "react";
 import { LocationPointIcon } from "@/Components/Icons";
+import { PropertyData } from "@/types";
 
 interface AirspaceInfoProps {
   address:string;
   title:string
-  setData: React.Dispatch<React.SetStateAction<any>>;
+  setData: React.Dispatch<React.SetStateAction<PropertyData>>;
 }
 
 const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ address,title, setData }) => {
@@ -14,7 +15,7 @@ const AirspaceInfo: React.FC<AirspaceInfoProps> = ({ address,title, setData }) =
 
   return (
     <>
-      <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg" style={{ border: "1px solid #4285F4" }}>
+      <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-[#4285F4]" >
         <div className="w-6 h-6">
           <LocationPointIcon />
         </div>

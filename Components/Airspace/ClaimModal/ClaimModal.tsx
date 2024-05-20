@@ -9,7 +9,6 @@ import ClaimAirspaceHeader from "./ClaimAirspaceHeader";
 import { claimAirspaceProperty } from "@/utils/propertyUtils/propertyUtils";
 import PropertiesService from "@/services/PropertiesService";
 import { Coordinates,User,PropertyData } from "@/types";
-import { toast } from "react-toastify";
 
 interface ClaimModalProps {
   onCloseModal: () => void;
@@ -59,7 +58,6 @@ const ClaimModal: React.FC<ClaimModalProps> = ({
       setIsLoading,
       setData,
       setClaimButtonLoading,
-      toast,
       defaultData
     );
   };
