@@ -12,7 +12,7 @@ import UserService from '../../services/UserService';
 import { toast } from 'react-toastify';
 import AccountVerification from '../../Components/MyAccount/AccountVerification';
 import PersonalInformation from '../../Components/MyAccount/PersonalInformation';
-import { UserType, PersonalInformationType } from '../../types';
+import { PersonalInformationType } from '../../types';
 import React from 'react';
 
 const Account  = () => {

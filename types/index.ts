@@ -14,3 +14,10 @@ export interface PersonalInformationType {
     newsletter: boolean;
     KYCStatusId: number;
 }
+
+export interface Web3authContextType {
+    web3auth: any;
+    setWeb3auth: React.Dispatch<React.SetStateAction<any>>;
+    provider: any;
+    setProvider: React.Dispatch<React.SetStateAction<any>>;
+  }

@@ -2,8 +2,9 @@
 import store from "@/store/store";
 import React, { createContext, useState } from "react";
 import { Provider } from "react-redux";
+import { Web3authContextType } from '../types';
 
-export const Web3authContext = createContext<any>(null);
+export const Web3authContext = createContext<Web3authContextType | null>(null);
 
 export const Web3authProvider = ({ children }) => {
   const [web3auth, setWeb3auth] = useState(null);

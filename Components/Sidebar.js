@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 import logo from "../public/images/logo.svg";
 import logoNoChars from "../public/images/logo-no-chars.png";
