@@ -1189,8 +1189,11 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   //gets address suggestions 
   useEffect(() => {
+    const {propertyAddress,geoLocation}=router.query;
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
+    
+    if (propertyAddress,geoLocation) return setShowOptions(false); //to doesnt show address suggestions when address is already there in url
 
     let timeoutId;
 
@@ -1281,15 +1284,18 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   //adds address for the new address
   useEffect(() => {
     let {propertyAddress,geoLocation}=router.query;
-
-    if(((propertyAddress)|| (geoLocation)) && (propertyAddress!=address)){// this condition prevent rerenderings,
-      if(!geoLocation){// incase on coOrdinates we get the coOrdinates               
-          setFlyToAddress(propertyAddress)                  
-      }else{//in case there are coOrdinates and address both or only corOrdinate,we get the address relevent to the mapbox
-        setFlyToAddress(geoLocation)
-         propertyAddress=address
-      }  
+    
+    if(propertyAddress!=address){// this condition prevent rerenderings,
+      if(((propertyAddress && propertyAddress.length>2)|| (geoLocation && geoLocation.length>2))){
+        if(geoLocation){   // prioritizing the geolocation over Property Address as it is more consistant             
+            setFlyToAddress(geoLocation)
+           propertyAddress=address                  
+        }else{
+          setFlyToAddress(propertyAddress)
+        }  
+      }
     }
+
     if (flyToAddress === address) setShowOptions(false);
     if (flyToAddress) setData((prev) => ({ ...prev, address: address }));
   }, [flyToAddress, address,router.query]);
