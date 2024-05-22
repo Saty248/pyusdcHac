@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import logo from "../public/images/logo.svg";
 import logoNoChars from "../public/images/logo-no-chars.png";
@@ -35,7 +35,7 @@ const Sidebar = () => {
     onClick,
     numberOfUnseenNotifications,
   }) => {
-    const isActive = href ? asPath.includes(href) : false;
+    const isActive = href ? asPath?.includes(href) : false;
 
     if (onClick !== undefined) {
       return (
@@ -98,7 +98,7 @@ const Sidebar = () => {
     onClick,
     numberOfUnseenNotifications,
   }) => {
-    const isActive = asPath.includes(href);
+    const isActive = asPath?.includes(href);
 
     if (onClick !== undefined) {
       return (
