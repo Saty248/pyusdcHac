@@ -44,7 +44,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   const [finalAns, setFinalAns] = useState<
-    { status: string; message: string; tokenId?: string } | null | undefined
+    { status: string; message: string | undefined; tokenId?: string } | null | undefined
   >();
   const { user } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =

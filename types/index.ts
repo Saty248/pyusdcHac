@@ -92,3 +92,14 @@ export type Bounds = {
         lng: number;
     }
 }
+export type RentTokenResponse = {
+    status: string;
+    message: string
+    statusCode?: number;
+    errorMessage?:string;
+    data?:{
+        status?:string;
+        message?:string;
+        tokenId?:string
+    }
+}

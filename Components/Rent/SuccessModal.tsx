@@ -8,7 +8,7 @@ import { PropertyData } from "@/types";
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns:
-    | { status: string; message: string; tokenId?: string }
+    | { status: string; message: string | undefined; tokenId?: string }
     | null
     | undefined;
   rentData: PropertyData | undefined | null;
