@@ -599,7 +599,10 @@ const DepositAndWithdraw = ({
           )}
         </>
       )}
-      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
+
+      {activeSection === 0 && (
+        <>
+        <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
         <div className="w-6 h-6">
           <WarningIcon />
         </div>
@@ -641,6 +644,9 @@ const DepositAndWithdraw = ({
         </div>
       </div>
         }
+        </>
+      )}
+      
     </div>
   );
 };
