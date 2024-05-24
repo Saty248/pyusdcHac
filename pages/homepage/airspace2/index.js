@@ -1212,7 +1212,7 @@ const Airspaces = () => {
         setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(err);
+        console.error(error);
       }
     };
 

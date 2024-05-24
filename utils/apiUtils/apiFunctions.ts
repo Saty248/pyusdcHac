@@ -27,9 +27,15 @@ export const flyToUserIpAddress = async (map: Map | null): Promise<void> => {
 
 
 interface AddressData {
+<<<<<<< HEAD
     mapbox_id: string;
     short_code: string;
     wikidata: string;
+=======
+  mapbox_id: string;
+  short_code: string;
+  wikidata: string;
+>>>>>>> 0b29de1cbc0d3facd9f19259807c81f5d651165f
 }
 
 
