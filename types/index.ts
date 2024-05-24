@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type Coordinates = {
     longitude: number;
     latitude: number;
@@ -14,6 +16,25 @@ export type WeekDayRange = {
     toTime: number;
     weekDayId: number;
 };
+
+
+export interface TransactionHistoryProps {
+  transactions: Transaction[];
+  user: User;
+}
+
+
+export interface Transaction {
+    token: boolean;
+    timestamp: number;
+    id: string;
+    date: string;
+    transHash: string;
+    hash: string;
+    destination: string;
+    amount: number;
+    status: string;
+  }
 
 export type layers = {
     createdAt?: Date;
@@ -128,3 +149,52 @@ export interface Web3authContextType {
     provider: any;
     setProvider: React.Dispatch<React.SetStateAction<any>>;
   }
+ 
+ export interface AvailableBalanceProps {
+    solbalance: number;
+  }
+  
+  export interface UserUSDWalletBalance {
+    isLoading: boolean;
+    amount: number;
+  }
+  
+  export interface RootState {
+    value: {
+      userUSDWalletBalance: UserUSDWalletBalance;
+    };
+  }
+  
+
+ export interface DepositAndWithdrawProps {
+  walletId: string;
+  activeSection: number;
+  setActiveSection: Dispatch<SetStateAction<number>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
+  setreFetchBal: Dispatch<SetStateAction<boolean>>;
+  refetchBal: boolean;
+  setTokenBalance: Dispatch<SetStateAction<number>>;
+  tokenBalance: number;
+  solbalance: number;
+}
+
+ export interface AccordionProps {
+    selectedMethod: { icon: string; name: string };
+    setSelectedMethod: Dispatch<SetStateAction<{ icon: string; name: string }>>;
+  }
+  
+  export interface PaymentMethod {
+    icon: string;
+    name: string;
+  }
+
+export interface TooltipProps {
+  isCopied: boolean;
+}
+
+export interface ConnectionConfig {
+    rpcTarget: string;
+  }
+
+  
