@@ -27,7 +27,7 @@ const PropertiesService = () => {
     }
   }
 
-  const findPropertiesByCordinates = async ({ postData })=>{
+  const findPropertiesByCoordinates = async ({ postData })=>{
     try {
       const response = await postRequest({
         uri: `/public/properties/`,
@@ -78,7 +78,7 @@ const PropertiesService = () => {
 
 
   return { 
-    findPropertiesByCordinates,
+    findPropertiesByCoordinates,
     getPropertyById,
     claimProperty,
     updateClaimedProperty,
