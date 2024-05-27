@@ -1,12 +1,14 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
 import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Icons";
+import ZoomControllers from "@/Components/ZoomControllers";
 import Sidebar from "@/Components/Sidebar";
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
+
 import {
   HelpQuestionIcon,
   ArrowLeftIcon,
@@ -27,8 +29,10 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
-
-const SuccessModal = ({ closePopUp, isSuccess}) => {
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
+const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
   const handleButtonClick = () => {
     router.push("/homepage/referral");
@@ -57,10 +61,21 @@ const SuccessModal = ({ closePopUp, isSuccess}) => {
         </div>
         ):(
           <div className="mt-20">
-            <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
-                Claim Failed! Please review your submission and ensure all information
-                is correct.
-            </h1>
+            {
+              errorMessages?.length > 0 ? 
+                <>
+                  {errorMessages?.map((error)=>(
+                    <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                      {error}
+                    </h1>
+                  ))}
+                </>
+              :<div className="border-2">
+              <h1 className=" px-6 font-[500]  text-xl text-center text-[#FFFFFF] font-poppins">
+                Claim Failed! Please review your submission and ensure all information is correct.
+              </h1>
+              </div>
+            }
           </div>
         )}
             
@@ -293,7 +308,10 @@ const ClaimModal = ({
   onClaim,
   claimButtonLoading,
 }) => {
+  const { setAndClearOtherPublicRouteData } = useAuth();
+
   const [isInfoVisible, setIsInfoVisible] = useState(false);
+
   useEffect(() => {
     let airSpaceName = data.address.split(",");
     setData((prev) => {
@@ -302,6 +320,7 @@ const ClaimModal = ({
         name: airSpaceName[0],
       };
     });
+    setAndClearOtherPublicRouteData("airSpaceData", data)
   }, []);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
@@ -323,7 +342,7 @@ const ClaimModal = ({
     }
   };
   return (
-    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-50 flex flex-col gap-[15px] ">
+    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px]      md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -336,8 +355,16 @@ const ClaimModal = ({
             <h2 className="text-[#222222] text-center font-medium text-xl">
               Claim Airspace
             </h2>
-            <div className="hidden md:block w-[20px] h-[20px] ">
+            <div onClick={() => setIsInfoVisible((prev) => !prev)}
+             className="hidden md:block w-[20px] h-[20px] relative tems-center justify-center">
               <InfoIcon />
+                  {isInfoVisible && (
+                    <div className="absolute -top-4 left-6 w-[189px] bg-[#CCE3FC] rounded-[4px] p-[12px] font-normal text-[10px] italic">
+                      Note that we store your data securely with advanced encryption and
+                      strict authentication measures to ensure utmost privacy and
+                      protection.
+                    </div>
+                  )}
             </div>
           </div>
 
@@ -677,35 +704,14 @@ const ClaimModal = ({
             >
               Cancel
             </div>
-            <button
-              onClick={onClaim}
-              className=" w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer "
-            >
-              {claimButtonLoading ? (
-                <svg
-                  className="animate-spin -ml-1 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                "Claim Airspace"
-              )}
-            </button>
+            
+            <div className="w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
+              <div className="flex justify-center items-center w-full ">
+                <LoadingButton onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
+                  Claim Airspace
+                </LoadingButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -936,32 +942,47 @@ const Slider = () => {
   );
 };
 
-const PopUp = ({ isVisible }) => {
+const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-3.5 ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5`}
     >
       <div className="flex items-center justify-center w-[18px] h-[18px]">
         <SuccessIcon />
       </div>
-      Congratulations on claiming your piece of the sky successfully!
+        <div className="text-light-green text-base gap-3">
+        Congratulations on claiming your piece of the sky successfully!
+        </div>
+       <div className="w-4 h-5 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
+         <CloseIcon  />
+        </div>
     </div>
   );
 };
 
-const FailurePopUp = ({ isVisible }) => {
+const FailurePopUp = ({ isVisible, errorMessages }) => {
   return (
     <div
-      className={` z-20 absolute top-[14px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
+      className={` z-20 absolute top-[14px] w-[500px] ${isVisible ? "right-0" : "-right-[100%]"} bg-white p-5 flex items-center gap-5 duration-500`}
     >
-      {/* <div className='flex items-center justify-center w-[18px] h-[18px]'>
-					<FailureIcon />
-				</div> */}
-      🛑 Claim Failed! Please review your submission and ensure all information
-      is correct.
+        🛑
+      <div>
+        {errorMessages?.length > 0 ? (
+          <div >
+            {errorMessages?.map((error) => (
+              <h1 className="text-black text-base">{error}</h1>
+            ))}
+          </div>
+        ) : (
+          <div> Claim Failed! Please review your submission and ensure all
+            information is correct.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
 
 const HowToModal = ({ goBack }) => {
   const [section, setSection] = useState(0);
@@ -1054,7 +1075,9 @@ const HowToModal = ({ goBack }) => {
   );
 };
 
-const Airspaces = () => {
+
+const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
+
   const [isLoading, setIsLoading] = useState(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState(false);
@@ -1100,11 +1123,17 @@ const Airspaces = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
   const [showFailurePopUp, setShowFailurePopUp] = useState(false);
+  const [errorMessages,setErrorMessages] = useState([]);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [data, setData] = useState({ ...defaultData });
   // database
   const { claimProperty } = PropertiesService();
-  const { user } = useAuth();
+
+  const { user, redirectIfUnauthenticated } = useAuth();
+  const router = useRouter();
+  const { web3auth } = useContext(Web3authContext);
+
+// new map is created if not rendered
 
   useEffect(() => {
     if (map) return;
@@ -1146,11 +1175,19 @@ const Airspaces = () => {
       });
 
       setMap(newMap);
-      flyToUserIpAddress(newMap);
+
+      //doesnt move the map to iplocation when user persisted initial state in 
+      let inintialAirSpaceData=localStorage.getItem('airSpaceData')
+      if(inintialAirSpaceData?.length<2){
+        flyToUserIpAddress(newMap);
+      }
+      
     };
     createMap();
   }, []);
 
+
+  //gets address suggestions 
   useEffect(() => {
     if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
@@ -1175,7 +1212,7 @@ const Airspaces = () => {
             setAddresses([]);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }, 500);
     };
@@ -1185,6 +1222,7 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [address]);
 
+  //flies to the new address
   useEffect(() => {
     if (!flyToAddress) return;
 
@@ -1238,6 +1276,7 @@ const Airspaces = () => {
     goToAddress();
   }, [flyToAddress, map]);
 
+  //adds address for the new address
   useEffect(() => {
     if (flyToAddress === address) setShowOptions(false);
     if (flyToAddress) setData((prev) => ({ ...prev, address: flyToAddress }));
@@ -1245,21 +1284,33 @@ const Airspaces = () => {
 
   useEffect(() => {
     if (!showSuccessPopUp) return;
-    const timeoutId = setTimeout(() => {
-      setShowSuccessPopUp(false);
-    }, 4000);
-
-    return () => clearTimeout(timeoutId);
   }, [showSuccessPopUp]);
 
   useEffect(() => {
     if (!showFailurePopUp) return;
     const timeoutId = setTimeout(() => {
       setShowFailurePopUp(false);
-    }, 4000);
+      setErrorMessages([]);
+    }, 6000);
 
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
+
+  useEffect(() => {
+    const inintialAirSpaceDataString=localStorage.getItem('airSpaceData')
+    const parsedInitialAirspaceData=JSON.parse(inintialAirSpaceDataString);
+    if(parsedInitialAirspaceData?.address?.length>2){
+      setData(parsedInitialAirspaceData);
+      setFlyToAddress(parsedInitialAirspaceData.address)
+      setAddress(parsedInitialAirspaceData.address)
+      setShowClaimModal(true)
+    }else{
+      console.log('no initial datta')
+    }
+  
+  
+  }, [])
+
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -1269,6 +1320,9 @@ const Airspaces = () => {
 
   const onClaim = async () => {
     try {
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
+
       setClaimButtonLoading(true);
       const {
         address,
@@ -1287,8 +1341,11 @@ const Airspaces = () => {
       let { latitude, longitude } = coordinates;
       latitude = Number(latitude);
       longitude = Number(longitude);
+      let errors = [];
 
-      if (!name) return;
+      if (!name) {
+        errors.push('Please enter a name for the Airspace');
+      }
 
       const postData = {
         address,
@@ -1314,10 +1371,23 @@ const Airspaces = () => {
         ],
         weekDayRanges,
       };
+      if (!rent) {
+        errors.push('Please ensure to check the rental checkbox before claiming airspace.');
+      }
+      if (!weekDayRanges.some(item => item.isAvailable)) {
+        errors.push('Kindly ensure that at least one day is made available.');
+      }
+      if (errors.length > 0) {
+        setErrorMessages(errors);
+        setShowFailurePopUp(true);
+        return;
+      }
 
       const responseData = await claimProperty({ postData })
 
-      if (!responseData) setShowFailurePopUp(true);
+      if (!responseData) {
+        setShowFailurePopUp(true);
+      }
       else setShowSuccessPopUp(true);
       
       setShowClaimModal(false);
@@ -1329,6 +1399,7 @@ const Airspaces = () => {
     } finally {
       setClaimButtonLoading(false);
     }
+    removePubLicUserDetailsFromLocalStorage('airSpaceData', user)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -1354,6 +1425,7 @@ const Airspaces = () => {
       console.error("Error:", error);
     }
   };
+
 
   return (
     <Fragment>
@@ -1385,6 +1457,7 @@ const Airspaces = () => {
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} />
           )}
+          
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
@@ -1412,6 +1485,7 @@ const Airspaces = () => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
+                        removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1421,7 +1495,7 @@ const Airspaces = () => {
                       claimButtonLoading={claimButtonLoading}
                     />
                   )}
-                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal isSuccess={showSuccessPopUp} closePopUp={() => {
+                  { (showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
                     showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
                   }} />}
               </Fragment>
@@ -1441,12 +1515,13 @@ const Airspaces = () => {
                   }}
                 />
                 <Slider />
-                <PopUp isVisible={showSuccessPopUp} />
-                <FailurePopUp isVisible={showFailurePopUp} />
+                <PopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp}/>
+                <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages}/>
 
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
+                      removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}
@@ -1497,6 +1572,7 @@ const Airspaces = () => {
                       </p>
                     </Link>
                   </div>
+                  
                   <div
                     onClick={() => setShowHowToModal(true)}
                     className="flex cursor-pointer items-center justify-center gap-[7px] rounded-[20px] bg-[#222222] p-[13px] text-white"
@@ -1509,6 +1585,9 @@ const Airspaces = () => {
                 </div>
               </div>
             )}
+            <div className="hidden sm:block">
+              <ZoomControllers map={map}/>
+            </div>
           </section>
         </div>
       </div>

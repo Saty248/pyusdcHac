@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useEffect } from "react";
 import useAuth from '@/hooks/useAuth';
@@ -12,7 +12,7 @@ import { checkPhoneIsValid } from "@/pages/auth/join/intro";
 import UserService from "@/services/UserService";
 import { toast } from "react-toastify";
 
-const Portfolio = () => {
+const Account = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [personalInformation, setPersonalInformation] = useState({ name: '', email: '', phoneNumber: '', newsletter: false, KYCStatusId: 0 })
 
@@ -20,6 +20,7 @@ const Portfolio = () => {
     const { updateUser } = UserService()
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('')
+    const [isChanged, setIsChanged] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -58,6 +59,7 @@ const Portfolio = () => {
                     ...user,
                     name,
                     phoneNumber,
+                    email,
                     newsletter
                 };
 
@@ -109,22 +111,22 @@ const Portfolio = () => {
                                 </div>}
                             </div>
                             <p className="font-normal text-base text-[#87878D] pr-[42px]">{personalInformation.KYCStatusId !== 0 ? 'Thank you, your account is successfully verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.' : 'Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Note that we store your data securely with advanced encryption and strict authentication measures to ensure utmost privacy and protection.'}</p>
-                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <p className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" onClick={onVerifyMyAccount}>Verify my account</p>}
+                            {!(personalInformation.KYCStatusId !== 0) &&!isLoading && <div className="font-medium text-base text-[#0653EA] text-right flex-1 cursor-pointer" disabled={isLoading} onClick={onVerifyMyAccount}>Verify my account</div>}
                         </div>
                         <div className="flex flex-col py-[17px] px-[25px] rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: '0px 12px 34px -10px #3A4DE926' }}>
                             <h2 className="text-xl font-medium text-[#222222]">Personal Information</h2>
                             <div className="flex flex-wrap gap-[10px]">
                                 <div className="flex flex-col gap-[5px] basis-full">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="name">Name</label>
-                                    <input value={personalInformation.name} onChange={(e) => setPersonalInformation(prev => ({ ...prev, name: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="name" id="name" />
+                                    <input value={personalInformation.name} onChange={(e) =>  {setIsChanged(true); setPersonalInformation(prev => ({ ...prev, name: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="name" id="name" />
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="name">Email</label>
-                                    <input value={personalInformation.email} onChange={(e) => setPersonalInformation(prev => ({ ...prev, email: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
+                                    <input value={personalInformation.email} readOnly={true} onChange={(e) => setPersonalInformation(prev => ({ ...prev, email: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Phone</label>
-                                    <input value={personalInformation.phoneNumber} onChange={(e) => {setIsPhoneNumberValid(true ); setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
+                                    <input value={personalInformation.phoneNumber} onChange={(e) => {setIsChanged(true) ; setIsPhoneNumberValid(true ) ; setPersonalInformation(prev => ({ ...prev, phoneNumber: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: isPhoneNumberValid ? '1px solid #87878D' : '1px solid #E04F64' }} type="text" name="phone" id="phone" />
                                     {!isPhoneNumberValid && (<p className='text-[11px] italic text-red-600'>{errorMessage}</p> )}
                                 </div>
                                 <div className="flex flex-col gap-[10px] basis-full">
@@ -135,7 +137,7 @@ const Portfolio = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-end flex-1">
-                                    <p className="font-medium text-base text-[#0653EA] cursor-pointer" onClick={updateDataHandler}>Save changes</p>
+                                     <button  disabled={isLoading}  className={`font-medium text-base ${!isChanged ? 'text-gray-400 cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'  }`}  onClick={updateDataHandler} > Save changes </button>
                                 </div>
                             </div>
                         </div>
@@ -146,4 +148,4 @@ const Portfolio = () => {
     )
 }
 
-export default Portfolio;
+export default Account;

@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useEffect, useState } from "react";
 import Sidebar from "@/Components/Sidebar";
@@ -440,6 +440,39 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
   );
 };
 
+const SkyPointBalance = ({ registeredFriends}) => {
+  const [hasUsedReferralCode, setHasUsedReferralCode] = useState(false);
+  const [userTotalPoint, setUserTotalPoint] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user');
+      const userParsed = userData ? JSON.parse(userData) : {};
+      if (Object.keys(userParsed).length > 0 && userParsed.totalPoint) {
+        setUserTotalPoint(Number(userParsed?.totalPoint))
+      }
+      setHasUsedReferralCode(userParsed?.usedReferralCodeId);
+    }
+  }, []);
+
+  const hasUsedReferralCodePoint = hasUsedReferralCode ? 50 : 0;
+  const skyPoints = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
+
+  return (
+    <div className="w-full md:w-[35%] px-4 md:px-[44px]">
+      <div className="py-5 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+        <div className="flex items-end justify-end">
+          <div className="w-12 h-12 md:w-[44px] md:h-[42px] rounded-full bg-[#E9F5FE] flex items-center justify-center">
+            <div className="w-6 h-6"><GiftIcon isActive={true} /></div>
+          </div>
+        </div>
+        <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
+        <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{skyPoints} SKY Points</div>
+      </div>
+    </div>
+  );
+};
+
 const Referral = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState(0);
@@ -488,6 +521,7 @@ const Referral = () => {
               setActiveSection={setActiveSection}
             />
             <AlertMessage />
+            <SkyPointBalance  registeredFriends={data?.registeredFriends} user={user}/>
             <TheProgram
               activeSection={activeSection}
               isMobile={isMobile}
