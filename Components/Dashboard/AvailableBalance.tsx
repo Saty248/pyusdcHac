@@ -1,13 +1,16 @@
 import { FC } from "react";
 import { useSelector } from "react-redux";
-import { WalletIcon } from "@/Components/Icons";
+
 import { BalanceLoader } from "@/Components/Wrapped";
 import Item from "@/Components/Dashboard/Item";
+import { WalletIcon } from "../Shared/Icons";
 
 const AvailableBalance: FC = () => {
   const userUSDWalletBalance = useSelector(
     (state: any) => state.value.userUSDWalletBalance
   );
+
+  console.log({ userUSDWalletBalance });
 
   return (
     <Item

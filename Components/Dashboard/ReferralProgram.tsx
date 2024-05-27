@@ -1,7 +1,7 @@
 import { FC, Fragment } from "react";
 
 import Item from "@/Components/Dashboard/Item";
-import { EarthIcon, GiftIcon, ShareIcon } from "../Icons";
+import { EarthIcon, GiftIcon, ShareIcon } from "../Shared/Icons";
 import ReferralProgramItem from "./ReferralProgramItem";
 import Path from "./Path";
 

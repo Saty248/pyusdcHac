@@ -3,7 +3,7 @@ import {
   DroneIcon,
   LocationPointIcon,
   ChevronRightIcon,
-} from "@/Components/Icons";
+} from "../Shared/Icons";
 import Item from "@/Components/Dashboard/Item";
 import WorldMap from "@/Components/WorldMap";
 import { BalanceLoader } from "@/Components/Wrapped";
