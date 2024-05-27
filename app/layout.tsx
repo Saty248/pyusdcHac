@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "./global.css";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import Script from "next/script";
@@ -13,12 +13,10 @@ import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
-// import { PersistGate } from "redux-persist/integration/react";
-// import { persistStore } from "redux-persist";
-// import store from "@/redux/store";
-// import ErrorBoundary from "@/Components/ErrorBoundary";
+
 
 import type { Metadata } from "next";
+import { Head } from "next/document";
 
 export const metadata: Metadata = {
   title: "Sky Trade",
@@ -32,6 +30,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
+        <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
+        <link
+          href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css'
+          rel='stylesheet'
+        />
+      </head>
       <body>
         <div id="backdrop-root"></div>
         <div id="modal-root"></div>
@@ -49,10 +58,28 @@ export default function RootLayout({
                 gtag('config', 'G-C0J4J56QW5');
             `}
           </Script>
+          <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+                (function(){
+                var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+                s1.async=true;
+                s1.src='https://embed.tawk.to/655381bacec6a912820fc8a3/1hf735gcu';
+                s1.charset='UTF-8';
+                s1.setAttribute('crossorigin','*');
+                s0.parentNode.insertBefore(s1,s0);
+                })();
+              `,
+            }}
+          />
           {/* <Provider store={store}> */}
           <Web3authProvider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
+              <div id='backdrop-root'></div>
+              <div id='modal-root'></div>
               {children}
             </SidebarProvider>
             <CookieConsent />

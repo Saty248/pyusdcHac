@@ -2,6 +2,8 @@
 import store from "@/store/store";
 import React, { createContext, useState, ReactNode } from "react";
 import { Provider } from "react-redux";
+import { Web3authContextType } from '../types';
+
 
 interface Web3authContextType {
   web3auth: any;
@@ -9,6 +11,9 @@ interface Web3authContextType {
   provider: any;
   setProvider: React.Dispatch<React.SetStateAction<any>>;
 }
+
+export const Web3authContext = createContext<Web3authContextType | null>(null);
+
 
 const defaultValue: Web3authContextType = {
   web3auth: null,
