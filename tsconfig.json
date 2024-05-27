@@ -29,5 +29,6 @@
     ".next/types/**/*.ts",
     "Components/Shared/Sidebar.js"
 , "store/store.js"  ],
+
   "exclude": ["node_modules"]
 }
