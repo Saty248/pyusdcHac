@@ -59,6 +59,7 @@ const Account = () => {
                     ...user,
                     name,
                     phoneNumber,
+                    email,
                     newsletter
                 };
 
@@ -121,7 +122,7 @@ const Account = () => {
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="name">Email</label>
-                                    <input value={personalInformation.email} onChange={(e) =>  {setIsChanged(true); setPersonalInformation(prev => ({ ...prev, email: e.target.value }))}} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
+                                    <input value={personalInformation.email} readOnly={true} onChange={(e) => setPersonalInformation(prev => ({ ...prev, email: e.target.value }))} className="py-[16px] px-[22px] rounded-lg text-[14px] font-normal text-[#222222] outline-none" style={{ border: "1px solid #87878D" }} type="text" name="email" id="email" />
                                 </div>
                                 <div className="flex flex-col gap-[5px] basis-full md:basis-1/3 flex-1">
                                     <label className="font-normal text-[14px] text-[#838187]" htmlFor="phone">Phone</label>
