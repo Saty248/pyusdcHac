@@ -48,7 +48,7 @@ const useAuth = () => {
 
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/auth/join");
+    router.push("/auth");
   };
 
   const updateProfile = (updatedUser) => {

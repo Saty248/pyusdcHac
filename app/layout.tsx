@@ -42,6 +42,8 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <div id="backdrop-root"></div>
+        <div id="modal-root"></div>
         {/* <PersistGate loading={null} persistor={persistor}> */}
         <>
           <Script src="https://cdn.withpersona.com/dist/persona-v4.8.0.js" />
