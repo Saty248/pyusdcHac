@@ -598,6 +598,7 @@ const Explorer = ({
           className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
         >
           {registeredAddress.map((item) => {
+            console.log(item, "11111111111")
             //add popup to black ones
             const rentCLickHandler = () => {
               let el1 = document.createElement("div");
@@ -940,6 +941,7 @@ const Rent = () => {
           setLoadingRegAddresses(false);
 
           if (responseData.length > 0) {
+            console.log(responseData, "responseData")
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
@@ -950,12 +952,13 @@ const Rent = () => {
                 .setLngLat(lngLat)
                 .setPopup(popup)
                 .addTo(newMap);
-                console.log(marker, "markers")
+                // console.log(marker, "markers")
               
                 const filteredData = responseData.filter(item => item.type === 'rent');
-                console.log(filteredData,"filteredData")
+                // console.log(filteredData,"filteredData")
                 marker.getElement().addEventListener('click', function() {
-                  onClickRent();
+                  setRentData(responseData[i]);
+                  setShowClaimModal(true);
               });
             }
           }
