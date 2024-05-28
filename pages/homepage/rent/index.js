@@ -940,7 +940,6 @@ const Rent = () => {
           setLoadingRegAddresses(false);
 
           if (responseData.length > 0) {
-            console.log(responseData, "responseData")
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
