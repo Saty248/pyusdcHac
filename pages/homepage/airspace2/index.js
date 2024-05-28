@@ -471,7 +471,6 @@ const ClaimModal = ({
               >
                 <p className="text-[14px] font-normal text-[#838187] mt-4">
                   Select extra features your facility provides
-                  <span className="text-[#E04F64]">*</span>
                 </p>
                 <div className=" flex-col  flex md:flex-row  md:items-center gap-[10px] leading-[2rem]">
                   <div className="flex items-center gap-[5px]">
