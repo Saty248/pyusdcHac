@@ -1391,12 +1391,14 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
       else {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
+        setData({ ...defaultData });
       }     
-      setIsLoading(false);
-      setData({ ...defaultData });
     } catch (error) {
       console.error(error);
       toast.error("Error when creating property.")
+    } finally {
+      setIsLoading(false);
+      setClaimButtonLoading(false);
     }
     removePubLicUserDetailsFromLocalStorage('airSpaceData', user)
   };
