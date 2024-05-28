@@ -64,12 +64,6 @@ export  const checkPhoneIsValid = async (phone) => {
 }
 const IndividualSignup = () => {
 
-    // const {category} = useSelector((state) =>
-    // {
-    //   const {category} = state.userReducer
-    //   return {category}
-    // }, shallowEqual );
-
     const dispatch = useDispatch()
 
 

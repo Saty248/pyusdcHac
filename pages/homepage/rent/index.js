@@ -1091,13 +1091,14 @@ const Rent = () => {
         <title>SkyTrade - Marketplace : Rent</title>
        
       </Head>
+      {isLoading && <Backdrop />}
+      {isLoading && <Spinner />}
 
       { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+     
           <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
           {isMobile && (
             <ExplorerMobile
