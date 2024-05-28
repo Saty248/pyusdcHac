@@ -946,10 +946,15 @@ const Rent = () => {
               const popup = new maplibregl.Popup().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               );
-              new maplibregl.Marker(el)
+              const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
                 .setPopup(popup)
                 .addTo(newMap);
+                const filteredData = responseData.filter(item => item.type === 'rent');
+                marker.getElement().addEventListener('click', function() {
+                  setRentData(responseData[i]);
+                  setShowClaimModal(true);
+              });
             }
           }
         }, 3000);
