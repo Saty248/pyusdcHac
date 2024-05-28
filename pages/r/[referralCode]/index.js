@@ -28,7 +28,7 @@ const ReferralCodeRedirect = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
-  const [doesCodeExist, setDoesCodeExist] = useState(true);
+  const [doesCodeExist, setDoesCodeExist] = useState(false);
 
   const emailRef = useRef();
   const router = useRouter();
@@ -47,7 +47,11 @@ const ReferralCodeRedirect = () => {
       try {
         const responseData = await getReferralByCode(referralCode);
         if (!responseData) setDoesCodeExist(false);
-        localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+        else if (responseData && responseData.statusCode === 500) setDoesCodeExist(false);
+        else {
+          localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+          setDoesCodeExist(true);
+        }
       } catch (error) {
         console.log("response: error", error);
       } finally {
@@ -69,7 +73,7 @@ const ReferralCodeRedirect = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (web3auth?.status === "connected" && provider) {
+        if (web3auth?.status === "connected" && provider && doesCodeExist) {
           dispatch(counterActions.setIsWaitingScreenVisible(true))
 
           const userInformation = await web3auth.getUserInfo();
@@ -133,13 +137,6 @@ const ReferralCodeRedirect = () => {
     setProvider(web3authProvider);
   };
 
-  const onTermsAndConditionsClicked = () => {
-    return;
-  };
-
-  const onPrivacyPolicyClicked = () => {
-    return;
-  };
 
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;

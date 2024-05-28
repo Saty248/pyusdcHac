@@ -309,9 +309,10 @@ const IndividualSignup = () => {
                                     <input
                                         type='referralCode'
                                         ref={referralCodeRef}
-                                        value={referralCode1.code}
+                                        value={referralCode1.code.toUpperCase()}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value })}}
+                                        maxLength={6}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value.toUpperCase() })}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
