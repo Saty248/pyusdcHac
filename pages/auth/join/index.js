@@ -18,6 +18,7 @@ import useInitAuth from "@/hooks/useInitAuth";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 import { counterActions } from "@/store/store";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { useRouter } from 'next/router';
 
 
 
@@ -35,6 +36,7 @@ const Signup = () => {
 
   const { web3auth, setProvider } = useContext(Web3authContext);
 
+  const router = useRouter();
 
   const isWaitingScreenVisible = useSelector(
     (state) => state.value.isWaitingScreenVisible
