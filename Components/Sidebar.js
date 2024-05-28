@@ -1,4 +1,4 @@
-import React, { Fragment, useContext,useState } from 'react';
+import React, { Fragment, useContext,useEffect,useLayoutEffect,useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import useAuth from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
 import MobileNavbar from "@/Components/MobileNavbar";
 import { useMobile } from "@/hooks/useMobile";
+import navbarTabs from './helper/navbarTabs';
 
 
 const Sidebar = () => {
@@ -19,10 +20,24 @@ const Sidebar = () => {
   const { signOut } = useAuth();  
   const [showMobileNavbar, setShowMobileNavbar] = useState(false);
   const { isMobile } = useMobile();
+  const {user}=useAuth()
+
+ 
+  useEffect(()=>{
+    if(navbarTabs.includes(asPath)){
+      localStorage.setItem('currentTab',asPath)
+    }
+  },[])
+  
 
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
-    const isActive = href ? asPath.includes(href) : false;
+    const [isActive,setIsActive]=useState(false)
+
+    useEffect(()=>{
+     let isActiveVal = href ? href.includes(localStorage.getItem('currentTab') ||  asPath) : false;
+     setIsActive(isActiveVal)
+    },[])
 
     if (onClick !== undefined) {
       return (
@@ -116,19 +131,19 @@ const Sidebar = () => {
         />
         </Link>
        
-        <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />} />
-        <SidebarItem href={'/homepage/airspace2'} text={'Airspaces'} children={<EarthIcon />} />
-        <SidebarItem href={'/homepage/referral'} text={'Referral Program'} children={<GiftIcon />} />
+        <SidebarItem href={'/homepage/dashboard2'} text={'Dashboard'} children={<DashboardIcon />}   />
+        <SidebarItem href={'/homepage/airspace2'} text={'Airspaces'} children={<EarthIcon />}   />
+        <SidebarItem href={'/homepage/referral'} text={'Referral Program'} children={<GiftIcon />}   />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={''} text={'Buy Airspace'} children={<MapIcon />} />
-        <SidebarItem href={'/homepage/rent'} text={'Rent Airspace'} children={<DroneIcon />} />
-        <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
+        <SidebarItem href={'/homepage/rent'} text={'Rent Airspace'} children={<DroneIcon />}   />
+        <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0}   />
+        <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />}   />
         <div className='bg-[#00000012] w-full h-[1px]' />
-        <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
-        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />}/>
-        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />}/>
+        <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />}   />
+        {user?.blockchainAddress && <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />}/>}
+        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />}  />
       </aside>
       <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />

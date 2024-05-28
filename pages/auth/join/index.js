@@ -117,6 +117,7 @@ const Signup = () => {
             }}
           >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
+            {router.pathname=='/auth/join' && <>
             <p className="mt-[25px] text-xl font-medium text-light-black">
               Welcome{isLogin && " back"} to SkyTrade
             </p>
@@ -129,6 +130,22 @@ const Signup = () => {
                 during sign up.
               </p>
             )}
+            </>
+            }
+            {router.pathname!='/auth/join' && <>
+           <p className="mt-[25px] text-xl font-medium text-light-black">
+           Unlock the full experience! 🚀
+            </p>
+            <p className="text-base text-light-black">
+              {isLogin ? "Login" : "Register"}
+            </p>
+            {isLogin && (
+              <p className="text-center text-sm text-light-grey">
+               Log in or create an account to access this feature. Join now to enjoy seamless navigation and exclusive benefits tailored just for you. Ready to explore more? Log in or register now! 
+              </p>
+            )}
+            </>
+            }
             <div className="relative flex w-full flex-col gap-[5px]">
               <label
                 className="text-[14px] font-normal"

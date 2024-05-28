@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/router";
 import { counterActions } from "@/store/store";
-import publicAccessRouteRedirection from "@/Components/helper/publicAccessRoutesRedirection";
+import publicAccessRoutes from "@/Components/helper/publicAccessRoutes";
 
 const useAuth = () => {
   const router = useRouter();
@@ -57,7 +57,7 @@ const useAuth = () => {
   };
 
   const setAndClearOtherPublicRouteData = (localStorageKey, data) => {
-    for (const route of publicAccessRouteRedirection) {
+    for (const route of publicAccessRoutes) {
       if(route.localStorageKey !== localStorageKey) {
         localStorage.removeItem(route.localStorageKey)
       }
@@ -67,9 +67,9 @@ const useAuth = () => {
 
 
   const customRedirect = () => {
-    const publicAccessRoutes = publicAccessRouteRedirection || [];
+    const routes = publicAccessRoutes || [];
 
-    for (const item of publicAccessRoutes) {
+    for (const item of routes) {
       const initialKeyData = localStorage.getItem(item.localStorageKey);
       if (initialKeyData && initialKeyData?.length > 2) {
         router.replace(item.redirectTo);
@@ -83,7 +83,8 @@ const useAuth = () => {
   const redirectIfUnauthenticated = () => {
     if(web3auth && web3auth.status === "connected") return false;
     else {
-      router.push("/auth/join");
+      router.push("/auth/inAppSignIn");
+      toast.success("Contragulations! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
       return true;
     }
   }
