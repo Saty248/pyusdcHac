@@ -219,17 +219,6 @@ const WeekDayRangesForm = ({ weekDayRanges, setWeekDayRanges }) => {
 
   const options = Array.from({ length: 25 });
 
-  // Initialize the weekDayRanges state with all days set to available
-  useEffect(() => {
-    const defaultWeekDayRanges = weekDayRanges.map((day) => ({
-      isAvailable: true,
-      fromTime: 9,
-      toTime: 21,
-      weekDayId: day.weekDayId,
-    }));
-    setWeekDayRanges(defaultWeekDayRanges);
-  }, []);
-
   const handleToggle = (day) => {
     const weekDayRangesCopy = [...weekDayRanges];
     weekDayRangesCopy[day].isAvailable = !weekDayRangesCopy[day].isAvailable;
@@ -1112,13 +1101,13 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     isFixedTransitFee: false,
     noFlyZone: false,
     weekDayRanges: [
-      { fromTime: 9, toTime: 21, isAvailable: false, weekDayId: 0 },
-      { fromTime: 9, toTime: 21, isAvailable: false, weekDayId: 1 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 2 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 3 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 4 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 5 },
-      { fromTime: 0, toTime: 24, isAvailable: false, weekDayId: 6 },
+      { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 0 },
+      { fromTime: 9, toTime: 21, isAvailable: true, weekDayId: 1 },
+      { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 2 },
+      { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 3 },
+      { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 4 },
+      { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 5 },
+      { fromTime: 0, toTime: 24, isAvailable: true, weekDayId: 6 },
     ],
   };
   // showing
@@ -1140,7 +1129,6 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   useLayoutEffect(()=>{
     const {propertyAddress,geoLocation}=router.query;
     if (propertyAddress,geoLocation){
-      console.log('herere')
       localStorage.removeItem('airSpaceData')
       setData({...defaultData})
       
