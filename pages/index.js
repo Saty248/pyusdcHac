@@ -14,7 +14,7 @@ export default function Home() {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push('/auth/join');
+    router.push('/homepage/airspace2');
   }
 
   useEffect(() => {

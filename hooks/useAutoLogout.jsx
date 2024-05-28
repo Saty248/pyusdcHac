@@ -3,17 +3,14 @@ import { useRouter } from "next/router";
 
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAuth from "@/hooks/useAuth";
-import publicAccessRouteRedirection from "@/Components/helper/publicAccessRoutesRedirection";
+import publicAccessRoutes from "@/Components/helper/publicAccessRoutes";
+
 
 const useAutoLogout = () => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
   const { user } = useAuth();
-  const publicAccessRoutes=["/auth/join","/"];
-  for(let item of publicAccessRouteRedirection ){
-    publicAccessRoutes.push(item.redirectTo)
-  }
-  
+
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
@@ -21,7 +18,11 @@ const useAutoLogout = () => {
   };
 
   const redirectTo = () => {
-    if(router.pathname !== "/r/[referralCode]")  router.push("/auth/inAppSignIn");
+    if(router.pathname !== "/r/[referralCode]" && router.pathname !== "/") {
+      router.push("/auth/inAppSignIn");
+    } else {
+      router.push("/homepage/airspace2");
+    }
   };
 
   useEffect(() => {
@@ -42,9 +43,10 @@ const useAutoLogout = () => {
 
     if (!web3auth) return;
 
-    if(publicAccessRoutes.includes(router.pathname)){
-      return
-    }else if (web3auth?.status === "ready") {
+    const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth/join"]);
+
+    if(routes.includes(router.pathname)) return;
+    else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
       if (!fetchedToken?.sessionId) {
         redirectTo()

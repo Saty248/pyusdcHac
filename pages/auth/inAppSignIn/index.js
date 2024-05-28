@@ -8,14 +8,6 @@ import LoginPage from "@/Components/common/LoginPage";
 
 const InAppSignIn = () => {
 
-/*   useEffect(()=>{
-    const inintialAirSpaceData=localStorage.getItem('airSpaceData')
-    const inintialRentDataString=localStorage.getItem('rentData')
-    if((inintialAirSpaceData && inintialAirSpaceData.length>2) ||(inintialRentDataString && inintialRentDataString.length>2) ){
-      toast.success("Contragulations! To ensure your your actions are saved and recognized, register now with SkyTrade.")    
-  }
-},[]) */
-
     return (
       <Fragment>
         <Head>
