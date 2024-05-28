@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/router";
@@ -83,6 +83,7 @@ const useAuth = () => {
     if(web3auth && web3auth.status === "connected") return false;
     else {
       router.push("/auth/inAppSignIn");
+      toast.success("Contragulations! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
       return true;
     }
   }
