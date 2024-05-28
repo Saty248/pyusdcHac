@@ -1,27 +1,32 @@
-import React, { Fragment, useContext } from 'react';
+import React, { Fragment, useContext,useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import logo from '../public/images/logo.svg';
 import logoNoChars from '../public/images/logo-no-chars.png';
-import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
+import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon,MenuIcon } from './Icons';
 import useAuth from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
+import MobileNavbar from "@/Components/MobileNavbar";
+import { useMobile } from "@/hooks/useMobile";
 
 
 const Sidebar = () => {
   const router = useRouter();
   const { asPath } = router;
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
-  const { signOut } = useAuth();
+  const { signOut } = useAuth();  
+  const [showMobileNavbar, setShowMobileNavbar] = useState(false);
+  const { isMobile } = useMobile();
+
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }) => {
     const isActive = href ? asPath.includes(href) : false;
 
     if (onClick !== undefined) {
       return (
-        <div onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div title={text} onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
@@ -79,6 +84,11 @@ const Sidebar = () => {
     await signOut()
   };
 
+  
+  const handleMenuClick = () => {
+    setShowMobileNavbar(true);
+ };
+ 
   return (
     <div className={"relative z-20"}>
       <aside
@@ -117,20 +127,20 @@ const Sidebar = () => {
         <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
-        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />} />
-        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />} style={"mt-auto"} />
+        <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon />}/>
+        <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon /> : <ArrowCompressIcon />}/>
       </aside>
       <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
         <SidebarItemMobile href={'/homepage/dashboard2'} text={"Dashboard"} children={<DashboardIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/airspace2'} text={"Airspaces"} children={<EarthIcon />} numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/marketplace'} text={"Marketplace"} children={<MapIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/homepage/rent'} text={'Rent'} children={<DroneIcon />}  numberOfUnseenNotifications={0} />
         <SidebarItemMobile href={'/homepage/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/homepage/referral'} text={"Referral"} children={<GiftIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'https://skytrade.tawk.help'} text={"HelpCenter"} children={<HelpQuestionIcon />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile onClick={logoutHandler}  text={"Logout"} children={<LogoutIcon />} />
+        <SidebarItemMobile onClick={handleMenuClick}  text={"Menu"} children={<MenuIcon />} numberOfUnseenNotifications={0} />
       </nav>
+
+      {showMobileNavbar && isMobile && (
+            <MobileNavbar setShowMobileNavbar={setShowMobileNavbar}/>
+          )}
     </div>
   );
 };

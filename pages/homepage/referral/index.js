@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Fragment, useEffect, useState } from "react";
 import Sidebar from "@/Components/Sidebar";
@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import UserService from "@/services/UserService";
 import { useRouter } from 'next/router';
+import { BalanceLoader } from "@/Components/Wrapped";
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -385,9 +386,32 @@ const YourReferrals = ({
   );
 };
 
-const InviteYourFriends = ({ referralCode }) => {
+const InviteYourFriends = () => {
   const [friendEmail, setFriendEmail] = useState("");
-  const origin = useOrigin();
+  const [isLoading, setIsLoading] = useState(false);
+  const { sendReferral } = ReferralCodeService();
+
+  const handleReferUser = async () => {
+    try {
+      setIsLoading(true);
+      if (isLoading) return;
+      if (!friendEmail) {
+        toast.error("Enter the receiver email")
+        return;
+      }
+
+      const resp = await sendReferral(friendEmail);
+      if (resp) {
+        toast.success("Referral sent successfully");
+      }
+      else toast.error("Error when sending referral")
+    } catch (error) {
+      console.log(error);
+      toast.error(error.messsage)
+    } finally {
+      setIsLoading(false)
+    }
+  };
 
   return (
     <div className="flex flex-col gap-[15px] px-[51px]">
@@ -409,15 +433,12 @@ const InviteYourFriends = ({ referralCode }) => {
           id="friendEmail"
           placeholder="email address"
         />
-        <div className="absolute right-[5px] top-1/2 -translate-y-1/2 w-[38px] h-[41px] bg-[#0653EA] flex items-center justify-center cursor-pointer rounded-lg">
-          <a
-            href={`mailto:${friendEmail}?body=${origin}/r/${referralCode}`}
-            target="_blank"
-          >
-            <div className="w-[15px] h-[15px] ">
-              <ShareIcon color={"white"} />
-            </div>
-          </a>
+        <div 
+          onClick={handleReferUser}
+          className={`absolute right-[5px] top-1/2 -translate-y-1/2 bg-[#0653EA] w-[38px] h-[41px]  flex items-center justify-center ${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-lg`}>
+          <div className="w-[15px] h-[15px]">
+            <ShareIcon color={"white"} />
+          </div>
         </div>
       </div>
     </div>
@@ -436,6 +457,46 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
           {text}
         </div>
       ))}
+    </div>
+  );
+};
+
+const SkyPointBalance = ({ registeredFriends}) => {
+  const [skyPoints, setSkyPoints] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user');
+      const userParsed = userData ? JSON.parse(userData) : {};
+      let userTotalPoint = 0;
+      if (Object.keys(userParsed).length > 0 && userParsed.totalPoint) {
+        userTotalPoint  = Number(userParsed?.totalPoint);
+      }
+      const hasUsedReferralCodePoint = userParsed?.usedReferralCodeId ? 50 : 0;
+      const points = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
+      setSkyPoints(String(points))
+    }
+  }, [registeredFriends]);
+
+  
+  return (
+    <div className="w-full md:w-[35%] px-4 md:px-[44px]">
+      <div className="py-5 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+        <div className="flex items-end justify-end">
+          <div className="w-12 h-12 md:w-[44px] md:h-[42px] rounded-full bg-[#E9F5FE] flex items-center justify-center">
+            <div className="w-6 h-6"><GiftIcon isActive={true} /></div>
+          </div>
+        </div>
+        <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
+        {!skyPoints ? (
+          <div className="mt-4">
+            <BalanceLoader /> 
+          </div>
+        ): (
+          <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{skyPoints} SKY Points</div>
+        )}
+        
+      </div>
     </div>
   );
 };
@@ -488,6 +549,7 @@ const Referral = () => {
               setActiveSection={setActiveSection}
             />
             <AlertMessage />
+            <SkyPointBalance  registeredFriends={data?.registeredFriends} user={user}/>
             <TheProgram
               activeSection={activeSection}
               isMobile={isMobile}
@@ -501,7 +563,7 @@ const Referral = () => {
               blockchainAddress={user?.blockchainAddress}
               user={user}
             />
-            <InviteYourFriends referralCode={data?.referralCode} />
+            <InviteYourFriends />
             <YourReferrals
               activeSection={activeSection}
               isMobile={isMobile}

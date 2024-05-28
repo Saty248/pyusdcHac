@@ -1,42 +1,39 @@
-"use client";
+// "use client";
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
-import { useDispatch, shallowEqual, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { SolanaWallet } from "@web3auth/solana-provider";
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
-import useAuth from '@/hooks/useAuth';
-
 import logo from "../../../public/images/logo.svg";
 
-import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
-import UserService from "@/services/UserService";
 import useInitAuth from '@/hooks/useInitAuth';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
+import Link from "next/link";
+import { toast } from 'react-toastify';
 
 const ReferralCodeRedirect = () => {
+  const { isRedirecting } = useAuthRedirect();
+
   const [emailValid, setEmailValid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
-  const [doesCodeExist, setDoesCodeExist] = useState(true);
+  const [doesCodeExist, setDoesCodeExist] = useState(false);
 
   const emailRef = useRef();
   const router = useRouter();
   const { referralCode } = router.query;
-  const dispatch = useDispatch();
 
-  const { signIn } = useAuth();
   const { getReferralByCode } = ReferralCodeService();
   const { web3auth, provider, setProvider } = useContext(Web3authContext)
-  const { getUser } = UserService()
   const { init } = useInitAuth();
 
   useEffect(() => {
@@ -45,7 +42,11 @@ const ReferralCodeRedirect = () => {
       try {
         const responseData = await getReferralByCode(referralCode);
         if (!responseData) setDoesCodeExist(false);
-        localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+        else if (responseData && responseData.statusCode === 500) setDoesCodeExist(false);
+        else {
+          localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+          setDoesCodeExist(true);
+        }
       } catch (error) {
         console.log("response: error", error);
       } finally {
@@ -54,45 +55,11 @@ const ReferralCodeRedirect = () => {
     })();
   }, [referralCode]);
 
-  const {isWaitingScreenVisible} = useSelector((state) => {
-    const {isWaitingScreenVisible} = state.userReducer;
-    return {isWaitingScreenVisible}
-  }, shallowEqual);
 
+  const isWaitingScreenVisible = useSelector(
+    (state) => state.value.isWaitingScreenVisible
+  );
 
-  useEffect(() => {
-    (async () => {
-      try {
-        if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true))
-
-          const userInformation = await web3auth.getUserInfo();
-          const solanaWallet = new SolanaWallet(provider);
-          const accounts = await solanaWallet.requestAccounts();
-
-          const responseData = await getUser()
-
-          if (responseData?.id) {
-            signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
-          } else {
-            dispatch(
-              setCategory({
-                email: userInformation.email,
-                blockchainAddress: accounts[0],
-              })
-            );
-
-            router.replace(`/auth/join/intro`);
-          }
-          dispatch(setIsWaitingScreenVisible(false))
-        }
-      } catch (error) {
-        console.error(error)
-        dispatch(setIsWaitingScreenVisible(false))
-      } 
-    })()
-  },[web3auth?.status])
 
   const loginUser = async (isEmail) => {
     await init();
@@ -127,13 +94,6 @@ const ReferralCodeRedirect = () => {
     setProvider(web3authProvider);
   };
 
-  const onTermsAndConditionsClicked = () => {
-    return;
-  };
-
-  const onPrivacyPolicyClicked = () => {
-    return;
-  };
 
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;
@@ -144,7 +104,7 @@ const ReferralCodeRedirect = () => {
     <Fragment>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
-      {!doesCodeExist && (
+      {!doesCodeExist && !isLoading && (
         <div className="w-screen h-screen flex items-center justify-center flex-col gap-5 text-[#222222]">
           <p className="font-bold text-3xl">Oops!</p>
           <p className="max-w-[400px] text-center">
@@ -155,13 +115,13 @@ const ReferralCodeRedirect = () => {
           <div
             className="text-[#222222] p-4 rounded hover:text-white cursor-pointer hover:bg-[#222222]"
             style={{ border: "1px solid #222222" }}
-            onClick={() => router.replace("/")}
+            onClick={() => router.replace("/auth/join")}
           >
             Go to login
           </div>
         </div>
       )}
-      {doesCodeExist && !isWaitingScreenVisible && (
+      {doesCodeExist && !isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
@@ -305,23 +265,25 @@ const ReferralCodeRedirect = () => {
                 />
                 <p className="text-[#595959] mx-auto">Connect with Google</p>
               </button>
-              <p className="text-[#87878D] text-sm text-center">
-                By creating an account I agree with{" "}
-                <span
-                  onClick={onTermsAndConditionsClicked}
-                  className="text-[#0653EA] cursor-pointer"
-                >
-                  Terms and Conditions
-                </span>{" "}
-                and{" "}
-                <span
-                  onClick={onPrivacyPolicyClicked}
-                  className="text-[#0653EA] cursor-pointer"
-                >
-                  Privacy Policy
-                </span>{" "}
-                agreement
-              </p>
+              <p className="text-center text-sm text-[#87878D]">
+              By creating an account I agree with{" "}
+              <Link
+                target="_blank"
+                href="https://docs.sky.trade/terms.pdf"
+                className="cursor-pointer text-[#0653EA]"
+              >
+                Terms and Conditions
+              </Link>{" "}
+              and{" "}
+              <Link
+                target="_blank"
+                href="https://docs.sky.trade/privacy.pdf"
+                className="cursor-pointer text-[#0653EA]"
+              >
+                Privacy Policy
+              </Link>{" "}
+              agreement
+            </p>
             </form>
           </div>
         </div>

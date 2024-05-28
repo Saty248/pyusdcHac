@@ -1,10 +1,10 @@
-"use client";
+// "use client";
 
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Head from "next/head";
 import Backdrop from '@/Components/Backdrop';
@@ -14,23 +14,25 @@ import logo from '../../../../public/images/logo.svg';
 import useAuth from '@/hooks/useAuth';
 import * as Yup from 'yup'
 import UserService from "@/services/UserService";
+import { counterActions } from '@/store/store';
+
 
 const PartOne = ({ setPart }) => {
     return (
         <Fragment>
-            <p className='text-xl font-medium text-light-black mt-[25px]'>
+            <p className='text-xl font-medium text-light-black md:mt-[25px]'>
                 Unlock Passive Rental Income
             </p>
-            <div className='text-[15px] text-light-grey font-normal'>
+            <div className='text-[15px] text-light-grey font-normal md:leading-8 md:mt-6'>
                 <p>💰 <span className='font-bold'>Monetize Your Air Rights Easily:</span> Elevate earnings without changing property ownership.</p>
                 <p>🌐 <span className='font-bold'>User-Friendly Air Rights Management:</span> Define and control with ease on our secure platform.</p>
                 <p>🚀 <span className='font-bold'>Hassle-Free Passive Income:</span> Gain full control and minimal effort for a steady income.</p>
                 <p>🔐 <span className='font-bold'>Secure Access with SkyTrade:</span> Register to control land and airspace, ensuring permissions and receive direct fees into your account.</p>
             </div>
-            <p className='text-center text-base text-[#222222]'>Join SkyTrade today and turn your air rights into a lucrative opportunity! 🚀✨</p>
+              <p className='text-center text-base text-[#222222] md:mt-6'>Join SkyTrade today and turn your <br/> air rights into a lucrative opportunity! 🚀✨</p>
             <button
                 onClick={() => setPart(1)}
-                className='rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full'
+                className='rounded-md bg-dark-blue text-white transition-all duration-500 ease-in-out hover:bg-blue-600 py-4 px-24 text-[15px] w-full md:mt-2'
             >
                 Get started
             </button>
@@ -62,12 +64,21 @@ export  const checkPhoneIsValid = async (phone) => {
 }
 const IndividualSignup = () => {
 
-    const {category} = useSelector((state) =>
-    {
-      const {category} = state.userReducer
-      return {category}
-    }, shallowEqual );
+    const dispatch = useDispatch()
 
+
+    const category = useSelector(
+        (state) => state.value.category
+      );
+    
+
+      useEffect(() => {
+        const categoryData = localStorage.getItem("category");
+        if (categoryData) {
+          const currentCategory = JSON.parse(categoryData);
+          dispatch(counterActions.setCategory(currentCategory));
+        }
+      }, []);
 
 
 
@@ -97,14 +108,17 @@ const IndividualSignup = () => {
         if (typeof global?.window !== 'undefined') {
             const codeString = localStorage.getItem('referralCode');
             if (!codeString) return;
-            const { id, code } = JSON.parse(codeString).response;
-            setReferralCode({ id, code })
-            setReferralDisabled(true)
+            const refCode = JSON.parse(codeString);
+            if (refCode && Object.keys(refCode).length > 0) {
+                const { id, code } = refCode.response;
+                setReferralCode({ id, code })
+                setReferralDisabled(true)
+            }
         }
     }, [global?.window]);
 
 
-    const { temporaryToken, signIn } = useAuth();
+    const { temporaryToken, signIn,customRedirect } = useAuth();
 
     const newsletterHandler = () => {
         setNewsletter((prev) => !prev);
@@ -170,7 +184,8 @@ const IndividualSignup = () => {
                 setPhoneNumber('');
                 referralCodeRef.current.value = '';
 
-                router.replace('/homepage/dashboard2');
+               customRedirect()
+            
             } 
         } catch (error) {
             console.log(error);
@@ -196,15 +211,9 @@ const IndividualSignup = () => {
             {isLoading &&
                 createPortal(<Spinner />, document.getElementById('backdrop-root'))}
 
-            <div
-                className='relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'
-            >
+            <div className='relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden'>
                 <div
-                    className='mx-auto flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] rounded relative justify-center'
-                    style={{
-                        maxWidth: '449px',
-                    }}
-                >
+                    className='mx-auto w-[372px] md:w-[449px] flex flex-col items-center gap-[15px] bg-white md:py-[40px] px-[30px] rounded relative justify-center'>
                     <Image
                         src={logo}
                         alt="Company's logo"
@@ -297,9 +306,10 @@ const IndividualSignup = () => {
                                     <input
                                         type='referralCode'
                                         ref={referralCodeRef}
-                                        value={referralCode1.code}
+                                        value={referralCode1.code.toUpperCase()}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value })}}
+                                        maxLength={6}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value.toUpperCase() })}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}
