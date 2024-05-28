@@ -114,9 +114,12 @@ const IndividualSignup = () => {
         if (typeof global?.window !== 'undefined') {
             const codeString = localStorage.getItem('referralCode');
             if (!codeString) return;
-            const { id, code } = JSON.parse(codeString).response;
-            setReferralCode({ id, code })
-            setReferralDisabled(true)
+            const refCode = JSON.parse(codeString);
+            if (refCode && Object.keys(refCode).length > 0) {
+                const { id, code } = refCode.response;
+                setReferralCode({ id, code })
+                setReferralDisabled(true)
+            }
         }
     }, [global?.window]);
 

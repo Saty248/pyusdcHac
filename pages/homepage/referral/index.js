@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import UserService from "@/services/UserService";
 import { useRouter } from 'next/router';
+import { BalanceLoader } from "@/Components/Wrapped";
 
 const Item = ({ icon, title, text }) => {
   return (
@@ -461,23 +462,23 @@ const Switcher = ({ sections, activeSection, setActiveSection }) => {
 };
 
 const SkyPointBalance = ({ registeredFriends}) => {
-  const [hasUsedReferralCode, setHasUsedReferralCode] = useState(false);
-  const [userTotalPoint, setUserTotalPoint] = useState(0);
+  const [skyPoints, setSkyPoints] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const userData = localStorage.getItem('user');
       const userParsed = userData ? JSON.parse(userData) : {};
+      let userTotalPoint = 0;
       if (Object.keys(userParsed).length > 0 && userParsed.totalPoint) {
-        setUserTotalPoint(Number(userParsed?.totalPoint))
+        userTotalPoint  = Number(userParsed?.totalPoint);
       }
-      setHasUsedReferralCode(userParsed?.usedReferralCodeId);
+      const hasUsedReferralCodePoint = userParsed?.usedReferralCodeId ? 50 : 0;
+      const points = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
+      setSkyPoints(String(points))
     }
-  }, []);
+  }, [registeredFriends]);
 
-  const hasUsedReferralCodePoint = hasUsedReferralCode ? 50 : 0;
-  const skyPoints = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
-
+  
   return (
     <div className="w-full md:w-[35%] px-4 md:px-[44px]">
       <div className="py-5 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
@@ -487,7 +488,14 @@ const SkyPointBalance = ({ registeredFriends}) => {
           </div>
         </div>
         <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
-        <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{skyPoints} SKY Points</div>
+        {!skyPoints ? (
+          <div className="mt-4">
+            <BalanceLoader /> 
+          </div>
+        ): (
+          <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{skyPoints} SKY Points</div>
+        )}
+        
       </div>
     </div>
   );

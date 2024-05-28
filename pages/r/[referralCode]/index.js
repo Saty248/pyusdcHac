@@ -2,29 +2,27 @@
 
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
-import { useDispatch, shallowEqual, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { SolanaWallet } from "@web3auth/solana-provider";
 
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
-import useAuth from '@/hooks/useAuth';
-
 import logo from "../../../public/images/logo.svg";
 
-import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
 import ReferralCodeService from "@/services/ReferralCodeService";
 import { Web3authContext } from '@/providers/web3authProvider';
-import UserService from "@/services/UserService";
 import useInitAuth from '@/hooks/useInitAuth';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 import Link from "next/link";
-import { counterActions } from "@/store/store";
+import { toast } from 'react-toastify';
 
 const ReferralCodeRedirect = () => {
+  const { isRedirecting } = useAuthRedirect();
+
   const [emailValid, setEmailValid] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
@@ -33,12 +31,9 @@ const ReferralCodeRedirect = () => {
   const emailRef = useRef();
   const router = useRouter();
   const { referralCode } = router.query;
-  const dispatch = useDispatch();
 
-  const { signIn } = useAuth();
   const { getReferralByCode } = ReferralCodeService();
   const { web3auth, provider, setProvider } = useContext(Web3authContext)
-  const { getUser } = UserService()
   const { init } = useInitAuth();
 
   useEffect(() => {
@@ -60,49 +55,11 @@ const ReferralCodeRedirect = () => {
     })();
   }, [referralCode]);
 
-  // const {isWaitingScreenVisible} = useSelector((state) => {
-  //   const {isWaitingScreenVisible} = state.userReducer;
-  //   return {isWaitingScreenVisible}
-  // }, shallowEqual);
 
   const isWaitingScreenVisible = useSelector(
     (state) => state.value.isWaitingScreenVisible
   );
 
-
-  useEffect(() => {
-    (async () => {
-      try {
-        if (web3auth?.status === "connected" && provider && doesCodeExist) {
-          dispatch(counterActions.setIsWaitingScreenVisible(true))
-
-          const userInformation = await web3auth.getUserInfo();
-          const solanaWallet = new SolanaWallet(provider);
-          const accounts = await solanaWallet.requestAccounts();
-
-          const responseData = await getUser()
-
-          if (responseData?.id) {
-            signIn({ user: responseData });
-            router.push("/homepage/dashboard2");
-          } else {
-            dispatch(counterActions.
-              setCategory({
-                email: userInformation.email,
-                blockchainAddress: accounts[0],
-              })
-            );
-
-            router.replace(`/auth/join/intro`);
-          }
-          dispatch(counterActions.setIsWaitingScreenVisible(false))
-        }
-      } catch (error) {
-        console.error(error)
-        dispatch(counterActions.setIsWaitingScreenVisible(false))
-      } 
-    })()
-  },[web3auth?.status])
 
   const loginUser = async (isEmail) => {
     await init();
@@ -147,7 +104,7 @@ const ReferralCodeRedirect = () => {
     <Fragment>
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
-      {!doesCodeExist && (
+      {!doesCodeExist && !isLoading && (
         <div className="w-screen h-screen flex items-center justify-center flex-col gap-5 text-[#222222]">
           <p className="font-bold text-3xl">Oops!</p>
           <p className="max-w-[400px] text-center">
@@ -158,13 +115,13 @@ const ReferralCodeRedirect = () => {
           <div
             className="text-[#222222] p-4 rounded hover:text-white cursor-pointer hover:bg-[#222222]"
             style={{ border: "1px solid #222222" }}
-            onClick={() => router.replace("/")}
+            onClick={() => router.replace("/auth/join")}
           >
             Go to login
           </div>
         </div>
       )}
-      {doesCodeExist && !isWaitingScreenVisible && (
+      {doesCodeExist && !isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
