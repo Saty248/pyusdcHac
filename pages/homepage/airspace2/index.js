@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useContext } from "react";
+import { Fragment, useState, useEffect, useContext, useLayoutEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl from "maplibre-gl";
 import Script from "next/script";
@@ -31,7 +31,7 @@ import PropertiesService from "@/services/PropertiesService";
 import { toast } from "react-toastify";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { Web3authContext } from "@/providers/web3authProvider";
-import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
+import { removePubLicUserDetailsFromLocalStorage,removePubLicUserDetailsFromLocalStorageOnClose } from "@/Components/helper/localStorage";
 const SuccessModal = ({ closePopUp, isSuccess,errorMessages}) => {
   const router = useRouter();
   const handleButtonClick = () => {
@@ -313,7 +313,9 @@ const ClaimModal = ({
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   useEffect(() => {
+    
     let airSpaceName = data.address.split(",");
+    console.log('name chamge',airSpaceName)
     setData((prev) => {
       return {
         ...prev,
@@ -321,7 +323,7 @@ const ClaimModal = ({
       };
     });
     setAndClearOtherPublicRouteData("airSpaceData", data)
-  }, []);
+  }, [data.address]);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;
     let parsedVal = parseFloat(inputVal);
@@ -386,7 +388,7 @@ const ClaimModal = ({
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {data.address}
+              {data?.address}
             </p>
           </div>
           <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
@@ -394,7 +396,7 @@ const ClaimModal = ({
               Name of airspace<span className="text-[#E04F64]">*</span>
             </label>
             <input
-              value={data.name}
+              value={data?.name}
               onChange={(e) =>
                 setData((prev) => ({ ...prev, name: e.target.value }))
               }
@@ -416,7 +418,7 @@ const ClaimModal = ({
                 type="checkbox"
                 id="rent"
                 name="rent"
-                checked={data.rent}
+                checked={data?.rent}
                 onChange={() =>
                   setData((prev) => {
                     const newData = { ...prev, rent: !prev.rent };
@@ -432,7 +434,7 @@ const ClaimModal = ({
                 id="sell"
                 disabled
                 name="sell"
-                checked={data.sell}
+                checked={data?.sell}
                 onChange={() =>
                   setData((prev) => {
                     const newData = { ...prev, sell: !prev.sell };
@@ -444,7 +446,7 @@ const ClaimModal = ({
               <label htmlFor="sell">Sell</label>
             </div>
           </div>
-          {data.rent && (
+          {data?.rent && (
             <Fragment>
               <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem] ">
                 Rental Details
@@ -459,7 +461,7 @@ const ClaimModal = ({
               <div className="md:flex items-center justify-between gap-[15px] mt-4">
                 <div className="flex-1 ">
                   <VariableFeeRentalRangesSelect
-                    fee={data.transitFee}
+                    fee={data?.transitFee}
                     setFee={(fee) =>
                       setData((prev) => ({ ...prev, transitFee: "" + fee }))
                     }
@@ -467,7 +469,7 @@ const ClaimModal = ({
                 </div>
                 <div className="flex-1 mt-4 md:mt-0 ">
                   <TimeZoneSelect
-                    timeZone={data.timezone}
+                    timeZone={data?.timezone}
                     setTimeZone={(timezone) =>
                       setData((prev) => ({ ...prev, timezone }))
                     }
@@ -489,7 +491,7 @@ const ClaimModal = ({
                       type="checkbox"
                       id="hasLandingDeck"
                       name="hasLandingDeck"
-                      checked={data.hasLandingDeck}
+                      checked={data?.hasLandingDeck}
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
@@ -510,7 +512,7 @@ const ClaimModal = ({
                       type="checkbox"
                       id="hasChargingStation"
                       name="hasChargingStation"
-                      checked={data.hasChargingStation}
+                      checked={data?.hasChargingStation}
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
@@ -531,7 +533,7 @@ const ClaimModal = ({
                       type="checkbox"
                       id="hasStorageHub"
                       name="hasStorageHub"
-                      checked={data.hasStorageHub}
+                      checked={data?.hasStorageHub}
                       onChange={() =>
                         setData((prev) => ({
                           ...prev,
@@ -553,7 +555,7 @@ const ClaimModal = ({
                   Availability<span className="text-[#E04F64]">*</span>
                 </p>
                 <WeekDayRangesForm
-                  weekDayRanges={data.weekDayRanges}
+                  weekDayRanges={data?.weekDayRanges}
                   setWeekDayRanges={(weekDayRanges) =>
                     setData((prev) => ({ ...prev, weekDayRanges }))
                   }
@@ -561,7 +563,7 @@ const ClaimModal = ({
               </div>
             </Fragment>
           )}
-          {data.sell && (
+          {data?.sell && (
             <Fragment>
               <div className="flex items-center gap-[7.5px]">
                 <h2 className="text-[#222222] font-normal text-[20px]">
@@ -603,7 +605,7 @@ const ClaimModal = ({
                     autoComplete="off"
                     type="number"
                     min={0}
-                    value={data.sellingPrice}
+                    value={data?.sellingPrice}
                     onChange={handleSellPrice}
                     name="sellingPrice"
                     id="sellingPrice"
@@ -626,18 +628,18 @@ const ClaimModal = ({
           <div className="flex items-center gap-[7px] text-[#87878D] text-[14px] mt-4">
             <input
               className="relative h-[16.67px] w-[16.67px] cursor-pointer bg-cover p-[2.5px]"
-              checked={data.hasPlanningPermission === "true"}
+              checked={data?.hasPlanningPermission === "true"}
               onChange={() =>
                 setData((prev) => ({ ...prev, hasPlanningPermission: "true" }))
               }
               style={{
                 appearance: "none",
                 border:
-                  data.hasPlanningPermission !== "true"
+                  data?.hasPlanningPermission !== "true"
                     ? "2px solid #222222"
                     : "2px solid #0653EA",
                 backgroundColor:
-                  data.hasPlanningPermission === "true"
+                  data?.hasPlanningPermission === "true"
                     ? "#0653EA"
                     : "transparent",
                 borderRadius: "50%",
@@ -650,18 +652,18 @@ const ClaimModal = ({
             <label htmlFor="zone-yes">Yes</label>
             <input
               className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
-              checked={data.hasPlanningPermission === "false"}
+              checked={data?.hasPlanningPermission === "false"}
               onChange={() =>
                 setData((prev) => ({ ...prev, hasPlanningPermission: "false" }))
               }
               style={{
                 appearance: "none",
                 border:
-                  data.hasPlanningPermission !== "false"
+                  data?.hasPlanningPermission !== "false"
                     ? "2px solid #222222"
                     : "2px solid #0653EA",
                 backgroundColor:
-                  data.hasPlanningPermission === "false"
+                  data?.hasPlanningPermission === "false"
                     ? "#0653EA"
                     : "transparent",
                 borderRadius: "50%",
@@ -674,16 +676,16 @@ const ClaimModal = ({
             <label htmlFor="zone-no">No</label>
             <input
               className="relative h-[16.67px] w-[16.67px] cursor-pointer p-[2.5px]"
-              checked={!data.hasPlanningPermission}
+              checked={!data?.hasPlanningPermission}
               onChange={() =>
                 setData((prev) => ({ ...prev, hasPlanningPermission: null }))
               }
               style={{
                 appearance: "none",
-                border: data.hasPlanningPermission
+                border: data?.hasPlanningPermission
                   ? "2px solid #222222"
                   : "2px solid #0653EA",
-                backgroundColor: !data.hasPlanningPermission
+                backgroundColor: !data?.hasPlanningPermission
                   ? "#0653EA"
                   : "transparent",
                 borderRadius: "50%",
@@ -1133,8 +1135,18 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
-// new map is created if not rendered
+//removes cached airspaceData when address is in coOrdinates
 
+  useLayoutEffect(()=>{
+    const {propertyAddress,geoLocation}=router.query;
+    if (propertyAddress,geoLocation){
+      console.log('herere')
+      localStorage.removeItem('airSpaceData')
+      setData({...defaultData})
+      
+    }
+  },[router.query])
+  // new map is created if not rendered
   useEffect(() => {
     if (map) return;
 
@@ -1505,7 +1517,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   {showClaimModal && (
                     <ClaimModal
                       onCloseModal={() => {
-                        removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
+                        removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData',user)
                         setShowClaimModal(false);
                         setIsLoading(false);
                       }}
@@ -1541,7 +1553,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
-                      removePubLicUserDetailsFromLocalStorage('airSpaceData',user)
+                      removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData',user)
                       setShowClaimModal(false);
                       setIsLoading(false);
                     }}
