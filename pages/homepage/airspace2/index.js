@@ -783,7 +783,7 @@ const Explorer = ({
           </div>
         )}
       </div>
-      {flyToAddress && (
+      {flyToAddress && address && (
         <div
           onClick={onClaimAirspace}
           className="w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
@@ -1129,9 +1129,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   useLayoutEffect(()=>{
     const {propertyAddress,geoLocation}=router.query;
     if (propertyAddress,geoLocation){
-      localStorage.removeItem('airSpaceData')
-      setData({...defaultData})
-      
+      localStorage.removeItem('airSpaceData');      
     }
   },[router.query])
   // new map is created if not rendered
@@ -1190,10 +1188,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
   //gets address suggestions 
   useEffect(() => {
     const {propertyAddress,geoLocation}=router.query;
-    if (!showOptions) setShowOptions(true);
     if (!address) return setShowOptions(false);
-    
-    if (propertyAddress,geoLocation) return setShowOptions(false); //to doesnt show address suggestions when address is already there in url
 
     let timeoutId;
 
@@ -1283,9 +1278,10 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
 
   //adds address for the new address
   useEffect(() => {
-    let {propertyAddress,geoLocation}=router.query;
-    
-    if(propertyAddress!=address){// this condition prevent rerenderings,
+    let { propertyAddress, geoLocation } = router.query;
+
+    if((propertyAddress || geoLocation) && !address){// this condition prevent rerenderings,
+      
       if(((propertyAddress && propertyAddress.length>2)|| (geoLocation && geoLocation.length>2))){
         if(geoLocation){   // prioritizing the geolocation over Property Address as it is more consistant             
             setFlyToAddress(geoLocation)
@@ -1446,6 +1442,11 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
     }
   };
 
+  const handleSetAddress = (value) => {
+    setAddress(value)
+    if (!showOptions) setShowOptions(true)
+  }
+
 
   return (
     <Fragment>
@@ -1464,7 +1465,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
               onGoBack={() => setShowMobileMap(false)}
               flyToAddress={flyToAddress}
               address={address}
-              setAddress={setAddress}
+              setAddress={handleSetAddress}
               addresses={addresses}
               showOptions={showOptions}
               handleSelectAddress={handleSelectAddress}
@@ -1489,7 +1490,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && (
+            {isMobile && showMobileMap && flyToAddress && address  && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
@@ -1525,7 +1526,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 <Explorer
                   flyToAddress={flyToAddress}
                   address={address}
-                  setAddress={setAddress}
+                  setAddress={handleSetAddress}
                   addresses={addresses}
                   showOptions={showOptions}
                   handleSelectAddress={handleSelectAddress}
