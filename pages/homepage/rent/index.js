@@ -598,7 +598,6 @@ const Explorer = ({
           className=" mt-5 bg-white w-full flex-col h-auto max-h-60 overflow-y-scroll"
         >
           {registeredAddress.map((item) => {
-            console.log(item, "11111111111")
             //add popup to black ones
             const rentCLickHandler = () => {
               let el1 = document.createElement("div");
@@ -952,10 +951,7 @@ const Rent = () => {
                 .setLngLat(lngLat)
                 .setPopup(popup)
                 .addTo(newMap);
-                // console.log(marker, "markers")
-              
                 const filteredData = responseData.filter(item => item.type === 'rent');
-                // console.log(filteredData,"filteredData")
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
