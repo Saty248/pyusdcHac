@@ -82,7 +82,7 @@ const useAuth = () => {
   const redirectIfUnauthenticated = () => {
     if(web3auth && web3auth.status === "connected") return false;
     else {
-      router.push("/auth/join");
+      router.push("/auth/inAppSignIn");
       return true;
     }
   }
