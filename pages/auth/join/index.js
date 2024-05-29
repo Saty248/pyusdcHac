@@ -105,9 +105,9 @@ const Signup = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
+        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded  max-sm:bg-[white]">
           <form
-            className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
+            className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
             style={{
               maxWidth: "449px",
             }}
