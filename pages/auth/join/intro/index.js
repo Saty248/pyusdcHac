@@ -64,12 +64,6 @@ export  const checkPhoneIsValid = async (phone) => {
 }
 const IndividualSignup = () => {
 
-    // const {category} = useSelector((state) =>
-    // {
-    //   const {category} = state.userReducer
-    //   return {category}
-    // }, shallowEqual );
-
     const dispatch = useDispatch()
 
 
@@ -114,9 +108,12 @@ const IndividualSignup = () => {
         if (typeof global?.window !== 'undefined') {
             const codeString = localStorage.getItem('referralCode');
             if (!codeString) return;
-            const { id, code } = JSON.parse(codeString).response;
-            setReferralCode({ id, code })
-            setReferralDisabled(true)
+            const refCode = JSON.parse(codeString);
+            if (refCode && Object.keys(refCode).length > 0) {
+                const { id, code } = refCode.response;
+                setReferralCode({ id, code })
+                setReferralDisabled(true)
+            }
         }
     }, [global?.window]);
 
@@ -309,9 +306,10 @@ const IndividualSignup = () => {
                                     <input
                                         type='referralCode'
                                         ref={referralCodeRef}
-                                        value={referralCode1.code}
+                                        value={referralCode1.code.toUpperCase()}
                                         placeholder='Enter referral code'
-                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value })}}
+                                        maxLength={6}
+                                        onChange={(event)=>{setReferralCode({ ...referralCode1, code: event.target.value.toUpperCase() })}}
                                         disabled={referralDisabled}
                                         className='rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none'
                                         style={{ border: isReferralCodeValid ? '1px solid #87878D' : '1px solid #E04F64' }}

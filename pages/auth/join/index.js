@@ -4,109 +4,43 @@ import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { useRouter } from "next/router";
 import Image from "next/image";
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { SolanaWallet } from "@web3auth/solana-provider";
-
-import useAuth from "@/hooks/useAuth";
 
 import logo from "../../../public/images/logo.svg";
 
 import Head from "next/head";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import {
-  setCategory,
-  setIsWaitingScreenVisible,
-} from "@/redux/slices/userSlice";
-import { shallowEqual, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
-import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 import { counterActions } from "@/store/store";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { useRouter } from 'next/router';
 
 
 
 const Signup = () => {
+  const { isRedirecting } = useAuthRedirect();
+
   const [emailValid, setEmailValid] = useState(true);
   const[isLoading,setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [isRedirecting, setIsRedirecting] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const emailRef = useRef();
   const { init } = useInitAuth();
 
-  const { signIn,customRedirect } = useAuth();
+  const { web3auth, setProvider } = useContext(Web3authContext);
 
-  const { web3auth, provider, setProvider } = useContext(Web3authContext);
-  const { getUser } = UserService();
-
-  // const {isWaitingScreenVisible} = useSelector((state) => {
-  //   const {isWaitingScreenVisible} = state.userReducer;
-  //   return {isWaitingScreenVisible}
-  // }, shallowEqual);
+  const router = useRouter();
 
   const isWaitingScreenVisible = useSelector(
     (state) => state.value.isWaitingScreenVisible
   );
-
-  useEffect(() => {
-    const categoryData = localStorage.getItem("category");
-    if (categoryData) {
-      const currentCategory = JSON.parse(categoryData);
-      dispatch(counterActions.setCategory(currentCategory));
-    }
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        if (web3auth?.status === "connected" && provider) {
-          dispatch(counterActions.setIsWaitingScreenVisible(true));
-          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
-
-          const userInformation = await web3auth.getUserInfo();
-          const solanaWallet = new SolanaWallet(provider);
-          const accounts = await solanaWallet.requestAccounts();
-
-          const responseData = await getUser();
-
-          if (responseData?.id) {
-            console.log({ responseData });
-            localStorage.setItem("user", JSON.stringify(responseData));
-            signIn({ user: responseData });
-            customRedirect()
-            
-          } else {
-            const categoryData = {
-              email: userInformation.email,
-              blockchainAddress: accounts[0],
-            };
-
-            dispatch(counterActions.setCategory(categoryData));
-
-            localStorage.setItem("category", JSON.stringify(categoryData));
-
-            router.replace(`/auth/join/intro`);
-          }
-          setIsRedirecting(true);
-          dispatch(counterActions.setIsWaitingScreenVisible(false));
-          localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
-        }
-      } catch (error) {
-        console.error(error);
-        dispatch(counterActions.setIsWaitingScreenVisible(false));
-        localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
-      }
-    })();
-  }, [web3auth?.status]);
-
-  console.log("web3auth.status", web3auth?.status);
 
   const loginUser = async (isEmail) => {
     
@@ -171,9 +105,9 @@ const Signup = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded bg-[#F6FAFF] max-sm:bg-[white]">
+        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded  max-sm:bg-[white]">
           <form
-            className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
+            className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
             style={{
               maxWidth: "449px",
             }}
@@ -185,6 +119,7 @@ const Signup = () => {
             }}
           >
             <Image src={logo} alt="Company's logo" width={199} height={77} />
+            {router.pathname=='/auth/join' && <>
             <p className="mt-[25px] text-xl font-medium text-light-black">
               Welcome{isLogin && " back"} to SkyTrade
             </p>
@@ -197,6 +132,22 @@ const Signup = () => {
                 during sign up.
               </p>
             )}
+            </>
+            }
+            {router.pathname!='/auth/join' && <>
+           <p className="mt-[25px] text-xl font-medium text-light-black">
+           Unlock the full experience! 🚀
+            </p>
+            <p className="text-base text-light-black">
+              {isLogin ? "Login" : "Register"}
+            </p>
+            {isLogin && (
+              <p className="text-center text-sm text-light-grey">
+               Log in or create an account to access this feature. Join now to enjoy seamless navigation and exclusive benefits tailored just for you. Ready to explore more? Log in or register now! 
+              </p>
+            )}
+            </>
+            }
             <div className="relative flex w-full flex-col gap-[5px]">
               <label
                 className="text-[14px] font-normal"

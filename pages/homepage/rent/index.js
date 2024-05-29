@@ -44,7 +44,7 @@ import PropertiesService from "@/services/PropertiesService";
 import { Web3authContext } from '@/providers/web3authProvider';
 import ZoomControllers from "@/Components/ZoomControllers";
 import useAutoLogout from "@/hooks/useAutoLogout";
-import { removePubLicUserDetailsFromLocalStorage } from "@/Components/helper/localStorage";
+import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "@/Components/helper/localStorage";
 
 
 
@@ -445,7 +445,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
 
           <div
             onClick={() => {
-              removePubLicUserDetailsFromLocalStorage('rentData',user)
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData',user)
               setShowClaimModal(false);
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
@@ -489,7 +489,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
         <div className="touch-manipulation flex items-center justify-center gap-[20px] text-lg">
           <div
             onClick={() => {
-              removePubLicUserDetailsFromLocalStorage('rentData',user)
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData',user)
               setShowClaimModal(false);
 
             }}
@@ -946,10 +946,15 @@ const Rent = () => {
               const popup = new maplibregl.Popup().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               );
-              new maplibregl.Marker(el)
+              const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
                 .setPopup(popup)
                 .addTo(newMap);
+                const filteredData = responseData.filter(item => item.type === 'rent');
+                marker.getElement().addEventListener('click', function() {
+                  setRentData(responseData[i]);
+                  setShowClaimModal(true);
+              });
             }
           }
         }, 3000);
@@ -1091,13 +1096,14 @@ const Rent = () => {
         <title>SkyTrade - Marketplace : Rent</title>
        
       </Head>
+      {isLoading && <Backdrop />}
+      {isLoading && <Spinner />}
 
       { <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
         <Sidebar />
 
         <div className="w-full h-full flex flex-col">
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+     
           <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
           {isMobile && (
             <ExplorerMobile
