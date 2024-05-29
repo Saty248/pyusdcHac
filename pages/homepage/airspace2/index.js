@@ -1496,7 +1496,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>

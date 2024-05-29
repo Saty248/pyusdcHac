@@ -75,8 +75,8 @@ const Sidebar = () => {
 
     if (onClick !== undefined) {
       return (
-        <div onClick={onClick} className={`py-[16.87px] flex flex-col items-center gap-2 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px] `}>
-          <div className='relative w-5 h-5 flex items-center justify-center'>
+        <div onClick={onClick} className={`py-[16.87px] flex flex-col items-center gap-1 px-[11.77px] w-full ${isActive && 'text-[#4285F4]'} rounded-[3.66px] `}>
+          <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           </div>
           <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[11px] tracking-[1%]`}>{text}</p>
