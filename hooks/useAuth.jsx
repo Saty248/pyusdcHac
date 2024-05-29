@@ -38,8 +38,6 @@ const useAuth = () => {
 
   const signIn = ({ user }) => {
     if (user) dispatch(counterActions.setUser(user));
-    const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
-    localStorage.setItem("skySessionId", JSON.stringify(fetchedToken));
     localStorage.setItem("user", JSON.stringify(user));
   };
 

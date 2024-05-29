@@ -50,6 +50,7 @@ const useAutoLogout = () => {
       const fetchedToken = JSON.parse(localStorage.getItem('openlogin_store'));
       if (!fetchedToken?.sessionId) {
         redirectTo()
+        localStorage.removeItem("user");
       } 
     }
 
