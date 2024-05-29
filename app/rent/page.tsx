@@ -1,6 +1,7 @@
+"use client";
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
-import Sidebar from "@/Components/Sidebar";
+
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
@@ -13,6 +14,7 @@ import ExplorerMobile from "@/Components/Rent/Explorer/ExplorerMobile";
 import RentModal from "@/Components/Rent/RentModal/RentModal";
 import { getAddresses, goToAddress } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
+import Sidebar from "@/Components/Shared/Sidebar";
 
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -27,8 +27,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "Components/Shared/Sidebar.js"
-, "store/store.js"  ],
+    "Components/Shared/Sidebar.tsx",
+    "store/store.js"
+  ],
 
   "exclude": ["node_modules"]
 }

@@ -14,7 +14,6 @@ import { ToastContainer } from "react-toastify";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-toastify/dist/ReactToastify.css";
 
-
 import type { Metadata } from "next";
 import { Head } from "next/document";
 
@@ -37,8 +36,8 @@ export default function RootLayout({
         />
         <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
         <link
-          href='https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css'
-          rel='stylesheet'
+          href="https://unpkg.com/maplibre-gl@3.1.0/dist/maplibre-gl.css"
+          rel="stylesheet"
         />
       </head>
       <body>
@@ -78,8 +77,8 @@ export default function RootLayout({
           <Web3authProvider>
             <SidebarProvider>
               <ToastContainer style={{ width: "500px" }} />
-              <div id='backdrop-root'></div>
-              <div id='modal-root'></div>
+              <div id="backdrop-root"></div>
+              <div id="modal-root"></div>
               {children}
             </SidebarProvider>
             <CookieConsent />

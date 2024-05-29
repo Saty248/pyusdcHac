@@ -1,9 +1,10 @@
 "use client";
-import store from "@/store/store";
+
+import store from "@/redux/store";
 import React, { createContext, useState, ReactNode } from "react";
 import { Provider } from "react-redux";
-import { Web3authContextType } from '../types';
-
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 
 interface Web3authContextType {
   web3auth: any;
@@ -11,9 +12,6 @@ interface Web3authContextType {
   provider: any;
   setProvider: React.Dispatch<React.SetStateAction<any>>;
 }
-
-export const Web3authContext = createContext<Web3authContextType | null>(null);
-
 
 const defaultValue: Web3authContextType = {
   web3auth: null,
@@ -28,6 +26,8 @@ interface Web3authProviderProps {
   children: ReactNode;
 }
 
+const persistor = persistStore(store);
+
 export const Web3authProvider: React.FC<Web3authProviderProps> = ({
   children,
 }) => {
@@ -36,11 +36,13 @@ export const Web3authProvider: React.FC<Web3authProviderProps> = ({
 
   return (
     <Provider store={store}>
-      <Web3authContext.Provider
-        value={{ web3auth, setWeb3auth, provider, setProvider }}
-      >
-        {children}
-      </Web3authContext.Provider>
+      <PersistGate loading={null} persistor={persistor}>
+        <Web3authContext.Provider
+          value={{ web3auth, setWeb3auth, provider, setProvider }}
+        >
+          {children}
+        </Web3authContext.Provider>
+      </PersistGate>
     </Provider>
   );
 };

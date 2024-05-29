@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import useFetchBalance from "./useFetchBalance";
 import useInitAuth from "@/hooks/useInitAuth";
 import useAutoLogout from "@/hooks/useAutoLogout";

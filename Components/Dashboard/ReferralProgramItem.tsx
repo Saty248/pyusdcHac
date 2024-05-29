@@ -29,7 +29,7 @@ const ReferralProgramItem: FC<ReferralProgramItemProps> = ({
         </Link>
       </div>
       <p className="text-[#4285F4] font-semibold text-[12px]">{title}</p>
-      <p className="text-[#1E1E1E] font-normal text-[10px] text-center hidden md:block">
+      <p className="text-[#1E1E1E] font-normal text-xs text-center hidden md:block">
         {text}
       </p>
     </div>

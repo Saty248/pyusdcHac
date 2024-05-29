@@ -1,19 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
 
 import { counterActions } from "@/store/store";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { setUser } from "@/redux/slices/userSlice";
 
 const useAuth = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [web3authStatus, setWeb3authStatus] = useState();
   const { web3auth, setProvider } = useContext(Web3authContext);
 
-  const { userData } = useSelector((state) => {
-    const { user } = state.value;
+  const { userData } = useAppSelector((state) => {
+    const { user } = state.userReducer;
     return { userData: user };
   }, shallowEqual);
 
@@ -21,7 +23,7 @@ const useAuth = () => {
     const userData = localStorage.getItem("user");
     if (userData && userData !== "undefined") {
       const currentUser = JSON.parse(userData);
-      dispatch(counterActions.setUser(currentUser));
+      dispatch(setUser(currentUser));
     }
   }, []);
 
@@ -37,14 +39,13 @@ const useAuth = () => {
   }, [web3auth?.status]);
 
   const signIn = ({ user }) => {
-    if (user) dispatch(counterActions.setUser(user));
+    if (user) dispatch(setUser(user));
     const fetchedToken = JSON.parse(localStorage.getItem("openlogin_store"));
     localStorage.setItem("skySessionId", JSON.stringify(fetchedToken));
   };
 
   const signOut = async () => {
     setProvider(null);
-    // dispatch(counterActions.setClearState({}));
 
     sessionStorage.clear();
     localStorage.clear();
@@ -52,7 +53,7 @@ const useAuth = () => {
   };
 
   const updateProfile = (updatedUser) => {
-    dispatch(counterActions.setUser(updatedUser));
+    dispatch(setUser(updatedUser));
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 

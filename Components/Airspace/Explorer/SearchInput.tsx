@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { MagnifyingGlassIcon } from '@/Components/Icons';
-import { handleSelectAddress } from '@/utils/addressUtils/addressFunction';
+import { MagnifyingGlassIcon } from "@/Components/Icons";
+import { handleSelectAddress } from "@/utils/addressUtils/addressFunction";
 
 interface SearchInputProps {
   address: string;
@@ -18,10 +18,10 @@ const SearchInput: React.FC<SearchInputProps> = ({
   showOptions,
   addresses,
   setFlyToAddress,
-  setShowOptions
+  setShowOptions,
 }) => {
   return (
-    <div className="relative w-full flex items-center rounded-lg bg-white px-2.5 py-2.5 border border-light-grey/30" >
+    <div className="relative w-full flex items-center rounded-lg bg-white px-2.5 py-2.5 border border-light-grey/30">
       <input
         autoComplete="off"
         value={address}
@@ -29,7 +29,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         type="text"
         name="searchLocation"
         id="searchLocation"
-        placeholder="Search Airspace"
+        placeholder="Search Airspaces"
         className="w-full pr-5 outline-none"
       />
       <div className="h-[17px] w-[17px]">
@@ -41,7 +41,14 @@ const SearchInput: React.FC<SearchInputProps> = ({
             <div
               key={item?.id}
               data-value={item?.place_name}
-              onClick={() => handleSelectAddress(item.place_name,setAddress,setFlyToAddress,setShowOptions)}
+              onClick={() =>
+                handleSelectAddress(
+                  item.place_name,
+                  setAddress,
+                  setFlyToAddress,
+                  setShowOptions
+                )
+              }
               className="w-full p-5 text-left text-light-black border-t-[0.2px] border-light-black"
             >
               {item.place_name}

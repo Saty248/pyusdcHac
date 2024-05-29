@@ -3,7 +3,7 @@
 import { Fragment, useState, useEffect } from "react";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 import ZoomControllers from "@/Components/ZoomControllers";
-import Sidebar from "@/Components/Sidebar";
+
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
 import Backdrop from "@/Components/Backdrop";
@@ -25,6 +25,7 @@ import {
 } from "@/utils/apiUtils/apiFunctions";
 import { Coordinates, PropertyData } from "@/types";
 import MobileMapSection from "@/Components/Airspace/MobileMapSection";
+import Sidebar from "@/Components/Shared/Sidebar";
 
 const Airspaces = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +34,11 @@ const Airspaces = () => {
   const [showMobileMap, setShowMobileMap] = useState<boolean>(false);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
   const [address, setAddress] = useState<string>("");
-  const [addressData, setAddressData] = useState<{mapbox_id:string; short_code:string; wikidata:string;} | null | undefined>();
+  const [addressData, setAddressData] = useState<
+    | { mapbox_id: string; short_code: string; wikidata: string }
+    | null
+    | undefined
+  >();
   const [addresses, setAddresses] = useState<
     { id: string; place_name: string }[]
   >([]);
@@ -156,7 +161,6 @@ const Airspaces = () => {
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
 
-  
   return (
     <Fragment>
       <Head>

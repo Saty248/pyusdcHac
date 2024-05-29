@@ -1,42 +1,46 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { shallowEqual } from "react-redux";
 import { useRouter } from "next/navigation";
 
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Web3authContext } from "@/providers/web3authProvider";
-import { counterActions } from "@/store/store";
 import UserService from "@/services/UserService";
 import useInitAuth from "@/hooks/useInitAuth";
 import useAuth from "@/hooks/useAuth";
 import Head from "next/head";
 import { AuthForm } from "@/Components/Auth";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import {
+  setCategory,
+  setIsWaitingScreenVisible,
+} from "@/redux/slices/userSlice";
 
 const Signup: React.FC = () => {
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
-
+  console.log({ web3auth });
   const { getUser } = UserService();
   const { signIn } = useAuth();
   const { init } = useInitAuth();
 
-  const isWaitingScreenVisible = useSelector(
-    (state: any) => state.value.isWaitingScreenVisible,
-    shallowEqual
-  );
+  const { isWaitingScreenVisible } = useAppSelector((state) => {
+    const { isWaitingScreenVisible } = state.userReducer;
+    return { isWaitingScreenVisible };
+  }, shallowEqual);
 
   useEffect(() => {
     const categoryData = localStorage.getItem("category");
     if (categoryData) {
       const currentCategory = JSON.parse(categoryData);
-      dispatch(counterActions.setCategory(currentCategory));
+      dispatch(setCategory(currentCategory));
     }
   }, [dispatch]);
 
@@ -44,7 +48,7 @@ const Signup: React.FC = () => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(counterActions.setIsWaitingScreenVisible(true));
+          dispatch(setIsWaitingScreenVisible(true));
           localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
 
           const userInformation = await web3auth.getUserInfo();
@@ -63,17 +67,17 @@ const Signup: React.FC = () => {
               blockchainAddress: accounts[0],
             };
 
-            dispatch(counterActions.setCategory(categoryData));
+            dispatch(setCategory(categoryData));
             localStorage.setItem("category", JSON.stringify(categoryData));
             router.replace(`/auth/join`);
           }
           setIsRedirecting(true);
-          dispatch(counterActions.setIsWaitingScreenVisible(false));
+          dispatch(setIsWaitingScreenVisible(false));
           localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
         }
       } catch (error) {
         console.error(error);
-        dispatch(counterActions.setIsWaitingScreenVisible(false));
+        dispatch(setIsWaitingScreenVisible(false));
         localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
       }
     })();
@@ -83,7 +87,7 @@ const Signup: React.FC = () => {
     const isWaitingScreen = localStorage.getItem("isWaitingScreenVisible");
     if (isWaitingScreen) {
       const isWaiting = JSON.parse(isWaitingScreen);
-      dispatch(counterActions.setIsWaitingScreenVisible(isWaiting));
+      dispatch(setIsWaitingScreenVisible(isWaiting));
     }
   }, [dispatch]);
 

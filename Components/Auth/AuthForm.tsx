@@ -2,13 +2,13 @@ import React, { FC, useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+
 import Link from "next/link";
 
 import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { counterActions } from "@/store/store";
-import LoadingButton from "@/components/LoadingButton/LoadingButton";
+
 import useInitAuth from "@/hooks/useInitAuth";
 import useAuth from "@/hooks/useAuth";
 
@@ -16,6 +16,8 @@ import useAuth from "@/hooks/useAuth";
 import EmailInput from "./EmailInput";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
+import { useAppDispatch } from "@/redux/store";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -34,7 +36,7 @@ const AuthForm: FC<AuthFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
+
   const { init } = useInitAuth();
   const { signIn } = useAuth();
   const { web3auth, provider, setProvider } = useContext(Web3authContext);

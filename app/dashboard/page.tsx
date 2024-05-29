@@ -2,23 +2,11 @@
 
 import { Fragment, useState, useEffect, FC } from "react";
 import ErrorBoundary from "@/Components/ErrorBoundary";
-import { createPortal } from "react-dom";
 import Link from "next/link";
-import Script from "next/script";
-
 import PageHeader from "@/Components/PageHeader";
 import Spinner from "@/Components/Spinner";
-import Backdrop from "@/Components/Backdrop";
-import WorldMap from "@/Components/WorldMap";
 import useAuth from "@/hooks/useAuth";
-import { SolanaWallet } from "@web3auth/solana-provider";
-import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
-import base58 from "bs58";
 import Head from "next/head";
-import { createUSDCBalStore } from "@/zustand/store";
-import { BalanceLoader } from "@/Components/Wrapped";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import Sidebar from "@/Components/Shared/Sidebar";
 import {
@@ -26,12 +14,7 @@ import {
   MyAirspaces,
   ReferralProgram,
 } from "@/Components/Dashboard";
-import { InfoIcon, MagnifyingGlassIcon } from "@/components/Icons";
-
-let USDollar = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { InfoIcon, MagnifyingGlassIcon } from "@/Components/Shared/Icons";
 
 const Dashboard: FC = () => {
   const [isLoadingAirspace, setIsLoadingAirspace] = useState(false);
@@ -86,9 +69,9 @@ const Dashboard: FC = () => {
             <PageHeader pageTitle={"Dashboard"} />
             <section className=" md:flex relative w-full h-full md:pl-[53px]  ">
               <div className="flex-col-reverse flex justify-center items-align  md:flex-row">
-                <div className="md:basis-[58%] md:flex md:flex-col md:gap-5 md:h-screen md:overflow-y-auto md:my-[-53px] md:py-[53px]">
+                <div className="md:basis-[58%] md:flex md:flex-col md:gap-5 md:h-screen md:overflow-y-auto md:my-[-53px] md:py-[53px] ">
                   <h2 className="font-medium hidden md:flex text-xl text-black pt-10">
-                    Welcome on SkyTrade!
+                    Welcome to SkyTrade!
                   </h2>
                   <p className="font-normal text-base text-[#87878D] hidden md:flex">
                     Claim your airspace on the dashboard to kickstart your

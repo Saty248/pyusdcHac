@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, Fragment, FormEvent } from "react";
 import { createPortal } from "react-dom";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { shallowEqual } from "react-redux";
 import swal from "sweetalert";
 import { useRouter } from "next/navigation";
 import Head from "next/head";
@@ -10,9 +10,10 @@ import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 import useAuth from "@/hooks/useAuth";
 import UserService from "@/services/UserService";
-import { counterActions } from "@/store/store";
 import { checkPhoneIsValid } from "@/Components/Auth/PhoneValidation";
 import PartOne from "@/Components/Auth/PartOne";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { setCategory } from "@/redux/slices/userSlice";
 
 interface RootState {
   value: {
@@ -21,9 +22,14 @@ interface RootState {
 }
 
 const IndividualSignup: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const category = useSelector((state: RootState) => state.value.category);
+
+  const { category } = useAppSelector((state) => {
+    const { category } = state.userReducer;
+    return { category };
+  }, shallowEqual);
+
   const { createUser } = UserService();
   const { temporaryToken, signIn } = useAuth();
 
@@ -48,7 +54,7 @@ const IndividualSignup: React.FC = () => {
     const categoryData = localStorage.getItem("category");
     if (categoryData) {
       const currentCategory = JSON.parse(categoryData);
-      dispatch(counterActions.setCategory(currentCategory));
+      dispatch(setCategory(currentCategory));
     }
   }, [dispatch]);
 
@@ -150,7 +156,10 @@ const IndividualSignup: React.FC = () => {
         <title>StyTrade - Login</title>
       </Head>
       {isLoading &&
-        createPortal(<Backdrop />, document.getElementById("backdrop-root")!)}
+        createPortal(
+          <Backdrop onClick={() => {}} />,
+          document.getElementById("backdrop-root")!
+        )}
       {isLoading &&
         createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 

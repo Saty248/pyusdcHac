@@ -7,18 +7,19 @@ import useAutoLogout from "@/hooks/useAutoLogout";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/navigation";
 import { useMobile } from "@/hooks/useMobile";
+import useInitAuth from "@/hooks/useInitAuth";
 
 export default function Home() {
+  // useInitAuth();
   useAutoLogout();
-  const router = useRouter();
 
+  const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
 
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    // router.push("/auth/join");
-    router.push("/dashboard");
+    router.push("/auth");
   };
 
   useEffect(() => {
@@ -36,8 +37,6 @@ export default function Home() {
 
   const { isMobile } = useMobile();
   const [doItAgain, setDoItAgain] = useState(false);
-
-  // const persistor = persistStore(store);
 
   useEffect(() => {
     var Tawk_API = global?.Tawk_API || undefined;

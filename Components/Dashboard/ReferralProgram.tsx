@@ -14,7 +14,7 @@ const ReferralProgram: FC = () => {
       href={"/homepage/referral"}
       style={"h-fit"}
     >
-      <div className="flex md:flex-col items-center justify-center gap-[8.37px] md:px-[17px]">
+      <div className="flex md:flex-col items-center justify-center gap-[8.37px] md:px-[17px] text-xs">
         <ReferralProgramItem
           icon={<ShareIcon color={""} />}
           title={"Share"}
