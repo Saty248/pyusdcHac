@@ -64,7 +64,6 @@ const MobileNavbar = ({setShowMobileNavbar}) => {
             <SidebarItem href={'/homepage/rent'} text={'Rent Airspace'} children={<DroneIcon />} />
             <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
             <SidebarItem href={'/homepage/funds'} text={'Funds'} children={<WalletIcon />} />
-            <SidebarItem href={'/homepage/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon />} numberOfUnseenNotifications={0} />
             <div className='bg-[#00000012] w-full h-[1px]' />
             <SidebarItem href={'https://skytrade.tawk.help'} text={'Help Center'} children={<HelpQuestionIcon />} />
             <div onClick={logoutHandler} className='cursor-pointer mb-8 flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold rounded-[3.66px]'>

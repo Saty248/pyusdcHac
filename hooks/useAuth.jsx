@@ -82,7 +82,7 @@ const useAuth = () => {
     if(web3auth && web3auth.status === "connected") return false;
     else {
       router.push("/auth/inAppSignIn");
-      toast.success("Contragulations! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
+      toast.success("Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
       return true;
     }
   }
