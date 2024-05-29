@@ -1496,7 +1496,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute bottom-2 left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
@@ -1573,7 +1573,7 @@ const Airspaces = (showMobileNavbar,setShowMobileNavbar) => {
                 <div className="flex flex-1 flex-col gap-[23px] px-[13px] py-[29px]">
                   <div className="flex flex-1 items-center gap-[14px]">
                     <Link
-                      href={"/homepage/portfolio"}
+                      href={"/homepage/airspace2"}
                       className="flex h-full w-full cursor-pointer flex-col justify-between gap-[184px] rounded-[20px] bg-cover bg-center bg-no-repeat p-[17px]"
                       style={{
                         backgroundImage: "url('/images/airspace-preview.png')",
