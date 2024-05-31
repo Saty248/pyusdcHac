@@ -35,6 +35,21 @@ const AirspaceRentalService = () => {
     }
   }
 
+  const getRejectedAirspaces = async (callerAddress, limit, page)=>{
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-rejected-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+      })
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
   const getTotalAirspacesByUserAddress = async (callerAddress)=>{
     try {
       if (!callerAddress) return [];
@@ -76,6 +91,7 @@ const AirspaceRentalService = () => {
   return { 
     getPropertiesByUserAddress,
     getUnverifiedAirspaces,
+    getRejectedAirspaces,
     createMintRentalToken,
     executeMintRentalToken,
     getTotalAirspacesByUserAddress
