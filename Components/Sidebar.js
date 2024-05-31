@@ -41,7 +41,7 @@ const Sidebar = () => {
 
     if (onClick !== undefined) {
       return (
-        <div title={text} onClick={onClick} className={`${style || ''} cursor-pointer py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+        <div title={text} onClick={onClick} className={`${style || ''} cursor-default py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
           <div className='w-6 h-6 flex items-center justify-center'>
             {React.cloneElement(children, { isActive })}
           </div>
@@ -54,7 +54,7 @@ const Sidebar = () => {
     }
 
     return (
-      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
+      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href} className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed' } relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
         <div className='relative w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children, { isActive })}
           {(numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
