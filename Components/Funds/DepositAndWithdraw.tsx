@@ -382,50 +382,54 @@ const DepositAndWithdraw = ({
             )}
           </>
         )}
+        {activeSection === 0 && (
+        <>
         <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
-          <div className="w-6 h-6">
-            <WarningIcon />
-          </div>
-          <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
-            {
-              selectedMethod.name == "Stripe" ? (
-                <p>
-                  Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
-                </p>
-              ):
-              <div >
-                  To complete your deposit, please use your crypto wallet to deposit
-                  USDC to the following address:
-                <br/>
-                <div className="w-full">
-                  <p 
-                    className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
-                    style={{ color: "#0653EA" }}
-                  >
-                    {walletId}  
-                  </p>
-                </div>
-              </div>
-            }
-          </div>
+        <div className="w-6 h-6">
+          <WarningIcon />
         </div>
+        <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
           {
-            selectedMethod.name == "Native" &&
-        <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
-          <div className="w-6 h-6">
-            <WarningIcon />
-          </div>
-          <div className="text-[#222222] text-[14px] font-normal w-full">
-            Scan the QR Code with your Wallet, you can use Phantom Wallet,
-            Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
-            that funds may be irrecoverable if you enter an incorrect wallet ID.
-            It is crucial to ensure the accuracy of the provided ID to avoid any
-            loss.
-          </div>
-        </div>
+            selectedMethod.name == "Stripe" ? (
+              <p>
+                Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
+              </p>
+            ):
+            <div >
+                To complete your deposit, please use your crypto wallet to deposit
+                USDC to the following address:
+              <br/>
+              <div className="w-full">
+                <p 
+                  className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                  style={{ color: "#0653EA" }}
+                >
+                  {walletId}  
+                </p>
+              </div>
+            </div>
           }
+        </div>
       </div>
-    );
-  };
+        {
+          selectedMethod.name == "Native" &&
+      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+        <div className="w-6 h-6">
+          <WarningIcon />
+        </div>
+        <div className="text-[#222222] text-[14px] font-normal w-full">
+          Scan the QR Code with your Wallet, you can use Phantom Wallet,
+          Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
+          that funds may be irrecoverable if you enter an incorrect wallet ID.
+          It is crucial to ensure the accuracy of the provided ID to avoid any
+          loss.
+        </div>
+      </div>
+        }
+        </>
+      )}
 
-      export default DepositAndWithdraw;
+    </div>
+  );
+};
+export default DepositAndWithdraw;

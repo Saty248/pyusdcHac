@@ -5,14 +5,7 @@ import useAuth from "@/hooks/useAuth";
 import Spinner from "../Spinner";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
-
-interface AirspaceType {
-  id?: string;
-  address?: string;
-  expirationDate?: string;
-  name?: string;
-  type?: string;
-}
+import { PropertyData } from "@/types";
 
 const PortfolioList = ({ title, selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -20,16 +13,16 @@ const PortfolioList = ({ title, selectAirspace }) => {
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rejectedPageNumber, setRejectedPageNumber] = useState(1);
   const [rentedAirspaces, setRentedAirspaces] = useState<
-    Array<AirspaceType>
+    Array<PropertyData>
   >([]);
   const [verifiedAirspaces, setVerifiedAirspaces] = useState<
-    Array<AirspaceType >
+    Array<PropertyData >
   >([]);
   const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<
-    Array<AirspaceType>
+    Array<PropertyData>
   >([]);
   const [rejectedAirspaces, setRejectedAirspaces] = useState<
-    Array<AirspaceType >
+    Array<PropertyData >
   >([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState(null);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
@@ -162,7 +155,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
         10,
         unverifiedPageNumber
       );
-
       setUnverifiedAirspaces(unverified?.items);
     } else if (unverifiedPageNumber > 1) {
       const newUnverifiedAirspaces = await getUnverifiedAirspaces(

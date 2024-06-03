@@ -11,14 +11,11 @@ import InviteYourFriends from "@/Components/Referral/InviteYourFriends";
 import YourReferrals from "@/Components/Referral/YourReferrals/YourReferrals";
 import Share from "@/Components/Referral/Share/Share";
 import AlertMessage from "@/Components/Referral/AlertMessage";
-import Backdrop from "@/Components/Backdrop";
-import Spinner from "@/Components/Spinner";
-import { createPortal } from "react-dom";
 import ReferralProgramOverview from "@/Components/Referral/ReferralProgramOverview/ReferralProgramOverview";
 import Sidebar from "@/Components/Shared/Sidebar";
+import PointBalance from "@/Components/Referral/PointBalance";
 
 const Referral = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<number>(0);
   const [data, setData] = useState({
@@ -47,20 +44,13 @@ const Referral = () => {
       }
     })();
   }, [user, web3authStatus]);
-  const renderPortal = (component: JSX.Element) => {
-    if (typeof document !== "undefined") {
-      const backdropRoot = document.getElementById("backdrop-root");
-      return backdropRoot ? createPortal(component, backdropRoot) : null;
-    }
-    return null;
-  };
+
   return (
     <Fragment>
       <Head>
         <title>SkyTrade - Referral Program</title>
       </Head>
-      {isLoading && renderPortal(<Backdrop />)}
-      {isLoading && renderPortal(<Spinner />)}
+
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
@@ -72,6 +62,9 @@ const Referral = () => {
               setActiveSection={setActiveSection}
             />
             <AlertMessage />
+
+            <PointBalance registeredFriends={data?.registeredFriends} />
+
             <ReferralProgramOverview
               activeSection={activeSection}
               isMobile={isMobile}
@@ -83,8 +76,6 @@ const Referral = () => {
               isMobile={isMobile}
               section={1}
               referralCode={data?.referralCode}
-              blockchainAddress={user?.blockchainAddress}
-              user={user}
             />
             <InviteYourFriends referralCode={data?.referralCode} />
             <YourReferrals

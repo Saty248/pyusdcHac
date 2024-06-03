@@ -76,6 +76,7 @@ const Account = () => {
           name,
           phoneNumber,
           newsletter,
+          email,
         };
 
         updateProfile(updatedUser);
