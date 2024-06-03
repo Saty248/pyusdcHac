@@ -22,7 +22,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }:ModalProps) => {
           <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
             <ArrowLeftIcon />
           </div>
-          <h2 className="text-[#222222] text-center font-medium text-xl">
+          <h2 className="text-[#222222] text-center font-medium text-xl w-[97%]">
             {airspace?.address}
           </h2>
           <div
