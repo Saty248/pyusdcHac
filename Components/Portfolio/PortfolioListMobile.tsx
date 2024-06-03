@@ -19,9 +19,11 @@ const PortfolioListMobile = ({  selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
-  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType & any>>([]);
-  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
-  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
+  const [rejectedPageNumber, setRejectedPageNumber] = useState(1);
+  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [rejectedAirspaces, setRejectedAirspaces] = useState<Array<AirspaceType >>([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
@@ -29,19 +31,23 @@ const PortfolioListMobile = ({  selectAirspace }) => {
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
   const { user, web3authStatus } = useAuth();
-  const { getPropertiesByUserAddress, getUnverifiedAirspaces } = AirspaceRentalService();
+  const { getPropertiesByUserAddress, getUnverifiedAirspaces ,getRejectedAirspaces} = AirspaceRentalService();
 
   const handleNextPage = () => {
     if (activeTab === "Verified Airspaces") {
-      if (verifiedAirspaces.length < 10) return;
+      if (verifiedAirspaces?.length < 10) return;
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
     } else if (activeTab === "Rented Airspaces") {
-      if (rentedAirspaces.length < 10) return;
+      if (rentedAirspaces?.length < 10) return;
       setRentalPageNumber((prevPageNumber) => prevPageNumber + 1);
-    } else {
+    } else if (activeTab === "Rejected Airspaces") {
+      if (rejectedAirspaces?.length < 10) return;
+      setRejectedPageNumber((prevPageNumber) => prevPageNumber + 1);
+    }
+    else {
       if (unverifiedAirspaces?.length < 10) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber + 1);
-    }
+    } 
   };
 
   const handlePrevPage = () => {
@@ -51,17 +57,19 @@ const PortfolioListMobile = ({  selectAirspace }) => {
     } else if (activeTab === "Rented Airspaces") {
       if (rentalPageNumber === 1) return;
       setRentalPageNumber((prevPageNumber) => prevPageNumber - 1);
-    } else {
+    } else if (activeTab === "Rejected Airspaces") {
+      if (rejectedPageNumber === 1) return;
+      setRejectedPageNumber((prevPageNumber) => prevPageNumber - 1);
+    }
+    else {
       if (unverifiedPageNumber === 1) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber - 1);
     }
-  };
+  }
 
   const fetchAirspaces = async () => {
     if (user?.blockchainAddress) {
       setLoading(true);
-      console.log("fetching");
-
       const verifiedAirspaces = await getPropertiesByUserAddress(
         user?.blockchainAddress,
         "landToken",
@@ -85,11 +93,16 @@ const PortfolioListMobile = ({  selectAirspace }) => {
       );
       setUnverifiedAirspaces(unverified?.items);
       setAllUnverifiedAirspaces(unverified?.items);
+      const rejected = await getRejectedAirspaces(
+        user?.blockchainAddress,
+        10,
+        rejectedPageNumber
+      );
+      setRejectedAirspaces(rejected?.items);
 
       setLoading(false);
     }
   };
-
   const paginateAirspaces = async () => {
     if (user?.blockchainAddress) {
       setLoading(true);
@@ -112,7 +125,6 @@ const PortfolioListMobile = ({  selectAirspace }) => {
         }
       } else if (activeTab === "Rented Airspaces") {
         if (rentalPageNumber === 1) {
-          // Fetch data from API
           const rented = await getPropertiesByUserAddress(
             user?.blockchainAddress,
             "rentalToken",
@@ -145,8 +157,23 @@ const PortfolioListMobile = ({  selectAirspace }) => {
           );
           setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
         }
+      }else if (activeTab === "Rejected Airspaces") {
+        if (rejectedPageNumber === 1) {
+          const rejected = await getRejectedAirspaces(
+            user?.blockchainAddress,
+            10,
+            rejectedPageNumber
+          );
+          setRejectedAirspaces(rejected?.items);
+        } else if (rejectedPageNumber > 1) {
+          const newRejectedAirspaces = await getRejectedAirspaces(
+            user?.blockchainAddress,
+            10,
+            rejectedPageNumber
+          );
+          setRejectedAirspaces(newRejectedAirspaces?.items);
+        }
       }
-
       setLoading(false);
     }
   };
@@ -161,10 +188,7 @@ const PortfolioListMobile = ({  selectAirspace }) => {
     if(web3authStatus) {
       paginateAirspaces();
     }
-  }, [pageNumber, rentalPageNumber, unverifiedPageNumber]);
-
-  console.log({ verifiedAirspaces, rentedAirspaces, unverifiedAirspaces })
-
+  }, [pageNumber, rentalPageNumber, unverifiedPageNumber,rejectedPageNumber]);
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -188,6 +212,12 @@ const PortfolioListMobile = ({  selectAirspace }) => {
           onClick={() => setActiveTab("Pending Verification")}
         >
           Pending Verification
+        </div>
+        <div
+          className={`${activeTab === "Rejected Airspaces" ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => setActiveTab("Rejected Airspaces")}
+        >
+          Rejected Airspaces
         </div>
       </div>
 
@@ -254,28 +284,48 @@ const PortfolioListMobile = ({  selectAirspace }) => {
             }
             </div>
           )}
+          {activeTab === "Rejected Airspaces" && (
+            <div className="flex flex-col gap-[2px] pb-2 min-h-[70vh]">
+              {(rejectedAirspaces && rejectedAirspaces[0] && rejectedAirspaces[0].address) ? rejectedAirspaces?.map(
+                ({ address, expirationDate, name, type }, index) => (
+                  <PortfolioItemMobile
+                    airspaceName={address}
+                    key={index}
+                    tags={[true, false, false, false]}
+                    type={type}
+                    selectAirspace={() => selectAirspace(index)}
+                  />
+                )
+              )
+              :
+              <AirspacesEmptyMessage />
+            }
+            </div>
+          )}
 
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
-              <div
+              <button
                 onClick={handlePrevPage}
-                className={`${activeTab === "Verified Airspaces" && pageNumber === 1 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentalPageNumber === 1 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedPageNumber === 1 ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
-              >
+                disabled={(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)|| (activeTab === "Rejected Airspaces" && rejectedPageNumber === 1)}
+                className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)  || (activeTab === "Rejected Airspaces" && rejectedPageNumber === 1)? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}>
                 <RxCaretLeft />
-              </div>
+              </button>
               <div>
-                {activeTab === "Verified Airspaces"
+              {activeTab === "Verified Airspaces"
                   ? pageNumber
                   : activeTab === "Rented Airspaces"
                     ? rentalPageNumber
+                    : activeTab === 'Rejected Airspaces' 
+                    ? rejectedPageNumber 
                     : unverifiedPageNumber}
               </div>
-              <div
+              <button
                 onClick={handleNextPage}
-                className={`${activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10 ? "cursor-not-allowed" : activeTab === "Rented Airspaces" && rentedAirspaces.length < 10 ? "cursor-not-allowed" : activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10 ? "cursor-not-allowed" : "cursor-pointer"} p-1 cursor-pointer border rounded-lg border-gray-200`}
-              >
+                disabled={(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces?.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) || (activeTab === "Rejected Airspaces" && rejectedAirspaces?.length < 10)}
+                className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces?.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) || (activeTab === "Rejected Airspaces" && rejectedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}>
                 <RxCaretRight />
-              </div>
+              </button>
             </div>
           </div>
         </div>
