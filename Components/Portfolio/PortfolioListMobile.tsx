@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
-import useAuth from '@/hooks/useAuth';
+import useAuth from "@/hooks/useAuth";
 import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
+import { PropertyData } from "@/types";
 
-interface AirspaceType {
-  id?:string
-  address?:string,
-   expirationDate?:string,
-    name?:string,
-   type?:string,
-}
-
-
-const PortfolioListMobile = ({  selectAirspace }) => {
+const PortfolioListMobile = ({ selectAirspace }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rejectedPageNumber, setRejectedPageNumber] = useState(1);
-  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType>>([]);
-  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType>>([]);
-  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType>>([]);
-  const [rejectedAirspaces, setRejectedAirspaces] = useState<Array<AirspaceType >>([]);
+  const [rentedAirspaces, setRentedAirspaces] = useState<Array<PropertyData>>(
+    []
+  );
+  const [verifiedAirspaces, setVerifiedAirspaces] = useState<
+    Array<PropertyData>
+  >([]);
+  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<
+    Array<PropertyData>
+  >([]);
+  const [rejectedAirspaces, setRejectedAirspaces] = useState<
+    Array<PropertyData>
+  >([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
@@ -31,7 +31,11 @@ const PortfolioListMobile = ({  selectAirspace }) => {
 
   const [activeTab, setActiveTab] = useState("Verified Airspaces");
   const { user, web3authStatus } = useAuth();
-  const { getPropertiesByUserAddress, getUnverifiedAirspaces ,getRejectedAirspaces} = AirspaceRentalService();
+  const {
+    getPropertiesByUserAddress,
+    getUnverifiedAirspaces,
+    getRejectedAirspaces,
+  } = AirspaceRentalService();
 
   const handleNextPage = () => {
     if (activeTab === "Verified Airspaces") {
@@ -43,11 +47,10 @@ const PortfolioListMobile = ({  selectAirspace }) => {
     } else if (activeTab === "Rejected Airspaces") {
       if (rejectedAirspaces?.length < 10) return;
       setRejectedPageNumber((prevPageNumber) => prevPageNumber + 1);
-    }
-    else {
+    } else {
       if (unverifiedAirspaces?.length < 10) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber + 1);
-    } 
+    }
   };
 
   const handlePrevPage = () => {
@@ -60,12 +63,11 @@ const PortfolioListMobile = ({  selectAirspace }) => {
     } else if (activeTab === "Rejected Airspaces") {
       if (rejectedPageNumber === 1) return;
       setRejectedPageNumber((prevPageNumber) => prevPageNumber - 1);
-    }
-    else {
+    } else {
       if (unverifiedPageNumber === 1) return;
       setUnverifiedPageNumber((prevPageNumber) => prevPageNumber - 1);
     }
-  }
+  };
 
   const fetchAirspaces = async () => {
     if (user?.blockchainAddress) {
@@ -157,7 +159,7 @@ const PortfolioListMobile = ({  selectAirspace }) => {
           );
           setUnverifiedAirspaces(newUnverifiedAirspaces?.items);
         }
-      }else if (activeTab === "Rejected Airspaces") {
+      } else if (activeTab === "Rejected Airspaces") {
         if (rejectedPageNumber === 1) {
           const rejected = await getRejectedAirspaces(
             user?.blockchainAddress,
@@ -179,16 +181,16 @@ const PortfolioListMobile = ({  selectAirspace }) => {
   };
 
   useEffect(() => {
-    if(user && web3authStatus) {
+    if (user && web3authStatus) {
       fetchAirspaces();
     }
   }, [user, web3authStatus]);
 
   useEffect(() => {
-    if(web3authStatus) {
+    if (web3authStatus) {
       paginateAirspaces();
     }
-  }, [pageNumber, rentalPageNumber, unverifiedPageNumber,rejectedPageNumber]);
+  }, [pageNumber, rentalPageNumber, unverifiedPageNumber, rejectedPageNumber]);
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -230,8 +232,10 @@ const PortfolioListMobile = ({  selectAirspace }) => {
         <div className="w-screen ">
           {activeTab === "Rented Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh] ">
-              {(rentedAirspaces && rentedAirspaces[0] && rentedAirspaces[0].address) ? rentedAirspaces.map(
-                ({ address, expirationDate, name, type }, index) => (
+              {rentedAirspaces &&
+              rentedAirspaces[0] &&
+              rentedAirspaces[0].address ? (
+                rentedAirspaces.map(({ address, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
                     key={index}
@@ -239,18 +243,19 @@ const PortfolioListMobile = ({  selectAirspace }) => {
                     type={type}
                     selectAirspace={() => selectAirspace(index)}
                   />
-                )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+                ))
+              ) : (
+                <AirspacesEmptyMessage />
+              )}
             </div>
           )}
 
           {activeTab === "Verified Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh]">
-              {(verifiedAirspaces && verifiedAirspaces[0] && verifiedAirspaces[0].address) ? verifiedAirspaces.map(
-                ({ address, expirationDate, name, type }, index) => (
+              {verifiedAirspaces &&
+              verifiedAirspaces[0] &&
+              verifiedAirspaces[0].address ? (
+                verifiedAirspaces.map(({ address, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
                     key={index}
@@ -258,18 +263,19 @@ const PortfolioListMobile = ({  selectAirspace }) => {
                     type={type}
                     selectAirspace={() => selectAirspace(index)}
                   />
-                )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+                ))
+              ) : (
+                <AirspacesEmptyMessage />
+              )}
             </div>
           )}
 
           {activeTab === "Pending Verification" && (
             <div className="flex flex-col gap-[2px] pb-2 min-h-[70vh]">
-              {(unverifiedAirspaces && unverifiedAirspaces[0] && unverifiedAirspaces[0].address) ? unverifiedAirspaces?.map(
-                ({ address, expirationDate, name, type }, index) => (
+              {unverifiedAirspaces &&
+              unverifiedAirspaces[0] &&
+              unverifiedAirspaces[0].address ? (
+                unverifiedAirspaces?.map(({ address, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
                     key={index}
@@ -277,17 +283,18 @@ const PortfolioListMobile = ({  selectAirspace }) => {
                     type={type}
                     selectAirspace={() => selectAirspace(index)}
                   />
-                )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+                ))
+              ) : (
+                <AirspacesEmptyMessage />
+              )}
             </div>
           )}
           {activeTab === "Rejected Airspaces" && (
             <div className="flex flex-col gap-[2px] pb-2 min-h-[70vh]">
-              {(rejectedAirspaces && rejectedAirspaces[0] && rejectedAirspaces[0].address) ? rejectedAirspaces?.map(
-                ({ address, expirationDate, name, type }, index) => (
+              {rejectedAirspaces &&
+              rejectedAirspaces[0] &&
+              rejectedAirspaces[0].address ? (
+                rejectedAirspaces?.map(({ address, type }, index) => (
                   <PortfolioItemMobile
                     airspaceName={address}
                     key={index}
@@ -295,11 +302,10 @@ const PortfolioListMobile = ({  selectAirspace }) => {
                     type={type}
                     selectAirspace={() => selectAirspace(index)}
                   />
-                )
-              )
-              :
-              <AirspacesEmptyMessage />
-            }
+                ))
+              ) : (
+                <AirspacesEmptyMessage />
+              )}
             </div>
           )}
 
@@ -307,23 +313,42 @@ const PortfolioListMobile = ({  selectAirspace }) => {
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
                 onClick={handlePrevPage}
-                disabled={(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)|| (activeTab === "Rejected Airspaces" && rejectedPageNumber === 1)}
-                className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1)  || (activeTab === "Rejected Airspaces" && rejectedPageNumber === 1)? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}>
+                disabled={
+                  (activeTab === "Verified Airspaces" && pageNumber === 1) ||
+                  (activeTab === "Rented Airspaces" &&
+                    rentalPageNumber === 1) ||
+                  (activeTab === "Pending Verification" &&
+                    unverifiedPageNumber === 1) ||
+                  (activeTab === "Rejected Airspaces" &&
+                    rejectedPageNumber === 1)
+                }
+                className={`${(activeTab === "Verified Airspaces" && pageNumber === 1) || (activeTab === "Rented Airspaces" && rentalPageNumber === 1) || (activeTab === "Pending Verification" && unverifiedPageNumber === 1) || (activeTab === "Rejected Airspaces" && rejectedPageNumber === 1) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+              >
                 <RxCaretLeft />
               </button>
               <div>
-              {activeTab === "Verified Airspaces"
+                {activeTab === "Verified Airspaces"
                   ? pageNumber
                   : activeTab === "Rented Airspaces"
                     ? rentalPageNumber
-                    : activeTab === 'Rejected Airspaces' 
-                    ? rejectedPageNumber 
-                    : unverifiedPageNumber}
+                    : activeTab === "Rejected Airspaces"
+                      ? rejectedPageNumber
+                      : unverifiedPageNumber}
               </div>
               <button
                 onClick={handleNextPage}
-                disabled={(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces?.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) || (activeTab === "Rejected Airspaces" && rejectedAirspaces?.length < 10)}
-                className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces?.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) || (activeTab === "Rejected Airspaces" && rejectedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}>
+                disabled={
+                  (activeTab === "Verified Airspaces" &&
+                    verifiedAirspaces?.length < 10) ||
+                  (activeTab === "Rented Airspaces" &&
+                    rentedAirspaces?.length < 10) ||
+                  (activeTab === "Pending Verification" &&
+                    unverifiedAirspaces?.length < 10) ||
+                  (activeTab === "Rejected Airspaces" &&
+                    rejectedAirspaces?.length < 10)
+                }
+                className={`${(activeTab === "Verified Airspaces" && verifiedAirspaces?.length < 10) || (activeTab === "Rented Airspaces" && rentedAirspaces?.length < 10) || (activeTab === "Pending Verification" && unverifiedAirspaces?.length < 10) || (activeTab === "Rejected Airspaces" && rejectedAirspaces?.length < 10) ? "cursor-not-allowed" : "cursor-pointer"} p-1 border rounded-lg border-gray-200`}
+              >
                 <RxCaretRight />
               </button>
             </div>

@@ -52,6 +52,7 @@ export type PropertyData = {
   address: string;
   ownerId?: number;
   propertyStatusId?: number;
+  propertyId?: number;
   hasChargingStation: boolean;
   hasLandingDeck: boolean;
   hasStorageHub: boolean;
@@ -73,6 +74,8 @@ export type PropertyData = {
   updateAt?: Date;
   layers?: layers[];
   propertyStatus?: propertyStatus;
+  status?:number;
+  type?:string;
 };
 export type User = {
   KYCStatusId: number;
