@@ -944,7 +944,7 @@ const PopUp = ({ isVisible, setShowSuccessPopUp }) => {
         Congratulations on claiming your piece of the sky successfully!
         </div>
        <div className="w-3 h-3 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
-       <CloseIcon color="red" />
+       <CloseIcon/>
         </div>
     </div>
   );
