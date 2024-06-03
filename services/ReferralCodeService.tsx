@@ -3,7 +3,7 @@ import Service from "./Service"
 const ReferralCodeService = () => {
   const { getRequest, patchRequest } = Service();
 
-  const getReferralByCode = async (referralCode) => {
+  const getReferralByCode = async (referralCode: string) => {
     try {
       const response = await getRequest({
         uri: `/public/referral-code/${referralCode}`,
@@ -15,7 +15,7 @@ const ReferralCodeService = () => {
     }
   }
 
-  const sendReferral = async (receiverEmail) => {
+  const sendReferral = async (receiverEmail: string) => {
     try {
       const response = await getRequest({
         uri: `/referral-code/send-referral/${receiverEmail}`
@@ -26,7 +26,7 @@ const ReferralCodeService = () => {
     }
   }
 
-  const getReferralCodeById = async (id) => {
+  const getReferralCodeById = async (id: string | number) => {
     try {
       const response = await getRequest({
         uri: `/referral-code/referral-code/${id}`
@@ -37,7 +37,7 @@ const ReferralCodeService = () => {
     }
   }
 
-   const updateReferral = async ({ postData })=>{
+  const updateReferral = async ({ postData }: { postData: any }) => {
     try {
       const response = await patchRequest({
         uri:  `/referral-code`,

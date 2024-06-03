@@ -3,7 +3,7 @@ import Service from "./Service"
 const AirspaceRentalService = () => {
   const { getRequest, postRequest } = Service();
 
-  const getPropertiesByUserAddress = async (callerAddress, type, limit, afterAssetId)=>{
+  const getPropertiesByUserAddress = async (callerAddress: string | undefined, type: string, limit: string | number, afterAssetId?: string)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -19,7 +19,7 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const getUnverifiedAirspaces = async (callerAddress, limit, page)=>{
+  const getUnverifiedAirspaces = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -35,7 +35,7 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const getRejectedAirspaces = async (callerAddress, limit, page)=>{
+  const getRejectedAirspaces = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -50,7 +50,7 @@ const AirspaceRentalService = () => {
       return [];
     }
   }
-  const getTotalAirspacesByUserAddress = async (callerAddress)=>{
+  const getTotalAirspacesByUserAddress = async (callerAddress: string | undefined)=>{
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
@@ -63,7 +63,7 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const createMintRentalToken = async ({ postData })=>{
+  const createMintRentalToken = async ({ postData }: {postData: any})=>{
     try {
       const response = await postRequest({
         uri: `/private/airspace-rental/create-mint-rental-token-ix`,
@@ -75,7 +75,7 @@ const AirspaceRentalService = () => {
     }
   }
 
-  const executeMintRentalToken = async ({ postData })=>{
+  const executeMintRentalToken = async ({ postData }: { postData: any }) => {
     try {
       const response = await postRequest({
         uri: `/private/airspace-rental/execute-mint-rental-token-ix`,

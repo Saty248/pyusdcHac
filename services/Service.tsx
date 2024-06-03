@@ -6,11 +6,18 @@ import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
 
+interface RequestI {
+  uri: string;
+  isPublic?: boolean;
+  postData?: any;
+  suppressErrorReporting?: boolean;
+}
+
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
-  const toastError = (error, suppressErrorReporting) => {
+  const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
     if (
       !suppressErrorReporting &&
@@ -24,7 +31,10 @@ const Service = () => {
     }
   };
 
-  const createHeader = async ({ uri, isPublic }) => {
+  const createHeader = async ({ uri, isPublic }: {
+    uri: string;
+    isPublic?: boolean;
+  }) => {
     try {
       if (isPublic === true) {
         return {
@@ -55,31 +65,26 @@ const Service = () => {
       let message = new SIWWeb3({ header, payload, network });
 
       const messageText = message.prepareMessage();
+      console.log(messageText)
       const msg = new TextEncoder().encode(messageText);
       const result = await solanaWallet.signMessage(msg);
 
       const signature = base58.encode(result);
-      const signatureObj = {};
-
-      signatureObj.sign = signature;
-      signatureObj.sign_nonce = message.payload.nonce;
-      signatureObj.sign_issue_at = message.payload.issuedAt;
-      signatureObj.sign_address = accounts[0];
 
       return {
         "Content-Type": "application/json",
         URI: uri,
-        sign: signatureObj.sign,
-        time: signatureObj.sign_issue_at,
-        nonce: signatureObj.sign_nonce,
-        address: signatureObj.sign_address,
+        sign: signature,
+        time: message.payload.issuedAt,
+        nonce: message.payload.nonce,
+        address: accounts[0],
       };
     } catch (error) {
       console.error(error);
     }
   };
 
-  const getRequest = async ({ uri, isPublic, suppressErrorReporting }) => {
+  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
       const headers = await createHeader({ uri, isPublic });
 
@@ -100,7 +105,7 @@ const Service = () => {
     postData,
     isPublic,
     suppressErrorReporting,
-  }) => {
+  }: RequestI) => {
     try {
       const headers = await createHeader({ uri, isPublic });
 
@@ -122,7 +127,7 @@ const Service = () => {
     postData,
     isPublic,
     suppressErrorReporting,
-  }) => {
+  }: RequestI) => {
     try {
       const headers = await createHeader({ uri, isPublic });
 
@@ -144,7 +149,7 @@ const Service = () => {
     postData,
     isPublic,
     suppressErrorReporting,
-  }) => {
+  }: RequestI) => {
     try {
       const headers = await createHeader({ uri, isPublic });
 
