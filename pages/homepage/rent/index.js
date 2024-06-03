@@ -156,7 +156,7 @@ import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLoc
       {finalAns?.status === "Rent Successful" ? (
         <>
           <button
-            onClick={() => router.push("/homepage/portfolio")}
+            onClick={()=> ( setShowClaimModal(false))}
             className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 bg-[#34A853] text-center text-[#FFFFFF] text-lg"
           >
             Portfolio
@@ -192,7 +192,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   const [date, setDate] = useState(defaultValueDate);
   const router = useRouter();
   const { web3auth } = useContext(Web3authContext);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(true);
 
   const [finalAns, setfinalAns] = useState();
   const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
@@ -410,7 +410,9 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
     return (
       <SuccessModal
         setShowSuccess={setShowSuccess}
-        finalAns={finalAns}
+        finalAns={{
+          status: "Rent Successful"
+        }}
         rentData={rentData}
         setShowClaimModal={setShowClaimModal}
       />
@@ -418,6 +420,8 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
   }
 
   return (
+    <>
+     
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -508,6 +512,7 @@ const ClaimModal = ({ setShowClaimModal, rentData,setRentData, setIsLoading,isLo
         </div>
       </div>
     </LocalizationProvider>
+    </>
   );
 };
 
