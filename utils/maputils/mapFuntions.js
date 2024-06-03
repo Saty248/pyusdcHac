@@ -14,17 +14,21 @@ export const handleZoomOut = (map) => {
   adjustZoom(-1, map);
 };
 
-export const createRentMarkerWithPopup = (map, property, markerElement) => {
+export const createRentMarkerWithPopup = (map, setRentData,setShowClaimModal,property, responseData, markerElement) => {
   const lngLat = new maplibregl.LngLat(property.longitude, property.latitude);
   const popup = new maplibregl.Popup().setHTML(
     `<strong>${property.address}</strong>`
   );
 
-  new maplibregl.Marker(markerElement)
+  const marker = new maplibregl.Marker(markerElement)
     .setLngLat(lngLat)
     .setPopup(popup)
-    .addTo(map);
-};
+    .addTo(newMap);
+    marker.getElement().addEventListener('click', function() {
+      setRentData(responseData[i]);
+      setShowClaimModal(true);
+    });
+}
 
 export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,item) => {
   let el1 = document.createElement("div");
