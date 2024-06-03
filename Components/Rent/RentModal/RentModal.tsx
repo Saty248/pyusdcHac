@@ -41,7 +41,8 @@ const RentModal: React.FC<RentModalProps> = ({
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [date, setDate] = useState(defaultValueDate);
 
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(true);
+  
 
   const [finalAns, setFinalAns] = useState<
     { status: string; message: string | undefined; tokenId?: string } | null | undefined
@@ -123,7 +124,9 @@ const RentModal: React.FC<RentModalProps> = ({
     return (
       <SuccessModal
         setShowSuccess={setShowSuccess}
-        finalAns={finalAns}
+        finalAns={{
+          status: "Rent Successful"
+        }}
         rentData={rentData}
         setShowClaimModal={setShowClaimModal}
       />
