@@ -20,16 +20,16 @@ const PortfolioList = ({ title, selectAirspace }) => {
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rejectedPageNumber, setRejectedPageNumber] = useState(1);
   const [rentedAirspaces, setRentedAirspaces] = useState<
-    Array<AirspaceType & any>
+    Array<AirspaceType>
   >([]);
   const [verifiedAirspaces, setVerifiedAirspaces] = useState<
-    Array<AirspaceType & any>
+    Array<AirspaceType >
   >([]);
   const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<
-    Array<AirspaceType & any>
+    Array<AirspaceType>
   >([]);
   const [rejectedAirspaces, setRejectedAirspaces] = useState<
-    Array<AirspaceType & any>
+    Array<AirspaceType >
   >([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState(null);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);

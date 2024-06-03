@@ -20,10 +20,10 @@ const PortfolioListMobile = ({  selectAirspace }) => {
   const [rentalPageNumber, setRentalPageNumber] = useState(1);
   const [unverifiedPageNumber, setUnverifiedPageNumber] = useState(1);
   const [rejectedPageNumber, setRejectedPageNumber] = useState(1);
-  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType & any>>([]);
-  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
-  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType & any>>([]);
-  const [rejectedAirspaces, setRejectedAirspaces] = useState<Array<AirspaceType & any>>([]);
+  const [rentedAirspaces, setRentedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [verifiedAirspaces, setVerifiedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [unverifiedAirspaces, setUnverifiedAirspaces] = useState<Array<AirspaceType>>([]);
+  const [rejectedAirspaces, setRejectedAirspaces] = useState<Array<AirspaceType >>([]);
   const [allUnverifiedAirspaces, setAllUnverifiedAirspaces] = useState([]);
   const [allRentedAirspaces, setAllRentedAirspaces] = useState([]);
   const [allVerifiedAirspaces, setAllVerifiedAirspaces] = useState([]);
