@@ -7,14 +7,13 @@ import { FacebookIcon, LinkedInIcon, XIcon } from "../../Shared/Icons";
 import CopyableInput from "./CopyableInput";
 import SocialShareButton from "./SocialShareButton";
 import { User } from "@/types";
+import useAuth from "@/hooks/useAuth";
 
 interface ShareProps {
   activeSection: number;
   section: number;
   isMobile: boolean;
   referralCode: string;
-  blockchainAddress: string;
-  user: User;
   isLoading: boolean;
 }
 
@@ -23,10 +22,12 @@ const Share: React.FC<ShareProps> = ({
   section,
   isMobile,
   referralCode,
-  user,
   isLoading,
 }) => {
   if (activeSection !== section && isMobile) return null;
+
+  const { user } = useAuth();
+
 
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
 
@@ -56,7 +57,7 @@ const Share: React.FC<ShareProps> = ({
 
   useEffect(() => {
     setTemporalReferralCode(referralCode);
-  }, [referralCode, user]);
+  }, [referralCode, user?.blockchainAddress]);
 
   const handleCopy = (e: MouseEvent, text: string, isCode: boolean) => {
     e.preventDefault();
@@ -77,6 +78,10 @@ const Share: React.FC<ShareProps> = ({
       return;
     }
     try {
+      if (!user) {
+        toast.error("User not logged");
+        return;
+      }
       const {
         ownedReferralCode: { id },
       } = user;
