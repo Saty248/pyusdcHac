@@ -14,7 +14,7 @@ export const handleZoomOut = (map) => {
   adjustZoom(-1, map);
 };
 
-export const createRentMarkerWithPopup = (map, setRentData,setShowClaimModal,property, responseData, markerElement) => {
+export const createRentMarkerWithPopup = (map, property, markerElement) => {
   const lngLat = new maplibregl.LngLat(property.longitude, property.latitude);
   const popup = new maplibregl.Popup().setHTML(
     `<strong>${property.address}</strong>`
