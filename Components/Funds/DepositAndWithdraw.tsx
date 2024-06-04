@@ -276,7 +276,7 @@ const DepositAndWithdraw = ({
   
                       <input
                         type="text"
-                        value={amount || 0}
+                        value={amount}
                         name="amount"
                         onChange={handleAmountInputChanged}
                         id="amount"
