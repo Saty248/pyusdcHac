@@ -5,18 +5,12 @@ import { toast } from "react-toastify";
 
 import Link from "next/link";
 
-import { SolanaWallet } from "@web3auth/solana-provider";
-
-import { counterActions } from "@/store/store";
-
 import useInitAuth from "@/hooks/useInitAuth";
 import useAuth from "@/hooks/useAuth";
 
-// import logo from "../../../public/images/logo.svg";
 import EmailInput from "./EmailInput";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
-import { useAppDispatch } from "@/redux/store";
 import LoadingButton from "../LoadingButton/LoadingButton";
 
 interface AuthFormProps {

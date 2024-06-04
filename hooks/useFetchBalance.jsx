@@ -4,7 +4,6 @@ import useAuth from "@/hooks/useAuth";
 import { setUserUSDWalletBalance } from "@/redux/slices/userSlice";
 import axios from "axios";
 import { shallowEqual, useSelector } from "react-redux";
-import { counterActions } from "@/store/store";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 
 const useFetchBalance = () => {
