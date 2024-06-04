@@ -50,9 +50,6 @@ const DepositAndWithdraw = ({
           activeSection == 1 &&
         parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
         ) {
-
-          
-
           toast.error("You do not have enough funds");
   
           return;
@@ -62,7 +59,6 @@ const DepositAndWithdraw = ({
   
           return;
         }
-  
         setIsLoading(true);
   
         const solanaWallet = new SolanaWallet(provider);
@@ -132,7 +128,7 @@ const DepositAndWithdraw = ({
   
         tx.recentBlockhash = blockhash;
         tx.feePayer = new PublicKey(user?.blockchainAddress);
-  
+
         try {
           let estimatedGas = await tx.getEstimatedFee(connection);
 
@@ -171,13 +167,9 @@ const DepositAndWithdraw = ({
   
     const handleAmountInputChanged = (e) => {
       let inputValue = e.target.value;
-      // Replace any characters that are not numbers or decimal points with an empty string
       inputValue = inputValue.replace(/[^0-9.]/g, "");
-  
-      // Ensure only one decimal point is present
       const decimalCount = inputValue.split(".").length - 1;
       if (decimalCount > 1) {
-        // If more than one decimal point, remove the extra ones
         inputValue = inputValue.slice(0, inputValue.lastIndexOf("."));
       }
   
@@ -254,10 +246,10 @@ const DepositAndWithdraw = ({
                       >
                         $
                       </label>
-  
+
                       <input
                         type="text"
-                        value={amount || 0}
+                        value={amount}
                         name="amount"
                         onChange={handleAmountInputChanged}
                         id="amount"
@@ -288,7 +280,7 @@ const DepositAndWithdraw = ({
           )}
         </div>
   
-        {activeSection === 0 && (
+          {activeSection === 0 && (
           <>
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col items-start gap-[5px] flex-1">
@@ -390,6 +382,7 @@ const DepositAndWithdraw = ({
               </div>
             </div>
           }
+
         </div>
       </div>
         {

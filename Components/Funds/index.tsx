@@ -34,15 +34,11 @@ const Funds = () => {
   const [solbalance, setSolBalance] = useState<number>(0);
   const { provider } = useContext(Web3authContext) as Web3authContextType;
 
-  //get sol balance
   useEffect(() => {
     let fetchbalance = async () => {
       if (user && provider) {
         const solanaWallet = new SolanaWallet(provider);
-
-        console.log("solana wallet ", solanaWallet);
         const accounts = await solanaWallet.requestAccounts();
-
         const connectionConfig: ConnectionConfig = await solanaWallet.request({
           method: "solana_provider_config",
           params: [],
@@ -56,11 +52,9 @@ const Funds = () => {
       }
     };
     fetchbalance()
-      // make sure to catch any error
       .catch(console.error);
   }, [solbalance, user, web3authStatus]);
 
-  // GET TRANSACTION HISTORY
   useEffect(() => {
     if (user) {
       fetch(
@@ -111,7 +105,6 @@ const Funds = () => {
         });
       }
 
-      console.log(collectedTransactions);
       setTransactions(collectedTransactions);
     }
   }, [transactionHistory, user, web3authStatus]);
