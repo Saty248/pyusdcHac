@@ -24,13 +24,9 @@ const Share: React.FC<ShareProps> = ({
   referralCode,
   isLoading,
 }) => {
-  if (activeSection !== section && isMobile) return null;
-
   const { user } = useAuth();
-
-
+  if (activeSection !== section && isMobile) return;
   const [isCopied, setIsCopied] = useState({ code: false, link: false });
-
   const [temporalReferralCode, setTemporalReferralCode] =
     useState(referralCode);
   const { updateReferral } = ReferralCodeService();
@@ -39,25 +35,31 @@ const Share: React.FC<ShareProps> = ({
 
   useEffect(() => {
     if (!isCopied.code) return;
-    const timeoutId = setTimeout(
-      () => setIsCopied((prev) => ({ ...prev, code: false })),
-      2000
-    );
-    return () => clearTimeout(timeoutId);
-  }, [isCopied.code]);
+    let timeoutId: NodeJS.Timeout;
+    (() => {
+      timeoutId = setTimeout(() => {
+        setIsCopied((prev) => ({ ...prev, code: false }));
+      }, 2000);
+    })();
+
+    return () => timeoutId && clearTimeout(timeoutId);
+  }, [isCopied.code, user]);
 
   useEffect(() => {
     if (!isCopied.link) return;
-    const timeoutId = setTimeout(
-      () => setIsCopied((prev) => ({ ...prev, link: false })),
-      2000
-    );
-    return () => clearTimeout(timeoutId);
+    let timeoutId: NodeJS.Timeout;
+    (() => {
+      timeoutId = setTimeout(() => {
+        setIsCopied((prev) => ({ ...prev, link: false }));
+      }, 2000);
+    })();
+
+    return () => timeoutId && clearTimeout(timeoutId);
   }, [isCopied.link]);
 
   useEffect(() => {
     setTemporalReferralCode(referralCode);
-  }, [referralCode, user?.blockchainAddress]);
+  }, [referralCode, user]);
 
   const handleCopy = (e: MouseEvent, text: string, isCode: boolean) => {
     e.preventDefault();
@@ -102,11 +104,10 @@ const Share: React.FC<ShareProps> = ({
           })
         );
         router.refresh();
-      } else if (resp?.errorMessage) {
-        toast.error(resp.errorMessage);
-      } else {
-        toast.error("Error when updating referral");
+      } else if (resp && resp.errorMessage) {
+        toast.error(resp.errorMessage)
       }
+      else toast.error("Error when updating referral")
     } catch (error) {
       console.error(error);
       toast.error(error.message);
