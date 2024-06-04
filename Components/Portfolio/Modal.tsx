@@ -10,8 +10,7 @@ interface ModalProps {
 }
 
 
-const  Modal = ({ airspace, onCloseModal, isOffer }:ModalProps) => {
-  console.log({ airspace });
+const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
   return (
     <Fragment>
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-50 flex flex-col gap-[15px]">
@@ -22,7 +21,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }:ModalProps) => {
           <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
             <ArrowLeftIcon />
           </div>
-          <h2 className="text-[#222222] text-center font-medium text-xl w-[97%]">
+          <h2 className="text-[#222222] text-center font-medium text-xl">
             {airspace?.address}
           </h2>
           <div

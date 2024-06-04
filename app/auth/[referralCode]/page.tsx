@@ -127,7 +127,7 @@ const ReferralCodeRedirect = () => {
           <div
             className="text-[#222222] p-4 rounded hover:text-white cursor-pointer hover:bg-[#222222]"
             style={{ border: "1px solid #222222" }}
-            onClick={() => router.replace("/auth/join")}
+            onClick={() => router.replace("/auth")}
           >
             Go to login
           </div>
