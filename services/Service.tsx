@@ -42,7 +42,6 @@ const Service = () => {
           "Content-Type": "application/json",
         };
       }
-      console.log({ provider });
       if (!provider) return;
 
       const solanaWallet = new SolanaWallet(provider);
@@ -65,7 +64,6 @@ const Service = () => {
       let message = new SIWWeb3({ header, payload, network });
 
       const messageText = message.prepareMessage();
-      console.log(messageText)
       const msg = new TextEncoder().encode(messageText);
       const result = await solanaWallet.signMessage(msg);
 

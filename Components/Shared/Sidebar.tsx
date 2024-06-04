@@ -53,8 +53,6 @@ const Sidebar: React.FC = () => {
   }) => {
     const isActive = href ? asPath?.includes(href) : false;
 
-    console.log({ href, asPath });
-
     if (onClick !== undefined) {
       return (
         <div title={text} onClick={onClick} className={`${style || ''} cursor-default py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>

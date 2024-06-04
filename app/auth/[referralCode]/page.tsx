@@ -33,8 +33,6 @@ const ReferralCodeRedirect = () => {
   const router = useRouter();
   const queryParams = useParams();
 
-  console.log({ queryParams })
-
   const { getReferralByCode } = ReferralCodeService();
   const { web3auth, setProvider } = useContext(Web3authContext)
   const { init } = useInitAuth();

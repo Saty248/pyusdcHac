@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useDispatch, shallowEqual } from "react-redux";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useRouter } from "next/navigation";
 import publicAccessRoutes from "@/helpers/publicAccessRoutes";
 import { User } from "@/types";
 import { setUser } from "@/redux/slices/userSlice";
+import { useAppSelector } from "@/redux/store";
 
 const useAuth = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const useAuth = () => {
   const [web3authStatus, setWeb3authStatus] = useState<boolean>(false);
   const { web3auth, setProvider } = useContext(Web3authContext);
 
-  const { userData } = useSelector((state: any) => {
+  const { userData } = useAppSelector((state: any) => {
     return { userData: state?.userReducer?.user };
   }, shallowEqual);
 
