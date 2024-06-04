@@ -47,7 +47,7 @@ const PersonalInformation= ({
                 </div>
             </div>
             <div className="flex items-center justify-end flex-1">
-             <button  disabled={isLoading}  className={`font-medium text-base ${!isChanged ? 'text-gray-400 cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'  }`}  onClick={updateDataHandler} > Save changes </button>
+             <button  disabled={isLoading || !isChanged}  className={`font-medium text-base ${!isChanged ? 'text-gray-400 cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'  }`}  onClick={updateDataHandler} > Save changes </button>
             </div>
         </div>
     </div>
