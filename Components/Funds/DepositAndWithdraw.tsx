@@ -48,30 +48,25 @@ const DepositAndWithdraw = ({
       try {
         if (
           activeSection == 1 &&
-        //   parseFloat(tokenBalance) <= parseFloat(amount)
         parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
         ) {
-          console.log(tokenBalance, "this is tokenBalance");
-          console.log(amount, "this is amount");
-          console.log("amts=", parseFloat(tokenBalance.toString()), parseFloat(amount || '0'));
-  
+
+          
+
           toast.error("You do not have enough funds");
   
           return;
         }
         if (activeSection == 1 && parseFloat (userSolBalc.toString()) === 0) {
-          console.log("amts=", parseFloat(tokenBalance.toString()), parseFloat(amount || '0'));
           toast.error("You do not have enough SOL");
   
           return;
         }
-        //new PublicKey('fgdf')
   
         setIsLoading(true);
   
         const solanaWallet = new SolanaWallet(provider);
   
-        console.log("solana wallet ", solanaWallet);
         const accounts = await solanaWallet.requestAccounts();
   
         const connectionConfig: ConnectionConfig = await solanaWallet.request({
@@ -84,7 +79,6 @@ const DepositAndWithdraw = ({
           new PublicKey(accounts[0])
         );
   
-        // let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
         const mintAccount: string = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
         let tx = new Transaction();
   
@@ -97,11 +91,6 @@ const DepositAndWithdraw = ({
           new PublicKey(mintAccount),
           new PublicKey(user?.blockchainAddress)
         );
-        // let ix = [];
-  
-        // let priorityIx = await getPriorityFeeIx(connection);
-  
-        // ix.push(priorityIx);
         let ix: TransactionInstruction[] = [];
 
         let priorityIx: TransactionInstruction = await getPriorityFeeIx(connection);
@@ -127,7 +116,6 @@ const DepositAndWithdraw = ({
           }
         }
   
-        console.log("amount = ", amount);
         let transferIx = createTransferInstruction(
           senderUSDCAddr,
           recipientUSDCAddr,
@@ -145,7 +133,6 @@ const DepositAndWithdraw = ({
         tx.recentBlockhash = blockhash;
         tx.feePayer = new PublicKey(user?.blockchainAddress);
   
-        console.log("transaction obj ", tx);
         try {
           let estimatedGas = await tx.getEstimatedFee(connection);
 
@@ -156,7 +143,6 @@ const DepositAndWithdraw = ({
           }
   
           if (solbalance < estimatedGas) {
-            // normalized back to sol hence the division
             toast.error(`At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`);
             setIsLoading(false);
             return;
@@ -164,14 +150,10 @@ const DepositAndWithdraw = ({
   
           const signature = await solanaWallet.signAndSendTransaction(tx);
   
-          console.log("sig =", signature);
-  
           setTokenBalance(tokenBalance - Number(amount));
-          console.log("new token bal=", amount);
           setTimeout(() => {
             setIsLoading(false);
-            console.log("timeout over");
-            router.prefetch("/homepage/funds");
+            router.prefetch("/funds");
           }, 10000);
           notifySuccess();
         } catch (err) {
@@ -179,7 +161,6 @@ const DepositAndWithdraw = ({
           setIsLoading(false);
         }
       } catch (error) {
-        console.log("pub key ", error);
   
         setIsLoading(false);
         toast.error(error.message);
