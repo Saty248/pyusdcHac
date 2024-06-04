@@ -43,7 +43,6 @@ export const goToAddress = async (
     map: Map | maplibregl.Map | null,
     marker: Marker |maplibregl.Marker| null
 ): Promise<void> => {
-    console.log('marker:',marker)
     try {
         setIsLoading(true);
 
@@ -81,7 +80,6 @@ export const goToAddress = async (
         let el = document.createElement("div");
         el.id = "markerWithExternalCss";
 
-        // const newMarker = new Marker(el).setLngLat(endPoint)
         const newMarker = new maplibregl.Marker(el)
           .setLngLat(endPoint)
           .addTo(map);
