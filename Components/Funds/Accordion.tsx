@@ -45,7 +45,7 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
           ) : (
             <div className="font-medium  text-[#838187] text-[12px]">Select</div>
           )}
-  
+
           <div className="transform transition-transform duration-300">
             {isOpen ? chevronDownIcon() : chevronUpIcon()}
           </div>

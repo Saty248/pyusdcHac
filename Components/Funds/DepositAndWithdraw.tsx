@@ -51,27 +51,19 @@ const DepositAndWithdraw = ({
         //   parseFloat(tokenBalance) <= parseFloat(amount)
         parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
         ) {
-          console.log(tokenBalance, "this is tokenBalance");
-          console.log(amount, "this is amount");
-          console.log("amts=", parseFloat(tokenBalance.toString()), parseFloat(amount || '0'));
-  
           toast.error("You do not have enough funds");
   
           return;
         }
         if (activeSection == 1 && parseFloat (userSolBalc.toString()) === 0) {
-          console.log("amts=", parseFloat(tokenBalance.toString()), parseFloat(amount || '0'));
           toast.error("You do not have enough SOL");
   
           return;
         }
-        //new PublicKey('fgdf')
-  
         setIsLoading(true);
   
         const solanaWallet = new SolanaWallet(provider);
   
-        console.log("solana wallet ", solanaWallet);
         const accounts = await solanaWallet.requestAccounts();
   
         const connectionConfig: ConnectionConfig = await solanaWallet.request({
@@ -97,11 +89,6 @@ const DepositAndWithdraw = ({
           new PublicKey(mintAccount),
           new PublicKey(user?.blockchainAddress)
         );
-        // let ix = [];
-  
-        // let priorityIx = await getPriorityFeeIx(connection);
-  
-        // ix.push(priorityIx);
         let ix: TransactionInstruction[] = [];
 
         let priorityIx: TransactionInstruction = await getPriorityFeeIx(connection);
@@ -127,7 +114,6 @@ const DepositAndWithdraw = ({
           }
         }
   
-        console.log("amount = ", amount);
         let transferIx = createTransferInstruction(
           senderUSDCAddr,
           recipientUSDCAddr,
@@ -144,8 +130,7 @@ const DepositAndWithdraw = ({
   
         tx.recentBlockhash = blockhash;
         tx.feePayer = new PublicKey(user?.blockchainAddress);
-  
-        console.log("transaction obj ", tx);
+
         try {
           let estimatedGas = await tx.getEstimatedFee(connection);
 
@@ -156,7 +141,6 @@ const DepositAndWithdraw = ({
           }
   
           if (solbalance < estimatedGas) {
-            // normalized back to sol hence the division
             toast.error(`At least ${estimatedGas / LAMPORTS_PER_SOL} SOL required as gas fee`);
             setIsLoading(false);
             return;
@@ -164,14 +148,10 @@ const DepositAndWithdraw = ({
   
           const signature = await solanaWallet.signAndSendTransaction(tx);
   
-          console.log("sig =", signature);
-  
           setTokenBalance(tokenBalance - Number(amount));
-          console.log("new token bal=", amount);
           setTimeout(() => {
             setIsLoading(false);
-            console.log("timeout over");
-            router.prefetch("/homepage/funds");
+            router.prefetch("/funds");
           }, 10000);
           notifySuccess();
         } catch (err) {
@@ -190,13 +170,9 @@ const DepositAndWithdraw = ({
   
     const handleAmountInputChanged = (e) => {
       let inputValue = e.target.value;
-      // Replace any characters that are not numbers or decimal points with an empty string
       inputValue = inputValue.replace(/[^0-9.]/g, "");
-  
-      // Ensure only one decimal point is present
       const decimalCount = inputValue.split(".").length - 1;
       if (decimalCount > 1) {
-        // If more than one decimal point, remove the extra ones
         inputValue = inputValue.slice(0, inputValue.lastIndexOf("."));
       }
   
@@ -273,7 +249,7 @@ const DepositAndWithdraw = ({
                       >
                         $
                       </label>
-  
+
                       <input
                         type="text"
                         value={amount}
@@ -307,7 +283,7 @@ const DepositAndWithdraw = ({
           )}
         </div>
   
-        {activeSection === 0 && (
+          {activeSection === 0 && (
           <>
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col items-start gap-[5px] flex-1">
@@ -409,6 +385,7 @@ const DepositAndWithdraw = ({
               </div>
             </div>
           }
+
         </div>
       </div>
         {
