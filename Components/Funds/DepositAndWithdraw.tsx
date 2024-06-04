@@ -48,7 +48,6 @@ const DepositAndWithdraw = ({
       try {
         if (
           activeSection == 1 &&
-        //   parseFloat(tokenBalance) <= parseFloat(amount)
         parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
         ) {
           toast.error("You do not have enough funds");
@@ -76,7 +75,6 @@ const DepositAndWithdraw = ({
           new PublicKey(accounts[0])
         );
   
-        // let mintAccount = process.env.NEXT_PUBLIC_MINT_ADDRESS;
         const mintAccount: string = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
         let tx = new Transaction();
   
@@ -159,7 +157,6 @@ const DepositAndWithdraw = ({
           setIsLoading(false);
         }
       } catch (error) {
-        console.log("pub key ", error);
   
         setIsLoading(false);
         toast.error(error.message);

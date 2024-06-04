@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import { createPortal } from "react-dom";
 
 import PageHeader from "../../Components/PageHeader";
-import Spinner from "../../Components/Backdrop";
+import Spinner from "../../Components/Spinner";
 import Backdrop from "../../Components/Backdrop";
 
 import UserService from "../../services/UserService";
@@ -94,15 +94,15 @@ const Account = () => {
 
   const onVerifyMyAccount = () => {
     setIsLoading(true);
-    // const client = new Persona.Client({
-    //     templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-    //     referenceId: user?.id.toString(),
-    //     environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
-    //     onReady: () => {
-    //         setIsLoading(false);
-    //         client.open();
-    //     },
-    // });
+    const client = new Persona.Client({
+        templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+        referenceId: user?.id.toString(),
+        environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+        onReady: () => {
+            setIsLoading(false);
+            client.open();
+        },
+    });
   };
 
   return (

@@ -24,8 +24,8 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
           claim airspaces, you receive:
         </p>
         <p className="text-[#4285F4] text-[15px] font-normal">
-          <span className="font-bold text-[20px]">+50 SKY points to you</span>{" "}
-          for each successful referral registration and{" "}
+          <span className="font-bold text-[20px]">+50 SKY points to you</span> for
+          each successful referral registration and{" "}
           <span className="font-bold text-[20px]">+50 SKY points</span> to the
           successfully referred person
           <br />
@@ -36,7 +36,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-9 px-[35px] md:px-[51px]">
         <Item
-          icon={<ShareIcon color={undefined} />}
+          icon={<ShareIcon />}
           title={"Share"}
           text={
             "Send your invite link or code to your friends and explain them how cool is SkyTrade"

@@ -408,7 +408,7 @@ export const UserIcon = () => {
   );
 };
 
-export const ShareIcon = ({ color }) => {
+export const ShareIcon = ({ color }:{color?: string}) => {
   return (
     <svg
       width="100%"
