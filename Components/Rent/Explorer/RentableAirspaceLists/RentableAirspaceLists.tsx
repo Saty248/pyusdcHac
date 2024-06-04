@@ -32,6 +32,8 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   const [selectedAddress, setSelectedAddress] = useState<number | null | undefined>();
   useRentableAirspaces({
     map,
+    setRentData,
+    setShowClaimModal,
     setLoadingRegAddresses,
     setRegisteredAddress,
   });

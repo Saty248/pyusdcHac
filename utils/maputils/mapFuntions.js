@@ -23,11 +23,8 @@ export const createRentMarkerWithPopup = (map, property, markerElement) => {
   const marker = new maplibregl.Marker(markerElement)
     .setLngLat(lngLat)
     .setPopup(popup)
-    .addTo(newMap);
-    marker.getElement().addEventListener('click', function() {
-      setRentData(responseData[i]);
-      setShowClaimModal(true);
-    });
+    .addTo(map);
+    return marker;
 }
 
 export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,item) => {

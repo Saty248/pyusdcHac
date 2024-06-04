@@ -41,7 +41,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [date, setDate] = useState(defaultValueDate);
 
-  const [showSuccess, setShowSuccess] = useState<boolean>(true);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
   
 
   const [finalAns, setFinalAns] = useState<
