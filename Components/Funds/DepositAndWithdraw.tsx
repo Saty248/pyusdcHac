@@ -29,7 +29,7 @@ const DepositAndWithdraw = ({
     solbalance,
   }: DepositAndWithdrawProps) => {
     const router = useRouter();
-    const [amount, setAmount] = useState<string | null>(null);
+    const [amount, setAmount] = useState<string>('');
     const [copy, setCopy] = useState(false);
     const [isCopyTooltipVisible,setIsCopyTooltipVisible] = useState(false);
   

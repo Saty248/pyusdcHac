@@ -94,6 +94,7 @@ const Account = () => {
 
   const onVerifyMyAccount = () => {
     setIsLoading(true);
+    // @ts-ignore
     const client = new Persona.Client({
         templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
         referenceId: user?.id.toString(),
