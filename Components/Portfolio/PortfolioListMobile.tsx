@@ -19,8 +19,8 @@ const PortfolioListMobile = ({ selectAirspace }) => {
   return (
     <div className="overflow-x-hidden mb-24">
       <div
-        className=" flex items-center overflow-x-auto border-b border-[#5D7285]/50"
-        style={{ scrollbarWidth: "thin", scrollbarColor: "#ccc #f3f4f6" }}
+        className=" flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-6"
+        style={{ scrollbarWidth: "none", scrollbarColor: "none" }}
       >
         <div
           className={highlightActiveTab(PortfolioTabEnum.VERIFIED, 'px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap')}

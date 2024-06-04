@@ -60,21 +60,24 @@ const PortfolioList = ({ title, selectAirspace }) => {
         </div>
       ) : (
         <>
-          {airspaceList &&
-            airspaceList[0] &&
-            airspaceList[0].address ? (
-            airspaceList?.map((airspace, index) => (
-              <PortfolioItem
-                airspaceName={airspace?.address}
-                key={index}
-                tags={[true, false, false, false]}
-                type={airspace?.type}
-                selectAirspace={() => selectAirspace(airspace)}
-              />
-            ))
-          ) : (
-            <AirspacesEmptyMessage />
-          )}
+          <div className="flex flex-col gap-[15px] min-h-[20rem]">
+            {airspaceList &&
+              airspaceList[0] &&
+              airspaceList[0].address ? (
+              airspaceList?.map((airspace, index) => (
+                <PortfolioItem
+                  airspaceName={airspace?.address}
+                  key={index}
+                  tags={[true, false, false, false]}
+                  type={airspace?.type}
+                  selectAirspace={() => selectAirspace(airspace)}
+                />
+              ))
+            ) : (
+              <AirspacesEmptyMessage />
+            )}
+          </div>
+
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
