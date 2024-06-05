@@ -207,7 +207,7 @@ const DepositAndWithdraw = ({
             </div>
           ))}
         </div>
-        <div className="flex sm:hidden text-[#838187] text-[14px] w-full">
+        <div className="flex text-[#838187] text-[14px] w-full">
           <p>Choose your payment method</p>
   
         </div>
@@ -220,12 +220,6 @@ const DepositAndWithdraw = ({
           )}
           {activeSection === 1 && (
             <div className="flex flex-col gap-[5px]">
-              <label
-                htmlFor="amount"
-                className="text-[14px] font-normal text-[#838187]"
-              >
-                Choose your payment method
-              </label>
               <Accordion
                 selectedMethod={selectedMethod}
                 setSelectedMethod={setSelectedMethod}
