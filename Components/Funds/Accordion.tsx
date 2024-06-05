@@ -1,30 +1,54 @@
+"use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AccordionProps, PaymentMethod } from "../../types";
 import { chevronDownIcon,chevronUpIcon } from '../Icons';
+import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
+import useAuth from '@/hooks/useAuth';
 
-const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
+const supportedMethods = [
+  {
+    icon: "/images/Stripe.svg",
+    name: "Stripe",
+  },
+  {
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
+  },
+  {
+    icon: "/images/ramp.svg",
+    name: "Ramp",
+  },
+];
+
+const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useAuth();
   
     const handleSelection = (method: PaymentMethod) => {
       setSelectedMethod(method);
       setIsOpen(false);
+      if (method.name === "Ramp") {
+        showRampDepositeAndWithdrawal()
+      }
     };
   
     const toggleAccordion = () => {
       setIsOpen(!isOpen);
     };
+
+  const showRampDepositeAndWithdrawal = () => {
+    new RampInstantSDK({
+      url: "https://app.demo.ramp.network",
+      hostAppName: 'SKYTRADE APP',
+      hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
+      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
+      defaultAsset: 'SOLANA_USDC',
+      userAddress: user?.blockchainAddress,
+      enabledFlows: [activeSection === 0 ? 'ONRAMP' : 'OFFRAMP']
+    }).show()
+  }
   
-    const supportedMethods = [
-      {
-        icon: "/images/Stripe.svg",
-        name: "Stripe",
-      },
-      {
-        icon: "/images/bank-note-arrow.svg",
-        name: "Native",
-      },
-    ];
     return (
       <div className="border rounded-lg ">
         <div

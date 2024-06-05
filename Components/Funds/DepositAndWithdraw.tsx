@@ -44,7 +44,8 @@ const DepositAndWithdraw = ({
   
     let userSolBalc = solbalance;
     const handleWithdraw = async () => {
-        if(!amount) return
+      if(!amount) return
+      if (!user) return
       try {
         if (
           activeSection == 1 &&
@@ -216,6 +217,7 @@ const DepositAndWithdraw = ({
             <Accordion
               selectedMethod={selectedMethod}
               setSelectedMethod={setSelectedMethod}
+              activeSection={activeSection}
             />
           )}
           {activeSection === 1 && (
@@ -229,6 +231,7 @@ const DepositAndWithdraw = ({
               <Accordion
                 selectedMethod={selectedMethod}
                 setSelectedMethod={setSelectedMethod}
+                activeSection={activeSection}
               />
               {selectedMethod.name == "Native" && (
                 <div>

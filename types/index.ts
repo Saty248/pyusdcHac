@@ -181,6 +181,7 @@ export interface DepositAndWithdrawProps {
 export interface AccordionProps {
   selectedMethod: { icon: string; name: string };
   setSelectedMethod: Dispatch<SetStateAction<{ icon: string; name: string }>>;
+  activeSection: number;
 }
 
 export interface PaymentMethod {
