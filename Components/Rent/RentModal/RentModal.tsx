@@ -20,6 +20,7 @@ import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
+import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helper/localStorage";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,9 +54,19 @@ const RentModal: React.FC<RentModalProps> = ({
     AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
 
+  localStorage.setItem('rentData',JSON.stringify(rentData));
+  
   useEffect(() => {
-    getTokenBalance(user, setTokenBalance);
+    setAndClearOtherPublicRouteData("rentData", rentData);
   }, []);
+   
+
+  useEffect(() => {
+    if(user){
+      getTokenBalance(user, setTokenBalance);
+    }
+    
+  }, [user]);
 
   const handleRentAirspace = async () => {
     try {
@@ -217,6 +228,7 @@ const RentModal: React.FC<RentModalProps> = ({
           <div
             onClick={() => {
               setShowClaimModal(false);
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData')
             }}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
             style={{ border: "1px solid #0653EA" }}

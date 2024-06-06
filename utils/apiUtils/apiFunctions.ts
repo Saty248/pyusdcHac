@@ -110,7 +110,7 @@ export const getAddresses = async (
             if (!response.ok) throw new Error("Error while getting addresses");
             const data = await response.json();
             if (!response.ok) {
-            setLoadingAddresses(false);
+                setLoadingAddresses(false);
             throw new Error("Error while getting addresses");
             }
 
@@ -123,7 +123,7 @@ export const getAddresses = async (
             }
             } catch (error) {
             console.error(error);
-            setLoadingAddresses(false);
+            //setLoadingAddresses(false);
             }
         }, 500);
 };
@@ -134,7 +134,7 @@ export const getTokenBalance = (user, setTokenBalance) => {
         id: 1,
         method: "getTokenAccountsByOwner",
         params: [
-            user.blockchainAddress,
+            user?.blockchainAddress,
             {
                 mint: process.env.NEXT_PUBLIC_MINT_ADDRESS,
             },
