@@ -1,3 +1,4 @@
+'use client'
 import Signup from '@/app/auth/page'
 import React from 'react'
 
