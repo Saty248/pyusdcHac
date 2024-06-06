@@ -47,6 +47,7 @@ const Account = () => {
 
   const updateDataHandler = async (e) => {
     e.preventDefault();
+    if (!user) return toast.error("User not logged in");
 
     const { name, email, phoneNumber, newsletter } = personalInformation;
     // TODO: check if data has changed

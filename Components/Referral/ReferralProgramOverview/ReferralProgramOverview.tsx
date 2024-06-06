@@ -37,7 +37,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-9 px-[35px] md:px-[51px]">
         <Item
-          icon={<ShareIcon />}
+          icon={<ShareIcon color={undefined} />}
           title={"Share"}
           text={
             "Send your invite link or code to your friends and explain them how cool is SkyTrade"

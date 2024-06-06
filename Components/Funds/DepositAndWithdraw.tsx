@@ -44,7 +44,8 @@ const DepositAndWithdraw = ({
   
     let userSolBalc = solbalance;
     const handleWithdraw = async () => {
-        if(!amount) return
+      if(!amount) return
+      if (!user) return
       try {
         if (
           activeSection == 1 &&
