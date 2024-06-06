@@ -19,7 +19,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
           {pageTitle}
         </p>
         {
-                user?.blockchainAddress?<Link href={'/account'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
+                user?.blockchainAddress?<Link href={'/my-account'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
                     <div className="w-6 h-6"><UserIcon /></div>
                     <p className='md:block hidden'>{user?.name}</p>
                 </Link>
