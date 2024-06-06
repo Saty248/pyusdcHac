@@ -20,6 +20,7 @@ import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
+import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,19 +47,31 @@ const RentModal: React.FC<RentModalProps> = ({
   
 
   const [finalAns, setFinalAns] = useState<
-    { status: string; message: string | undefined; tokenId?: string } | null | undefined
+    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
   >();
-  const { user } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
     AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
 
+  localStorage.setItem('rentData',JSON.stringify(rentData));
+  
   useEffect(() => {
-    getTokenBalance(user, setTokenBalance);
+    setAndClearOtherPublicRouteData("rentData", rentData);
   }, []);
+   
+
+  useEffect(() => {
+    if(user){
+      getTokenBalance(user, setTokenBalance);
+    }
+    
+  }, [user]);
 
   const handleRentAirspace = async () => {
     try {
+      const isRedirecting = redirectIfUnauthenticated();
+      if (isRedirecting) return;
       const currentDate = new Date();
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
@@ -147,7 +160,6 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Backdrop />
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
         className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
@@ -159,6 +171,7 @@ const RentModal: React.FC<RentModalProps> = ({
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData')
               setShowClaimModal(false);
             }}
           >
@@ -176,6 +189,7 @@ const RentModal: React.FC<RentModalProps> = ({
           <div
             onClick={() => {
               setShowClaimModal(false);
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData')
             }}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
           >
@@ -215,6 +229,7 @@ const RentModal: React.FC<RentModalProps> = ({
           <div
             onClick={() => {
               setShowClaimModal(false);
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData')
             }}
             className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-[#0653EA] cursor-pointer w-1/2"
             style={{ border: "1px solid #0653EA" }}
