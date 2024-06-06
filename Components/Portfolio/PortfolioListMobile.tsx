@@ -59,13 +59,13 @@ const PortfolioListMobile = ({ selectAirspace }) => {
             {airspaceList &&
               airspaceList[0] &&
               airspaceList[0].address ? (
-              airspaceList.map(({ address, type }, index) => (
+              airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
-                  airspaceName={address}
+                  airspaceName={airspace?.address}
                   key={index}
                   tags={[true, false, false, false]}
-                  type={type}
-                  selectAirspace={() => selectAirspace(index)}
+                  type={airspace?.type}
+                  selectAirspace={() => selectAirspace(airspace)}
                 />
               ))
             ) : (
