@@ -79,7 +79,7 @@ const RentModal: React.FC<RentModalProps> = ({
       if(rentData?.layers){
 
         const postData = {
-          callerAddress: user.blockchainAddress,
+          callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
           landAssetIds: [rentData.layers[0].tokenId],

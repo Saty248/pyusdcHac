@@ -59,6 +59,7 @@ export type PropertyData = {
   isRentableAirspace: boolean;
   sell?: boolean;
   title: string;
+  name: string;
   transitFee: string;
   noFlyZone: boolean;
   isFixedTransitFee: boolean;
@@ -76,6 +77,7 @@ export type PropertyData = {
   propertyStatus?: propertyStatus;
   status?:number;
   type?:string;
+  hasPlanningPermission?:string | null;
 };
 export type User = {
   KYCStatusId: number;

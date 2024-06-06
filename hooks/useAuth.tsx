@@ -15,7 +15,7 @@ const useAuth = () => {
   const { web3auth, setProvider } = useContext(Web3authContext);
 
   const { userData } = useAppSelector((state: any) => {
-    return { userData: state?.userReducer?.user };
+    return { userData: state?.userReducer?.user as User | null };
   }, shallowEqual);
 
   useEffect(() => {
