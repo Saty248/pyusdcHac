@@ -173,11 +173,8 @@ export interface DepositAndWithdrawProps {
   setActiveSection: Dispatch<SetStateAction<number>>;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
-  setreFetchBal: Dispatch<SetStateAction<boolean>>;
-  refetchBal: boolean;
   setTokenBalance: Dispatch<SetStateAction<number>>;
   tokenBalance: number;
-  solbalance: number;
 }
 
 export interface AccordionProps {

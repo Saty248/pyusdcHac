@@ -130,11 +130,8 @@ const Funds = () => {
                   setActiveSection={setActiveSection}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
-                  setreFetchBal={setreFetchBal}
-                  refetchBal={refetchBal}
                   setTokenBalance={setTokenBalance}
                   tokenBalance={tokenBalance}
-                  solbalance={solbalance}
                 />
               </div>
               <TransactionHistory transactions={transactions} user={user} />
