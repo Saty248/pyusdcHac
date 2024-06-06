@@ -20,7 +20,7 @@ import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
-import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helper/localStorage";
+import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
