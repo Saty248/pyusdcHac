@@ -172,6 +172,7 @@ const RentModal: React.FC<RentModalProps> = ({
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
+              removePubLicUserDetailsFromLocalStorageOnClose('rentData')
               setShowClaimModal(false);
             }}
           >
