@@ -408,7 +408,10 @@ const Airspaces: React.FC = () => {
     setAddress(value)
     if (!showOptions) setShowOptions(true)
   }
-
+  const handleOpenAirspaceMap = () =>{
+    setShowHowToModal(false);
+    setShowMobileMap(true);
+  }
 
   return (
     <Fragment>
@@ -433,7 +436,7 @@ const Airspaces: React.FC = () => {
             />
           )}
           {showHowToModal && (
-            <HowToModal goBack={() => setShowHowToModal(false)} />
+            <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap}/>
           )}
 
           <section

@@ -3,9 +3,27 @@ import { CloseIcon, EarthIcon } from "../Icons";
 
 interface PropsI {
   goBack: () => void;
+  handleOpenAirspaceMap: () => void;
 }
 
-const HowToModal = ({ goBack }: PropsI) => {
+const stepsData = [
+  { title: 'Discover Your Address', description: 'Enter your address using the map for accuracy.' },
+  { title: 'Move the Pin If Needed', description: 'Easily adjust the location pin if Google Maps is off.' },
+  { title: 'Claim Airspace', description: "Click the 'Claim Airspace' button to confirm your airspace address. Your Airspace is saved. Modify your details anytime." },
+  { title: 'Checking the details', description: 'We confirm official records.' },
+  { title: 'Passive income is on the way', description: 'We will update you as your account receives funds.' },
+];
+
+const Step = ({ number, title, description }) => (
+  <p className="text-[15px] w-full text-left">
+    <span className="font-bold">{number}. {title}</span>
+    <br />
+    {description}
+  </p>
+);
+
+
+const HowToModal = ({ goBack,handleOpenAirspaceMap }: PropsI) => {
   const [section, setSection] = useState(0);
   return (
     <div className="absolute z-50 flex h-screen w-screen flex-col items-center justify-center bg-white">
@@ -35,44 +53,29 @@ const HowToModal = ({ goBack }: PropsI) => {
       {section === 1 && (
         <div className="flex flex-col items-center justify-center gap-[15px] px-[60px] text-center text-[#222222]">
           <p className="text-[20px] font-medium">How to Claim My Airspace?</p>
-          <div className="flex flex-col items-center justify-center py-[30px] text-center">
-            <p className="text-[15px]">
-              <span className="font-bold">1. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
-            <p className="text-[15px]">
-              <span className="font-bold">2. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
-            <p className="text-[15px]">
-              <span className="font-bold">3. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
-            <p className="text-[15px]">
-              <span className="font-bold">4. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
-            <p className="text-[15px]">
-              <span className="font-bold">5. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
-            <p className="text-[15px]">
-              <span className="font-bold">6. Discover Your Address</span>
-              <br />
-              Enter your address using the map for accuracy.
-            </p>
+          <div className="flex flex-col items-center flex-start py-[30px] text-left">
+            
+            
+          {stepsData.map((step, index) => (
+        <Step
+          key={index}
+          number={index + 1}
+          title={step.title}
+          description={step.description}
+        />
+      ))}
+            
+            
+            
           </div>
+
           <p className="text-[15px]">
             Let's get started on creating the future and receiving passive
             income from your skies. 🚀✨
           </p>
+          
           <div
-            onClick={goBack}
+            onClick={handleOpenAirspaceMap}
             className="w-full cursor-pointer rounded-[8px] bg-[#0653EA] py-[16px] text-center text-white"
           >
             Claim Airspace
