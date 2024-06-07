@@ -236,7 +236,7 @@ const Rent = () => {
               <div
                 className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
                 id="map"
-                style={{ zIndex: "20" }}
+                style={{ zIndex: "10" }}
               />
 
               {!isMobile && (
