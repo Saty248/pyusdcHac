@@ -45,7 +45,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
 
         <div className="flex gap-[15px]">
           <p className="text-[14px] font-normal text-[#222222]">ID:</p>
-          <p className="text-[14px] font-normal text-[#87878D]">
+          <p className="text-[14px] font-normal text-[#87878D] break-all">
             {airspace?.id}
           </p>
         </div>
