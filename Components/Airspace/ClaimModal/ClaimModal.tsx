@@ -22,7 +22,6 @@ const ClaimModal = ({
   onClaim,
   claimButtonLoading,
 }: PropsI) => {
-  const { setAndClearOtherPublicRouteData } = useAuth();
 
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -36,7 +35,6 @@ const ClaimModal = ({
         name: airSpaceName[0],
       };
     });
-    setAndClearOtherPublicRouteData("airSpaceData", data)
   }, [data.address]);
   const handleSellPrice = (e) => {
     let inputVal = e.target.value;

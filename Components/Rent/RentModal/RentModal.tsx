@@ -56,11 +56,6 @@ const RentModal: React.FC<RentModalProps> = ({
   localStorage.setItem('rentData',JSON.stringify(rentData));
   
   useEffect(() => {
-    setAndClearOtherPublicRouteData("rentData", rentData);
-  }, []);
-   
-
-  useEffect(() => {
     if(user){
       getTokenBalance(user, setTokenBalance);
     }
@@ -70,7 +65,11 @@ const RentModal: React.FC<RentModalProps> = ({
   const handleRentAirspace = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
-      if (isRedirecting) return;
+      if (isRedirecting) 
+        {
+          setAndClearOtherPublicRouteData("rentData", rentData);
+          return;
+        }
       const currentDate = new Date();
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
