@@ -63,6 +63,19 @@ const AirspaceRentalService = () => {
     }
   }
 
+  const getSingleAsset = async (assetId: string) => {
+    try {
+      if (!assetId) return null;
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-single-asset/${assetId}`,
+      })
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   const createMintRentalToken = async ({ postData }: {postData: any})=>{
     try {
       const response = await postRequest({
@@ -95,7 +108,8 @@ const AirspaceRentalService = () => {
     getRejectedAirspaces,
     createMintRentalToken,
     executeMintRentalToken,
-    getTotalAirspacesByUserAddress
+    getTotalAirspacesByUserAddress, 
+    getSingleAsset
   };
 };
 

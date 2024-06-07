@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import PageHeader from "@/Components/PageHeader";
@@ -13,27 +13,35 @@ import Modal from "@/Components/Portfolio/Modal";
 import Sidebar from "@/Components/Shared/Sidebar";
 import { useSearchParams } from "next/navigation";
 import PropertiesService from "@/services/PropertiesService";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
+import { Web3authContext } from "@/providers/web3authProvider";
 
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);
-  const [hasId,setHasId] = useState(false)
   const { user, web3authStatus } = useAuth();
   const {getPropertyById} = PropertiesService()
+  const { getSingleAsset } = AirspaceRentalService()
   const searchParams = useSearchParams()
   
   const id = searchParams?.get("id");
-  useEffect(()=>{
-    const getAirspaceById =async (id)=>{
-      const portfolioData = await getPropertyById(id)
-      setSelectedAirspace(portfolioData)
-    }
-    if(id){
-      getAirspaceById(id)
-      setHasId(true)
-    }
 
-  },[id])
+  const { web3auth } = useContext(Web3authContext)
+
+  useEffect(()=>{
+    (async () => {
+      if (web3auth && web3auth.status === "connected" && id) {
+        let portfolioData = null
+        if (!isNaN(Number(id))) {
+          portfolioData = await getPropertyById(id)
+        } else {
+          portfolioData = await getSingleAsset(id)
+        }
+        setSelectedAirspace(portfolioData)
+      }
+    })()
+  }, [id, web3auth?.status])
+
   useEffect(() => {
     if (!user) return;
 

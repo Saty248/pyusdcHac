@@ -53,14 +53,15 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
               airspaces.slice(0, 3).map((airspace, i) => (
                 <div
                   key={i}
-                  className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px]"
+                  onClick={() => router.push(`/portfolio?id=${airspace?.id}`)}
+                  className="rounded-lg w-full py-[16px] px-[22px] flex items-center gap-[10px] cursor-pointer"
                   style={{ border: "1px solid #4285F4" }}
                 >
                   <div className="w-[24px] h-[24px] flex justify-center items-center">
                     <LocationPointIcon />
                   </div>
                   <p className="flex-1">{airspace.title || airspace.address}</p>
-                  <div onClick={()=>router.push(`/portfolio?id=${airspace?.id}`)} className="w-[18px] h-[18px] flex items-center justify-center">
+                  <div className="w-[18px] h-[18px] cursor-pointer flex items-center justify-center">
                     <ChevronRightIcon />
                   </div>
                 </div>
