@@ -79,7 +79,7 @@ const Airspaces: React.FC = () => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user, redirectIfUnauthenticated } = useAuth();
+  const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
 
@@ -298,7 +298,13 @@ const Airspaces: React.FC = () => {
   const onClaim = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
-      if (isRedirecting) return;
+      
+      if (isRedirecting)
+        {
+          setAndClearOtherPublicRouteData("airSpaceData", data)
+
+          return;
+        } 
       if (!user) return;
 
       setClaimButtonLoading(true);
