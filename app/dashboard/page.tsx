@@ -36,6 +36,7 @@ const Dashboard: FC = () => {
         if (airspaces && airspaces.previews) {
           let retrievedAirspaces = airspaces.previews.map((item: any) => ({
             address: item.address,
+            id: item?.id,
           }));
           if (retrievedAirspaces.length > 0) {
             setAirspaces(retrievedAirspaces);
