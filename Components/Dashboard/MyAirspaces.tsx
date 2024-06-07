@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useRouter } from 'next/navigation';
 import {
   DroneIcon,
   LocationPointIcon,
@@ -7,9 +8,10 @@ import {
 import Item from "@/Components/Dashboard/Item";
 import WorldMap from "@/Components/WorldMap";
 import { BalanceLoader } from "@/Components/Wrapped";
+import { PropertyData } from "@/types";
 
 interface MyAirspacesProps {
-  airspaces: { title?: string; address: string }[];
+  airspaces: PropertyData[];
   totalAirspace: number;
   isLoading: boolean;
 }
@@ -19,6 +21,7 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
   totalAirspace,
   isLoading,
 }) => {
+  const router = useRouter()
   return (
     <Item
       title={
@@ -57,7 +60,7 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
                     <LocationPointIcon />
                   </div>
                   <p className="flex-1">{airspace.title || airspace.address}</p>
-                  <div className="w-[18px] h-[18px] flex items-center justify-center">
+                  <div onClick={()=>router.push(`/portfolio?id=${airspace?.id}`)} className="w-[18px] h-[18px] flex items-center justify-center">
                     <ChevronRightIcon />
                   </div>
                 </div>
