@@ -1,9 +1,26 @@
+"use client"
+
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { AccordionProps, PaymentMethod } from "../../types";
 import { chevronDownIcon,chevronUpIcon } from '../Icons';
 
-const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
+const supportedMethods = [
+  {
+    icon: "/images/bank-note-arrow.svg",
+    name: "Native",
+  },
+  {
+    icon: "/images/ramp.svg",
+    name: "Ramp",
+  },
+  {
+    icon: "/images/Stripe.svg",
+    name: "Stripe",
+  },
+];
+
+const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {
     const [isOpen, setIsOpen] = useState(false);
   
     const handleSelection = (method: PaymentMethod) => {
@@ -14,17 +31,7 @@ const Accordion = ({ selectedMethod, setSelectedMethod }: AccordionProps) => {
     const toggleAccordion = () => {
       setIsOpen(!isOpen);
     };
-  
-    const supportedMethods = [
-      {
-        icon: "/images/Stripe.svg",
-        name: "Stripe",
-      },
-      {
-        icon: "/images/bank-note-arrow.svg",
-        name: "Native",
-      },
-    ];
+
     return (
       <div className="border rounded-lg ">
         <div
