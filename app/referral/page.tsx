@@ -67,12 +67,12 @@ const Referral = () => {
               activeSection={activeSection}
               section={0}
             />
-            {activeSection === 1 && (
-              <Share
-                isLoading={fetchingCode}
-                referralCode={data?.referralCode}
-              />
-            )}
+            
+            <Share
+              isLoading={fetchingCode}
+              referralCode={data?.referralCode}
+            />
+   
             <InviteYourFriends referralCode={data?.referralCode} />
             <YourReferrals
               activeSection={activeSection}
