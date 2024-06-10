@@ -1,31 +1,33 @@
 "use client"
 
-import useAuth from "@/hooks/useAuth";
-import { useMobile } from "@/hooks/useMobile";
-import PropertiesService from "@/services/PropertiesService";
+import useAuth from "../../hooks/useAuth";
+import { useMobile } from "../../hooks/useMobile";
+import PropertiesService from "../../services/PropertiesService";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import maplibregl, { Marker } from "maplibre-gl";
 import { toast } from "react-toastify";
-import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
+import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helpers/localstorage";
 import axios from "axios";
 import Head from "next/head";
-import Backdrop from "@/Components/Backdrop";
-import Spinner from "@/Components/Spinner";
-import Sidebar from "@/Components/Shared/Sidebar";
-import PageHeader from "@/Components/PageHeader";
-import ExplorerMobile from "@/Components/Airspace/Explorer/ExplorerMobile";
-import HowToModal from "@/Components/Airspace/HowToModal";
-import ClaimModal from "@/Components/Airspace/ClaimModal/ClaimModal";
-import SuccessModal from "@/Components/Airspace/SuccessModal";
-import Explorer from "@/Components/Airspace/Explorer/Explorer";
-import Slider from "@/Components/Airspace/Slider";
-import SuccessPopUp from "@/Components/Airspace/SuccessPopUp";
-import FailurePopUp from "@/Components/Airspace/FailurePopUp";
+import Backdrop from "../../Components/Backdrop";
+import Spinner from "../../Components/Spinner";
+import Sidebar from "../../Components/Shared/Sidebar";
+import PageHeader from "../../Components/PageHeader";
+import ExplorerMobile from "../../Components/Airspace/Explorer/ExplorerMobile";
+import HowToModal from "../../Components/Airspace/HowToModal";
+import ClaimModal from "../../Components/Airspace/ClaimModal/ClaimModal";
+import SuccessModal from "../../Components/Airspace/SuccessModal";
+import Explorer from "../../Components/Airspace/Explorer/Explorer";
+import Slider from "../../Components/Airspace/Slider";
+import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
+import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon } from "@/Components/Icons";
-import ZoomControllers from "@/Components/ZoomControllers";
+import { HelpQuestionIcon } from "../../Components/Icons";
+import ZoomControllers from "../../Components/ZoomControllers";
+import { useTour } from "@reactour/tour";
+import React from "react";
 
 const Airspaces: React.FC = () => {
 
@@ -34,7 +36,8 @@ const Airspaces: React.FC = () => {
   const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
   const [map, setMap] = useState<any>(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState<boolean>(false);
+  const { setIsOpen, currentStep, isOpen } = useTour();
+  const [showMobileMap, setShowMobileMap] = useState<boolean>(isOpen);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
   // variables
   const [address, setAddress] = useState<string>("");
@@ -44,6 +47,7 @@ const Airspaces: React.FC = () => {
     longitude: "",
     latitude: "",
   });
+  console.log(isOpen, "isOpenvvv")
   const [marker, setMarker] = useState<Marker | null>(null);
   const defaultData = {
     address: address,
@@ -295,6 +299,33 @@ const Airspaces: React.FC = () => {
     setShowOptions(false);
   };
 
+  useEffect(() => {
+    console.log("fffffffffff")
+    // if (localStorage.getItem("new")) {
+    setIsOpen(true);
+    // localStorage.removeItem("new");
+    // }
+  }, []);
+
+  useEffect(() => {
+    if (currentStep === 1 && isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3 && isMobile) {
+      setShowClaimModal(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowMobileMap(false);
+      setShowClaimModal(false);
+    }
+  }, [isOpen]);
+
   const onClaim = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
@@ -417,8 +448,7 @@ const Airspaces: React.FC = () => {
   const handleOpenAirspaceMap = () =>{
     setShowHowToModal(false);
     setShowMobileMap(true);
-  }
-
+  } 
   return (
     <Fragment>
       <Head>
@@ -431,7 +461,8 @@ const Airspaces: React.FC = () => {
         {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
+          {((showMobileMap && isMobile) ||
+            (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               address={address}
@@ -456,20 +487,20 @@ const Airspaces: React.FC = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && address && (
+             {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
             )}
             {isMobile && (
               <Fragment>
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
@@ -505,7 +536,7 @@ const Airspaces: React.FC = () => {
                 <SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />
                 <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />
 
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
@@ -520,7 +551,7 @@ const Airspaces: React.FC = () => {
                 )}
               </div>
             )}
-            {!showMobileMap && (
+            {(!showMobileMap || isOpen) && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
@@ -532,7 +563,7 @@ const Airspaces: React.FC = () => {
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  <div className="claim-step w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>

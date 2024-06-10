@@ -1,14 +1,14 @@
 import "./global.css";
 import { Provider } from "react-redux";
-import store from "@/store/store";
+import store from "../store/store";
 import Script from "next/script";
 
-import CookieConsent from "@/Components/CookieConsent";
+import CookieConsent from "../Components/CookieConsent";
 
-import { msclaritConfig } from "@/hooks/msclaritConfig";
+import { msclaritConfig } from "../hooks/msclaritConfig";
 
-import { SidebarProvider } from "@/hooks/sidebarContext";
-import { Web3authProvider } from "@/providers/web3authProvider";
+import { SidebarProvider } from "../hooks/sidebarContext";
+import { Web3authProvider } from "../providers/web3authProvider";
 import { ToastContainer } from "react-toastify";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,6 +17,10 @@ import "react-toastify/dist/ReactToastify.css";
 import type { Metadata } from "next";
 import { Head } from "next/document";
 import NextTopLoader from 'nextjs-toploader';
+import { TourProvider } from "@reactour/tour";
+import React from "react";
+import { OnboardingTour } from "../Components/Tours";
+
 
 export const metadata: Metadata = {
   title: "Sky Trade",
@@ -92,7 +96,9 @@ export default function RootLayout({
               speed={300}
               shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
-              {children}
+              <OnboardingTour>
+                {children}
+              </OnboardingTour>
             </SidebarProvider>
             <CookieConsent />
           </Web3authProvider>
