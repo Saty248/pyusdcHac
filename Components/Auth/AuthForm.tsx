@@ -12,6 +12,8 @@ import EmailInput from "./EmailInput";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import LoadingButton from "../LoadingButton/LoadingButton";
+import Sidebar from "../Shared/Sidebar";
+import { useMobile } from "@/hooks/useMobile";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -30,7 +32,7 @@ const AuthForm: FC<AuthFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-
+  const { isMobile } = useMobile();
   const { init } = useInitAuth();
   const { signIn } = useAuth();
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
@@ -87,8 +89,10 @@ const AuthForm: FC<AuthFormProps> = ({
   };
 
   return (
+    <div className="">
+      {isMobile && ( <Sidebar />)}
     <form
-      className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"style={{ maxWidth: "449px" }}
+      className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-24 md:py-10 "style={{ maxWidth: "449px" }}
       id="login"
       name="login"
       onSubmit={(e) => {
@@ -203,6 +207,7 @@ const AuthForm: FC<AuthFormProps> = ({
         </span>
       </p>
     </form>
+    </div>
   );
 };
 
