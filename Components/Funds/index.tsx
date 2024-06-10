@@ -21,6 +21,7 @@ import {
   KeyI,
 } from "../../types";
 import Sidebar from "../Shared/Sidebar";
+import { useMobile } from "@/hooks/useMobile";
 
 const Funds = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +34,7 @@ const Funds = () => {
   const router = useRouter();
   const [solbalance, setSolBalance] = useState<number>(0);
   const { provider } = useContext(Web3authContext) as Web3authContextType;
-
+  const { isMobile } = useMobile();
   useEffect(() => {
     let fetchbalance = async () => {
       if (user && provider) {

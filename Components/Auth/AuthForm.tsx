@@ -88,8 +88,7 @@ const AuthForm: FC<AuthFormProps> = ({
 
   return (
     <form
-      className="relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"
-      style={{ maxWidth: "449px" }}
+      className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"style={{ maxWidth: "449px" }}
       id="login"
       name="login"
       onSubmit={(e) => {
