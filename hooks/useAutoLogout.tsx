@@ -19,7 +19,7 @@ const useAutoLogout = () => {
 
   const redirectTo = () => {
     if (pathname) {
-      const isReferralPage = pathname.includes("/auth/r/");
+      const isReferralPage = pathname.includes("/r/");
       if (!isReferralPage && pathname !== "/") {
         router.push("/auth/inAppSignIn");
       } else {
@@ -42,7 +42,7 @@ const useAutoLogout = () => {
     if (!web3auth) return;
 
     const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth/join", "/auth"]);
-    const isReferralPage = pathname?.includes("/auth/r/");
+    const isReferralPage = pathname?.includes("/r/");
 
     if (routes.includes(String(pathname)) || isReferralPage) return;
     else if (web3auth?.status === "ready") {
