@@ -47,7 +47,6 @@ const Airspaces: React.FC = () => {
     longitude: "",
     latitude: "",
   });
-  console.log(isOpen, "isOpenvvv")
   const [marker, setMarker] = useState<Marker | null>(null);
   const defaultData = {
     address: address,
@@ -300,11 +299,10 @@ const Airspaces: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("fffffffffff")
-    // if (localStorage.getItem("new")) {
+    if (localStorage.getItem("new")) {
     setIsOpen(true);
-    // localStorage.removeItem("new");
-    // }
+    localStorage.removeItem("new");
+    }
   }, []);
 
   useEffect(() => {
