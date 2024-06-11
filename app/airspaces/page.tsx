@@ -501,15 +501,9 @@ const Airspaces: React.FC = () => {
                     setIsLoading(true);
                   }}
                 />
-                    <div className="hidden sm:block">
-              
-                    <Slider />
-                   </div>
-                 
+                <div className="hidden sm:block"><Slider /></div>
                 {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
-
                 {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
-
                 {showClaimModal && (
                   <ClaimModal
                     onCloseModal={() => {
