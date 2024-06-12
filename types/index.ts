@@ -75,9 +75,9 @@ export type PropertyData = {
   updateAt?: Date;
   layers?: layers[];
   propertyStatus?: propertyStatus;
-  status?:number;
-  type?:string;
-  hasPlanningPermission?:string | null;
+  status?: number;
+  type?: string;
+  hasPlanningPermission?: string | null;
 };
 export type User = {
   KYCStatusId: number;
@@ -213,4 +213,10 @@ export interface KeyI {
   amount: number;
   timestamp: number;
   date: string;
+}
+
+export interface AuctionPropertyI {
+  name: string;
+  highest_bid: string;
+  time_left: string;
 }

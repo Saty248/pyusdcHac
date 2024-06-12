@@ -161,8 +161,26 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-track {
   margin-top: 56px;
   background-color: white;
-  background : transparent;
+  background: transparent;
 }
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #B8CCE3;
+  background-color: #b8cce3;
+}
+
+/* Custom scrollbar styles */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
