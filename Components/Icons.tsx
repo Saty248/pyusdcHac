@@ -977,3 +977,54 @@ export const LoadingSpinner = ({ color }) => {
     </svg>
   );
 };
+export const RectangleIcon = () => {
+  return (
+    <svg
+      width="70"
+      height="9"
+      viewBox="0 0 70 9"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="70" height="9" rx="4.5" fill="#D9D9D9" />
+    </svg>
+  );
+};
+export const chevronUpBidIcon = () => {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.75 10.875L8.29289 6.33211C8.68342 5.94158 9.31658 5.94158 9.70711 6.33211L14.25 10.875"
+        stroke="#868686"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+export const chevronDownBidIcon = () => {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M14.25 7.125L9.70711 11.6679C9.31658 12.0584 8.68342 12.0584 8.29289 11.6679L3.75 7.125"
+        stroke="#868686"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
