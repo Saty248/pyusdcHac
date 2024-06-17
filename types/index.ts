@@ -18,8 +18,9 @@ export type WeekDayRange = {
 };
 
 export interface TransactionHistoryProps {
-  transactions: Transaction[];
   user: User | null;
+  provider:any | null;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface Transaction {

@@ -1,40 +1,115 @@
 import React, { useState, useEffect } from 'react';
-import { MagnifyingGlassIcon } from '../../Components/Icons';
+
+import { MagnifyingGlassIcon,RefreshIcon } from '../../Components/Icons';
 import { useMobile } from '@/hooks/useMobile';
 import {TransactionHistoryProps } from '../../types';
+import { SolanaWallet } from '@web3auth/solana-provider';
+import { Connection, PublicKey, SignaturesForAddressOptions, TransactionSignature } from '@solana/web3.js';
+import moment from 'moment';
 
-const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
+const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryProps) => {
+  enum PAGE {
+    reset,
+    before,
+    after
+  }
+  const limit=6
     const { isMobile } = useMobile();
-      const [currentPage, setCurrentPage] = useState(1);
-      const TRANSACTIONS_PER_PAGE = 8;
-      const initialIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
-      const finalIndex = currentPage * TRANSACTIONS_PER_PAGE;
-      const paginatedData = transactions?.slice(initialIndex, finalIndex);
-      const totalPages = Math.ceil(transactions?.length / TRANSACTIONS_PER_PAGE);
+    const [transactionHistory, setTransactionHistory] = useState<Array<any>>([]);
+    let _signatureList:string[];
+    const [signatureList, setSignatureList] = useState<Array<any>>([]);
+    let FirstTransactionHistorySignature:string|null=null
+    let lastTransactionHistorySignature:string|null=null
+    const [currentPage, setCurrentPage] = useState(1);
+      
     
+
+
+
       useEffect(() => {
-        setCurrentPage(1);
-      }, [transactions]);
-    
-      const changePage = (newPage) => setCurrentPage(newPage);
-      const getPaginationNumbers = () => {
-        const pages: number[] = [];
-        const range = 2;
-        
-    
-        for (let i = currentPage - range; i <= currentPage + range; i++) {
-          if (i > 0 && i <= totalPages) {
-            pages.push(i);
-          }
+        //console.log('here effect only',transactionHistory?.length)
+        if (user && provider && transactionHistory?.length<=0) {
+          console.log(user,provider)
+          //console.log('here effect condition')
+          getTransactions(PAGE.reset)
         }
-    
-        return pages;
-      };
-    
+      },[user,provider]);
+
+      //console.log(signatureList,FirstTransactionHistorySignature,lastTransactionHistorySignature)
+      const getTransactions=async(page:PAGE)=>{
+        try {
+          setIsLoading(true)
+          let TxOptions:SignaturesForAddressOptions;
+          //console.log(signatureList)
+          FirstTransactionHistorySignature=signatureList?.length>0?signatureList[0]:null
+          lastTransactionHistorySignature=signatureList?.length>0?signatureList[signatureList.length-1]:null      
+          //console.log(FirstTransactionHistorySignature,lastTransactionHistorySignature)
+          
+          if(page==PAGE.reset){
+            TxOptions={limit}
+          }else if(page==PAGE.before){            
+            TxOptions={
+              limit,
+              before:lastTransactionHistorySignature as string
+            }
+            if(!lastTransactionHistorySignature){
+              setCurrentPage(0)
+            }
+            //console.log(lastTransactionHistorySignature,TxOptions)
+          }else{
+            if(FirstTransactionHistorySignature){
+              //console.log(FirstTransactionHistorySignature)
+              TxOptions={
+                until:FirstTransactionHistorySignature as string
+              }  
+            }else{
+              console.log(FirstTransactionHistorySignature)
+              TxOptions={limit}
+              setCurrentPage(1)
+            }
+            
+          }
+  
+         const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();        
+        const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
+       let transactionList =await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+
+       if(transactionList.length==0 && currentPage>1){
+        transactionList =await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),{limit})
+        setCurrentPage(0)
+       }
+       if(page=PAGE.after){
+        transactionList=transactionList.slice(-limit)
+       }  
+       //console.log(transactionList)      
+       _signatureList = transactionList.map(transaction=>transaction.signature);
+        //console.log(_signatureList)        
+        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
+        //console.log(transactionDetails)
+         setTransactionHistory(transactionDetails )
+        setSignatureList(_signatureList) 
+        } catch (error) {
+          console.log(error)
+        }
+        finally{
+          setIsLoading(false)
+        }
+      
+      }
+      const handleNextTxPage=async()=>{
+        await getTransactions(PAGE.before)
+        setCurrentPage((oldpage)=>oldpage+1)
+      }
+
+      const handlePrevTxPage=async()=>{
+        await getTransactions(PAGE.after)
+        setCurrentPage((oldpage)=>oldpage-1)
+      }
       return (
         <div className="flex flex-col  gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
-          <div className="flex flex-col sm:flex-row justify-start sm:justify-between items-center">
-            <p className="font-medium text-xl pt-[14px] pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
+          <div className="flex sm:flex-col md:flex-row  justify-start sm:justify-between items-center">
+            <p className="flex font-medium text-xl pt-[14px] pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
               Transaction History
             </p>
             <div
@@ -48,14 +123,21 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
                 placeholder="Search Transactions"
                 className="outline-none w-full pr-[20px]"
               />
-              <div className="w-[17px] h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]">
+              <div className="w-[17px] cursor-pointer h-[17px] absolute top-1/2 -translate-y-1/2 right-[22px]" 
+              
+              >
                 <MagnifyingGlassIcon />
               </div>
+              
+            </div>
+            <div className='sm:w-[1px] md:w-[5%] cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
+            onClick={()=>{getTransactions(PAGE.reset)}}
+            >
+            <RefreshIcon />
             </div>
           </div>
           <div
-          className={`flex justify-center overflow-y-auto fund-table-scrollbar
-          ${paginatedData?.length > 0 ? "h-[300px]" : "h-auto"} 
+          className={`flex justify-center overflow-y-auto fund-table-scrollbar h-auto 
           sm:h-[80%] fund-table-scrollbar`}
           style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
           >
@@ -63,78 +145,59 @@ const TransactionHistory = ({ transactions, user }:TransactionHistoryProps) => {
               <div className="overflow-x-auto fund-table-scrollbar">
     
               <table className="w-[100%]" >
-                <thead className="sticky top-0 z-10 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+                <thead className="sticky top-0 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
                   <tr className="w-full">
-                {["date", "transaction id", "type", "amount", "status"].map(
-                  (th,index) => (
-                    <th key={index} className="whitespace-nowrap text-start py-5 px-5 !w-[50%] min-w-[120px] sm:w-[20%]">{th}</th>
-                  )
-                )}
+                  <th className="text-start py-5 px-5">Date</th>
+                  <th className="text-start py-5 px-5">Transaction Id</th>
+                  <th className="text-start py-5 px-5">type</th>
+                  <th className="text-start py-5 px-5">amount</th>
+                  <th className="py-5 px-5 text-start">status</th>
                   </tr>
                 </thead>
-              <tbody>
-    
-              {paginatedData?.map((transaction, index) => (
-                <tr
-                  key={transaction.id}
-                  className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg`}
-                >
-                  <td className={`py-6 px-2 rounded-l-lg text-[#222222]   text-start w-[200px] min-w-[120px] sm:w-[20%] `}>
-                    {transaction.date}
-                  </td>
-                  <td className={`py-6 px-2 text-[#222222]  text-clip text-start w-1/2 min-w-[120px] sm:w-[20%] `}>
-                    <a
-                      className=""
-                      target="_blank"
-                      href={`https://explorer.solana.com/tx/${transaction.transHash}`}
-                    >
-                      {transaction.hash}
-                    </a>
-                  </td>
-                  <td className={`py-6 px-2 text-[#222222]  text-start  w-1/2 min-w-[120px] sm:w-[20%] `}>
-                    {transaction?.destination !== user?.blockchainAddress
-                      ? "withdraw"
-                      : "deposit"}
-                  </td>
-                  <td className={`py-6 px-2 text-[#222222]  text-start w-1/2 min-w-[120px] sm:w-[20%] `}>
-                    ${transaction.amount / 1000000}
-                  </td>
-                  <td className={`py-6 px-2 rounded-r-lg text-[#222222] text-center sm:text-startw-1/2 min-w-[120px] sm:w-[20%] `}>
-                    {transaction.status}
-                  </td>
-                </tr>
-              ))} 
+                {transactionHistory?.map((item,idx)=>{
+                  let difference=item?.meta?.postTokenBalances[0]?.uiTokenAmount?.uiAmount - item?.meta?.preTokenBalances[0]?.uiTokenAmount?.uiAmount
+                  //console.log(difference)
+                  let type=difference>0?'Deposit':'Withdraw';
+                  if(difference.toString()=='NaN'){
+                    return null;
+                  }
+                  return(<tr>
+                    <td className='py-6 text-[#222222] px-5 w-2/12'>{moment.unix(item?.blockTime).format("YYYY-MM-DD HH:mm:ss")}</td>
+                    <td className='py- text-[#222222] text-clip px-5 w-2/12'>{signatureList[idx].substring(0,25)}</td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12'>{type}</td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12'> {difference}</td>
+                    <td className='py-6 text-[#222222]  px-5 w-2/12'>Finalized</td>
+                  </tr>)
+                })}
+              <tbody> 
             </tbody>
           </table>
           </div>
     
           <div className="flex items-center justify-end">
             <div className="mx-auto flex gap-[11.71px]">
-              {getPaginationNumbers().map((pageNumber) => (
-                <div
-                  className={`${currentPage === pageNumber ? "text-[#87878D]" : "text-[#0653EA] cursor-pointer"} text-base font-bold`}
-                  key={pageNumber}
-                  onClick={() => changePage(pageNumber)}
-                >
-                  {pageNumber}
-                </div>
-              ))}
-              {totalPages > 1 && (
-                <div
-                  className={`${currentPage === totalPages ? "text-[#87878D]" : "text-[#0653EA] cursor-pointer"} text-base font-normal`}
-                  onClick={() => {
-                    if (currentPage !== totalPages) changePage(currentPage + 1);
-                  }}
-                >
-                  Next
-                </div>
-              )}
+           
+            <div
+              className={`${currentPage==1?'disabled:true text-[#0653EA] text-base font-normal pointer-events-none	':' disabled:false text-[#0653EA] text-base font-normal'}`}
+             onClick={handlePrevTxPage}
+            >
+              prev
             </div>
-            {totalPages !== 0 && (
-              <div className="text-[#87878D] text-[14px] font-normal -tracking-[0.5px]">
-                Page {currentPage} of {totalPages}
-              </div>
-            )}
+          
+          {(
+            <div
+              className={`text-[#0653EA] cursor-pointer text-base font-normal`}
+              onClick={handleNextTxPage}
+            >
+              Next
+            </div>
+          )}
+              
+            </div>
+            <div className="text-[#87878D] text-left text-[14px] font-normal -tracking-[0.5px] px-5 ">
+            Page {currentPage}
+          </div>
+
           </div>
           </div>
           </div>
