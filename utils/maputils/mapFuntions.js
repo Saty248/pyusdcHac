@@ -43,3 +43,28 @@ export const changeRentMarkerColor = (map,setSelectedAddress,marker,setMarker,it
     .addTo(map);
   setMarker(marker1);
 };
+
+export const drawPolygons = (newMap, index,area) => {
+  if (!newMap.getSource(`myPolygon-${index}`)) {
+    newMap.addSource(`myPolygon-${index}`, {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Polygon",
+          coordinates: [area],
+        },
+      },
+    });
+  }
+  newMap.addLayer({
+    id: `myPolygon-layer-${index}`,
+    type: "fill",
+    source: `myPolygon-${index}`,
+    paint: {
+      "fill-color": "rgba(0, 0, 255, 0.5)",
+      "fill-outline-color": "rgba(0, 0, 255, 0.5)",
+    },
+  });
+};

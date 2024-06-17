@@ -21,6 +21,9 @@ import {
   AuctionExplorerMobile,
   AuctionSearchMobile,
 } from "@/Components/Buy";
+import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
+import { drawPolygons } from "@/utils/maputils";
+import BidDetails from "@/Components/Buy/BidDetail/BidDetail";
 
 const DUMMY_AUCTIONS = [
   {
@@ -52,6 +55,76 @@ const DUMMY_AUCTIONS = [
     name: "Trentino UK",
     highest_bid: "$20",
     time_left: "2 days",
+  },
+];
+
+const DUMMY_AUCTIONS_2 = [
+  {
+    address: "50, California Street, Financial District",
+    id: 8,
+    name: "My first Airspace",
+    highestBid: "$20",
+    timeLeft: "1min 	2sec",
+    latitude: 37.79,
+
+    longitude: -122.4,
+    area: [
+      [-121.977199, 38.975108],
+      [-122.105019, 39.995138],
+      [-122.078486, 37.017605],
+      [-119.083333, 37.017605],
+      [-118.977199, 39.975108],
+    ],
+  },
+  {
+    address: "50, California Street, Financial District",
+    id: 8,
+    name: "My Second Airspace",
+    highestBid: 123,
+    timeLeft: "1min 	2sec",
+    latitude: 47.79,
+
+    longitude: -122.4,
+    area: [
+      [-108.977199, 46.975108],
+      [-102.105019, 45.995138],
+      [-102.078486, 47.017605],
+      [-109.083333, 47.017605],
+      [-108.977199, 50.975108],
+    ],
+  },
+  {
+    address: "50, California Street, Financial District",
+    id: 8,
+    name: "My Second Airspace",
+    highestBid: 123,
+    timeLeft: "1min 	2sec",
+    latitude: 27.79,
+
+    longitude: -122.4,
+    area: [
+      [-108.977199, 27.975108],
+      [-102.105019, 26.995138],
+      [-102.078486, 27.017605],
+      [-109.083333, 27.017605],
+      [-108.977199, 20.975108],
+    ],
+  },
+  {
+    address: "50, California Street, Financial District",
+    id: 8,
+    name: "My Second Airspace",
+    highestBid: 123,
+    timeLeft: "1min 	2sec",
+    latitude: 17.79,
+
+    longitude: -122.4,
+    area: [
+      [-108.977199, 17.975108],
+      [-102.105019, 18.995138],
+      [-102.078486, 17.017605],
+      [-109.083333, 17.017605],
+    ],
   },
 ];
 
@@ -89,6 +162,49 @@ const Rent = () => {
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { findPropertiesByCoordinates } = PropertiesService();
+  const [showBidDetail, setShowBidDetail] = useState(true);
+
+  const customPopupStyles = `
+.mapboxgl-popup-close-button {
+  position:absolute;
+  top:9px;
+  right:11px;
+  font-size:x-large;
+}
+.mapboxgl-popup {
+  position:relative;
+  background-color: #ffffff !important;
+  z-index:100;
+}
+.mapboxgl-popup-content {
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 400 !important;
+  padding: 0px !important;
+  cursor: pointer;
+  width: ${isMobile ? "321px" : "266px"};
+}
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+.mapboxgl-popup-content div {
+  margin: 0px !important;
+}
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+  margin-top: 15px;
+  display: none;
+}
+.mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+  display: none;
+}
+`;
+
+  if (typeof document !== "undefined") {
+    const styleElement = document.createElement("style");
+    styleElement.textContent = customPopupStyles;
+    document.head.appendChild(styleElement);
+  } else {
+    console.error("Cannot create style element: document is not defined.");
+  }
 
   useEffect(() => {
     if (map) return;
@@ -99,7 +215,7 @@ const Rent = () => {
         container: "map",
         style: "mapbox://styles/mapbox/streets-v12",
         center: [-104.718243, 40.413869],
-        zoom: 5,
+        zoom: 4,
         // attributionControl: false
       });
 
@@ -122,13 +238,12 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
-        newMap.zoomOut(4);
       });
 
       let timeoutId;
 
       newMap.on("move", async (e) => {
-        setLoadingRegAddresses(true);
+        // setLoadingRegAddresses(true);
 
         clearTimeout(timeoutId);
         timeoutId = setTimeout(async () => {
@@ -136,53 +251,50 @@ const Rent = () => {
           el.id = "markerWithExternalCss";
           let crds = e.target.getBounds();
 
-          const responseData = await findPropertiesByCoordinates({
-            postData: {
-              minLongitude: crds._sw.lng,
-              minLatitude: crds._sw.lat,
-              maxLongitude: crds._ne.lng,
-              maxLatitude: crds._ne.lat,
-            },
-          });
+          // const responseData = await findPropertiesByCoordinates({
+          //   postData: {
+          //     minLongitude: crds._sw.lng,
+          //     minLatitude: crds._sw.lat,
+          //     maxLongitude: crds._ne.lng,
+          //     maxLatitude: crds._ne.lat,
+          //   },
+          // });
 
-          let formattedProperties = [];
-          if (responseData) {
-            formattedProperties = responseData.filter((property) => {
-              if (
-                property.longitude >= crds._sw.lng &&
-                property.longitude <= crds._ne.lng &&
-                property.latitude >= crds._sw.lat &&
-                property.latitude <= crds._ne.lat
-              ) {
-                return property;
-              }
-            });
-          }
+          // let formattedProperties = [];
+          // if (responseData) {
+          //   formattedProperties = responseData.filter((property) => {
+          //     if (
+          //       property.longitude >= crds._sw.lng &&
+          //       property.longitude <= crds._ne.lng &&
+          //       property.latitude >= crds._sw.lat &&
+          //       property.latitude <= crds._ne.lat
+          //     ) {
+          //       return property;
+          //     }
+          //   });
+          // }
 
-          setRegisteredAddress(formattedProperties);
+          // setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
-
-          if (responseData.length > 0) {
-            for (let i = 0; i < responseData.length; i++) {
+          if (DUMMY_AUCTIONS_2.length > 0) {
+            for (let i = 0; i < DUMMY_AUCTIONS_2.length; i++) {
               const lngLat = new mapboxgl.LngLat(
-                responseData[i].longitude,
-                responseData[i].latitude
+                DUMMY_AUCTIONS_2[i].longitude,
+                DUMMY_AUCTIONS_2[i].latitude
               );
-
-              const popup = new maplibregl.Popup().setHTML(
-                `<strong>${responseData[i].address}</strong>`
-              );
+              //create markers here
               const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
-                .setPopup(popup)
                 .addTo(newMap);
-              const filteredData = responseData.filter(
-                (item) => item.type === "rent"
-              );
-              marker.getElement().addEventListener("click", function () {
-                setRentData(responseData[i]);
-                setShowClaimModal(true);
-              });
+
+              const markerElement = marker.getElement();
+
+              if (markerElement && marker && newMap) {
+                //add event listener for markers here
+                handleMouseEvent(isMobile, markerElement, marker, newMap);
+              }
+              //draw polygon around the markers from the api of available
+              drawPolygons(newMap, i, DUMMY_AUCTIONS_2[i]?.area);
             }
           }
         }, 3000);
@@ -343,7 +455,18 @@ const Rent = () => {
                   isLoading={isLoading}
                 />
               )} */}
-              <AuctionExplorerMobile data={filteredAuctions} />
+              {/* <AuctionExplorerMobile data={filteredAuctions} /> */}
+
+              {showBidDetail && (
+                <BidDetails
+                  address="50, California Street, Financial District"
+                  highestBid={200.0}
+                  timeLeft={"1min 	2sec"}
+                  imageUrl={""}
+                  yourBid={100}
+                  onCloseModal={() => setShowBidDetail(false)}
+                />
+              )}
             </section>
             <div className="hidden sm:block">
               <ZoomControllers map={map} />

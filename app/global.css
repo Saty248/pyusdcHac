@@ -170,6 +170,7 @@ button {
 /* Custom scrollbar styles */
 .thin-scrollbar::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 
 .thin-scrollbar::-webkit-scrollbar-track {
