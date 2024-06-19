@@ -290,7 +290,7 @@ const Sidebar = () => {
             numberOfUnseenNotifications={0}
           />
           <SidebarItemMobile
-            href={"/marketplace"}
+            href={"/buy"}
             text={"Marketplace"}
             children={<MapIcon isActive={false} />}
             numberOfUnseenNotifications={0}

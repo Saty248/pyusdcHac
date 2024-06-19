@@ -4,10 +4,15 @@ import AuctionCard from "./AuctionCard";
 
 interface BuyExplorerMobileProps {
   data: AuctionPropertyI[];
+  handleShowBidDetail:() => void;
 }
 
-const BuyExplorerMobile: React.FC<BuyExplorerMobileProps> = ({ data }) => {
+const BuyExplorerMobile: React.FC<BuyExplorerMobileProps> = ({ data,handleShowBidDetail }) => {
   const [toggleTray, setToggleTray] = useState(false);
+  const handleTrayToggle = () =>{
+    setToggleTray(false)
+    handleShowBidDetail()
+  }
   return (
     <div className="md:hidden fixed bottom-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center rounded-t-[30px]">
       <div
@@ -22,7 +27,7 @@ const BuyExplorerMobile: React.FC<BuyExplorerMobileProps> = ({ data }) => {
         <div className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6">
           {data.length > 0 ? (
             data.map((item, index) => (
-              <div className="mx-auto" key={index}>
+              <div className="mx-auto" key={index} onClick={handleTrayToggle}>
                 <AuctionCard data={item} />
               </div>
             ))

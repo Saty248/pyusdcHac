@@ -678,7 +678,7 @@ export const ChevronRightIcon = () => {
   );
 };
 
-export const CloseIcon = () => {
+export const CloseIcon = ({color='#222222'}) => {
   return (
     <svg
       width="100%"
@@ -689,7 +689,7 @@ export const CloseIcon = () => {
     >
       <path
         d="M14.3767 0.358305C13.9425 -0.0759428 13.241 -0.0759428 12.8067 0.358305L7.36195 5.79197L1.91714 0.34717C1.4829 -0.0870776 0.781418 -0.0870776 0.34717 0.34717C-0.0870776 0.781418 -0.0870776 1.4829 0.34717 1.91714L5.79197 7.36195L0.34717 12.8067C-0.0870776 13.241 -0.0870776 13.9425 0.34717 14.3767C0.781418 14.811 1.4829 14.811 1.91714 14.3767L7.36195 8.93192L12.8067 14.3767C13.241 14.811 13.9425 14.811 14.3767 14.3767C14.811 13.9425 14.811 13.241 14.3767 12.8067L8.93192 7.36195L14.3767 1.91714C14.7998 1.49403 14.7998 0.781419 14.3767 0.358305Z"
-        fill="#222222"
+        fill={color}
       />
     </svg>
   );
@@ -987,44 +987,6 @@ export const RectangleIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <rect width="70" height="9" rx="4.5" fill="#D9D9D9" />
-    </svg>
-  );
-};
-export const chevronUpBidIcon = () => {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3.75 10.875L8.29289 6.33211C8.68342 5.94158 9.31658 5.94158 9.70711 6.33211L14.25 10.875"
-        stroke="#868686"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
-  );
-};
-export const chevronDownBidIcon = () => {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M14.25 7.125L9.70711 11.6679C9.31658 12.0584 8.68342 12.0584 8.29289 11.6679L3.75 7.125"
-        stroke="#868686"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
     </svg>
   );
 };

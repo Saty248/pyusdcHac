@@ -1,14 +1,14 @@
 import React from "react";
-import TransactionHistory from "./PreviousBid";
+import CustomTable from "./CustomTable";
 interface AirspaceHistoryProps {
-  transaction: any;
+  airspaceHistory: any;
   totalLifeTimeIncome: number;
   MtdTotalIncome: number;
   WtdTotalIncome: number;
 }
 
 const AirspaceHistory: React.FC<AirspaceHistoryProps> = ({
-  transaction,
+  airspaceHistory,
   totalLifeTimeIncome,
   MtdTotalIncome,
   WtdTotalIncome,
@@ -42,7 +42,10 @@ const AirspaceHistory: React.FC<AirspaceHistoryProps> = ({
         </div>
       </div>
       <>
-        <TransactionHistory transactions={transaction} />
+        <CustomTable
+          header={["Price", "Date", "From"]}
+          body={airspaceHistory}
+        />
       </>
     </div>
   );

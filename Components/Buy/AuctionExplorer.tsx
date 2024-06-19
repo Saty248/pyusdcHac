@@ -5,9 +5,10 @@ import { AuctionPropertyI } from "@/types";
 
 interface BuyExplorerProps {
   data: AuctionPropertyI[];
+  handleShowBidDetail:() => void;
 }
 
-const BuyExplorer: React.FC<BuyExplorerProps> = ({ data }) => {
+const BuyExplorer: React.FC<BuyExplorerProps> = ({ data ,handleShowBidDetail}) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAuctions = data.filter((auction) =>
@@ -27,7 +28,7 @@ const BuyExplorer: React.FC<BuyExplorerProps> = ({ data }) => {
       </div>
       <div className="flex flex-col gap-4 py-4">
         <div>
-          <button className="text-base bg-dark-blue py-2 w-full text-white rounded-lg text-[14px]">
+          <button className="text-base bg-dark-blue py-2 w-full text-white rounded-lg">
             Create Auction
           </button>
         </div>
@@ -48,7 +49,7 @@ const BuyExplorer: React.FC<BuyExplorerProps> = ({ data }) => {
           <div className="grid grid-cols-2 gap-4">
             {filteredAuctions.length > 0 ? (
               filteredAuctions.map((item, index) => (
-                <div key={index}>
+                <div key={index} onClick={handleShowBidDetail}>
                   <AuctionCard data={item} />
                 </div>
               ))

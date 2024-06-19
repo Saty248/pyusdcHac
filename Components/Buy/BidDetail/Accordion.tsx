@@ -1,10 +1,12 @@
 "use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
-import { chevronDownBidIcon, chevronUpBidIcon } from "@/Components/Icons";
+import { chevronDownIcon, chevronUpIcon } from "@/Components/Icons";
+interface AccordionProps {
+  content: React.ReactNode;
+  title: string;
+}
 
-const Accordion = ({ content, title }) => {
+const Accordion: React.FC<AccordionProps> = ({ content, title }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleAccordion = () => {
@@ -23,8 +25,8 @@ const Accordion = ({ content, title }) => {
           </div>
         }
 
-        <div className="transform transition-transform duration-300">
-          {isOpen ? chevronUpBidIcon() : chevronDownBidIcon()}
+        <div className="transform transition-transform duration-300 text-[#868686]">
+          {isOpen ? chevronDownIcon() : chevronUpIcon()}
         </div>
       </div>
       {isOpen && <div>{content}</div>}
