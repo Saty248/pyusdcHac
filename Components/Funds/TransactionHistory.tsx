@@ -6,28 +6,36 @@ import {TransactionHistoryProps } from '../../types';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Connection, PublicKey, SignaturesForAddressOptions, TransactionSignature } from '@solana/web3.js';
 import moment from 'moment';
+import axios, { Axios } from 'axios';
 
 const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryProps) => {
   enum PAGE {
     reset,
     before,
-    after
+    after,
+    one,
+    two,
+    three,
+    four,
+    five
   }
-  const limit=6
+  const limit=4
+  const pageLimit=8
     const { isMobile } = useMobile();
     const [transactionHistory, setTransactionHistory] = useState<Array<any>>([]);
     let _signatureList:string[];
     const [signatureList, setSignatureList] = useState<Array<any>>([]);
-    let FirstTransactionHistorySignature:string|null=null
+    let firstTransactionHistorySignature:string|null=null
     let lastTransactionHistorySignature:string|null=null
-    const [currentPage, setCurrentPage] = useState(1);
-      
+    const [_lastTransactionHistorySignature,setLastTransactionHistorySignature]=useState<string>()
+    const [_firstTransactionHistorySignature,setfirstTransactionHistorySignature]=useState<string>()
     
 
 
 
       useEffect(() => {
-        //console.log('here effect only',transactionHistory?.length)
+        console.log('here effect only',transactionHistory?.length)
+        console.log(user,provider)
         if (user && provider && transactionHistory?.length<=0) {
           console.log(user,provider)
           //console.log('here effect condition')
@@ -35,77 +43,334 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         }
       },[user,provider]);
 
-      //console.log(signatureList,FirstTransactionHistorySignature,lastTransactionHistorySignature)
-      const getTransactions=async(page:PAGE)=>{
+      console.log(signatureList,firstTransactionHistorySignature,lastTransactionHistorySignature)
+
+      
+
+      const getPrevTransactions=async(page:PAGE)=>{
         try {
           setIsLoading(true)
           let TxOptions:SignaturesForAddressOptions;
-          //console.log(signatureList)
-          FirstTransactionHistorySignature=signatureList?.length>0?signatureList[0]:null
-          lastTransactionHistorySignature=signatureList?.length>0?signatureList[signatureList.length-1]:null      
-          //console.log(FirstTransactionHistorySignature,lastTransactionHistorySignature)
+          console.log(signatureList)
+          if(transactionHistory?.length>0){
+            console.log(transactionHistory.length,transactionHistory)
+            firstTransactionHistorySignature=signatureList[0]
+           lastTransactionHistorySignature=signatureList[signatureList.length-1]      
+          }else{
+            console.log('here',lastTransactionHistorySignature)
+          }
+          
+          console.log(firstTransactionHistorySignature,lastTransactionHistorySignature)
           
           if(page==PAGE.reset){
-            TxOptions={limit}
+              TxOptions={limit}
+            
           }else if(page==PAGE.before){            
             TxOptions={
               limit,
               before:lastTransactionHistorySignature as string
             }
-            if(!lastTransactionHistorySignature){
-              setCurrentPage(0)
-            }
-            //console.log(lastTransactionHistorySignature,TxOptions)
-          }else{
-            if(FirstTransactionHistorySignature){
-              //console.log(FirstTransactionHistorySignature)
+            console.log(lastTransactionHistorySignature,TxOptions)
+          }else if(page==PAGE.after){
+            if(firstTransactionHistorySignature && transactionHistory.length>0){
+              console.log(firstTransactionHistorySignature)
               TxOptions={
-                until:FirstTransactionHistorySignature as string
+                before:firstTransactionHistorySignature,
+                until:lastTransactionHistorySignature as string
               }  
             }else{
-              console.log(FirstTransactionHistorySignature)
-              TxOptions={limit}
-              setCurrentPage(1)
+              console.log(lastTransactionHistorySignature)
+              TxOptions={limit,
+                until:lastTransactionHistorySignature as string
+
+              }
+              
             }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,_lastTransactionHistorySignature,TxOptions)
+            
+          }else{
+            TxOptions={limit,
+             
+
+            }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,TxOptions)
             
           }
+
+
   
-         const solanaWallet = new SolanaWallet(provider);
+        const solanaWallet = new SolanaWallet(provider);
         const accounts = await solanaWallet.requestAccounts();        
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-       let transactionList =await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+        let transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+          console.log(transactionList) 
 
-       if(transactionList.length==0 && currentPage>1){
-        transactionList =await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),{limit})
-        setCurrentPage(0)
-       }
-       if(page=PAGE.after){
+       /* if(page==PAGE.after){
         transactionList=transactionList.slice(-limit)
-       }  
-       //console.log(transactionList)      
+       }  */ 
+       console.log(transactionList)      
        _signatureList = transactionList.map(transaction=>transaction.signature);
-        //console.log(_signatureList)        
+        console.log(_signatureList)        
         let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
-        //console.log(transactionDetails)
+        console.log(transactionDetails)
          setTransactionHistory(transactionDetails )
-        setSignatureList(_signatureList) 
+         setSignatureList(_signatureList)
+          
         } catch (error) {
           console.log(error)
+          setIsLoading(false)
         }
         finally{
           setIsLoading(false)
         }
       
-      }
+      } 
+
+      const getNextTransactions=async(page:PAGE)=>{
+        try {
+          setIsLoading(true)
+          let TxOptions:SignaturesForAddressOptions;
+          console.log(signatureList)
+          if(transactionHistory?.length>0){
+            console.log(transactionHistory.length,transactionHistory)
+            firstTransactionHistorySignature=signatureList[0]
+           lastTransactionHistorySignature=signatureList[signatureList.length-1]      
+          }else{
+            console.log('here',lastTransactionHistorySignature)
+          }
+          
+          console.log(firstTransactionHistorySignature,lastTransactionHistorySignature)
+          
+          if(page==PAGE.reset){
+              TxOptions={limit}
+            
+          }else if(page==PAGE.before){            
+            TxOptions={
+              limit,
+              before:lastTransactionHistorySignature as string
+            }
+            console.log(lastTransactionHistorySignature,TxOptions)
+          }else if(page==PAGE.after){
+            if(firstTransactionHistorySignature && transactionHistory.length>0){
+              console.log(firstTransactionHistorySignature)
+              TxOptions={
+                before:firstTransactionHistorySignature,
+                until:lastTransactionHistorySignature as string
+              }  
+            }else{
+              console.log(lastTransactionHistorySignature)
+              TxOptions={limit,
+                until:lastTransactionHistorySignature as string
+
+              }
+              
+            }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,_lastTransactionHistorySignature,TxOptions)
+            
+          }else{
+            TxOptions={limit,
+             
+
+            }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,TxOptions)
+            
+          }
+
+
+  
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();        
+        const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
+        let transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+          console.log(transactionList) 
+
+       /* if(page==PAGE.after){
+        transactionList=transactionList.slice(-limit)
+       }  */ 
+       console.log(transactionList)      
+       _signatureList = transactionList.map(transaction=>transaction.signature);
+        console.log(_signatureList)        
+        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
+        console.log(transactionDetails)
+         setTransactionHistory(transactionDetails )
+         setSignatureList(_signatureList)
+          
+        } catch (error) {
+          console.log(error)
+          setIsLoading(false)
+        }
+        finally{
+          setIsLoading(false)
+        }
+      
+      } 
+      
+      
+
+
+
+
+       const getTransactions=async(page:PAGE)=>{
+        try {
+          setIsLoading(true)
+          let TxOptions:SignaturesForAddressOptions;
+          console.log(signatureList)
+          if(transactionHistory?.length>0){
+            console.log(transactionHistory.length,transactionHistory)
+            firstTransactionHistorySignature=signatureList[0]
+           lastTransactionHistorySignature=signatureList[signatureList.length-1]      
+          }else{
+            console.log('here',lastTransactionHistorySignature)
+          }
+          
+          console.log(firstTransactionHistorySignature,lastTransactionHistorySignature)
+          
+          if(page==PAGE.reset){
+              TxOptions={limit}
+            
+          }else if(page==PAGE.before){            
+            TxOptions={
+              limit,
+              before:lastTransactionHistorySignature as string
+            }
+            console.log(lastTransactionHistorySignature,TxOptions)
+          }else if(page==PAGE.after){
+            if(firstTransactionHistorySignature && transactionHistory.length>0){
+              console.log(firstTransactionHistorySignature)
+              TxOptions={
+                
+                until:firstTransactionHistorySignature as string
+              }  
+            }else{
+              console.log(lastTransactionHistorySignature)
+              TxOptions={limit,
+                until:lastTransactionHistorySignature as string
+
+              }
+              
+            }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,_lastTransactionHistorySignature,TxOptions)
+            
+          }else{
+            TxOptions={limit,
+             
+
+            }
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,TxOptions)
+            
+          }
+
+
+  
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();        
+        const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
+        let transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+          console.log(transactionList) 
+
+       /* if(page==PAGE.after){
+        transactionList=transactionList.slice(-limit)
+       }  */ 
+       console.log(transactionList)      
+       _signatureList = transactionList.map(transaction=>transaction.signature);
+        console.log(_signatureList)        
+        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
+        console.log(transactionDetails)
+         setTransactionHistory(transactionDetails )
+         setSignatureList(_signatureList)
+          
+        } catch (error) {
+          console.log(error)
+          setIsLoading(false)
+        }
+        finally{
+          setIsLoading(false)
+        }
+      
+      } 
+
+       /*  const getTransactions=async(page:PAGE)=>{
+          try {
+            setIsLoading(true)
+            let TxOptions:SignaturesForAddressOptions;
+            console.log(signatureList)
+      
+            
+            console.log(firstTransactionHistorySignature,lastTransactionHistorySignature)
+            
+            if(page==PAGE.reset){
+                TxOptions={limit}
+              
+            }else if(page==PAGE.before){            
+              TxOptions={
+                limit,
+                before:_lastTransactionHistorySignature as string
+              }
+              console.log(lastTransactionHistorySignature,TxOptions)
+            }else if(page==PAGE.after){
+              TxOptions={
+                limit,
+                before:_firstTransactionHistorySignature,
+                until:_lastTransactionHistorySignature
+              }
+              
+              console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,_lastTransactionHistorySignature,TxOptions)
+              
+            }else{
+              TxOptions={limit
+              }
+              console.log(firstTransactionHistorySignature,lastTransactionHistorySignature,TxOptions)
+              
+            }
+  
+  
+    
+          const solanaWallet = new SolanaWallet(provider);
+          const accounts = await solanaWallet.requestAccounts();        
+          const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
+          let transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+            console.log(transactionList) 
+  
+         if(page==PAGE.after){
+          transactionList=transactionList.slice(-limit)
+         }  
+         console.log(transactionList)      
+         _signatureList = transactionList.map(transaction=>transaction.signature);
+          console.log(_signatureList)        
+          let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
+          console.log(transactionDetails)
+           setTransactionHistory(transactionDetails )
+           setSignatureList(_signatureList)
+           console.log(_signatureList.at(-pageLimit))
+            setfirstTransactionHistorySignature(_signatureList.at(-pageLimit))
+            setLastTransactionHistorySignature(_signatureList.at(-1))
+            
+        
+           
+            
+          } catch (error) {
+            console.log(error)
+            setIsLoading(false)
+          }
+          finally{
+            setIsLoading(false)
+          }
+        
+        } */
       const handleNextTxPage=async()=>{
+        if(transactionHistory.length==0){
+          return
+        }
         await getTransactions(PAGE.before)
-        setCurrentPage((oldpage)=>oldpage+1)
+        
       }
 
       const handlePrevTxPage=async()=>{
+       
         await getTransactions(PAGE.after)
-        setCurrentPage((oldpage)=>oldpage-1)
+        
       }
+  
       return (
         <div className="flex flex-col  gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
           <div className="flex sm:flex-col md:flex-row  justify-start sm:justify-between items-center">
@@ -156,7 +421,7 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
                 </thead>
                 {transactionHistory?.map((item,idx)=>{
                   let difference=item?.meta?.postTokenBalances[0]?.uiTokenAmount?.uiAmount - item?.meta?.preTokenBalances[0]?.uiTokenAmount?.uiAmount
-                  //console.log(difference)
+                  console.log(difference)
                   let type=difference>0?'Deposit':'Withdraw';
                   if(difference.toString()=='NaN'){
                     return null;
@@ -175,29 +440,31 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
           </div>
     
           <div className="flex items-center justify-end">
-            <div className="mx-auto flex gap-[11.71px]">
-           
+          {transactionHistory.length==0 && <div className="mx-auto flex gap-[11.71px]">
+          <div
+                  className={` text-[#87878D] text-base font-normal`}
+                  
+                >
+                  NO transactions found.
+                </div>
+            
+            </div>  }
             <div
-              className={`${currentPage==1?'disabled:true text-[#0653EA] text-base font-normal pointer-events-none	':' disabled:false text-[#0653EA] text-base font-normal'}`}
+              className={` text-[#0653EA] text-base font-normal mx-5`}
              onClick={handlePrevTxPage}
             >
               prev
             </div>
-          
-          {(
+           
+            
+            {(
             <div
-              className={`text-[#0653EA] cursor-pointer text-base font-normal`}
+              className={`text-[#0653EA] cursor-pointer text-base font-normal mx-1`}
               onClick={handleNextTxPage}
             >
               Next
             </div>
           )}
-              
-            </div>
-            <div className="text-[#87878D] text-left text-[14px] font-normal -tracking-[0.5px] px-5 ">
-            Page {currentPage}
-          </div>
-
           </div>
           </div>
           </div>
@@ -206,3 +473,34 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
       );
     };
     export default TransactionHistory;
+
+              /* let data = JSON.stringify({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "getSignaturesForAddress",
+            "params": [
+              `${accounts[0]}`,
+              TxOptions
+            ]
+          });
+          console.log(data)
+          let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://solana-devnet.rpc.extrnode.com/dffab5d1-c8df-49af-9f79-20e35ed3504c',
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            data : data
+          };
+          
+          let _transactionList = await axios.request(config) */
+              //console.log(_transactionList?.data?.result)
+             /*  if(!_transactionList.data.result){
+                throw Error("try again") 
+              } */
+              //let transactionList=_transactionList?.data?.result
+      /*  if(transactionList.length==0 && currentPage>1){
+        transactionList =await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),{limit})
+        setCurrentPage(0)
+       }  */
