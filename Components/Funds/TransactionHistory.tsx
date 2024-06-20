@@ -9,16 +9,6 @@ import moment from 'moment';
 import axios, { Axios } from 'axios';
 
 const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryProps) => {
-  enum PAGE {
-    reset,
-    before,
-    after,
-    one,
-    two,
-    three,
-    four,
-    five
-  }
   const limit=8
     const { isMobile } = useMobile();
     const [transactionHistory, setTransactionHistory] = useState<Array<any>>([]);
@@ -39,7 +29,6 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         const accounts = await solanaWallet.requestAccounts();        
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
         const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
-        console.log(transactionList,TxOptions)
         return transactionList
       }
 
