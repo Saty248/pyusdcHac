@@ -9,6 +9,8 @@ interface UserState {
   user: User | null;
   isWaitingScreenVisible: boolean;
   userUSDWalletBalance: UserUSDWalletBalanceI;
+  activeFilters: number;
+  isCreateAuctionModalOpen: boolean;
 }
 
 const initialState: UserState = {
@@ -19,6 +21,8 @@ const initialState: UserState = {
   user: null,
   isWaitingScreenVisible: false,
   userUSDWalletBalance: { amount: "0", isLoading: true },
+  activeFilters: 0,
+  isCreateAuctionModalOpen: false,
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -51,6 +55,14 @@ const userSlice: Slice<UserState> = createSlice({
     ) => {
       state.userUSDWalletBalance = action.payload;
     },
+
+    setActiveFilters: (state, action: PayloadAction<number>) => {
+      state.activeFilters = action.payload;
+    },
+
+    setIsCreateAuctionModalOpen: (state, action: PayloadAction<boolean>) => {
+      state.isCreateAuctionModalOpen = action.payload;
+    },
   },
 });
 
@@ -62,5 +74,7 @@ export const {
   setIsWaitingScreenVisible,
   setUser,
   setUserUSDWalletBalance,
+  setActiveFilters,
+  setIsCreateAuctionModalOpen,
 } = userSlice.actions;
 export default userSlice.reducer;

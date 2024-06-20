@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
-import {  drawPolygons } from "@/utils/maputils";
+import { drawPolygons } from "@/utils/maputils";
 import maplibregl from "maplibre-gl";
 import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
 interface useDrawBidPolygonsProps {
@@ -14,8 +14,7 @@ export const useDrawBidPolygons = ({
   isMobile,
   auctions,
 }: useDrawBidPolygonsProps) => {
-
-const customPopupStyles = `
+  const customPopupStyles = `
     .mapboxgl-popup-close-button {
     position:absolute;
     top:9px;
@@ -25,7 +24,6 @@ const customPopupStyles = `
     .mapboxgl-popup {
       position:relative;
       background-color: #ffffff !important;
-      z-index:100;
     }
     .mapboxgl-popup-content {
       font-family: 'Poppins', sans-serif !important;

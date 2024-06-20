@@ -14,8 +14,13 @@ import {
   AuctionExplorer,
   AuctionExplorerMobile,
   AuctionSearchMobile,
+  BuyFilter,
 } from "@/Components/Buy";
 import BidDetails from "@/Components/Buy/BidDetail/BidDetail";
+import CreateAuctionModal from "@/Components/Buy/CreateAuctionModal";
+import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { shallowEqual } from "react-redux";
 import BidPreview from "@/Components/Buy/BidPreview/BidPreview";
 import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
@@ -53,7 +58,14 @@ const DUMMY_AUCTIONS = [
   },
 ];
 
-const Rent = () => {
+const Buy = () => {
+  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
+    const { isCreateAuctionModalOpen } = state.userReducer;
+    return { isCreateAuctionModalOpen };
+  }, shallowEqual);
+
+  const dispatch = useAppDispatch();
+
   const [searchTerm, setSearchTerm] = useState("");
   const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -79,6 +91,7 @@ const Rent = () => {
   >("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<any>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
+
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -217,7 +230,6 @@ const Rent = () => {
 
   const handleShowBidDetail = () => {
     setShowBidDetail(true);
-
   };
   const handleOpenBidPreview = () => {
     setShowBidPreview(true);
@@ -254,6 +266,17 @@ const Rent = () => {
               />
             </div>
 
+            <div className="hidden md:block fixed top-[15%] right-10 z-50">
+              <BuyFilter />
+            </div>
+
+            {isCreateAuctionModalOpen && (
+              <CreateAuctionModal
+                data={DUMMY_AUCTIONS}
+                onClose={() => dispatch(setIsCreateAuctionModalOpen(false))}
+              />
+            )}
+
             <AuctionSearchMobile
               searchTerm={searchTerm}
               setSearchTerm={(value: string) => setSearchTerm(value)}
@@ -271,7 +294,10 @@ const Rent = () => {
 
               {!isMobile && (
                 <div className="flex justify-start items-start">
-                  <AuctionExplorer data={DUMMY_AUCTIONS} handleShowBidDetail={handleShowBidDetail} />
+                  <AuctionExplorer
+                    data={DUMMY_AUCTIONS}
+                    handleShowBidDetail={handleShowBidDetail}
+                  />
                 </div>
               )}
               {showAuctionList && (
@@ -319,4 +345,4 @@ const Rent = () => {
   );
 };
 
-export default Rent;
+export default Buy;
