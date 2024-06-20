@@ -20,10 +20,15 @@ import {
   AuctionExplorer,
   AuctionExplorerMobile,
   AuctionSearchMobile,
+  BuyFilter,
 } from "@/Components/Buy";
 import { handleMouseEvent } from "@/utils/eventHandlerUtils/eventHandlers";
 import { drawPolygons } from "@/utils/maputils";
 import BidDetails from "@/Components/Buy/BidDetail/BidDetail";
+import CreateAuctionModal from "@/Components/Buy/CreateAuctionModal";
+import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { shallowEqual } from "react-redux";
 
 const DUMMY_AUCTIONS = [
   {
@@ -128,7 +133,14 @@ const DUMMY_AUCTIONS_2 = [
   },
 ];
 
-const Rent = () => {
+const Buy = () => {
+  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
+    const { isCreateAuctionModalOpen } = state.userReducer;
+    return { isCreateAuctionModalOpen };
+  }, shallowEqual);
+
+  const dispatch = useAppDispatch();
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
@@ -384,6 +396,17 @@ const Rent = () => {
               />
             </div>
 
+            <div className="hidden md:block fixed top-[15%] right-10 z-50">
+              <BuyFilter />
+            </div>
+
+            {isCreateAuctionModalOpen && (
+              <CreateAuctionModal
+                data={DUMMY_AUCTIONS}
+                onClose={() => dispatch(setIsCreateAuctionModalOpen(false))}
+              />
+            )}
+
             <AuctionSearchMobile
               searchTerm={searchTerm}
               setSearchTerm={(value: string) => setSearchTerm(value)}
@@ -455,7 +478,7 @@ const Rent = () => {
                   isLoading={isLoading}
                 />
               )} */}
-              {/* <AuctionExplorerMobile data={filteredAuctions} /> */}
+              <AuctionExplorerMobile data={filteredAuctions} />
 
               {showBidDetail && (
                 <BidDetails
@@ -478,4 +501,4 @@ const Rent = () => {
   );
 };
 
-export default Rent;
+export default Buy;
