@@ -135,7 +135,7 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
             MARKETPLACE
           </p>
           <SidebarItem
-            href={""}
+            href={"/buy"}
             text={"Buy Airspace"}
             children={<MapIcon isActive={false} />}
           />
