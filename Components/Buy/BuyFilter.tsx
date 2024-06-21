@@ -83,7 +83,7 @@ const BuyFilter = () => {
           />
           <button
             onClick={handleSetActiveFilters}
-            className="text-base bg-dark-blue py-2 w-full text-white rounded-lg text-[14px]"
+            className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
           >
             Save Filter
           </button>

@@ -5,6 +5,7 @@ import { GiSettingsKnobs } from "react-icons/gi";
 import { FiPlus } from "react-icons/fi";
 import FilterTab from "./FilterTab";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useRouter } from 'next/navigation';
 import {
   setActiveFilters,
   setIsCreateAuctionModalOpen,
@@ -20,6 +21,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
   searchTerm,
   setSearchTerm,
 }) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
@@ -50,7 +52,9 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
   return (
     <div className="md:hidden fixed top-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center">
       <div className="flex items-center justify-between gap-2">
-        <IoArrowBack />
+        <div onClick={()=>router.push('/marketplace')}>
+          <IoArrowBack />
+        </div>
         <div className="flex justify-between items-center border rounded-lg overflow-hidden p-2">
           <input
             placeholder="Search auctions..."

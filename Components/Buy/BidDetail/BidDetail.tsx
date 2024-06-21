@@ -4,29 +4,27 @@ import { LocationPointIcon, RectangleIcon } from "@/Components/Icons";
 import Image1 from "@/public/images/AHImage.png";
 import Image from "next/image";
 import Accordion from "./Accordion";
-import TransactionHistory from "./PreviousBid";
+import CustomTable from "./CustomTable";
 import AirspaceHistory from "./AirspaceHistory";
 import { useMobile } from "@/hooks/useMobile";
 interface BidDetailsProps {
-  address: string;
-  imageUrl: any;
-  highestBid: number;
-  timeLeft: string;
-  yourBid: number;
-  onCloseModal: any;
+  auctionDetailData:any;
+  onCloseModal: () => void;
+  onPlaceBid:() => void;
+  currentUserBid:number;
+  setCurrentUserBid:any;
 }
 
 const BidDetails: React.FC<BidDetailsProps> = ({
-  address,
-  imageUrl,
-  highestBid,
-  timeLeft,
-  yourBid,
+  auctionDetailData,
+
   onCloseModal,
+  onPlaceBid,
+  setCurrentUserBid,
+  currentUserBid
 }) => {
   const { isMobile } = useMobile();
-  const [currentUserBid, setCurrentUserBid] = useState<number>(yourBid);
-  const transactions = [
+  const previousBidData = [
     {
       price: 100,
       date: "15 december 2023",
@@ -43,7 +41,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
       from: "Jane Doe",
     },
   ];
-  const transactions2 = [
+  const airspaceHistoryMockData = [
     {
       price: "Rental",
       date: "15 december 2023",
@@ -96,13 +94,13 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {address}
+              {auctionDetailData?.address}
             </p>
           </div>
           <div>
             <div className="relative border-2 h-[130px]">
               <Image
-                src={imageUrl ? imageUrl : Image1}
+                src={auctionDetailData?.imageUrl ? auctionDetailData?.imageUrl : Image1}
                 alt="test"
                 layout="fill"
                 objectFit="cover"
@@ -115,13 +113,13 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 Highest Bid
               </p>
               <h1 className="text-[14px]  leading-[26px] font-bold text-[#050505]">
-                ${highestBid}
+                ${auctionDetailData?.highestBid}
               </h1>
             </div>
             <div className="flex flex-col gap-[2px]">
               <p className="text-[14px]  text-[#727272]">Time left</p>
               <h1 className="text-[14px] font-bold text-[#050505]">
-                {timeLeft}
+                {auctionDetailData?.timeLeft}
               </h1>
             </div>
           </div>
@@ -132,10 +130,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               </p>
               <span className="text-[#E04F64]">*</span>
             </div>
-            {/* <input
-              className="flex items-center gap-[10px] py-[14px] px-[22px] rounded-lg h-[46px]"
-              style={{ border: "1px solid #87878D" }}
-            /> */}
             <div
               className=" flex w-full items-center text-[#232F4A] py-[14px] px-[22px] rounded-lg h-[46px]"
               style={{ border: "1px solid #87878D" }}
@@ -156,13 +150,13 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             </div>
           </div>
           <div className="w-full bg-[#0653EA] text-white rounded-lg ">
-            <button className="w-full h-[42px]">Place a Bid</button>
+            <button className="w-full h-[42px]" onClick={onPlaceBid}>Place a Bid</button>
           </div>
           <hr />
           <div>
             <Accordion
               title={`Previous Bid (${totalBId})`}
-              content={<TransactionHistory transactions={transactions} />}
+              content={<CustomTable header={["Price", "Date", "From"]} body={previousBidData} />}
             />
           </div>
           <hr />
@@ -171,7 +165,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               title={"Airspace History"}
               content={
                 <AirspaceHistory
-                  transaction={transactions2}
+                  airspaceHistory={airspaceHistoryMockData}
                   totalLifeTimeIncome={200.0}
                   MtdTotalIncome={200.0}
                   WtdTotalIncome={200.0}

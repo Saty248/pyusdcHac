@@ -166,3 +166,6 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
   background-color: #B8CCE3;
 }
+.marker-popup-hovered-class{
+  z-index: 500;
+}

@@ -9,9 +9,10 @@ import CreateAuctionModal from "./CreateAuctionModal";
 
 interface AuctionExplorerProps {
   data: AuctionPropertyI[];
+  handleShowBidDetail:() => void;
 }
 
-const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data }) => {
+const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDetail }) => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
     return { isCreateAuctionModalOpen };
@@ -40,7 +41,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data }) => {
           <div>
             <button
               onClick={() => dispatch(setIsCreateAuctionModalOpen(true))}
-              className="text-base bg-dark-blue py-2 w-full text-white rounded-lg text-[14px]"
+              className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
             >
               Create Auction
             </button>
@@ -62,7 +63,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data }) => {
             <div className="grid grid-cols-2 gap-4">
               {filteredAuctions?.length > 0 ? (
                 filteredAuctions.map((item, index) => (
-                  <div key={index}>
+                  <div key={index} onClick={handleShowBidDetail}>
                     <AuctionCard data={item} />
                   </div>
                 ))

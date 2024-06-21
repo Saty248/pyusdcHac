@@ -9,7 +9,7 @@ interface MarkerPopupProps{
 
 const MarkerPopup:React.FC<MarkerPopupProps> = ({name,highestBid,timeLeft}) => {
   return (
-    <div className={" relative bg-white rounded-[5px] flex flex-row w-[321px] sm:w-[266px] h-[130px] sm:h-auto sm:flex sm:flex-col"}>
+    <div className={" relative bg-white rounded-[5px] flex flex-row w-[321px] sm:w-[266px] h-[130px] sm:h-auto sm:flex sm:flex-col "}>
       <div className={"w-1/2 sm:w-[266px] relative h-[130px]"}>
           <Image src={Image1} alt="test"
           layout="fill"

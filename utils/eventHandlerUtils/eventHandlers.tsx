@@ -3,6 +3,7 @@ import ReactDom from "next/dist/compiled/react-dom/cjs/react-dom-server-legacy.b
 import mapboxgl, { Map, Marker } from "mapbox-gl";
 
 export const handleMouseEvent = (isMobile, markerElement, marker, map) => {
+  
   if (!isMobile) {
     markerElement.addEventListener("mouseenter", () => {
       const tooltipContent = ReactDom.renderToString(
@@ -30,6 +31,10 @@ export const handleMouseEvent = (isMobile, markerElement, marker, map) => {
     });
   } else {
     markerElement.addEventListener("touchend", (e) => {
+      const elementToRemove = document.querySelector(
+        ".marker-popup-hovered-class"
+      );
+      if (elementToRemove) elementToRemove.remove();
       const tooltipContent = ReactDom.renderToString(
         <MarkerPopup
           name={"guinfruoigài’çfjojvopijd"}

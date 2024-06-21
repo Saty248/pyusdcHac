@@ -7,12 +7,17 @@ import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 
 interface AuctionExplorerMobileProps {
   data: AuctionPropertyI[];
+  handleShowBidDetail:() => void;
 }
 
 const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
-  data,
+  data,handleShowBidDetail
 }) => {
   const [toggleTray, setToggleTray] = useState(false);
+  const handleTrayToggle = () =>{
+    setToggleTray(false)
+    handleShowBidDetail()
+  }
 
   const dispatch = useAppDispatch();
 
@@ -36,7 +41,7 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
           <div className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6">
             {data?.length > 0 ? (
               data.map((item, index) => (
-                <div className="mx-auto" key={index}>
+                <div className="mx-auto" key={index} onClick={handleTrayToggle}>
                   <AuctionCard data={item} />
                 </div>
               ))
