@@ -1,26 +1,18 @@
 import { EarthIcon, FriendsIcon, PropertyIcon } from "@/Components/Icons";
 import YourReferralsItem from "./YourReferralsItem";
-import { useMobile } from "@/hooks/useMobile";
 interface YourReferralsProps {
-  activeSection: number;
-  section: number;
   registeredFriends: number;
   registeredAirspaces: number;
   validatedProperties: number;
 }
 
 const YourReferrals: React.FC<YourReferralsProps> = ({
-  activeSection,
-  section,
   registeredFriends,
   registeredAirspaces,
   validatedProperties,
 }) => {
-  const { isMobile } = useMobile();
-
-  if (activeSection !== section && isMobile) return;
   return (
-    <div className="flex flex-col gap-[15px] px-[51px]">
+    <div className="flex flex-col gap-[15px] px-[10px]">
       <p className="text-[#222222] text-xl font-normal">Your referrals</p>
       <p className="text-[#87878D] text-[15px] font-normal">
         Stay in the loop on your referral influence and monitor the number of

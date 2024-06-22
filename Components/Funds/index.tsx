@@ -35,6 +35,7 @@ const Funds = () => {
   const [solbalance, setSolBalance] = useState<number>(0);
   const { provider } = useContext(Web3authContext) as Web3authContextType;
   const { isMobile } = useMobile();
+  
   useEffect(() => {
     let fetchbalance = async () => {
       if (user && provider) {
