@@ -166,19 +166,3 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
   background-color: #B8CCE3;
 }
-
-
-.referral-table-scrollbar::-webkit-scrollbar {
-  height: 4px; 
-}
-
-.referral-table-custom-scrollbar::-webkit-scrollbar-track {
-  background: #E9F5FE; 
-  border-radius: 10px;
-}
-
-.referral-table-custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #4285F4; 
-  border-radius: 10px;
-  border: 2px solid #E9F5FE;
-}

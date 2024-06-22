@@ -30,7 +30,7 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
       <div className="grid grid-col gap-4">
         {Array.from({ length: 6 }, (_, index) => (
           <div key={index} className="bg-gray-200 h-[66px] flex-1 flex items-center justify-center">
-            {index + 1}
+            
           </div>
         ))}
       </div>
@@ -67,7 +67,7 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ onBack }) => {
       <div className=" px-16 grid grid-cols-3 grid-rows-4 gap-2 mt-2">
       {Array.from({ length: 12 }, (_, index) => (
         <div key={index} className="bg-gray-200 h-[66px] flex items-center justify-center">
-          {index + 1}
+     
         </div>
       ))}
     </div>
