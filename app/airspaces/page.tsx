@@ -17,7 +17,7 @@ import Sidebar from "../../Components/Shared/Sidebar";
 import PageHeader from "../../Components/PageHeader";
 import ExplorerMobile from "../../Components/Airspace/Explorer/ExplorerMobile";
 import HowToModal from "../../Components/Airspace/HowToModal";
-import ClaimModal from "../../Components/Airspace/ClaimModal/ClaimModal";
+import {ClaimModal} from "../../Components/Airspace/ClaimModal/ClaimModal";
 import SuccessModal from "../../Components/Airspace/SuccessModal";
 import Explorer from "../../Components/Airspace/Explorer/Explorer";
 import Slider from "../../Components/Airspace/Slider";
@@ -530,10 +530,9 @@ const Airspaces: React.FC = () => {
                     setIsLoading(true);
                   }}
                 />
-                <Slider />
-                <SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />
-                <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />
-
+                <div className="hidden sm:block"><Slider /></div>
+                {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
+                {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
