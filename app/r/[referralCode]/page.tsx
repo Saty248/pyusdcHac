@@ -192,7 +192,7 @@ const ReferralCodeRedirect = () => {
             >
               <p className="text-base font-normal text-[#222222]">Register</p>
               <p className="text-sm text-light-grey text-center">
-                Sign up to get rewarded with 50 credit
+                Sign up to get rewarded with 5 credit
               </p>
               <EmailInput
                 emailRef={emailRef}
