@@ -23,6 +23,8 @@ import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
 import { TextField, Box } from '@mui/material';
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -130,6 +132,7 @@ const RentModal: React.FC<RentModalProps> = ({
       setFinalAns({ status: "Rent failed", message: error.message });
     } finally {
       setIsLoading(false);
+      localStorage.removeItem("rentData")
     }
   };
 
@@ -156,6 +159,7 @@ const RentModal: React.FC<RentModalProps> = ({
       return false;
     }
   };
+  
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -182,11 +186,7 @@ const RentModal: React.FC<RentModalProps> = ({
             <h2 className="text-[#222222] font-medium text-xl text-center">
               Airspace Details
             </h2>
-            <div className="w-[20px] h-[20px] ml-3">
-              <InfoIcon />
-            </div>
           </div>
-
           <div
             onClick={() => {
               setShowClaimModal(false);
@@ -255,13 +255,13 @@ const RentModal: React.FC<RentModalProps> = ({
           >
             Cancel
           </div>
-          <button
-            disabled={isLoading}
+          <LoadingButton
             onClick={handleRentAirspace}
-            className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
+            isLoading={isLoading} 
+            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </button>
+          </LoadingButton>
         </div>
       </div>
       </Box>
