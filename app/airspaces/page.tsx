@@ -390,7 +390,14 @@ const Airspaces: React.FC = () => {
       return;
     }
     try {
-      const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+      const propertyAddress = searchParams?.get('propertyAddress')
+    const geoLocation = searchParams?.get('geoLocation');
+
+      if(propertyAddress || geoLocation){
+        //do nothing
+      }
+      else{
+        const ipResponse = await axios.get("https://api.ipify.org/?format=json");
       const ipAddress = ipResponse.data.ip;
       const ipGeolocationApiUrl = await axios.get(
         `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
@@ -405,6 +412,7 @@ const Airspaces: React.FC = () => {
         center: [longitude, latitude],
         zoom: 15,
       });
+    }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -449,7 +457,7 @@ const Airspaces: React.FC = () => {
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
+              className={`!absolute !left-0 !top-0 !m-0 !h-[100%] !w-[100%] `}
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
