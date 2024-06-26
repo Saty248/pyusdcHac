@@ -130,6 +130,7 @@ const RentModal: React.FC<RentModalProps> = ({
       setFinalAns({ status: "Rent failed", message: error.message });
     } finally {
       setIsLoading(false);
+      localStorage.removeItem("rentData")
     }
   };
 
