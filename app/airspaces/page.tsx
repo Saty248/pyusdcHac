@@ -112,7 +112,7 @@ const Airspaces: React.FC = () => {
         // attributionControl: false
       });
 
-      newMap.on("load", function () {
+      newMap.on("render", function () {
         newMap.resize()
       });
       newMap.on("load", function () {
@@ -249,8 +249,11 @@ const Airspaces: React.FC = () => {
     const geoLocation = searchParams?.get('geoLocation');
 
 
-    if ((propertyAddress || geoLocation) && !address) {// this condition prevent rerenderings,
-
+    if ((propertyAddress || geoLocation) && !address) {
+      // this condition prevent rerenderings,
+      if(isMobile){
+        setShowMobileMap(true)
+      }
       if (((propertyAddress && propertyAddress.length > 2) || (geoLocation && geoLocation.length > 2))) {
         if (geoLocation) {   // prioritizing the geolocation over Property Address as it is more consistant             
           setFlyToAddress(geoLocation)
@@ -258,6 +261,8 @@ const Airspaces: React.FC = () => {
           setFlyToAddress(propertyAddress)
         }
       }
+      
+    
     }
 
     if (flyToAddress === address) setShowOptions(false);
