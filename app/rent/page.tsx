@@ -119,9 +119,21 @@ const Rent = () => {
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
-              const popup = new maplibregl.Popup().setHTML(
+              const popup = new maplibregl.Popup({offset: 25,closeOnClick: false}).trackPointer().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               );
+
+              popup.on('open', () => {
+                const popupElement = popup.getElement();
+                if (popupElement) {
+                  popupElement.style.zIndex ='40';
+                  popupElement.addEventListener('click', function() {
+                    setRentData(responseData[i]);;
+                    setShowClaimModal(true);
+                  });
+                }
+              });
+
               const marker = new maplibregl.Marker(el)
                 .setLngLat(lngLat)
                 .setPopup(popup)
@@ -130,7 +142,7 @@ const Rent = () => {
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
-              });
+               });
             }
           }
         }, 3000);
@@ -236,7 +248,6 @@ const Rent = () => {
               <div
                 className={"!absolute !top-0 !left-0 !m-0 !w-screen !h-screen"}
                 id="map"
-                style={{ zIndex: "10" }}
               />
 
               {!isMobile && (
