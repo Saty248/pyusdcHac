@@ -22,7 +22,9 @@ import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
+import { TextField, Box } from '@mui/material';
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -161,15 +163,16 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         {!isMobile && (<Backdrop />)}
-      <div
-        style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
-      >
-        <div
-          className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+          <div
+          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
+          className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-[340px] md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
         >
+          <div
+            className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+            style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+          >
           <div
             className="w-[16px] h-[12px] md:hidden"
             onClick={() => {
@@ -219,6 +222,24 @@ const RentModal: React.FC<RentModalProps> = ({
               disablePast
               maxDate={maxDate}
               shouldDisableTime={shouldDisableTime}
+              slotProps={{
+                popper: {
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [-10, -30],
+                    },
+                  },
+                  {
+                    name: 'preventOverflow',
+                    options: {
+                      altAxis: true, 
+                    },
+                  },
+                ],
+              }
+              }}
             />
           </div>
         </div>
@@ -243,6 +264,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </LoadingButton>
         </div>
       </div>
+      </Box>
     </LocalizationProvider>
   );
 };
