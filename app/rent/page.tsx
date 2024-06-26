@@ -79,7 +79,7 @@ const Rent = () => {
             "fill-color": "#D20C0C",
           },
         });
-        newMap.zoomOut();
+        newMap.zoomOut({duration:4});
       });
 
       let timeoutId;
