@@ -22,7 +22,9 @@ import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
+import { TextField, Box } from '@mui/material';
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -130,6 +132,7 @@ const RentModal: React.FC<RentModalProps> = ({
       setFinalAns({ status: "Rent failed", message: error.message });
     } finally {
       setIsLoading(false);
+      localStorage.removeItem("rentData")
     }
   };
 
@@ -160,6 +163,7 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         {!isMobile && (<Backdrop />)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
@@ -218,6 +222,24 @@ const RentModal: React.FC<RentModalProps> = ({
               disablePast
               maxDate={maxDate}
               shouldDisableTime={shouldDisableTime}
+              slotProps={{
+                popper: {
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [-10, -30],
+                    },
+                  },
+                  {
+                    name: 'preventOverflow',
+                    options: {
+                      altAxis: true, 
+                    },
+                  },
+                ],
+              }
+              }}
             />
           </div>
         </div>
@@ -242,6 +264,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </LoadingButton>
         </div>
       </div>
+      </Box>
     </LocalizationProvider>
   );
 };
