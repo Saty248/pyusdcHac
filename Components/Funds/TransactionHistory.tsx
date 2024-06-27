@@ -6,7 +6,6 @@ import {TransactionHistoryProps } from '../../types';
 import { SolanaWallet } from '@web3auth/solana-provider';
 import { Connection, PublicKey, SignaturesForAddressOptions, TransactionSignature } from '@solana/web3.js';
 import moment from 'moment';
-import axios, { Axios } from 'axios';
 
 const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryProps) => {
   const limit=8
@@ -26,9 +25,11 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
  
       const fetchTransaction=async(TxOptions:SignaturesForAddressOptions)=>{
         const solanaWallet = new SolanaWallet(provider);
-        const accounts = await solanaWallet.requestAccounts();        
+        const accounts = await solanaWallet.requestAccounts();
+        const _user='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' /* accounts[0] */        
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${accounts[0]}`),TxOptions)
+        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${_user}`),TxOptions)
+        console.log('gerer',transactionList)
         return transactionList
       }
 
@@ -53,6 +54,7 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         
     
         let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
+
         
        
          setTransactionHistory(transactionDetails )
@@ -118,10 +120,18 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
 
              
        _signatureList = transactionList.map(transaction=>transaction.signature);
-               
-        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
-        
-         setTransactionHistory(transactionDetails )
+               console.log(_signatureList)
+         let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[],{
+          maxSupportedTransactionVersion:2
+      });
+        transactionDetails.forEach((item)=>{
+            console.log(item?.transaction.message.accountKeys.forEach((item2)=>{
+              console.log(item2.pubkey.toString())
+            }))
+
+        })
+        console.log(transactionDetails[0]?.meta?.postTokenBalances)
+         setTransactionHistory(transactionDetails ) 
          setSignatureList(_signatureList)
          
          setfirstTransactionHistorySignature(_signatureList[0])
@@ -203,9 +213,33 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
                   </tr>
                 </thead>
                 {transactionHistory?.map((item,idx)=>{
-                  let difference=item?.meta?.postTokenBalances[0]?.uiTokenAmount?.uiAmount - item?.meta?.preTokenBalances[0]?.uiTokenAmount?.uiAmount
+                  let preTokenBalOcject=item.meta.preTokenBalances.filter((item)=>{
+                    if(item.owner=='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' && item.mint=="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
+                      return item
+                    }
+                  })
+                  console.log('preTokenBalOcject',preTokenBalOcject)
+                  let postTokenBalOcject=item.meta.postTokenBalances.filter((item)=>{
+                    if(item.owner=='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' && item.mint=="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
+                      return item
+                    }
+                  })
+                  let difference=postTokenBalOcject[0]?.uiTokenAmount?.uiAmount - preTokenBalOcject[0]?.uiTokenAmount?.uiAmount
                   
-                  let type=difference>0?'Deposit':'Withdraw';
+                  let type=difference>0?'Deposit':'Withdraw';                  
+                    let accounts=item?.transaction.message.accountKeys
+                    
+                    let accountInputs:Array<any>=accounts.map((item)=>{
+                      console.log(item.pubkey.toString())
+                      if(item.pubkey.toString()=="HmqstutaEpbddgt5hjhJAsnrXhTUfQpveCpyWEvEdnWM"){
+                        
+                        type='Rental fee'
+                      } 
+                    })
+                    
+                  
+                    
+                  
                   
                   return(<tr>
                     <td className='py-6 text-[#222222] px-5 w-2/12'>{moment.unix(item?.blockTime).format("YYYY-MM-DD HH:mm:ss")}</td>
