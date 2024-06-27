@@ -312,9 +312,9 @@ const Airspaces: React.FC = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("new")) {
-    setIsOpen(true);
-    localStorage.removeItem("new");
+    if (localStorage.getItem("showTour")) {
+      setIsOpen(true);
+      localStorage.removeItem("showTour");
     }
   }, []);
 

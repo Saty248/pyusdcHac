@@ -133,6 +133,8 @@ const IndividualSignup: React.FC = () => {
         setPhoneNumber("");
         if (referralCodeRef.current) referralCodeRef.current.value = "";
 
+        localStorage.setItem("showTour", "true");
+
         router.replace("/dashboard");
       }
     } catch (error: any) {
