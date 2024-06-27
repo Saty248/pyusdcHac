@@ -52,12 +52,7 @@ const Sidebar = () => {
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-      const timer = setTimeout(() => {
-        setIsLoaded(true);
-      }, 1000);
-
-      // Cleanup the timeout on component unmount
-      return () => clearTimeout(timer);
+      setIsLoaded(true);
     }, []);
 
     useEffect(() => {
