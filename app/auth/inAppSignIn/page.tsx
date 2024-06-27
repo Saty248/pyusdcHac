@@ -15,8 +15,14 @@ const InAppSignIn = () => {
         <Head>
           <title>SkyTrade </title>
         </Head>
-        <div className="bg-[#F0F0FA] h-screen w-screen ">
-        <LoginPage />
+
+        <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+          {!isMobile && <Sidebar />}
+          <div className={`w-full h-full flex flex-col overflow-scroll md:overflow-hidden pointer-events-none`}>
+            <section className=" md:flex relative w-full h-full md:pl-[53px] "
+            ></section>
+          </div>
+          {<LoginPage />}
         </div>
       </Fragment>
     );
