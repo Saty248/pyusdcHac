@@ -202,7 +202,6 @@ export const ClaimModal = ({
                   setTimeZone={(timezone) =>
                     setData((prev) => ({ ...prev, timezone }))
                   }
-                  data={data}
                 />
               </div>
             </div>
