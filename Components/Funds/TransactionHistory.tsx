@@ -4,15 +4,16 @@ import { MagnifyingGlassIcon,RefreshIcon } from '../../Components/Icons';
 import { useMobile } from '@/hooks/useMobile';
 import {TransactionHistoryProps } from '../../types';
 import { SolanaWallet } from '@web3auth/solana-provider';
-import { Connection, PublicKey, SignaturesForAddressOptions, TransactionSignature } from '@solana/web3.js';
+import { Connection, PublicKey, SignaturesForAddressOptions, TransactionSignature, ParsedTransactionWithMeta } from '@solana/web3.js';
 import moment from 'moment';
+import Link from 'next/link';
 
 const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryProps) => {
   const limit=8
     const { isMobile } = useMobile();
-    const [transactionHistory, setTransactionHistory] = useState<Array<any>>([]);
+    const [transactionHistory, setTransactionHistory] = useState<Array<ParsedTransactionWithMeta | null>>([]);
     let _signatureList:string[];
-    const [signatureList, setSignatureList] = useState<Array<any>>([]);
+    const [signatureList, setSignatureList] = useState<Array<string>>([]);
  
     const [_lastTransactionHistorySignature,setLastTransactionHistorySignature]=useState<string>()
     const [_firstTransactionHistorySignature,setfirstTransactionHistorySignature]=useState<string>()    
@@ -23,13 +24,12 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         }
       },[user,provider]);
  
-      const fetchTransaction=async(TxOptions:SignaturesForAddressOptions)=>{
-        const solanaWallet = new SolanaWallet(provider);
-        const accounts = await solanaWallet.requestAccounts();
-        const _user='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' /* accounts[0] */        
+      const fetchTransaction=async(TxOptions:SignaturesForAddressOptions)=>{   
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${_user}`),TxOptions)
-        console.log('gerer',transactionList)
+        const tokenAcc=await connection.getTokenAccountsByOwner(new PublicKey(`${user?.blockchainAddress}`),{mint:new PublicKey(process.env.NEXT_PUBLIC_MINT_ADDRESS as string)})
+        
+        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`),TxOptions)
+        
         return transactionList
       }
 
@@ -53,9 +53,9 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
        _signatureList=_signatureList.slice(-limit)
         
     
-        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
-
-        
+       let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[],{
+        maxSupportedTransactionVersion:2
+    });
        
          setTransactionHistory(transactionDetails )
          setSignatureList(_signatureList)
@@ -84,8 +84,9 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         
        _signatureList = transactionList.map(transaction=>transaction.signature);
              
-        let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[]);
-      
+       let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[],{
+        maxSupportedTransactionVersion:2
+    });
          setTransactionHistory(transactionDetails )
          setSignatureList(_signatureList)
          if(_signatureList.length>0){
@@ -120,17 +121,11 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
 
              
        _signatureList = transactionList.map(transaction=>transaction.signature);
-               console.log(_signatureList)
+               
          let transactionDetails = await connection.getParsedTransactions(_signatureList as TransactionSignature[],{
           maxSupportedTransactionVersion:2
       });
-        transactionDetails.forEach((item)=>{
-            console.log(item?.transaction.message.accountKeys.forEach((item2)=>{
-              console.log(item2.pubkey.toString())
-            }))
-
-        })
-        console.log(transactionDetails[0]?.meta?.postTokenBalances)
+        
          setTransactionHistory(transactionDetails ) 
          setSignatureList(_signatureList)
          
@@ -139,7 +134,7 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
          
           
         } catch (error) {
-          console.log(error)
+          console.error(error)
           setIsLoading(false)
         }
         finally{
@@ -213,24 +208,40 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
                   </tr>
                 </thead>
                 {transactionHistory?.map((item,idx)=>{
-                  let preTokenBalOcject=item.meta.preTokenBalances.filter((item)=>{
-                    if(item.owner=='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' && item.mint=="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
+                  let preTokenBalOcject=item?.meta?.preTokenBalances?.filter((item)=>{
+                    if(item.owner==user?.blockchainAddress && item.mint==process.env.NEXT_PUBLIC_MINT_ADDRESS ){
                       return item
                     }
                   })
-                  console.log('preTokenBalOcject',preTokenBalOcject)
-                  let postTokenBalOcject=item.meta.postTokenBalances.filter((item)=>{
-                    if(item.owner=='2qVDbCEtdDGZR2dvvvPiFrrBSUcEvM7gWFQd2UvGA88w' && item.mint=="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"){
+                  
+                  let postTokenBalOcject=item?.meta?.postTokenBalances?.filter((item)=>{
+                    if(item.owner==user?.blockchainAddress && item.mint==process.env.NEXT_PUBLIC_MINT_ADDRESS){
                       return item
                     }
                   })
-                  let difference=postTokenBalOcject[0]?.uiTokenAmount?.uiAmount - preTokenBalOcject[0]?.uiTokenAmount?.uiAmount
+                  
+                  
+                  let difference=0;
+                  if(preTokenBalOcject || postTokenBalOcject){
+                    if(preTokenBalOcject && postTokenBalOcject){
+                      difference=(postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number)
+                      
+                    }else if(preTokenBalOcject==undefined && postTokenBalOcject){
+                      difference=postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number
+                      
+                    }else if(preTokenBalOcject){
+                      difference=-(preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number)
+                     
+                    }
+                  }
+                  
+                  
                   
                   let type=difference>0?'Deposit':'Withdraw';                  
                     let accounts=item?.transaction.message.accountKeys
                     
-                    let accountInputs:Array<any>=accounts.map((item)=>{
-                      console.log(item.pubkey.toString())
+                    accounts?.map((item)=>{
+                      
                       if(item.pubkey.toString()=="HmqstutaEpbddgt5hjhJAsnrXhTUfQpveCpyWEvEdnWM"){
                         
                         type='Rental fee'
@@ -242,8 +253,8 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
                   
                   
                   return(<tr>
-                    <td className='py-6 text-[#222222] px-5 w-2/12'>{moment.unix(item?.blockTime).format("YYYY-MM-DD HH:mm:ss")}</td>
-                    <td className='py- text-[#222222] text-clip px-5 w-2/12'>{signatureList[idx].substring(0,25)}</td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12'>{moment.unix(item?.blockTime as number).format("YYYY-MM-DD HH:mm:ss")}</td>
+                    <td className='py- text-[#222222] text-clip px-5 w-2/12'><Link href={`https://explorer.solana.com/tx/${signatureList[idx]}`} target='_blank'>{signatureList[idx].substring(0,25)}</Link></td>
                     <td className='py-6 text-[#222222] px-5 w-2/12'>{type}</td>
                     <td className='py-6 text-[#222222] px-5 w-2/12'> {difference.toString()=='NaN'?'Non Usdc Transaction':difference}</td>
                     <td className='py-6 text-[#222222]  px-5 w-2/12'>Finalized</td>
