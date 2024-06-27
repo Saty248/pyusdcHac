@@ -172,7 +172,7 @@ const IndividualSignup: React.FC = () => {
       <div className="relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden">
         <div className="mx-auto w-[372px] md:w-[449px] flex flex-col items-center gap-[15px] bg-white md:py-[40px] px-[30px] rounded relative justify-center">
           <Image
-            src={"/images/logo.svg"}
+            src={"/images/logo-1.svg"}
             alt="Company's logo"
             width={199}
             height={77}

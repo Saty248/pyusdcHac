@@ -153,7 +153,7 @@ const Sidebar = () => {
       >
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo-no-chars.png'}
+            src={'/images/logo-no-chars-1.png'}
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
@@ -163,7 +163,7 @@ const Sidebar = () => {
         </Link>
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo.svg'}
+            src={'/images/logo-1.svg'}
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
