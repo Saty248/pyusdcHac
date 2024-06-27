@@ -102,7 +102,7 @@ const AuthForm: FC<AuthFormProps> = ({
     >
      
       <Image
-        src={"/images/skytrade-logo.jpg"}
+        src={"/images/logo.svg"}
         alt="Company's logo"
         width={199}
         height={77}

@@ -149,7 +149,7 @@ const Sidebar = () => {
         </Link>
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/skytrade-logo.jpg'}
+            src={'/images/logo.svg'}
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
