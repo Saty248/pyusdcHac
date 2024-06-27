@@ -29,11 +29,8 @@ const ClaimModal = ({
   useEffect(() => {
 
     let airSpaceName = data.address.split(",");
-    console.log('name chamge', airSpaceName)
-    if(data.title!=""){
-      //do nothing
-      console.log(data)
-    }else{
+    
+     if(data.title==""){
       setData((prev) => {
         return {
           ...prev,
