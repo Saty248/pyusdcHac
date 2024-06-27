@@ -12,6 +12,8 @@ import EmailInput from "./EmailInput";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import LoadingButton from "../LoadingButton/LoadingButton";
+import Sidebar from "../Shared/Sidebar";
+import { useMobile } from "@/hooks/useMobile";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -30,7 +32,7 @@ const AuthForm: FC<AuthFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-
+  const { isMobile } = useMobile();
   const { init } = useInitAuth();
   const { signIn } = useAuth();
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
@@ -87,8 +89,10 @@ const AuthForm: FC<AuthFormProps> = ({
   };
 
   return (
+    <div className="py-[70px]  md:my-0">
+      {isMobile && ( <Sidebar />)}
     <form
-      className=" mt-12 md:mt-0 relative mx-auto flex flex-col items-center justify-center gap-[15px] rounded bg-white px-[30px] py-[40px]"style={{ maxWidth: "449px" }}
+      className="relative mx-auto flex flex-col items-center justify-center gap-[15px] py-16 md:py-10 md:rounded bg-white px-[30px] md:w-[449px] md:h-full h-screen w-screen "
       id="login"
       name="login"
       onSubmit={(e) => {
@@ -96,12 +100,14 @@ const AuthForm: FC<AuthFormProps> = ({
         loginUser(true);
       }}
     >
+     
       <Image
         src={"/images/logo.svg"}
         alt="Company's logo"
         width={199}
         height={77}
       />
+      
       <p className="mt-[25px] text-xl font-medium text-light-black">
         Welcome{isLogin && " back"} to SkyTrade
       </p>
@@ -110,8 +116,7 @@ const AuthForm: FC<AuthFormProps> = ({
       </p>
       {isLogin && (
         <p className="text-center text-sm text-light-grey">
-          Sign in effortlessly using the authentication method you chose during
-          sign up.
+          Sign in effortlessly using the authentication method you chose during sign up.
         </p>
       )}
       <EmailInput
@@ -203,6 +208,7 @@ const AuthForm: FC<AuthFormProps> = ({
         </span>
       </p>
     </form>
+    </div>
   );
 };
 

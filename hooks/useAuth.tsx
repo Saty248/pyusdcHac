@@ -15,7 +15,7 @@ const useAuth = () => {
   const { web3auth, setProvider } = useContext(Web3authContext);
 
   const { userData } = useAppSelector((state: any) => {
-    return { userData: state?.userReducer?.user as User | null };
+    return { userData: state?.userReducer?.user as User | null};
   }, shallowEqual);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const useAuth = () => {
   const redirectIfUnauthenticated = () => {
     if(web3auth && web3auth.status === "connected") return false;
     else {
-      router.push("/auth/inAppSignIn");
+      router.push("/auth");
       toast.success("Congratulation!!! To ensure your your actions are saved and recognized, register now with SkyTrade.")  
       return true;
     }

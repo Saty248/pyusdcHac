@@ -4,6 +4,8 @@ export default function Document() {
   return (
     <Html lang='en'>
       <Head>
+        <link rel="preload" href="/styles/globals.css" as="style" />
+          <link rel="stylesheet" href="/styles/globals.css" />
       
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
