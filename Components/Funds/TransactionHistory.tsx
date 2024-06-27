@@ -15,8 +15,8 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
     let _signatureList:string[];
     const [signatureList, setSignatureList] = useState<Array<string>>([]);
  
-    const [_lastTransactionHistorySignature,setLastTransactionHistorySignature]=useState<string>()
-    const [_firstTransactionHistorySignature,setfirstTransactionHistorySignature]=useState<string>()    
+    const [lastTransactionHistorySignature,setLastTransactionHistorySignature]=useState<string>()
+    const [firstTransactionHistorySignature,setfirstTransactionHistorySignature]=useState<string>()    
 
       useEffect(() => {        
         if (user && provider && transactionHistory?.length<=0) {         
@@ -24,11 +24,11 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
         }
       },[user,provider]);
  
-      const fetchTransaction=async(TxOptions:SignaturesForAddressOptions)=>{   
+      const fetchTransaction=async(txOptions:SignaturesForAddressOptions)=>{   
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
         const tokenAcc=await connection.getTokenAccountsByOwner(new PublicKey(`${user?.blockchainAddress}`),{mint:new PublicKey(process.env.NEXT_PUBLIC_MINT_ADDRESS as string)})
         
-        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`),TxOptions)
+        const transactionList = await connection.getSignaturesForAddress(new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`),txOptions)
         
         return transactionList
       }
@@ -37,14 +37,14 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
       const getPrevTransactions=async()=>{
         try {
           setIsLoading(true)
-          let TxOptions:SignaturesForAddressOptions;
+          let txOptions:SignaturesForAddressOptions;
           if(signatureList.length>0){
-            TxOptions={until:_firstTransactionHistorySignature}
+            txOptions={until:firstTransactionHistorySignature}
           }else{
-            TxOptions={before:_firstTransactionHistorySignature}
+            txOptions={before:firstTransactionHistorySignature}
           }       
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-        let transactionList = await fetchTransaction(TxOptions)
+        let transactionList = await fetchTransaction(txOptions)
         if(transactionList.length==0){
           return
         }
@@ -75,12 +75,12 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
       const getNextTransactions=async()=>{     
         try {
           setIsLoading(true)
-          let TxOptions:SignaturesForAddressOptions={
+          let txOptions:SignaturesForAddressOptions={
           limit,
-          before:_lastTransactionHistorySignature
+          before:lastTransactionHistorySignature
         }              
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-        let transactionList = await fetchTransaction(TxOptions)
+        let transactionList = await fetchTransaction(txOptions)
         
        _signatureList = transactionList.map(transaction=>transaction.signature);
              
@@ -113,10 +113,10 @@ const TransactionHistory = ({  user,provider,setIsLoading }:TransactionHistoryPr
        const getTransactions=async()=>{
         try {
           setIsLoading(true)
-          let TxOptions:SignaturesForAddressOptions={limit}     
+          let txOptions:SignaturesForAddressOptions={limit}     
                
         const connection=new Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string) 
-        let transactionList = await fetchTransaction(TxOptions)
+        let transactionList = await fetchTransaction(txOptions)
          
 
              
