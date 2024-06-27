@@ -399,8 +399,6 @@ const Airspaces: React.FC = () => {
     removePubLicUserDetailsFromLocalStorage('airSpaceData', user?.blockchainAddress)
   };
   const flyToUserIpAddress = async (map) => {
-    const propertyAddress = searchParams?.get('propertyAddress')
-    const geoLocation = searchParams?.get('geoLocation');
     if (!map) {
       return;
     }
