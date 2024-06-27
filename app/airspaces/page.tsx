@@ -47,7 +47,7 @@ const Airspaces: React.FC = () => {
   const [marker, setMarker] = useState<mapboxgl.Marker| null>(null);
   const defaultData = {
     address: address,
-    name: "",
+    title: "",
     rent: true,
     sell: false,
     hasPlanningPermission: null,
@@ -323,7 +323,7 @@ const Airspaces: React.FC = () => {
       setClaimButtonLoading(true);
       const {
         address,
-        name,
+        title,
         hasChargingStation,
         hasLandingDeck,
         hasPlanningPermission,
@@ -339,7 +339,7 @@ const Airspaces: React.FC = () => {
       const longitude = Number(coordinates.longitude);
       let errors: string[] = [];
 
-      if (!name) {
+      if (!title) {
         errors.push('Please enter a name for the Airspace');
       }
 
@@ -351,7 +351,7 @@ const Airspaces: React.FC = () => {
         hasLandingDeck,
         hasStorageHub,
         isRentableAirspace: rent,
-        title: name,
+        title,
         transitFee,
         noFlyZone,
         isFixedTransitFee,
@@ -496,6 +496,8 @@ const Airspaces: React.FC = () => {
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
+                      setData({...defaultData})
+
                     }}
                     data={data}
                     setData={setData}
@@ -531,6 +533,7 @@ const Airspaces: React.FC = () => {
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
+                      setData({...defaultData})
                     }}
                     data={data}
                     setData={setData}
