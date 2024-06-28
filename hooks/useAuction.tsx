@@ -13,7 +13,7 @@ export enum PortfolioTabEnum {
   RENTED,
 }
 
-const usePortfolioList = () => {
+const useAuction = () => {
   const { airspaceList } = useAppSelector((state) => {
     const { airspaceList } = state.userReducer;
     return { airspaceList };
@@ -40,45 +40,18 @@ const usePortfolioList = () => {
     (async () => {
       try {
         if (web3auth && web3auth?.status !== "connected") return;
-        let airspaces = [];
+
         setLoading(true);
         const assetId = airspaceList.length > 0 ? airspaceList.at(-1)?.id : "";
 
-        if (activeTab === PortfolioTabEnum.VERIFIED) {
-          airspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "landToken",
-            10,
-            String(assetId)
-          );
-          console.log({ airspaces });
-        } else if (activeTab === PortfolioTabEnum.RENTED) {
-          airspaces = await getPropertiesByUserAddress(
-            user?.blockchainAddress,
-            "rentalToken",
-            10,
-            String(assetId)
-          );
-        } else if (activeTab === PortfolioTabEnum.UNVERIFIED) {
-          const airspaceResp = await getUnverifiedAirspaces(
-            user?.blockchainAddress,
-            pageNumber,
-            10
-          );
-          if (airspaceResp && airspaceResp.items) {
-            airspaces = airspaceResp.items;
-          }
-        } else {
-          const airspaceResp = await getRejectedAirspaces(
-            user?.blockchainAddress,
-            pageNumber,
-            10
-          );
+        const airspaces = await getPropertiesByUserAddress(
+          user?.blockchainAddress,
+          "landToken",
+          10,
+          String(assetId)
+        );
+        console.log({ airspaces });
 
-          if (airspaceResp && airspaceResp.items) {
-            airspaces = airspaceResp.items;
-          }
-        }
         dispatch(setAirspaceList(airspaces));
       } catch (error) {
         console.error(error);
@@ -86,7 +59,7 @@ const usePortfolioList = () => {
         setLoading(false);
       }
     })();
-  }, [activeTab, web3auth?.status, pageNumber]);
+  }, [web3auth?.status, pageNumber]);
 
   const handleNextPage = () => {
     if (airspaceList?.length < 9) return;
@@ -98,21 +71,14 @@ const usePortfolioList = () => {
     setPageNumber((prevPageNumber) => prevPageNumber - 1);
   };
 
-  const handleTabSwitch = (tab: PortfolioTabEnum) => {
-    setAirspaceList([]);
-    setPageNumber(1);
-    setActiveTab(tab);
-  };
-
   return {
     activeTab,
     loading,
     airspaceList,
     pageNumber,
-    handleTabSwitch,
     handlePrevPage,
     handleNextPage,
   };
 };
 
-export default usePortfolioList;
+export default useAuction;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
 import { AuctionPropertyI } from "@/types";
@@ -6,17 +6,23 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 import CreateAuctionModa from "./CreateAuctionModal";
 import CreateAuctionModal from "./CreateAuctionModal";
+import MarketplaceService from "@/services/MarketplaceService";
 
 interface AuctionExplorerProps {
   data: AuctionPropertyI[];
-  handleShowBidDetail:() => void;
+  handleShowBidDetail: () => void;
 }
 
-const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDetail }) => {
+const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
+  data,
+  handleShowBidDetail,
+}) => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
     return { isCreateAuctionModalOpen };
   });
+
+  const { getAuctions } = MarketplaceService();
 
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +30,19 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
   const filteredAuctions = data.filter((auction) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleGetAuctions = async () => {
+    console.log("getting...");
+    const data = await getAuctions();
+    console.log({ data });
+  };
+
+  useEffect(() => {
+    const fetchAuction = async () => {
+      const result = await handleGetAuctions();
+    };
+    fetchAuction();
+  }, []);
 
   return (
     <>
@@ -41,6 +60,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
           <div>
             <button
               onClick={() => dispatch(setIsCreateAuctionModalOpen(true))}
+              // onClick={async () => await handleGetAuctions()}
               className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
             >
               Create Auction

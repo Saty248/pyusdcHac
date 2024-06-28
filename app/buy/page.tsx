@@ -24,6 +24,7 @@ import { shallowEqual } from "react-redux";
 import BidPreview from "@/Components/Buy/BidPreview/BidPreview";
 import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
+import MarketplaceService from "@/services/MarketplaceService";
 
 const DUMMY_AUCTIONS = [
   {
@@ -65,7 +66,7 @@ const Buy = () => {
   }, shallowEqual);
 
   const dispatch = useAppDispatch();
-
+  const { getAuctions } = MarketplaceService();
   const [searchTerm, setSearchTerm] = useState("");
   const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -272,7 +273,7 @@ const Buy = () => {
 
             {isCreateAuctionModalOpen && (
               <CreateAuctionModal
-                data={DUMMY_AUCTIONS}
+                data={[]}
                 onClose={() => dispatch(setIsCreateAuctionModalOpen(false))}
               />
             )}
