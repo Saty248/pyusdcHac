@@ -49,16 +49,6 @@ const Sidebar = () => {
 
   const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications}: SidebarItemProps) => {
     const [isActive, setIsActive] = useState(false);
-    const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setIsLoaded(true);
-      }, 1000);
-
-      // Cleanup the timeout on component unmount
-      return () => clearTimeout(timer);
-    }, []);
 
     useEffect(() => {
       const currentTab = localStorage.getItem('currentTab');
@@ -83,8 +73,6 @@ const Sidebar = () => {
         )}
       </>
     );
-
-    if (!isLoaded) return <></>
   
     if (onClick) {
       return (
