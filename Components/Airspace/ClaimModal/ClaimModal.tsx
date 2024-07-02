@@ -9,7 +9,7 @@ import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
-
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 interface PropsI {
   onCloseModal: () => void;
   data: any;
@@ -436,7 +436,7 @@ export const ClaimModal = ({
 
             <div className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
               <div className="flex justify-center items-center w-full ">
-                <LoadingButton onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
+                <LoadingButton  onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
                   Claim Airspace
                 </LoadingButton>
               </div>

@@ -3,7 +3,7 @@
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import maplibregl, { Marker } from "maplibre-gl";
@@ -28,6 +28,7 @@ import { HelpQuestionIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
 import React from "react";
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 
 const Airspaces: React.FC = () => {
 
@@ -85,6 +86,8 @@ const Airspaces: React.FC = () => {
   const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -338,6 +341,10 @@ const Airspaces: React.FC = () => {
   }, [isOpen]);
 
   const onClaim = async () => {
+    if(user?.KYCStatusId === 0){
+      setShowPopup(true);
+      return
+    }
     try {
       const isRedirecting = redirectIfUnauthenticated();
       
@@ -468,6 +475,7 @@ const Airspaces: React.FC = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
   } 
+  const router = useRouter();
   return (
     <Fragment>
       <Head>
@@ -624,6 +632,7 @@ const Airspaces: React.FC = () => {
                 </div>
               </div>
             )}
+            {showPopup && <VerificationPopup onVerifyMyAccount={() => router.push('/my-account')}/>}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>

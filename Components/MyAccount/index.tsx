@@ -93,10 +93,10 @@ const Account = () => {
     }
   };
 
-  const onVerifyMyAccount = () => {
+  const onVerifyMyAccount = async () => {
     setIsLoading(true);
     // @ts-ignore
-    const client = new Persona.Client({
+    const client =  await new Persona.Client({
         templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
         referenceId: user?.id.toString(),
         environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
