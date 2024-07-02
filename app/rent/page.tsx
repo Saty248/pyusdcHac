@@ -59,7 +59,7 @@ const Rent = () => {
         newMap.resize()
       });
 
-      newMap.on("load", function () {
+       newMap.on("load", function () {
         newMap.addLayer({
           id: "maine",
           type: "fill",
@@ -80,15 +80,15 @@ const Rent = () => {
           },
         });
         newMap.zoomOut({duration:4});
-      });
+      }); 
 
       let timeoutId;
 
-      newMap.on("move", async (e) => {
+        newMap.on("move", async (e) => {
         setLoadingRegAddresses(true);
 
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(async () => {
+         clearTimeout(timeoutId);
+         timeoutId = setTimeout(async () => {
           let crds = e.target.getBounds();
 
           const responseData = await findPropertiesByCoordinates({
@@ -117,40 +117,40 @@ const Rent = () => {
           setRegisteredAddress(formattedProperties);
           setLoadingRegAddresses(false);
 
-          if (responseData.length > 0) {
+           if (responseData.length > 0) {
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
-              const popup = new mapboxgl.Popup({offset: 25,closeOnClick: false}).trackPointer().setHTML(
+               const popup = new mapboxgl.Popup({offset: 25,closeOnClick: false}).trackPointer().setHTML(
                 `<strong>${responseData[i].address}</strong>`
-              );
-
-              popup.on('open', () => {
-                const popupElement = popup.getElement();
-                if (popupElement) {
+              ); 
+             
+               popup.on('open', () => {
+                const popupElement = popup.getElement();                                
+                if (popupElement) {                                    
                   popupElement.style.zIndex ='40';
                   popupElement.addEventListener('click', function() {
                     setRentData(responseData[i]);;
                     setShowClaimModal(true);
-                  });
+                  });                  
                 }
-              });
+              });              
 
-              const marker = new mapboxgl.Marker({
+               const marker = new mapboxgl.Marker({
                 color: "#3FB1CE",
               }).setLngLat(lngLat)
-              .setPopup(popup)
-              .addTo(newMap);
+              .setPopup(popup) 
+              .addTo(newMap);               
                
-                const filteredData = responseData.filter(item => item.type === 'rent');
+                 const filteredData = responseData.filter(item => item.type === 'rent');
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
-               });
-            }
-          }
-        }, 3000);
-      });
+               }); 
+             }
+          } 
+        }, 3000);  
+      }); 
 
       setMap(newMap);
     };
@@ -195,7 +195,7 @@ const Rent = () => {
     if (flyToAddress === address) setShowOptions(false);
   }, [flyToAddress, address]);
 
-  useEffect(()=>{
+   useEffect(()=>{
     const inintialRentDataString=localStorage.getItem('rentData')
     const parsedInitialRentData=inintialRentDataString?JSON.parse(inintialRentDataString):null;
     if(parsedInitialRentData && parsedInitialRentData?.address?.length>2){
@@ -206,7 +206,7 @@ const Rent = () => {
     }else{
       console.log('no initial datta')
     }
-  },[])
+  },[]) 
 
   return (
     <Fragment>
@@ -232,7 +232,7 @@ const Rent = () => {
                 showOptions={showOptions}
                 regAdressShow={regAdressShow}
                 registeredAddress={registeredAddress}
-                map={map}
+                 map={map} 
                 marker={marker}
                 setMarker={setMarker}
                 setShowClaimModal={setShowClaimModal}
@@ -243,7 +243,7 @@ const Rent = () => {
                 setLoadingRegAddresses={setLoadingRegAddresses}
                 setRegisteredAddress={setRegisteredAddress}
               />
-            )}
+            )} 
             <section
               className={
                 "relative flex w-full h-full justify-start items-start md:mb-0 mb-[79px] "
@@ -254,7 +254,7 @@ const Rent = () => {
                 id="map"
               />
 
-              {!isMobile && (
+               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <Explorer
                     setLoadingRegAddresses={setLoadingRegAddresses}
@@ -277,7 +277,7 @@ const Rent = () => {
                     setShowOptions={setShowOptions}
                   />
                 </div>
-              )}
+              )} 
               {showClaimModal && (
                 <RentModal
                   setShowClaimModal={setShowClaimModal}
@@ -287,9 +287,9 @@ const Rent = () => {
                    />
               )}
             </section>
-            <div className="hidden sm:block">
+             <div className="hidden sm:block">
               <ZoomControllers map={map} />
-            </div>
+            </div> 
           </div>
         </div>
       }
