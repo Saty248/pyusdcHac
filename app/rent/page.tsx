@@ -121,7 +121,7 @@ const Rent = () => {
             for (let i = 0; i < responseData.length; i++) {
               const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
 
-               const popup = new mapboxgl.Popup({offset: 25,closeOnClick: false}).trackPointer().setHTML(
+               const popup = new mapboxgl.Popup({offset: 25}).trackPointer().setHTML(
                 `<strong>${responseData[i].address}</strong>`
               ); 
              
