@@ -54,8 +54,13 @@ const useAutoLogout = () => {
     const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth"]);
     const isReferralPage = pathname?.includes("/r/");
 
-    if (routes.includes(String(pathname)) || isReferralPage) return;
-    else if (web3auth?.status === "ready") {
+    const userLocalstorage = localStorage.getItem('user');
+
+    if (routes.includes(String(pathname)) || isReferralPage){ 
+      return;
+    }else if (!userLocalstorage) {
+      logout()
+    }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(String(localStorage.getItem('openlogin_store')));
       if (!fetchedToken?.sessionId) {
         redirectTo()
