@@ -1044,3 +1044,13 @@ export const CancelIconWhite = () => {
     </svg>
   );
 };
+
+export const AccountNotificationIcon = () => {
+  return (
+    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="19" height="19" rx="3" fill="#F79663"/>
+    <path d="M9.5 6.79167V10.0417M14.375 9.5C14.375 12.1924 12.1924 14.375 9.5 14.375C6.80761 14.375 4.625 12.1924 4.625 9.5C4.625 6.80761 6.80761 4.625 9.5 4.625C12.1924 4.625 14.375 6.80761 14.375 9.5Z" stroke="white" stroke-width="1.08333" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9.50016" cy="11.9382" r="0.541667" fill="white"/>
+    </svg> 
+  );
+};

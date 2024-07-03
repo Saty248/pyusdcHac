@@ -13,7 +13,7 @@ const VerificationSuccessPopup: React.FC = () => {
   return (
     <>
     {showPopup && (
-      <div className={`fixed ${isMobile ? 'inset-0' : 'top-24 right-0'} bg-green-500 flex flex-col items-center justify-center p-4 z-50 gap-12`}>
+      <div className={`fixed ${isMobile ? 'inset-0' : 'top-24 right-0 bg-green-500'}  flex flex-col items-center justify-center p-4 z-50 gap-12`}>
         <div className="absolute top-4 right-4">
           <button onClick={handleClose} className="text-white h-6 w-6">
             <CancelIconWhite />

@@ -91,9 +91,9 @@ const AccountVerification = ({
         <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} />
         )}
  
-    {showPopup && (
-      <VerificationSuccessPopup />
-    )}
+    
+      {/* <VerificationSuccessPopup /> */}
+  
    
     </div>
   );
