@@ -172,3 +172,7 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
   background-color: #B8CCE3;
 }
+
+.fund-table tbody tr:nth-child(odd) {
+  background-color: #FFFFFF;
+}

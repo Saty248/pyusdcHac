@@ -29,3 +29,21 @@ export function formatDate(dateString) {
 
   return formattedDate;
 }
+
+const addSeperator = (x: number | string) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const formatNumber = (x: number | string) => {
+  const num = x.toString();
+  const numIndex = num.indexOf(".");
+
+  if (numIndex !== -1) {
+    const numBeforeDecimals = addSeperator(num.substring(0, numIndex));
+    const numAfterDecimals = num.substring(numIndex);
+
+    return numBeforeDecimals + numAfterDecimals;
+  }
+
+  return addSeperator(x);
+};

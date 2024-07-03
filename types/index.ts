@@ -17,11 +17,6 @@ export type WeekDayRange = {
   weekDayId: number;
 };
 
-export interface TransactionHistoryProps {
-  transactions: Transaction[];
-  user: User | null;
-}
-
 export interface Transaction {
   token: boolean;
   timestamp: number;
