@@ -25,7 +25,7 @@ import { useMobile } from "@/hooks/useMobile";
 import axios from "axios";
 
 const Funds = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<number>(0);
 
   const [refetchBal, setreFetchBal] = useState<boolean>(true);
@@ -83,7 +83,7 @@ const Funds = () => {
                   tokenBalance={tokenBalance}
                 />
               </div>
-              <TransactionHistory  user={user} provider={provider} setIsLoading={setIsLoading}/>
+              <TransactionHistory isLoading={isLoading} setIsLoading={setIsLoading}/>
             </div>
           </section>
         </div>

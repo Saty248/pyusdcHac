@@ -1,4 +1,3 @@
-import "@/styles/globals.css";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import Script from "next/script";
