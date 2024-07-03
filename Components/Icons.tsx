@@ -1009,3 +1009,38 @@ export const LoadingSpinner = ({ color }) => {
     </svg>
   );
 };
+
+export const FailedVerificationIcon = () => {
+  return (
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="21" cy="21" r="21" fill="#F79663"/>
+    <path d="M21 16V22M30 21C30 25.9706 25.9706 30 21 30C16.0294 30 12 25.9706 12 21C12 16.0294 16.0294 12 21 12C25.9706 12 30 16.0294 30 21Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="21.0005" cy="25.502" r="1" fill="white"/>
+    </svg>
+    
+  );
+};
+
+export const FileIcon = () => {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H12M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125" stroke="#838187" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17.5 15V21M17.5 21L15 18.5M17.5 21L20 18.5" stroke="#838187" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  );
+};
+
+export const CancelIconWhite = () => {
+  return (
+    <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_112_9711)">
+    <path d="M20.3767 6.35831C19.9425 5.92406 19.241 5.92406 18.8067 6.35831L13.3619 11.792L7.91714 6.34717C7.4829 5.91292 6.78142 5.91292 6.34717 6.34717C5.91292 6.78142 5.91292 7.4829 6.34717 7.91714L11.792 13.3619L6.34717 18.8067C5.91292 19.241 5.91292 19.9425 6.34717 20.3767C6.78142 20.811 7.4829 20.811 7.91714 20.3767L13.3619 14.9319L18.8067 20.3767C19.241 20.811 19.9425 20.811 20.3767 20.3767C20.811 19.9425 20.811 19.241 20.3767 18.8067L14.9319 13.3619L20.3767 7.91714C20.7998 7.49403 20.7998 6.78142 20.3767 6.35831Z" fill="white"/>
+    </g>
+    <defs>
+    <clipPath id="clip0_112_9711">
+    <rect width="26.723" height="26.723" fill="white"/>
+    </clipPath>
+    </defs>
+    </svg>
+  );
+};
