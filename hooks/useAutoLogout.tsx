@@ -52,13 +52,14 @@ const useAutoLogout = () => {
     if (!web3auth) return;
 
     const routes = publicAccessRoutes.map(x => x.redirectTo).concat(["/auth"]);
+    const authRoutes = ["/auth", "/auth/join"];
     const isReferralPage = pathname?.includes("/r/");
 
     const userLocalstorage = localStorage.getItem('user');
 
     if (routes.includes(String(pathname)) || isReferralPage){ 
       return;
-    }else if (!userLocalstorage) {
+    } else if (!userLocalstorage && !authRoutes.includes(String(pathname))) {
       logout()
     }else if (web3auth?.status === "ready") {
       const fetchedToken = JSON.parse(String(localStorage.getItem('openlogin_store')));
