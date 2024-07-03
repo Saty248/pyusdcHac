@@ -6,6 +6,7 @@ import moment from 'moment';
 import Link from 'next/link';
 import { Web3authContext } from "@/providers/web3authProvider";
 import useAuth from '@/hooks/useAuth';
+import { formatNumber } from '@/utils';
 
 interface TransactionListI {
   time: string;
@@ -75,22 +76,22 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
 
         const data = transactionDetails?.map((item, idx) => {
-          const preTokenBalOcject = item?.meta?.preTokenBalances?.filter((item) => {
+          const preTokenBalObject = item?.meta?.preTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
 
-          const postTokenBalOcject = item?.meta?.postTokenBalances?.filter((item) => {
+          const postTokenBalObject = item?.meta?.postTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
 
           let difference = 0;
-          if (preTokenBalOcject || postTokenBalOcject) {
-            if (preTokenBalOcject && postTokenBalOcject) {
-              difference = (postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number);
-            } else if (!preTokenBalOcject && postTokenBalOcject) {
-              difference = postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number;
-            } else if (preTokenBalOcject) {
-              difference = -(preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number);
+          if (preTokenBalObject || postTokenBalObject) {
+            if (preTokenBalObject && postTokenBalObject) {
+              difference = (postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
+            } else if (!preTokenBalObject && postTokenBalObject) {
+              difference = postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number;
+            } else if (preTokenBalObject) {
+              difference = (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
             }
           }
 
@@ -98,7 +99,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
           item?.transaction.message.accountKeys?.forEach((item) => {
             if (item.pubkey.toString() === rentalFeePublicKey) {
-              type = 'Rental fee';
+              type = 'Rental Fee';
             }
           });
 
@@ -106,7 +107,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             time: moment.unix(item?.blockTime as number).format("MMM D, YYYY"),
             transactionHash: signatureList[idx],
             type,
-            difference: difference.toString() == 'NaN' ? 'Non Usdc Transaction' : difference.toFixed(2),
+            difference: difference.toString() == 'NaN' ? 'Non USDC Transaction' : formatNumber(difference),
             firstTransactionSignature: signatureList[0],
             lastTransactionSignature: signatureList[signatureList.length - 1],
           };
@@ -137,6 +138,22 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   const handleReset = () => {
     setPageNumber(1);
     setIsNext(true);
+  };
+
+  const renderTransactionRows = () => {
+    return transactionList?.map((item) => (
+      <tr key={item.transactionHash}>
+        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
+        <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
+          <Link href={`https://explorer.solana.com/tx/${item.transactionHash}`} target='_blank'>
+            {item.transactionHash.substring(0, 25)}
+          </Link>
+        </td>
+        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.type}</td>
+        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.difference}</td>
+        <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>Settled</td>
+      </tr>
+    ));
   };
 
   return (
@@ -186,19 +203,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
                 </tr>
               </thead>
               <tbody>
-                {transactionList?.map((item) => (
-                  <tr key={item.transactionHash}>
-                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
-                    <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
-                      <Link href={`https://explorer.solana.com/tx/${item.transactionHash}`} target='_blank'>
-                        {item.transactionHash.substring(0, 25)}
-                      </Link>
-                    </td>
-                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.type}</td>
-                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'> {item.difference}</td>
-                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>Settled</td>
-                  </tr>
-                ))}
+                {renderTransactionRows()}
               </tbody>
             </table>
             <div className="flex items-center justify-end mt-8 w-[94%]">
