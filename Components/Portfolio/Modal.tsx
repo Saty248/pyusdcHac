@@ -22,7 +22,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
             <ArrowLeftIcon />
           </div>
           <h2 className="text-[#222222] text-center font-medium text-xl">
-            {airspace?.address}
+            {airspace?.address.length > 60 ?  airspace?.address.slice(0, 25) + ' ...' : airspace?.address}
           </h2>
           <div
             onClick={onCloseModal}
@@ -39,7 +39,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
             <LocationPointIcon />
           </div>
           <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {airspace?.address}
+              {airspace?.address.length > 60 ?  airspace?.address.slice(0, 25) + ' ...' : airspace?.address}
           </p>
         </div>
 
