@@ -51,7 +51,7 @@ button {
 
 .mapboxgl-popup {
   max-width: 200px;
-  background-color: #0653ea;
+  
   left: 0;
   top: 0;
 }
@@ -171,4 +171,8 @@ button {
 }
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
   background-color: #B8CCE3;
+}
+
+.fund-table tbody tr:nth-child(odd) {
+  background-color: #FFFFFF;
 }

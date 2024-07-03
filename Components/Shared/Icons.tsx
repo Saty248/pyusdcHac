@@ -99,9 +99,9 @@ export const LogoutIcon = ({ isActive }) => {
 export const MenuIcon = ({ isActive }) => {
     return (
         <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.32129 7.86621H19.3213" stroke="#5D7285" stroke-width="2" stroke-linecap="round"/>
-            <path d="M5.32129 12.8662H19.3213" stroke="#5D7285" stroke-width="2" stroke-linecap="round"/>
-            <path d="M5.32129 17.8662H19.3213" stroke="#5D7285" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.32129 7.86621H19.3213" stroke="#5D7285" stroke-width="2" strokeLinecap="round"/>
+            <path d="M5.32129 12.8662H19.3213" stroke="#5D7285" stroke-width="2" strokeLinecap="round"/>
+            <path d="M5.32129 17.8662H19.3213" stroke="#5D7285" stroke-width="2" strokeLinecap="round"/>
         </svg>
     )
 }
@@ -417,14 +417,14 @@ export const Tooltip = ({ isCopied }) => (
         cy="12"
         r="5"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 12H12M14 12H12M12 12V10M12 12V14"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
     )
@@ -446,14 +446,14 @@ export const Tooltip = ({ isCopied }) => (
         cy="12"
         r="5"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 12H12H14"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
     )
