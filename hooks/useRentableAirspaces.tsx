@@ -28,7 +28,7 @@ export const useRentableAirspaces = ({
         
 
     const getRentableProperties = async (bounds: Bounds) => {
-        setLoadingRegAddresses(true);
+         setLoadingRegAddresses(true);
         const responseData: PropertyData[] = await findPropertiesByCoordinates({
             postData: {
                 minLongitude: bounds._sw.lng,
@@ -56,7 +56,7 @@ export const useRentableAirspaces = ({
                 setShowClaimModal(true);
             });
               });
-        }
+        } 
     };
 
     const handleMove = async (
