@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-
-import { MagnifyingGlassIcon,RefreshIcon } from '../../Components/Icons';
+import { MagnifyingGlassIcon, RefreshIcon } from '../../Components/Icons';
 import { useMobile } from '@/hooks/useMobile';
 import { Connection, PublicKey } from '@solana/web3.js';
 import moment from 'moment';
@@ -19,13 +18,13 @@ interface TransactionListI {
 
 export interface TransactionHistoryPropsI {
   isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryPropsI) => {
   const limit: number = 10;
   const targetRpcUrl = process.env.NEXT_PUBLIC_RPC_TARGET as string;
-  const minterAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS as string
+  const minterAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
   const rentalFeePublicKey = "HmqstutaEpbddgt5hjhJAsnrXhTUfQpveCpyWEvEdnWM";
 
   const { web3auth } = useContext(Web3authContext);
@@ -36,11 +35,11 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [transactionList, setTransactionList] = useState<TransactionListI[]>([]);
 
-  useEffect(() => {        
+  useEffect(() => {
     (async () => {
       try {
         if ((web3auth && web3auth?.status !== "connected") || !user) return;
-        setIsLoading(true)
+        setIsLoading(true);
 
         const connection = new Connection(targetRpcUrl);
         const blockchainAddress = user.blockchainAddress;
@@ -49,50 +48,49 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
         const lastTxHash = transactionList.length > 0 ? transactionList.at(-1)?.lastTransactionSignature : "";
         if (isNext) {
-
           options = {
             limit,
             ...(lastTxHash && { before: lastTxHash })
-          }
+          };
         } else {
           const firstTxHash = transactionList.length > 0 ? transactionList.at(-1)?.firstTransactionSignature : "";
 
           options = {
             ...(firstTxHash && { until: firstTxHash }),
-          }
+          };
         }
 
         const tokenAcc = await connection.getTokenAccountsByOwner(
-          new PublicKey(user.blockchainAddress), 
+          new PublicKey(user.blockchainAddress),
           { mint: new PublicKey(minterAddress) }
-        )
+        );
 
         const _txs = await connection.getSignaturesForAddress(
-          new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`), 
+          new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`),
           options
-        )
-        const txs = _txs.slice(-limit)
+        );
+        const txs = _txs.slice(-limit);
 
         const signatureList = txs.map(transaction => transaction.signature);
         const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
 
         const data = transactionDetails?.map((item, idx) => {
           const preTokenBalOcject = item?.meta?.preTokenBalances?.filter((item) => {
-            return item.owner == blockchainAddress && item.mint == minterAddress
-          })
+            return item.owner == blockchainAddress && item.mint == minterAddress;
+          });
 
           const postTokenBalOcject = item?.meta?.postTokenBalances?.filter((item) => {
-            return item.owner == blockchainAddress && item.mint == minterAddress
-          })
+            return item.owner == blockchainAddress && item.mint == minterAddress;
+          });
 
           let difference = 0;
           if (preTokenBalOcject || postTokenBalOcject) {
             if (preTokenBalOcject && postTokenBalOcject) {
-              difference = (postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number)
+              difference = (postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number);
             } else if (!preTokenBalOcject && postTokenBalOcject) {
-              difference = postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number
+              difference = postTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number;
             } else if (preTokenBalOcject) {
-              difference = -(preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number)
+              difference = -(preTokenBalOcject[0]?.uiTokenAmount?.uiAmount as number);
             }
           }
 
@@ -100,9 +98,9 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
           item?.transaction.message.accountKeys?.forEach((item) => {
             if (item.pubkey.toString() === rentalFeePublicKey) {
-              type = 'Rental fee'
+              type = 'Rental fee';
             }
-          })
+          });
 
           return {
             time: moment.unix(item?.blockTime as number).format("MMM D, YYYY"),
@@ -111,17 +109,17 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             difference: difference.toString() == 'NaN' ? 'Non Usdc Transaction' : difference.toFixed(2),
             firstTransactionSignature: signatureList[0],
             lastTransactionSignature: signatureList[signatureList.length - 1],
-          }
-        })
+          };
+        });
 
         setTransactionList(data);
-        setIsLoading(false)
+        setIsLoading(false);
 
       } catch (error) {
-        console.error(error)
-        setIsLoading(false)
+        console.error(error);
+        setIsLoading(false);
       }
-    })()
+    })();
   }, [web3auth?.status, pageNumber, user?.blockchainAddress, isNext]);
 
   const handleNextPage = () => {
@@ -141,15 +139,12 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
     setIsNext(true);
   };
 
-
-
   return (
-    <div className="flex flex-col  gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
-      <div className="md:flex sm:flex-col md:flex-row  justify-start sm:justify-between items-center">
+    <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
+      <div className="md:flex sm:flex-col md:flex-row justify-start sm:justify-between items-center">
         <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-
         <div className='flex md:px-0 px-2 items-center'>
           <div
             className="relative px-[22px] md:py-[16px] py-3 bg-white md:w-[89%] rounded-lg"
@@ -166,81 +161,74 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
               <MagnifyingGlassIcon />
             </div>
           </div>
-          <div 
+          <div
             className='w-[15%] h-[15%] md:h-[20%] md:w-[20%] cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
             onClick={handleReset}
           >
             <RefreshIcon />
           </div>
         </div>
-
       </div>
       <div
         className={`flex justify-center overflow-y-auto md:overflow-y-hidden fund-table-scrollbar h-auto md:h-`}
         style={{ direction: `${isMobile ? "rtl" : "ltr"}` }}
       >
-        <div style={{direction: "ltr"}} className="w-[89%] sm:w-[100%] " >
+        <div style={{ direction: "ltr" }} className="w-[89%] sm:w-[100%]">
           <div className="overflow-x-auto md:overflow-x-hidden fund-table-scrollbar">
-
-          <table className="w-[100%] fund-table">
-            <thead className="sticky top-0 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
-              <tr className="w-full">
-              <th className="text-start py-5 px-5">Date</th>
-              <th className="text-start py-5 px-5">Transaction Id</th>
-              <th className="text-start py-5 px-5">type</th>
-              <th className="text-start py-5 px-5">amount</th>
-              <th className="py-5 px-5 text-start">status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactionList?.map((item) => (
-                <tr>
-                  <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
-                  <td className='py- text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
-                    <Link href={`https://explorer.solana.com/tx/${item.transactionHash}`} target='_blank'>
-                      {item.transactionHash.substring(0, 25)}
-                    </Link>
-                  </td>
-                  <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.type}</td>
-                  <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'> {item.difference}</td>
-                  <td className='py-6 text-[#222222]  px-5 w-2/12 whitespace-nowrap'>Settled</td>
+            <table className="w-[100%] fund-table">
+              <thead className="sticky top-0 bg-white sm:bg-[#F6FAFF] opacity-100 text-[#7D90B8] uppercase text-sm font-bold tracking-[0.5px]">
+                <tr className="w-full">
+                  <th className="text-start py-5 px-5">Date</th>
+                  <th className="text-start py-5 px-5">Transaction Id</th>
+                  <th className="text-start py-5 px-5">Type</th>
+                  <th className="text-start py-5 px-5">Amount</th>
+                  <th className="py-5 px-5 text-start">Status</th>
                 </tr>
-              ))}
-            </tbody>
-           </table>
-
-      <div className="flex items-center justify-end mt-8 w-[94%]">
-        <div className="mx-auto flex gap-[11.71px]">
-          <div className={` text-[#87878D] text-base font-normal`}>
-            {transactionList.length === 0 && !isLoading && "No transactions found."}
+              </thead>
+              <tbody>
+                {transactionList?.map((item) => (
+                  <tr key={item.transactionHash}>
+                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
+                    <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
+                      <Link href={`https://explorer.solana.com/tx/${item.transactionHash}`} target='_blank'>
+                        {item.transactionHash.substring(0, 25)}
+                      </Link>
+                    </td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.type}</td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'> {item.difference}</td>
+                    <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>Settled</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex items-center justify-end mt-8 w-[94%]">
+              <div className="mx-auto flex gap-[11.71px]">
+                <div className={` text-[#87878D] text-base font-normal`}>
+                  {transactionList.length === 0 && !isLoading && "No transactions found."}
+                </div>
+              </div>
+              {transactionList.length > 0 && (
+                <>
+                  <div
+                    onClick={handlePrevPage}
+                    className={`${pageNumber === 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-5`}
+                  >
+                    Previous
+                  </div>
+                  <div
+                    className={`${transactionList.length < limit - 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-1`}
+                    onClick={handleNextPage}
+                  >
+                    Next
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
-    
-        {transactionList.length > 0  && (
-          <>
-            <div
-              onClick={handlePrevPage}
-              className={`${pageNumber === 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-5`}
-            >
-              Previous
-            </div>
-            <div
-              className={`${transactionList.length < limit - 1 ? 'text-[#87878D] cursor-not-allowed' : 'text-[#0653EA] cursor-pointer'} text-base font-normal mx-1`}
-              onClick={handleNextPage}
-            >
-              Next
-            </div>
-          </>
-        )}
-
       </div>
-      </div>
-      
-
-      </div>
-      </div>
-
     </div>
   );
 };
+
 export default TransactionHistory;
