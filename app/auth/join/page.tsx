@@ -42,7 +42,7 @@ const IndividualSignup: React.FC = () => {
   const referralCodeRef = useRef<HTMLInputElement>(null);
 
   const [referralCode1, setReferralCode] = useState({ id: "", code: "" });
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState<number | null>(null);
   const [isNameValid, setIsNameValid] = useState(true);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [isStatusValid, setIsStatusValid] = useState(true);
