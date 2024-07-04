@@ -4,11 +4,7 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { AuctionSubmitI, PropertyData } from "@/types";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import {
-  setAirspaceList,
-  setAuctions,
-  setIsTriggerRefresh,
-} from "@/redux/slices/userSlice";
+import { setAirspaceList, setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { VersionedTransaction } from "@solana/web3.js";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import MarketplaceService from "@/services/MarketplaceService";
