@@ -13,6 +13,7 @@ interface UserState {
   isCreateAuctionModalOpen: boolean;
   airspaceList: PropertyData[];
   selectedproperty: PropertyData[];
+  isTriggerRefresh: boolean;
 }
 
 const initialState: UserState = {
@@ -27,6 +28,7 @@ const initialState: UserState = {
   isCreateAuctionModalOpen: false,
   airspaceList: [],
   selectedproperty: [],
+  isTriggerRefresh: false,
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -74,6 +76,10 @@ const userSlice: Slice<UserState> = createSlice({
     setSelectedproperty: (state, action: PayloadAction<PropertyData[]>) => {
       state.selectedproperty = action.payload;
     },
+
+    setIsTriggerRefresh: (state, action: PayloadAction<boolean>) => {
+      state.isTriggerRefresh = action.payload;
+    },
   },
 });
 
@@ -89,5 +95,6 @@ export const {
   setIsCreateAuctionModalOpen,
   setAirspaceList,
   setSelectedproperty,
+  setIsTriggerRefresh,
 } = userSlice.actions;
 export default userSlice.reducer;

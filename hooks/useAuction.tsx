@@ -4,7 +4,11 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { AuctionSubmitI, PropertyData } from "@/types";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setAirspaceList } from "@/redux/slices/userSlice";
+import {
+  setAirspaceList,
+  setAuctions,
+  setIsTriggerRefresh,
+} from "@/redux/slices/userSlice";
 import { VersionedTransaction } from "@solana/web3.js";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import MarketplaceService from "@/services/MarketplaceService";
@@ -17,13 +21,31 @@ interface SelectedPropertyI {
   endDate: Date | null;
 }
 
+export enum TransactionStatusEnum {
+  PENDING,
+  SUCCESS,
+  FAILED,
+}
+
 const useAuction = () => {
-  const { airspaceList } = useAppSelector((state) => {
-    const { airspaceList } = state.userReducer;
-    return { airspaceList };
+  const { airspaceList, isTriggerRefresh } = useAppSelector((state) => {
+    const { airspaceList, isTriggerRefresh } = state.userReducer;
+    return { airspaceList, isTriggerRefresh };
   });
 
   const dispatch = useAppDispatch();
+  const [selectedItems, setSelectedItems] = useState<SelectedPropertyI[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState(
+    TransactionStatusEnum.PENDING
+  );
+  const [responseStatus, setResponseStatus] = useState<"SUCCESS" | "FAIL">(
+    "FAIL"
+  );
+  const [txHash, setTxHash] = useState<string | null | undefined>(null);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
+  const { createAuction, submitAuction, getAuctions } = MarketplaceService();
+  const { provider } = useContext(Web3authContext);
   const [pageNumber, setPageNumber] = useState(1);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -31,11 +53,7 @@ const useAuction = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const {
-    getPropertiesByUserAddress,
-    getUnverifiedAirspaces,
-    getRejectedAirspaces,
-  } = AirspaceRentalService();
+  const { getPropertiesByUserAddress } = AirspaceRentalService();
 
   useEffect(() => {
     (async () => {
@@ -69,7 +87,7 @@ const useAuction = () => {
         setLoading(false);
       }
     })();
-  }, [web3auth?.status, pageNumber]);
+  }, [web3auth?.status, pageNumber, isTriggerRefresh]);
 
   const handleNextPage = () => {
     if (!hasMore) return;
@@ -80,17 +98,6 @@ const useAuction = () => {
     if (pageNumber === 1) return;
     setPageNumber((prevPageNumber) => prevPageNumber - 1);
   };
-
-  const [selectedItems, setSelectedItems] = useState<SelectedPropertyI[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccessfull, setIsSuccessfull] = useState(false);
-  const [responseStatus, setResponseStatus] = useState<"SUCCESS" | "FAIL">(
-    "FAIL"
-  );
-  const [txHash, setTxHash] = useState<string | null | undefined>(null);
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
-  const { createAuction, submitAuction } = MarketplaceService();
-  const { provider } = useContext(Web3authContext);
 
   const handleSelectItem = (item: PropertyData) => {
     console.log({ item });
@@ -154,6 +161,7 @@ const useAuction = () => {
         endDate: selectedItems[0].endDate,
       };
       const response = await createAuction({ postData });
+      console.log({ response });
       if (response && response.tx) {
         const transaction1 = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response.tx[0], "base64"))
@@ -182,23 +190,32 @@ const useAuction = () => {
           if (result && result.txid.length > 0) {
             console.log({ result });
             setTxHash(result.txid[0]);
-            setIsSuccessfull(true);
+            dispatch(setIsTriggerRefresh(true));
+            setTransactionStatus(TransactionStatusEnum.SUCCESS);
             setResponseStatus("SUCCESS");
             setSelectedItems([]);
             setSelectedItemId(null);
+          } else {
+            setTransactionStatus(TransactionStatusEnum.FAILED);
+            setResponseStatus("FAIL");
           }
+        } else {
+          setTransactionStatus(TransactionStatusEnum.FAILED);
+          setResponseStatus("FAIL");
         }
       } else {
-        setIsSuccessfull(false);
-        setIsProcessing(false);
+        setTransactionStatus(TransactionStatusEnum.FAILED);
         setResponseStatus("FAIL");
       }
     } catch (error) {
       console.log({ error });
-      setIsProcessing(false);
       setResponseStatus("FAIL");
     }
   };
+
+  useEffect(() => {
+    setIsProcessing(false);
+  }, []);
 
   return {
     loading,
@@ -213,7 +230,7 @@ const useAuction = () => {
     txHash,
     isProcessing,
     setIsProcessing,
-    isSuccessfull,
+    transactionStatus,
     responseStatus,
     selectedItemId,
     selectedItems,

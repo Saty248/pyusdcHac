@@ -77,12 +77,47 @@ const MarketplaceService = () => {
     }
   };
 
+  const createBid = async ({ postData }) => {
+    try {
+      // console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
+      const response = await postRequest({
+        uri: "/market/nft/bid",
+        postData,
+      });
+
+      console.log(response, "thanks");
+      return response;
+    } catch (error) {
+      console.error(error);
+      console.log("error here 2 thanks", error);
+      return [];
+    }
+  };
+  const submitSignature = async ({ postData }) => {
+    try {
+      console.log(postData, "postData");
+      // console.log(assetId,signature)
+      const response = await postRequest({
+        uri: "/market/nft/tx/submit",
+        postData,
+      });
+      console.log(response, "hello from service");
+      return response;
+    } catch (error) {
+      console.error(error);
+      console.log("error here 2 thanks", error);
+      return [];
+    }
+  };
+
   return {
     getAuctions,
     createAuction,
     submitAuction,
     searchAuctions,
     filterAuctions,
+    createBid,
+    submitSignature,
   };
 };
 

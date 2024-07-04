@@ -9,19 +9,19 @@ import { useMobile } from "@/hooks/useMobile";
 interface SuccessFailPopupProps {
   setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
   responseStatus: "SUCCESS" | "FAIL";
-  popupType: "BID" | "CREATE";
+  popupType?: "BID" | "CREATE";
   data: {
     address: string;
-    currentUserBid?: number;
+    currentUserBid?: number | null;
   };
-  txHash: string;
+  txHash?: string;
   setShowDetail: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   setShowSuccessAndErrorPopup,
   responseStatus,
-  popupType,
+  popupType = "BID",
   data,
   txHash,
   setShowDetail,
@@ -46,7 +46,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
   return (
     <div
       ref={modalRef}
-      className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[500]`}
+      className={`fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]`}
     >
       <div
         className={`w-[100vw] h-[100vh] sm:w-[422px] sm:h-[525px]  z-40 flex flex-col items-center justify-center sm:rounded-3xl ${responseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}

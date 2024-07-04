@@ -1,26 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
-import { AuctionPropertyI } from "@/types";
-import { useAppDispatch } from "@/redux/store";
+import { AuctionDataI, AuctionPropertyI } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
-
+import useFetchAuctions from "@/hooks/useFetchAuctions";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { LoadingSpinner } from "../Icons";
+import Spinner from "../Spinner";
 interface AuctionExplorerProps {
-  data: AuctionPropertyI[];
-  handleShowBidDetail: () => void;
+  auctions: AuctionDataI[];
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  hasMorePage: boolean;
+  setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
+  setAuctionDetailData: React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
 
 const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
-  data,
-  handleShowBidDetail,
+  auctions,
+  setPage,
+  hasMorePage,
+  setShowBidDetail,
+  setAuctionDetailData,
 }) => {
+  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
+    const { isCreateAuctionModalOpen } = state.userReducer;
+    return { isCreateAuctionModalOpen };
+  });
+
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
+  const { loading } = useFetchAuctions();
+  // let filteredAuctions = data;
+  // if(data?.length>0){
+  //   const filteredAuctions = data.filter((auction) =>
+  //     auction?.properties[0]?.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  // }
 
-  const filteredAuctions = data.filter((auction: any) =>
-    auction.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const handleShowBidDetail = (index) => {
+    setShowBidDetail(true);
+    setAuctionDetailData(auctions[index]);
+  };
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
   return (
     <>
       <div className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden ">
@@ -55,21 +79,41 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
               <MagnifyingGlassIcon />
             </div>
           </div>
-          <div className="h-[410px] overflow-y-auto thin-scrollbar">
+          <div
+            id="scrollableDiv"
+            className="h-[410px] overflow-y-auto thin-scrollbar"
+          >
             {" "}
-            <div className="grid grid-cols-2 gap-4">
-              {filteredAuctions?.length > 0 ? (
-                filteredAuctions.map((item, index) => (
-                  <div key={index} onClick={handleShowBidDetail}>
-                    <AuctionCard data={item} />
-                  </div>
-                ))
-              ) : (
-                <div className="text-center col-span-2 text-light-grey">
-                  No auctions found
+            {loading && (
+              <div className="w-full flex justify-center items-center">
+                <div className="">
+                  <Spinner />
+                  <div className="mt-28">Fetching Auctions...</div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+            {!loading && auctions && auctions?.length > 0 && (
+              <InfiniteScroll
+                dataLength={auctions.length}
+                next={handleLoadMore}
+                hasMore={hasMorePage}
+                loader={undefined}
+                scrollableTarget="scrollableDiv"
+                className="w-full grid grid-cols-2 gap-4 border"
+              >
+                {auctions.length > 0 ? (
+                  auctions.map((item, index) => (
+                    <div key={index} onClick={() => handleShowBidDetail(index)}>
+                      <AuctionCard data={item} />
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center col-span-2 text-light-grey">
+                    No auctions found
+                  </div>
+                )}
+              </InfiniteScroll>
+            )}
           </div>
         </div>
       </div>

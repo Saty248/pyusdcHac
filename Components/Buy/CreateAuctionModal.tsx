@@ -5,7 +5,7 @@ import { AuctionPropertyI } from "@/types";
 import { IoClose } from "react-icons/io5";
 import AuctionItem from "./AuctionItem";
 import Button from "../Shared/Button";
-import useAuction from "@/hooks/useAuction";
+import useAuction, { TransactionStatusEnum } from "@/hooks/useAuction";
 import Spinner from "../Spinner";
 import SuccessFailPopup from "./SuccessFailPopup";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -42,7 +42,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     txHash,
     isProcessing,
     setIsProcessing,
-    isSuccessfull,
+    transactionStatus,
     responseStatus,
     selectedItemId,
     selectedItems,
@@ -55,7 +55,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
       <>
         {isProcessing ? (
           <div className="fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
-            {!isSuccessfull ? (
+            {transactionStatus === TransactionStatusEnum.PENDING ? (
               <div className="w-full h-full flex flex-col items-center justify-center">
                 <Spinner />
                 <span className="mt-2 text-white font-semibold">
@@ -141,7 +141,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     <>
       {isProcessing ? (
         <div className="fixed inset-0 z-50 flex items-start py-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]	">
-          {!isSuccessfull ? (
+          {transactionStatus === TransactionStatusEnum.PENDING ? (
             <div className="w-full h-full flex flex-col items-center justify-center">
               <Spinner />
               <span className="mt-2 text-white font-semibold">
