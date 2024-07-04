@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
 import { AuctionPropertyI } from "@/types";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppDispatch } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
-import CreateAuctionModa from "./CreateAuctionModal";
-import CreateAuctionModal from "./CreateAuctionModal";
-import MarketplaceService from "@/services/MarketplaceService";
 
 interface AuctionExplorerProps {
   data: AuctionPropertyI[];
@@ -20,7 +17,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredAuctions = data.filter((auction: AuctionPropertyI) =>
+  const filteredAuctions = data.filter((auction: any) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

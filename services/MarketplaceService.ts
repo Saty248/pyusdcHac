@@ -58,11 +58,31 @@ const MarketplaceService = () => {
     }
   };
 
+  const filterAuctions = async ({
+    postData,
+  }: {
+    postData: {
+      minPrice: number;
+      maxPrice: number;
+    };
+  }) => {
+    try {
+      const response = await postRequest({
+        uri: `/market/nft/search`,
+        postData,
+      });
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return {
     getAuctions,
     createAuction,
     submitAuction,
     searchAuctions,
+    filterAuctions,
   };
 };
 
