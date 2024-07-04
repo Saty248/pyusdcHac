@@ -17,32 +17,12 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   data,
   handleShowBidDetail,
 }) => {
-  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
-    const { isCreateAuctionModalOpen } = state.userReducer;
-    return { isCreateAuctionModalOpen };
-  });
-
-  const { getAuctions } = MarketplaceService();
-
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredAuctions = data.filter((auction) =>
+  const filteredAuctions = data.filter((auction: AuctionPropertyI) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleGetAuctions = async () => {
-    console.log("getting...");
-    const data = await getAuctions();
-    console.log({ data });
-  };
-
-  useEffect(() => {
-    const fetchAuction = async () => {
-      const result = await handleGetAuctions();
-    };
-    fetchAuction();
-  }, []);
 
   return (
     <>

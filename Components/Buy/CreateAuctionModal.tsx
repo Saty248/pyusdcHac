@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { AuctionPropertyI, PropertyData } from "@/types";
+import { useContext, useState } from "react";
+import { AuctionPropertyI, AuctionSubmitI, PropertyData } from "@/types";
 import { IoClose } from "react-icons/io5";
 import AuctionItem from "./AuctionItem";
 import Button from "../Shared/Button";
 import useAuction from "@/hooks/useAuction";
 import Spinner from "../Spinner";
+import MarketplaceService from "@/services/MarketplaceService";
+import Image from "next/image";
+import { executeTransaction } from "@/utils/rent/transactionExecutor";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { VersionedTransaction } from "@solana/web3.js";
+import SuccessFailPopup from "./SuccessFailPopup";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface CreateAuctionModalProps {
   onClose: any;
@@ -14,63 +21,29 @@ interface CreateAuctionModalProps {
   mobile?: boolean;
 }
 
-interface SelectedPropertyI {
-  id: string;
-  name: string;
-  minSalePrice: number;
-  endDate: Date | null;
-}
-
 const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   onClose,
   data,
   mobile,
 }) => {
-  const { airspaceList, loading } = useAuction();
-  const [selectedItems, setSelectedItems] = useState<SelectedPropertyI[]>([]);
+  const {
+    loading,
+    airspaceList,
+    handleNextPage,
+    hasMore,
+    handleSelectItem,
+    handleAddProperties,
+    handleUpdateItem,
+    txHash,
+    isProcessing,
+    setIsProcessing,
+    isSuccessfull,
+    responseStatus,
+    selectedItemId,
+    selectedItems,
+  } = useAuction();
 
-  const handleSelectItem = (item: PropertyData) => {
-    setSelectedItems((prevSelectedItems) => {
-      const isItemSelected = prevSelectedItems.find(
-        (selectedItem) => selectedItem.id === item.id
-      );
-
-      let updatedItems;
-      if (isItemSelected) {
-        updatedItems = prevSelectedItems.filter(
-          (selectedItem) => selectedItem.id !== item.id
-        );
-      } else {
-        updatedItems = [
-          ...prevSelectedItems,
-          { id: item.id, name: item.name, minSalePrice: 0, endDate: null },
-        ];
-      }
-
-      console.log("Updated Items:", updatedItems);
-      return updatedItems;
-    });
-  };
-
-  const handleUpdateItem = (
-    id: string,
-    minSalePrice: number,
-    endDate: Date | null
-  ) => {
-    setSelectedItems((prevSelectedItems) => {
-      const updatedItems = prevSelectedItems.map((selectedItem) =>
-        selectedItem.id === id
-          ? { ...selectedItem, minSalePrice, endDate }
-          : selectedItem
-      );
-      console.log("Updated Items:", updatedItems);
-      return updatedItems;
-    });
-  };
-
-  const handleAddProperties = () => {
-    console.log("Selected Items:", selectedItems);
-  };
+  console.log({ airspaceList });
 
   if (mobile) {
     return (
@@ -86,7 +59,14 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
           <div className="text-center">Create Auction</div>
           <div>Select the properties you want to auction</div>
 
-          <div className="flex flex-col gap-3 overflow-y-auto h-[450px] thin-scrollbar">
+          <InfiniteScroll
+            dataLength={airspaceList.length}
+            next={handleNextPage}
+            hasMore={true}
+            loader={<Spinner />}
+            height={450}
+            className="flex flex-col gap-3 thin-scrollbar"
+          >
             {airspaceList.length > 0 &&
               airspaceList.map((item, index) => (
                 <AuctionItem
@@ -96,12 +76,17 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                   onUpdateItem={handleUpdateItem}
                   selected={
                     !!selectedItems.find(
-                      (selectedItem) => selectedItem.id === item.id
+                      (selectedItem) =>
+                        selectedItem.propertyId === item.propertyId
                     )
                   }
+                  disabled={
+                    selectedItemId !== null &&
+                    selectedItemId !== item.propertyId
+                  } // Disable if another item is selected
                 />
               ))}
-          </div>
+          </InfiniteScroll>
 
           <div className="flex justify-between gap-4">
             <Button secondary label="Cancel" onClick={onClose} />
@@ -116,51 +101,89 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50">
-      <div className="relative flex flex-col gap-8 dark:text-darkText w-full md:w-[689px] h-[685px] bg-white rounded-[30px] p-8">
-        <div
-          onClick={onClose}
-          className="absolute right-[1rem] top-[1rem] cursor-pointer"
-        >
-          <IoClose className="w-4 h-4" />
+    <>
+      {isProcessing ? (
+        <div className="fixed inset-0 z-50 flex items-start py-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]	">
+          {!isSuccessfull ? (
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <Spinner />
+              <span className="mt-2 text-white font-semibold">
+                Processing...
+              </span>
+            </div>
+          ) : (
+            <SuccessFailPopup
+              responseStatus={responseStatus}
+              setShowSuccessAndErrorPopup={setIsProcessing}
+              data={{
+                address: selectedItems[0].name,
+              }}
+              popupType={"CREATE"}
+              txHash={txHash || ""}
+              setShowDetail={onClose}
+            />
+          )}
         </div>
+      ) : (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="relative flex flex-col gap-8 dark:text-darkText w-full md:w-[689px] h-[685px] bg-white rounded-[30px] p-8">
+            <div
+              onClick={onClose}
+              className="absolute right-[1rem] top-[1rem] cursor-pointer"
+            >
+              <IoClose className="w-4 h-4" />
+            </div>
 
-        <div className="text-center">Create Auction</div>
-        <div>Select the properties you want to auction</div>
+            <div className="text-center">Create Auction</div>
+            <div>Select the properties you want to auction</div>
 
-        {loading ? (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <Spinner />
-            <span className="mt-16">Fetching Verified Airspaces...</span>
+            {loading ? (
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                <Spinner />
+                <span className="mt-24">Fetching Verified Airspaces...</span>
+              </div>
+            ) : (
+              <InfiniteScroll
+                dataLength={airspaceList.length}
+                next={handleNextPage}
+                hasMore={hasMore}
+                loader={<Spinner />}
+                height={450}
+                className="flex flex-col gap-3 thin-scrollbar"
+              >
+                {airspaceList.length > 0 &&
+                  airspaceList.map((item, index) => (
+                    <AuctionItem
+                      data={item}
+                      key={index}
+                      onSelectItem={handleSelectItem}
+                      onUpdateItem={handleUpdateItem}
+                      selected={
+                        !!selectedItems.find(
+                          (selectedItem) =>
+                            selectedItem.propertyId === item.propertyId
+                        )
+                      }
+                      disabled={
+                        selectedItemId !== null &&
+                        selectedItemId !== item.propertyId
+                      } // Disable if another item is selected
+                    />
+                  ))}
+              </InfiniteScroll>
+            )}
+
+            <div className="flex justify-between gap-4">
+              <Button secondary label="Cancel" onClick={onClose} />
+              <Button
+                label="Add Properties to Auction"
+                onClick={handleAddProperties}
+              />
+            </div>
           </div>
-        ) : (
-          <div className="flex flex-col gap-3 overflow-y-auto h-[450px] thin-scrollbar">
-            {airspaceList &&
-              airspaceList.map((item, index) => (
-                <AuctionItem
-                  data={item}
-                  key={index}
-                  onSelectItem={handleSelectItem}
-                  onUpdateItem={handleUpdateItem}
-                  selected={
-                    !!selectedItems.find(
-                      (selectedItem) => selectedItem.id === item.id
-                    )
-                  }
-                />
-              ))}
-          </div>
-        )}
-
-        <div className="flex justify-between gap-4">
-          <Button secondary label="Cancel" onClick={onClose} />
-          <Button
-            label="Add Properties to Auction"
-            onClick={handleAddProperties}
-          />
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

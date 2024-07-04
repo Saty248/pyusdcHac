@@ -9,11 +9,12 @@ interface AuctionItemProps {
   data: PropertyData | AuctionPropertyI;
   onSelectItem: (item: PropertyData) => void;
   onUpdateItem: (
-    id: string,
-    minSalePrice: number,
+    propertyId: number | null,
+    minSalePrice: number | null,
     endDate: Date | string | null
   ) => void;
   selected: boolean;
+  disabled: boolean; // Add this prop
 }
 
 const AuctionItem: React.FC<AuctionItemProps> = ({
@@ -21,6 +22,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   onSelectItem,
   onUpdateItem,
   selected,
+  disabled, // Add this prop
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -40,7 +42,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   const handleMinSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMinSalePrice(e.target.value);
     onUpdateItem(
-      data?.id ? data.id.toString() : "",
+      data?.propertyId || null,
       parseFloat(e.target.value) || 0,
       endDate
     );
@@ -49,7 +51,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   const handleEndDateChange = (date: Date | null) => {
     setEndDate(date);
     onUpdateItem(
-      data?.id ? data.id.toString() : "",
+      data?.propertyId || null,
       parseFloat(minSalePrice) || 0,
       convertDate(date)
     );
@@ -57,7 +59,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
 
   return (
     <div
-      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out`}
+      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
     >
       <div
         onClick={handleToggleClick}
@@ -69,6 +71,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
               type="checkbox"
               checked={selected}
               onChange={handleCheckboxClick}
+              disabled={disabled} // Disable the checkbox if disabled
             />
           </div>
           <div>{data.address}</div>
