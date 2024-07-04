@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "../Shared/Icons";
 import AuctionCard from "./AuctionCard";
 import { AuctionPropertyI } from "@/types";
@@ -6,22 +6,21 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 import CreateAuctionModa from "./CreateAuctionModal";
 import CreateAuctionModal from "./CreateAuctionModal";
+import MarketplaceService from "@/services/MarketplaceService";
 
 interface AuctionExplorerProps {
   data: AuctionPropertyI[];
-  handleShowBidDetail:() => void;
+  handleShowBidDetail: () => void;
 }
 
-const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDetail }) => {
-  const { isCreateAuctionModalOpen } = useAppSelector((state) => {
-    const { isCreateAuctionModalOpen } = state.userReducer;
-    return { isCreateAuctionModalOpen };
-  });
-
+const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
+  data,
+  handleShowBidDetail,
+}) => {
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredAuctions = data.filter((auction) =>
+  const filteredAuctions = data.filter((auction: AuctionPropertyI) =>
     auction.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -41,6 +40,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({ data,handleShowBidDet
           <div>
             <button
               onClick={() => dispatch(setIsCreateAuctionModalOpen(true))}
+              // onClick={async () => await handleGetAuctions()}
               className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
             >
               Create Auction
