@@ -1,4 +1,5 @@
 import { formatDate } from "@/utils";
+import UploadedDocuments from "../MyAccount/UploadedDocuments";
 
 const { Fragment } = require("react");
 const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
@@ -62,6 +63,7 @@ const  Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
             </p>
           </div>
         )}
+         <UploadedDocuments />
 
         {isOffer ? (
           <div

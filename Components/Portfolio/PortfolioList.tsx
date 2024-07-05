@@ -39,11 +39,19 @@ const PortfolioList = ({ title, selectAirspace }) => {
         >
           Rented Airspaces
         </div>
+        <div className="flex">
         <div
-          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} flex px-8 py-2 cursor-pointer transition ease-linear delay-75 gap-4`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           Pending Verification
+
+          <div  className="relative w-[24px] h-[24px]">
+            <div className="absolute inset-0 bg-[#F79663] text-white text-xs flex items-center justify-center rounded-md">
+              1
+            </div>
+        </div>
+        </div>
         </div>
         <div
           className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
