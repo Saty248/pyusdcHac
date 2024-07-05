@@ -17,6 +17,7 @@ const AccountVerification = ({
 }: AccountVerificationProps) => {
   console.log(KYCStatusId , "KYCStatusId")
   const [showPopup, setShowPopup] = useState(false);
+  const [x, setX] =useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -53,46 +54,54 @@ const AccountVerification = ({
     </div>
    </div>    
 
-     {/* 
-      this is success message and my docs upload UI
-     <div>  
+     
+     
+     {/* {x && (
+      <div>  
       <p className="font-normal text-base text-[#87878D]">Your account verification is currently under review. This step is crucial for security and compliance reasons. Please await confirmation to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your patience.</p>
       <p className="font-bold text-base text-[#87878D]">Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.</p>
-    </div> */}
+    </div>
+     )}  */}
     </div>
     
-    {/*
+    
+    {x && (
      <div className="p-4 mt-8 rounded-[30px] bg-white shadow-lg" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[15px]">
-        <div className="">
-        <h2 className="text-xl font-semibold">My Additional Documents</h2>
-        <p className="mt-4">We requested your “Document Name” and “Document Name”</p>
-      </div>
-      <div className="w-full md:w-[38%] flex flex-col md:flex-row justify-center items-center gap-6 mt-4 md:mt-0">
-        <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
-          <FileIcon />
-          <div>
-            <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
-            <p className="text-sm">“Document Name”</p>
-          </div>
-        </div>
-        <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
-          <FileIcon />
-          <div>
-            <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
-            <p className="text-sm">“Document Name”</p>
-          </div>
-        </div>
-      </div>
-   </div>
-    </div> 
-    */}
+     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[15px]">
+       <div className="">
+       <h2 className="text-xl font-semibold">My Additional Documents</h2>
+       <p className="mt-4">We requested your “Document Name” and “Document Name”</p>
+     </div>
+     <div className="w-full md:w-[38%] flex flex-col md:flex-row justify-center items-center gap-6 mt-4 md:mt-0">
+       <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
+         <FileIcon />
+         <div>
+           <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
+           <p className="text-sm">“Document Name”</p>
+         </div>
+       </div>
+       <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
+         <FileIcon />
+         <div>
+           <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
+           <p className="text-sm">“Document Name”</p>
+         </div>
+       </div>
+     </div>
+  </div>
+   </div> 
+    )}
+    
+    
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} />
+        <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} setX={setX} />
         )}
  
     
-      {/* <VerificationSuccessPopup /> */}
+      {x && (
+        <VerificationSuccessPopup />
+      )}
+      
   
    
     </div>
