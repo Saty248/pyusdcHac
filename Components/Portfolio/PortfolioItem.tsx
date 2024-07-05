@@ -6,6 +6,7 @@ import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 
 const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [j, setJ] = useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -51,21 +52,28 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
             Review Offer
           </div>
         )}
-        
-        {/* <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
-         <p className="text-orange-500 font-normal text-sm">
-           Additional documents requested
-         </p>
-        </div> */}
 
-        {/* <div className="flex justify-center items-center gap-2">
-        <div className="w-6 h-6">
-        <ReviewVerificationIcon />
-        </div>
+
+        {!j && (
+        <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
         <p className="text-orange-500 font-normal text-sm">
-               Documents under review
+          Additional documents requested
         </p>
-        </div> */}
+       </div>
+        )}
+        
+
+
+{j && (
+          <div className="flex justify-center items-center gap-2">
+          <div className="w-6 h-6">
+          <ReviewVerificationIcon />
+          </div>
+          <p className="text-orange-500 font-normal text-sm">
+                 Documents under review
+          </p>
+          </div>
+)}
         
         <div className="w-[7px] h-[14px]">
           <ChevronRightIcon />
@@ -73,15 +81,13 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
       </div>
       </div>
      
-      {/* <div className="">
-      <UploadedDocuments />
-      </div> */}
+{   j && <UploadedDocuments />}
 
-      {/* {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} />
-        )} */}
+      {showPopup && (
+        <AdditionalDocuments showPopup={showPopup} showUploadedDoc={setJ} closePopup={closePopup} />
+        )}
 
-     <VerificationSuccessPopup />
+{/* {j &&      <VerificationSuccessPopup />} */}
     </div>
   );
 };

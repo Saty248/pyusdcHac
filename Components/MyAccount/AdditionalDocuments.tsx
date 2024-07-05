@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
 import { CloseIcon } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
+import UploadedDocuments from './UploadedDocuments';
 
 
 interface PopupProps {
   showPopup: boolean;
   closePopup: () => void;
+  showUploadedDoc: any
 }
 
-const Popup: React.FC<PopupProps> = ({ showPopup, closePopup }) => {
+const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, showUploadedDoc }) => {
     const { isMobile } = useMobile();
     const [files, setFiles] = useState([]);
 
@@ -23,7 +25,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="fixed bottom-0 md:relative md:top-0 flex flex-col md:w-[566px] md:h-[350px] md:py-[20px] py-[30px] md:px-[20px] px-[30px] rounded-t-[30px] md:rounded-[15px] bg-white gap-[15px]" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+        <div className="fixed bottom-0 md:relative md:top-0 flex flex-col md:w-[566px] md:min-h-[350px] md:py-[20px] py-[30px] md:px-[20px] px-[30px] rounded-t-[30px] md:rounded-[15px] bg-white gap-[15px]" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
       <div>
         { isMobile ?
         (
@@ -60,7 +62,10 @@ Please upload additional documents to complete you claim
         <p className="text-base font-medium text-[#87878D]">Drag here or click to upload</p>  
         )}
         </div>
-        <button className="mt-4 px-6 py-2 text-white bg-dark-blue text-base">
+        <button onClick={() => {
+          showUploadedDoc(true)
+          closePopup()
+        }} className="mt-4 px-6 py-2 text-white bg-dark-blue text-base">
           Submit Additional Documents
         </button>
       </div>

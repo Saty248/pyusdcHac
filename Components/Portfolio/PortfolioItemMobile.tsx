@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronRightIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
 import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
+import UploadedDocuments from "../MyAccount/UploadedDocuments";
 
 const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -52,6 +53,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
               )}
             
             </div>
+            
         {/* <div className=" mt-4 flex justify-start items-center gap-2">
               <div className="w-6 h-6">
               <ReviewVerificationIcon />
@@ -60,6 +62,8 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
                     Documents under review
               </p>
           </div> */}
+
+<UploadedDocuments />
         </div>
        </div>
         
@@ -75,6 +79,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
           </div>
         </div> */}
 
+   
 
 
             {showPopup && (
