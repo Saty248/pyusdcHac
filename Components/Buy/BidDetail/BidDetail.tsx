@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useMobile } from "@/hooks/useMobile";
 
 import { AuctionDataI } from "@/types";
-import { getTimeLeft } from "@/utils/marketplaceUtils";
+import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
+
 interface BidDetailsProps {
   auctionDetailData: AuctionDataI | undefined;
   onCloseModal: () => void;
@@ -35,9 +36,11 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   };
   const endDate = new Date(auctionDetailData?.endDate);
   const timeLeft = getTimeLeft(endDate);
+  const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
+  const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
     <div className="fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
-      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[82%] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md ">
+      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md ">
         {isMobile && (
           <div
             onClick={onCloseModal}
@@ -62,14 +65,10 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             </p>
           </div>
           <div>
-            <div className="relative border-2 h-[130px]">
+            <div className="relative w-full h-[130px]">
               <Image
-                src={
-                  auctionDetailData?.metadata?.data?.uri
-                    ? auctionDetailData?.metadata?.data?.uri
-                    : Image1
-                }
-                alt="airspace image"
+                src={imageUrl}
+                alt={`Map at ${latitude}, ${longitude}`}
                 layout="fill"
                 objectFit="cover"
               />

@@ -14,6 +14,7 @@ import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { AuctionDataI } from "@/types";
 import MarketplaceService from "@/services/MarketplaceService";
+import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
 
 interface BidPreviewProps {
   setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
@@ -86,9 +87,11 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       setIsLoading(false);
     }
   };
+  const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
+  const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
     <div className="fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
-      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[490px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[520px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
         <div className="px-[25px] ">
           <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 ">
             {isMobile && (
@@ -130,16 +133,14 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           </div>
           <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
             <div className="relative h-[130px]">
-              <Image
-                src={
-                  auctionDetailData?.metadata?.data?.uri
-                    ? auctionDetailData?.metadata?.data?.uri
-                    : Image1
-                }
-                alt="airspace image"
-                layout="fill"
-                objectFit="cover"
-              />
+              <div className="relative w-full h-[130px]">
+                <Image
+                  src={imageUrl}
+                  alt={`Map at ${latitude}, ${longitude}`}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
             </div>
           </div>
           <div className="flex justify-between w-full">

@@ -1,7 +1,6 @@
 import { AuctionDataI } from "@/types";
-import { getTimeLeft } from "@/utils/marketplaceUtils";
-import Map, { Marker } from "react-map-gl";
-
+import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
+import Image from "next/image";
 interface AuctionCardProps {
   data: AuctionDataI;
 }
@@ -10,25 +9,16 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate);
   const { latitude, longitude, title } = data?.properties[0] || {};
-
+  const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
     <div className="w-[350px] md:w-full h-[227px] rounded-lg shadow-md overflow-hidden">
-      <div className="w-full h-[130px]">
-        <Map
-          initialViewState={{
-            latitude: latitude || 0,
-            longitude: longitude || 0,
-            zoom: 14,
-          }}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          scrollZoom={false} // Disable scroll zoom
-        >
-          <Marker latitude={latitude || 0} longitude={longitude || 0}>
-            <div className="bg-red-500 w-2 h-2 rounded-full" />
-          </Marker>
-        </Map>
+      <div className="relative w-full h-[130px]">
+      <Image
+          src={imageUrl}
+          alt={`Map at ${latitude}, ${longitude}`}
+          layout="fill"
+          objectFit="cover"
+        />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold">Name</div>

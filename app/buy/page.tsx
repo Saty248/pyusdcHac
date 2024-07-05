@@ -34,8 +34,6 @@ const Buy = () => {
   }, shallowEqual);
 
   const { auctions, hasMore, setPage } = useFetchAuctions();
-  console.log({ auctions });
-
   const dispatch = useAppDispatch();
   const { getAuctions } = MarketplaceService();
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,7 +62,7 @@ const Buy = () => {
   const [auctionDetailData, setAuctionDetailData] = useState<AuctionDataI>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
 
-  // useDrawBidPolygons({ map, auctions });
+  useDrawBidPolygons({ map, auctions });
 
   useEffect(() => {
     if (map) return;
@@ -125,8 +123,6 @@ const Buy = () => {
     setShowBidPreview(false);
     setShowBidDetail(false);
   };
-
-  console.log({ auctionDetailData });
 
   return (
     <Fragment>
