@@ -46,7 +46,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, showUploadedDoc })
         <p className="font-normal text-base text-[#87878D]">
         To verify your ownership of the claimed airspace and facilitate your passive income, we require additional documentation for legal compliance. Please be assured that all your information will be securely stored and handled with utmost confidentiality
 
-Please upload additional documents to complete you claim
+        Please upload additional documents to complete you claim
         </p>
         <p className="bg-[#D5DCEB] border w-full h-1"></p>
         <p className="font-normal text-base text-[#87878D]">

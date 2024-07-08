@@ -6,7 +6,7 @@ import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 
 const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [j, setJ] = useState(false)
+  const [showDocuments, setShowDocuments] =useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -54,7 +54,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
         )}
 
 
-        {!j && (
+        {!showDocuments && (
         <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
         <p className="text-orange-500 font-normal text-sm">
           Additional documents requested
@@ -64,7 +64,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
         
 
 
-{j && (
+{showDocuments && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
@@ -81,13 +81,13 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace }) => {
       </div>
       </div>
      
-{   j && <UploadedDocuments />}
+{   showDocuments && <UploadedDocuments />}
 
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} showUploadedDoc={setJ} closePopup={closePopup} />
+        <AdditionalDocuments showPopup={showPopup} showUploadedDoc={setShowDocuments} closePopup={closePopup} />
         )}
 
-{/* {j &&      <VerificationSuccessPopup />} */}
+{/* {showDocuments &&      <VerificationSuccessPopup />} */}
     </div>
   );
 };
