@@ -164,7 +164,7 @@ const RentModal: React.FC<RentModalProps> = ({
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
          {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
-        {!isMobile && (<Backdrop />)}
+        {!isMobile && (<Backdrop onClick={() => { setShowClaimModal(false)}}/>)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
         className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
