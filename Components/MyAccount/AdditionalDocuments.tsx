@@ -7,10 +7,10 @@ import { useMobile } from '@/hooks/useMobile';
 interface PopupProps {
   showPopup: boolean;
   closePopup: () => void;
-  setX:React.Dispatch<React.SetStateAction<boolean>>
+  setShowAdditionalDoc:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setX }) => {
+const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDoc }) => {
     const { isMobile } = useMobile();
     const [files, setFiles] = useState([]);
     
@@ -22,7 +22,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setX }) => {
   if (!showPopup) return null;
 
   const handleclick =() =>{
-    setX(true)
+    setShowAdditionalDoc(true)
     closePopup()
   }
 

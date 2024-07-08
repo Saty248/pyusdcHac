@@ -17,7 +17,7 @@ const AccountVerification = ({
 }: AccountVerificationProps) => {
   console.log(KYCStatusId , "KYCStatusId")
   const [showPopup, setShowPopup] = useState(false);
-  const [x, setX] =useState(false)
+  const [showAdditionalDoc, setShowAdditionalDoc] = useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -40,32 +40,47 @@ const AccountVerification = ({
     </div>
 
    <div>
-    <p className="font-normal text-base text-[#87878D]">
-     Your account verification is currently under review.<span className="font-bold"> To complete this process, we require additional documentation.</span> This step is crucial for security and compliance reasons.
-    </p>
-    <p className="font-normal text-base text-[#87878D]">
-     Please<span className="font-bold">submit “Document name” </span>at your earliest convenience to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your cooperation and patience
-    </p>
-
-    <div className="flex justify-end">
-      <p  onClick={handleButtonClick} className="text-dark-blue text-base">
-        Add Additionnal Documents
+    { showAdditionalDoc ?
+      (
+      <div>  
+        <p className="font-normal text-base text-[#87878D] mt-2">Your account verification is currently under review. This step is crucial for security and compliance reasons. Please await confirmation to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your patience.</p>
+        <p className="font-bold text-base text-[#87878D] mt-2">Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.</p>
+      </div>
+     ):(
+     <div>
+      <p className="font-normal text-base text-[#87878D] mt-2">
+        Your account verification is currently under review.<span className="font-bold"> To complete this process, we require additional documentation.</span> This step is crucial for security and compliance reasons.
       </p>
+      <p className="font-normal text-base text-[#87878D] mt-2">
+        Please<span className="font-bold">submit “Document name” </span>at your earliest convenience to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your cooperation and patience
+      </p>
+     </div>
+     )
+    }
+    
+
+    {!showAdditionalDoc &&(
+      <div className="flex justify-end mt-2">
+      <button  onClick={handleButtonClick} className="text-dark-blue text-base">
+        Add Additionnal Documents
+      </button>
     </div>
+    )}
    </div>    
 
      
      
-     {/* {x && (
-      <div>  
+   
+      {/* <div>  
       <p className="font-normal text-base text-[#87878D]">Your account verification is currently under review. This step is crucial for security and compliance reasons. Please await confirmation to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your patience.</p>
       <p className="font-bold text-base text-[#87878D]">Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.</p>
-    </div>
-     )}  */}
+    </div> */}
+  
+
     </div>
     
     
-    {x && (
+    {showAdditionalDoc && (
      <div className="p-4 mt-8 rounded-[30px] bg-white shadow-lg" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[15px]">
        <div className="">
@@ -94,13 +109,13 @@ const AccountVerification = ({
     
     
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} setX={setX} />
+        <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} setShowAdditionalDoc={setShowAdditionalDoc} />
         )}
  
     
-      {x && (
+      {/* {showAdditionalDoc && (
         <VerificationSuccessPopup />
-      )}
+      )} */}
       
   
    
