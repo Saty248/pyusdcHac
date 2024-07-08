@@ -41,10 +41,8 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
       try {
         if ((web3auth && web3auth?.status !== "connected") || !user) return;
         setIsLoading(true);
-
         const connection = new Connection(targetRpcUrl);
-        const blockchainAddress = user.blockchainAddress;
-
+        const blockchainAddress = user?.blockchainAddress;
         let options = {};
 
         const lastTxHash = transactionList.length > 0 ? transactionList.at(-1)?.lastTransactionSignature : "";
@@ -62,10 +60,9 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         }
 
         const tokenAcc = await connection.getTokenAccountsByOwner(
-          new PublicKey(user.blockchainAddress),
+          new PublicKey(user?.blockchainAddress as string),
           { mint: new PublicKey(minterAddress) }
         );
-
         const _txs = await connection.getSignaturesForAddress(
           new PublicKey(`${tokenAcc.value[0].pubkey.toString()}`),
           options
@@ -74,23 +71,24 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
 
         const signatureList = txs.map(transaction => transaction.signature);
         const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
-
         const data = transactionDetails?.map((item, idx) => {
           const preTokenBalObject = item?.meta?.preTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
-
           const postTokenBalObject = item?.meta?.postTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
-
           let difference = 0;
           if (preTokenBalObject || postTokenBalObject) {
-            if (preTokenBalObject && postTokenBalObject) {
+            
+            if ((preTokenBalObject && preTokenBalObject.length >0) && (postTokenBalObject && postTokenBalObject.length >0)) {
+              
               difference = (postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
-            } else if (!preTokenBalObject && postTokenBalObject) {
+            } else if ((!preTokenBalObject || preTokenBalObject.length <=0) && postTokenBalObject ) {
+              
               difference = postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number;
-            } else if (preTokenBalObject) {
+            } else if (preTokenBalObject && preTokenBalObject.length > 0) {
+              
               difference = (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
             }
           }
@@ -107,7 +105,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             time: moment.unix(item?.blockTime as number).format("MMM D, YYYY"),
             transactionHash: signatureList[idx],
             type,
-            difference: difference.toString() == 'NaN' ? 'Non USDC Transaction' : formatNumber(difference),
+            difference: difference.toString() == 'NaN' ? '1st transaction' : formatNumber(difference),
             firstTransactionSignature: signatureList[0],
             lastTransactionSignature: signatureList[signatureList.length - 1],
           };
