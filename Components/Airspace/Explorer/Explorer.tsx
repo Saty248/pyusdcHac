@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InfoIcon, MagnifyingGlassIcon } from "../../Icons";
+import { InfoIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
 import { useSearchParams } from "next/navigation";
 import { useTour } from "@reactour/tour";
 
@@ -28,7 +28,7 @@ const Explorer = ({
 
   return (
     <div
-      className="z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
+      className="z-20 m-[39px] hidden max-h-full max-w-[370px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
       <div className="flex items-center gap-[5px]">
@@ -47,7 +47,7 @@ const Explorer = ({
           )}
         </div>
       </div>
-      <p className="text-[15px] font-normal text-[#222222]">
+      <p className=" border text-[15px] font-normal text-[#222222] break-words">
         Ready to claim your airspace? No registered airspace yet, but exciting
         times ahead!
       </p>
@@ -69,7 +69,7 @@ const Explorer = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
+          <div className="absolute left-0 top-[55px] w-full flex-col h-auto max-h-60 overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
             {addresses.map((item) => {
               return (
                 <div
@@ -78,10 +78,18 @@ const Explorer = ({
                   onClick={() => handleSelectAddress(item.place_name)}
                   className="w-full p-5 text-left text-[#222222]"
                   style={{
-                    borderTop: "0.2px solid #222222",
+                    borderBottom: "0.2px solid #DBDBDB",
                   }}
                 >
-                  {item.place_name}
+                  <div className="flex  items-center ">
+                    <div className="w-[10%] h-6 mr-2">
+                      <LocationPointIcon />
+                    </div>
+
+                    <div className="w-[90%]">
+                    {item.place_name}
+                    </div>
+                  </div>
                 </div>
               );
             })}

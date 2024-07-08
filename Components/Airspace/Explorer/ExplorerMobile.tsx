@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeftIcon, MagnifyingGlassIcon } from "../../Icons";
+import { ArrowLeftIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 interface Address {
@@ -52,7 +52,7 @@ const ExplorerMobile = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
+            <div className="absolute left-0 top-[55px] w-full flex-col bg-white mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
             {addresses.map((item) => {
               return (
                 <div
@@ -64,7 +64,15 @@ const ExplorerMobile = ({
                     borderTop: "0.2px solid #222222",
                   }}
                 >
-                  {item.place_name}
+                  <div className="flex  items-center ">
+                    <div className="w-[10%] h-6 mr-3">
+                      <LocationPointIcon />
+                    </div>
+
+                    <div className="w-[90%]">
+                    {item.place_name}
+                    </div>
+                  </div>
                 </div>
               );
             })}
