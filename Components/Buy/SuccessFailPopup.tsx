@@ -136,7 +136,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
           {responseStatus === "SUCCESS" && (
             <>
               <button
-                onClick={() => router.push("/buy")}
+                onClick={() => router.push("/marketplace")}
                 className=" py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-[#34A853] text-center bg-[#FFFFFF] text-[14px]"
               >
                 Marketplace

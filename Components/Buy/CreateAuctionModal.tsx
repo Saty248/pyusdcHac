@@ -94,16 +94,17 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                   <span className="mt-16">Fetching Verified Airspaces...</span>
                 </div>
               ) : (
+                airspaceList &&
                 <InfiniteScroll
-                  dataLength={airspaceList.length}
+                  dataLength={airspaceList?.length}
                   next={handleNextPage}
                   hasMore={hasMore}
                   loader={<Spinner />}
                   height={450}
                   className="flex flex-col gap-3 thin-scrollbar"
                 >
-                  {airspaceList.length > 0 &&
-                    airspaceList.map((item, index) => (
+                  {airspaceList?.length > 0 &&
+                    airspaceList?.map((item, index) => (
                       <AuctionItem
                         data={item}
                         key={index}
@@ -180,16 +181,17 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                 <span className="mt-24">Fetching Verified Airspaces...</span>
               </div>
             ) : (
+              airspaceList && 
               <InfiniteScroll
-                dataLength={airspaceList.length}
+                dataLength={airspaceList?.length}
                 next={handleNextPage}
                 hasMore={hasMore}
                 loader={<Spinner />}
                 height={450}
                 className="flex flex-col gap-3 thin-scrollbar"
               >
-                {airspaceList.length > 0 &&
-                  airspaceList.map((item, index) => (
+                {airspaceList?.length > 0 &&
+                  airspaceList?.map((item, index) => (
                     <AuctionItem
                       data={item}
                       key={index}

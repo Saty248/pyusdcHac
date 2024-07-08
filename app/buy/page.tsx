@@ -61,6 +61,7 @@ const Buy = () => {
   >("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<AuctionDataI>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
+  const [txHash,setTxHash] = useState('');
 
   useDrawBidPolygons({ map, auctions });
 
@@ -200,6 +201,7 @@ const Buy = () => {
                     address: auctionDetailData?.properties[0]?.address,
                     currentUserBid: currentUserBid,
                   }}
+                  txHash={txHash}
                 />
               )}
               {showBidDetail && (
@@ -213,6 +215,7 @@ const Buy = () => {
               )}
               {showBidPreview && (
                 <BidPreview
+                  setTxHash={setTxHash}
                   setBidResponseStatus={setBidResponseStatus}
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
                   auctionDetailData={auctionDetailData}
