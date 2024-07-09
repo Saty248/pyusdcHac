@@ -24,7 +24,7 @@ const useFetchAuctions = (initialPage: number = 1, limit: number = 10,searchPara
          response = await getAuctions(page, limit);
       }
       else{
-         response = await searchAuctions(page,1,searchParam)
+         response = await searchAuctions(page,limit,searchParam)
       }
       const newData = response.data;
       setAuctions((prevData) =>
