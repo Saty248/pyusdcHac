@@ -70,6 +70,9 @@ export const useDrawBidPolygons = ({
   }, [map]);
 
   useEffect(() => {
+    function convertVertexDataFormatToPolygonFormat(data) {
+      return data.map(item => [item.longitude, item.latitude]);
+    }
     if (mapLoaded && map && auctions && auctions?.length > 0) {
       auctions.forEach((auction, index) => {
         const id = auction?.properties[0]?.id;
@@ -79,9 +82,7 @@ export const useDrawBidPolygons = ({
         );
 
         if (!markersRef.current[id]) {
-          let el = document.createElement("div");
-          el.id = `markerWithExternalCss-${id}`;
-          const marker = new maplibregl.Marker(el).setLngLat(lngLat).addTo(map);
+          const marker = new mapboxgl.Marker({color: "#3FB1CE"}).setLngLat(lngLat).addTo(map);
           markersRef.current[id] = marker;
 
           const markerElement = marker.getElement();
@@ -93,7 +94,8 @@ export const useDrawBidPolygons = ({
         }
 
         if (!polygonsRef.current[id]) {
-          drawPolygons(map, id, auction?.properties[0]?.vertexes);
+          const vertexAreaPolygon = convertVertexDataFormatToPolygonFormat(auction?.properties[0]?.vertexes)
+          drawPolygons(map, id, vertexAreaPolygon);
           polygonsRef.current[id] = true;
         }
       });

@@ -6,11 +6,13 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setIsCreateAuctionModalOpen } from "@/redux/slices/userSlice";
 import useFetchAuctions from "@/hooks/useFetchAuctions";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Spinner from "../Spinner";
 
 interface AuctionExplorerMobileProps {
   auctions: AuctionDataI[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
+  loading:boolean;
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
   setAuctionDetailData: React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
@@ -19,20 +21,20 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
   auctions,
   setPage,
   hasMorePage,
+  loading,
   setShowBidDetail,
   setAuctionDetailData,
 }) => {
   const [toggleTray, setToggleTray] = useState(false);
-  // const {  loading, page, hasMore } = useFetchAuctions();
   const handleTrayToggle = (index) => {
     setToggleTray(false);
     setShowBidDetail(true);
     setAuctionDetailData(auctions[index]);
   };
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  let filteredAuctions = auctions;
+  // let filteredAuctions = auctions;
 
   // const { isCreateAuctionModalOpen } = useAppSelector((state) => {
   //   const { isCreateAuctionModalOpen } = state.userReducer;
@@ -57,7 +59,16 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
             id="scrollableDiv"
             className="h-[450px] overflow-y-auto flex flex-col items-center gap-4 mt-6"
           >
-            {auctions && auctions?.length > 0 && (
+            {" "}
+            {loading && (
+              <div className="w-full flex justify-center items-center">
+                <div className="">
+                  <Spinner />
+                  <div className="mt-28">Fetching Auctions...</div>
+                </div>
+              </div>
+            )}
+            {!loading && auctions && auctions?.length > 0 && (
               <InfiniteScroll
                 dataLength={auctions.length}
                 next={handleLoadMore}
@@ -68,7 +79,7 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
                 {auctions.length > 0 ? (
                   auctions.map((item, index) => (
                     <div
-                      className="mx-auto"
+                      className="mx-auto mb-[15px]"
                       key={index}
                       onClick={() => handleTrayToggle(index)}
                     >

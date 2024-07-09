@@ -8,29 +8,35 @@ import useFetchAuctions from "@/hooks/useFetchAuctions";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { LoadingSpinner } from "../Icons";
 import Spinner from "../Spinner";
+import MarketplaceService from "@/services/MarketplaceService";
 interface AuctionExplorerProps {
+  setSearchTerm: (value: string) => void;
   auctions: AuctionDataI[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
+  loading:boolean;
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
   setAuctionDetailData: React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
 
 const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
+  setSearchTerm,
   auctions,
   setPage,
   hasMorePage,
+  loading,
   setShowBidDetail,
   setAuctionDetailData,
 }) => {
+  const [searchValue,setSearchValue] = useState("");
+  const { searchAuctions } = MarketplaceService();
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
     return { isCreateAuctionModalOpen };
   });
 
   const dispatch = useAppDispatch();
-  const [searchTerm, setSearchTerm] = useState("");
-  const { loading } = useFetchAuctions();
+  // const { loading } = useFetchAuctions();
   // let filteredAuctions = data;
   // if(data?.length>0){
   //   const filteredAuctions = data.filter((auction) =>
@@ -45,6 +51,10 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
+  const handleSearchAuctions = async () =>{
+    setSearchTerm(searchValue)
+  }
+
   return (
     <>
       <div className="hidden md:block w-[518px] h-[668px] z-20 bg-white m-8 rounded-[30px] p-6 shadow-md overflow-hidden ">
@@ -70,13 +80,15 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
           <div className="flex justify-between items-center w-full border rounded-lg overflow-hidden p-2">
             <input
               placeholder="Search auctions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' ? handleSearchAuctions():''}
               className="focus:outline-none w-10/12 text-[14px]"
             />
-
             <div className="w-4 h-4">
-              <MagnifyingGlassIcon />
+              <button onClick={handleSearchAuctions}>
+                <MagnifyingGlassIcon />
+              </button>
             </div>
           </div>
           <div
@@ -99,7 +111,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                 hasMore={hasMorePage}
                 loader={undefined}
                 scrollableTarget="scrollableDiv"
-                className="w-full grid grid-cols-2 gap-4 border"
+                className="w-full grid grid-cols-2 gap-4 mb-4"
               >
                 {auctions.length > 0 ? (
                   auctions.map((item, index) => (
