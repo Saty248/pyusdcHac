@@ -26,6 +26,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [pricePerSqFt, setPricePerSqFt] = useState([0, 0]);
+  const [searchValue,setSearchValue] = useState("");
 
   const { activeFilters, isCreateAuctionModalOpen } = useAppSelector(
     (state) => {
@@ -46,6 +47,10 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
     const activeFilters = calculateActiveFilters();
     dispatch(setActiveFilters(activeFilters));
   };
+  const handleSearchAuctions = async () =>{
+    setSearchTerm(searchValue)
+  }
+
 
   return (
     <div className="md:hidden fixed top-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center">
@@ -56,12 +61,13 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
         <div className="flex justify-between items-center border rounded-lg overflow-hidden p-2">
           <input
             placeholder="Search auctions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' ? handleSearchAuctions():''}
             className="focus:outline-none min-w-[200px] text-[14px]"
           />
 
-          <div className="w-4 h-4">
+          <div className="w-4 h-4" onClick={handleSearchAuctions}>
             <MagnifyingGlassIcon />
           </div>
         </div>
@@ -90,7 +96,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
           />
           <button
             onClick={handleSetActiveFilters}
-            className="text-base bg-dark-blue py-2 w-full text-white rounded-lg text-[14px]"
+            className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
           >
             Save Filter
           </button>

@@ -33,12 +33,9 @@ const Buy = () => {
     return { isCreateAuctionModalOpen };
   }, shallowEqual);
 
-  const { auctions, hasMore, setPage } = useFetchAuctions();
-  console.log({ auctions });
-
   const dispatch = useAppDispatch();
   const { getAuctions } = MarketplaceService();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   // const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
   //   auction.name.toLowerCase().includes(searchTerm.toLowerCase())
   // );
@@ -63,8 +60,10 @@ const Buy = () => {
   >("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<AuctionDataI>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
+  const [txHash,setTxHash] = useState('');
+  const { auctions, hasMore, loading,setPage } = useFetchAuctions(1,10,searchTerm);
 
-  // useDrawBidPolygons({ map, auctions });
+  useDrawBidPolygons({ map, auctions });
 
   useEffect(() => {
     if (map) return;
@@ -126,8 +125,6 @@ const Buy = () => {
     setShowBidDetail(false);
   };
 
-  console.log({ auctionDetailData });
-
   return (
     <Fragment>
       <Head>
@@ -178,8 +175,10 @@ const Buy = () => {
               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <AuctionExplorer
+                  setSearchTerm={(value: string) => setSearchTerm(value)}
                     auctions={auctions}
                     setPage={setPage}
+                    loading={loading}
                     hasMorePage={hasMore}
                     setShowBidDetail={setShowBidDetail}
                     setAuctionDetailData={setAuctionDetailData}
@@ -188,6 +187,7 @@ const Buy = () => {
               )}
               {showAuctionList && (
                 <AuctionExplorerMobile
+                loading={loading}
                   auctions={auctions}
                   setPage={setPage}
                   hasMorePage={hasMore}
@@ -204,6 +204,7 @@ const Buy = () => {
                     address: auctionDetailData?.properties[0]?.address,
                     currentUserBid: currentUserBid,
                   }}
+                  txHash={txHash}
                 />
               )}
               {showBidDetail && (
@@ -217,6 +218,7 @@ const Buy = () => {
               )}
               {showBidPreview && (
                 <BidPreview
+                  setTxHash={setTxHash}
                   setBidResponseStatus={setBidResponseStatus}
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
                   auctionDetailData={auctionDetailData}

@@ -39,19 +39,12 @@ const MarketplaceService = () => {
     }
   };
 
-  const searchAuctions = async ({
-    postData,
-  }: {
-    postData: {
-      minPrice: number;
-      maxPrice: number;
-    };
-  }) => {
+  const searchAuctions = async (page: number = 1, limit: number = 10,searchParam:string | undefined) => {
     try {
-      const response = await postRequest({
-        uri: `/market/nft/search`,
-        postData,
+      const response = await getRequest({
+        uri: `/market/nft/search?searchParam=${searchParam}&page=${page}&limit=${limit}`,
       });
+      console.log(response?.data,"hello search")
       return response?.data;
     } catch (error) {
       console.error(error);
