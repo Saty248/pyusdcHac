@@ -56,6 +56,7 @@ const Referral = () => {
     fetchData();
   }, [user, web3authStatus]);
 
+  const skyPoint: string | null = userRewards?.stats._sum.point?.toString() ?? '0';
 
 
   return (
@@ -76,7 +77,7 @@ const Referral = () => {
             />
             <AlertMessage />
 
-            <PointBalance point={userRewards?.stats?._sum.point?.toString()} />
+            <PointBalance point={skyPoint} />
 
             <ReferralProgramOverview
               activeSection={activeSection}
