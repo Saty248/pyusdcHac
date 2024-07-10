@@ -76,7 +76,7 @@ const Referral = () => {
             />
             <AlertMessage />
 
-            <PointBalance point={userRewards?.stats._sum.point.toString()} />
+            <PointBalance point={userRewards?.stats._sum.point?.toString()} />
 
             <ReferralProgramOverview
               activeSection={activeSection}
