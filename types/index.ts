@@ -99,7 +99,42 @@ export type User = {
     codeChanged: boolean;
   } | null;
   usedReferralCodeId: number | null;
+  isUserRewardClaimed: boolean;
 };
+
+interface Reward {
+  id: string;
+  rewardId: string;
+  email: string;
+  taskType: string;
+  point: number;
+  createdAt: string;
+  updateAt: string;
+}
+
+interface RewardStats {
+  _count: {
+    point: number;
+  };
+  _sum: {
+    point: number;
+  };
+  _avg: {
+    point: number;
+  };
+  _min: {
+    point: number;
+  };
+  _max: {
+    point: number;
+  };
+}
+
+export interface UserRewards {
+  stats: RewardStats;
+  rewards: Reward[];
+}
+
 
 export type Bounds = {
   _ne: {
