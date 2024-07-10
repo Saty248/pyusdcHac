@@ -4,7 +4,7 @@ import { FC } from "react";
 
 
 interface PropsI {
-  point: string | undefined;
+  point: string | null;
 }
 
 const PointBalance: FC<PropsI> = ({ point }) => {
