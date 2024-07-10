@@ -117,16 +117,16 @@ interface RewardStats {
     point: number;
   };
   _sum: {
-    point: number;
+    point: number | null;
   };
   _avg: {
-    point: number;
+    point: number | null;
   };
   _min: {
-    point: number;
+    point: number | null;
   };
   _max: {
-    point: number;
+    point: number | null;
   };
 }
 
