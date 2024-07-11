@@ -35,6 +35,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   const [isNext, setIsNext] = useState<boolean>(true);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [transactionList, setTransactionList] = useState<TransactionListI[]>([]);
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     (async () => {
@@ -141,7 +142,11 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   };
 
   const renderTransactionRows = () => {
-    return transactionList?.map((item) => (
+    const filteredTransactions = searchQuery
+    ? transactionList.filter(transaction => transaction.transactionHash.includes(searchQuery))
+    : transactionList;
+  return filteredTransactions?.map((item) => (
+  
       <tr key={item.transactionHash}>
         <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
         <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
@@ -162,15 +167,16 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-        <div className='flex md:px-0 px-2 items-center'>
+        <div className='flex md:px-0 px-2 justify-end items-center md:w-full '>
           <div
-            className="relative px-[22px] md:py-[16px] py-3 bg-white md:w-[89%] rounded-lg"
+            className="relative px-[22px] md:py-[16px] py-3 bg-white rounded-lg"
             style={{ border: "1px solid #87878D" }}
           >
             <input
               type="text"
               name="searchTransactions"
               id="searchTransactions"
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Transactions"
               className="outline-none w-full pr-[20px]"
             />
@@ -179,7 +185,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             </div>
           </div>
           <div
-            className='w-[15%] h-[15%] md:h-[20%] md:w-[20%] cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
+            className='w-12 h-12 md:h-12  md:w-12 cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
             onClick={handleReset}
           >
             <RefreshIcon />
