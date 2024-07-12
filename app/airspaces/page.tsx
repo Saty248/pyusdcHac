@@ -28,6 +28,7 @@ import { HelpQuestionIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
 import React from "react";
+import { defaultData } from "../../types";
 
 const Airspaces: React.FC = () => {
 
@@ -48,7 +49,7 @@ const Airspaces: React.FC = () => {
     latitude: "",
   });
   const [marker, setMarker] = useState<mapboxgl.Marker| null>(null);
-  const defaultData = {
+  const defaultData:defaultData = {
     address: address,
     title: "",
     rent: true,
@@ -58,7 +59,7 @@ const Airspaces: React.FC = () => {
     hasLandingDeck: false,
     hasStorageHub: false,
     sellingPrice: "0",
-    timezone: "UTC+0",
+    timezone: "Europe/london",
     transitFee: "1-99",
     isFixedTransitFee: false,
     noFlyZone: false,
