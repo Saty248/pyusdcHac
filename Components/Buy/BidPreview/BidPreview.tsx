@@ -17,6 +17,7 @@ import MarketplaceService from "@/services/MarketplaceService";
 import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
 import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch } from "@/redux/store";
+import { toast } from "react-toastify";
 
 interface BidPreviewProps {
   setTxHash: React.Dispatch<React.SetStateAction<string>>;
@@ -45,6 +46,11 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   const handleBid = async () => {
     try {
       setIsLoading(true);
+      if(currentUserBid && auctionDetailData && (currentUserBid < auctionDetailData?.price)){
+        toast.error('bid value less than the minimum bid price!');
+        setIsLoading(false);
+        return ;
+      }
       const postData = {
         assetId: auctionDetailData?.assetId,
         callerBlockchainAddress: user?.blockchainAddress,
