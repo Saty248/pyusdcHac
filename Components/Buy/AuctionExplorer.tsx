@@ -116,14 +116,17 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                     scrollableTarget="scrollableDiv"
                     className="w-full grid grid-cols-2 gap-4 mb-4"
                   >
-                    {auctions.map((item, index) => (
-                      <div
-                        key={index}
-                        onClick={() => handleShowBidDetail(index)}
-                      >
-                        <AuctionCard data={item} />
-                      </div>
-                    ))}
+                    {auctions
+                      .slice()
+                      .reverse()
+                      .map((item, index) => (
+                        <div
+                          key={index}
+                          onClick={() => handleShowBidDetail(index)}
+                        >
+                          <AuctionCard data={item} />
+                        </div>
+                      ))}
                   </InfiniteScroll>
                 ) : (
                   <div className="text-center col-span-2 text-light-grey">

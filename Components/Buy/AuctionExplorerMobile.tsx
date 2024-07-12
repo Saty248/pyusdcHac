@@ -77,15 +77,18 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
                 scrollableTarget="scrollableDiv"
               >
                 {auctions.length > 0 ? (
-                  auctions.map((item, index) => (
-                    <div
-                      className="mx-auto mb-[15px]"
-                      key={index}
-                      onClick={() => handleTrayToggle(index)}
-                    >
-                      <AuctionCard data={item} />
-                    </div>
-                  ))
+                  auctions
+                    .slice()
+                    .reverse()
+                    .map((item, index) => (
+                      <div
+                        className="mx-auto mb-[15px]"
+                        key={index}
+                        onClick={() => handleTrayToggle(index)}
+                      >
+                        <AuctionCard data={item} />
+                      </div>
+                    ))
                 ) : (
                   <div className="text-center col-span-2 text-light-grey">
                     No auctions found

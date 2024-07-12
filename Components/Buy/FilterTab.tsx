@@ -32,8 +32,8 @@ const FilterTab: React.FC<FilterTabProps> = ({ title, range, setRange }) => {
           <div className="text-sm text-light-grey">Minimum</div>
           <div>
             <input
-              type="number"
-              value={range[0]}
+              type="text"
+              value={range[0] > 0 ? range[0].toString() : ""}
               onChange={(e) => handleInputChange(setRange, 0, +e.target.value)}
               className="py-2 focus:outline-none border border-light-grey rounded-[8px] text-center max-w-[94px]"
             />
@@ -45,7 +45,7 @@ const FilterTab: React.FC<FilterTabProps> = ({ title, range, setRange }) => {
           <div>
             <input
               type="number"
-              value={range[1]}
+              value={range[1] > 0 ? range[1].toString() : ""}
               onChange={(e) => handleInputChange(setRange, 1, +e.target.value)}
               className="py-2 focus:outline-none border border-light-grey rounded-[8px] text-center max-w-[94px]"
             />

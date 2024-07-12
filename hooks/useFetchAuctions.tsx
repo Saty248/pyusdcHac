@@ -1,4 +1,5 @@
 import { Web3authContext } from "@/providers/web3authProvider";
+import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import MarketplaceService from "@/services/MarketplaceService";
 import { AuctionDataI } from "@/types";
@@ -15,6 +16,7 @@ const useFetchAuctions = (
       return { isTriggerRefresh, priceRange, activeFilters };
     }
   );
+  const dispatch = useAppDispatch();
   const { getAuctions, searchAuctions, filterAuctions } = MarketplaceService();
   const [auctions, setAuctions] = useState<AuctionDataI[]>([]);
   const [page, setPage] = useState<number>(initialPage);
@@ -22,16 +24,20 @@ const useFetchAuctions = (
   const [loading, setLoading] = useState<boolean>(false);
   const { web3auth } = useContext(Web3authContext);
 
+  console.log({ priceRange });
+
   const fetchData = async () => {
     try {
       setLoading(true);
       let response;
       if (
-        searchParam === "" ||
-        searchParam === undefined ||
-        searchParam === null ||
-        (priceRange[0] === 0 && priceRange[1] === 0)
+        (searchParam === "" ||
+          searchParam === undefined ||
+          searchParam === null) &&
+        priceRange[0] === 0 &&
+        priceRange[1] === 0
       ) {
+        console.log("this one?");
         response = await getAuctions(page, limit);
       } else if (activeFilters && (priceRange[0] > 0 || priceRange[1] > 0)) {
         const minPrice = priceRange[0];
@@ -40,32 +46,10 @@ const useFetchAuctions = (
           minPrice,
           maxPrice,
         };
-        response = await filterAuctions({ postData });
-      } else {
-        response = await searchAuctions(page, limit, searchParam);
-      }
-      const newData = response.data;
-      setAuctions((prevData) =>
-        page === 1 ? newData : [...prevData, ...newData]
-      );
-      setHasMore(newData.length === limit);
-    } catch (error) {
-      console.error("Error fetching data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        console.log("this one??");
 
-  const filterData = async () => {
-    try {
-      setLoading(true);
-      let response;
-      if (
-        searchParam === "" ||
-        searchParam === undefined ||
-        searchParam === null
-      ) {
-        response = await getAuctions(page, limit);
+        response = await filterAuctions(minPrice, maxPrice);
+        console.log({ response });
       } else {
         response = await searchAuctions(page, limit, searchParam);
       }
@@ -78,12 +62,17 @@ const useFetchAuctions = (
       console.error("Error fetching data", error);
     } finally {
       setLoading(false);
+      dispatch(setIsTriggerRefresh(false));
     }
   };
 
   useEffect(() => {
     fetchData();
   }, [web3auth?.status, page, isTriggerRefresh, searchParam, activeFilters]);
+
+  // useEffect(() => {
+  //   filterData();
+  // }, [activeFilters]);
 
   return { loading, page, auctions, hasMore, setPage };
 };

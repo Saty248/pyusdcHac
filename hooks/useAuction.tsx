@@ -49,7 +49,7 @@ const useAuction = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const { getPropertiesByUserAddress } = AirspaceRentalService();
+  const { getAuctionableProperties } = AirspaceRentalService();
 
   useEffect(() => {
     (async () => {
@@ -62,12 +62,11 @@ const useAuction = () => {
             ? airspaceList[airspaceList.length - 1]?.id
             : "";
 
-        const airspaces = await getPropertiesByUserAddress(
+        const airspaces = await getAuctionableProperties(
           user?.blockchainAddress,
           "landToken",
           10,
-          String(assetId),
-          true
+          String(assetId)
         );
 
         if (airspaces.length < 10) {
