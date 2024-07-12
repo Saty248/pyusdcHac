@@ -29,7 +29,7 @@ const useFetchAuctions = (
       if (
         searchParam === "" ||
         searchParam === undefined ||
-        searchParam === null ||
+        searchParam === null &&
         (priceRange[0] === 0 && priceRange[1] === 0)
       ) {
         response = await getAuctions(page, limit);
