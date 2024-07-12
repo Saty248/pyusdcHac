@@ -17,7 +17,7 @@ module.exports = {
         "bleach-white": "rgba(255, 255, 255, 0.95)",
         dark: "#252530",
         "light-dark": "#1E1E1E",
-        "light-grey": "#F0F0FA",
+        "lighter-grey": "#F0F0FA",
         milk: "#E6EEFD",
         "dark-blue": "#0653EA",
         "sky-blue": "#F4F8FF",

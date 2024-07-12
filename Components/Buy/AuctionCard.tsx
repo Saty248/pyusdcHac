@@ -13,7 +13,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
   return (
     <div className="w-[350px] md:w-full h-[227px] rounded-lg shadow-md overflow-hidden">
       <div className="relative w-full h-[130px]">
-      <Image
+        <Image
           src={imageUrl}
           alt={`Map at ${latitude}, ${longitude}`}
           layout="fill"
@@ -22,7 +22,9 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold">Name</div>
-        <div className="text-sm text-[#727272] truncate w-[95%] text-left">{title}</div>
+        <div className="text-sm text-[#727272] truncate w-[95%] text-left">
+          {title}
+        </div>
       </div>
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">

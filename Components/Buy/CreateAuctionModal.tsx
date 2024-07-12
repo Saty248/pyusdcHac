@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useState, useEffect } from "react";
-import { AuctionPropertyI } from "@/types";
+import { AuctionPropertyI, PropertyData } from "@/types";
 import { IoClose } from "react-icons/io5";
 import AuctionItem from "./AuctionItem";
 import Button from "../Shared/Button";
@@ -20,6 +20,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   data,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [airspaces, setAirspaces] = useState<PropertyData[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,7 +49,12 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     selectedItems,
   } = useAuction();
 
-  console.log({ airspaceList });
+  useEffect(() => {
+    const valid = airspaceList.filter((item) => item.status === 1);
+    setAirspaces(valid);
+  }, airspaceList);
+
+  console.log(airspaceList.filter((item) => item.status === 1));
 
   if (isMobile) {
     return (
@@ -56,9 +62,9 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
         {isProcessing ? (
           <div className="fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
             {transactionStatus === TransactionStatusEnum.PENDING ? (
-              <div className="w-full h-full flex flex-col items-center justify-center">
+              <div className="w-full h-full gap-4 flex flex-col items-center justify-center">
                 <Spinner />
-                <span className="mt-2 text-white font-semibold">
+                <span className="animate-pulse text-white font-semibold">
                   Processing...
                 </span>
               </div>
@@ -89,40 +95,49 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
               <div>Select the properties you want to auction</div>
 
               {loading ? (
-                <div className="w-full h-full flex flex-col items-center justify-center">
+                <div className="w-full h-full flex flex-col gap-4 items-center justify-center">
                   <Spinner />
-                  <span className="mt-16">Fetching Verified Airspaces...</span>
+                  <span className="animate-pulse">
+                    Fetching Verified Airspaces...
+                  </span>
                 </div>
               ) : (
-                airspaceList &&
-                <InfiniteScroll
-                  dataLength={airspaceList?.length}
-                  next={handleNextPage}
-                  hasMore={hasMore}
-                  loader={<Spinner />}
-                  height={450}
-                  className="flex flex-col gap-3 thin-scrollbar"
-                >
-                  {airspaceList?.length > 0 &&
-                    airspaceList?.map((item, index) => (
-                      <AuctionItem
-                        data={item}
-                        key={index}
-                        onSelectItem={handleSelectItem}
-                        onUpdateItem={handleUpdateItem}
-                        selected={
-                          !!selectedItems.find(
-                            (selectedItem) =>
-                              selectedItem.propertyId === item.propertyId
-                          )
-                        }
-                        disabled={
-                          selectedItemId !== null &&
-                          selectedItemId !== item.propertyId
-                        } // Disable if another item is selected
-                      />
-                    ))}
-                </InfiniteScroll>
+                <>
+                  {airspaces.length > 0 ? (
+                    <InfiniteScroll
+                      dataLength={airspaceList?.length}
+                      next={handleNextPage}
+                      hasMore={hasMore}
+                      loader={<Spinner />}
+                      height={450}
+                      className="flex flex-col gap-3 thin-scrollbar"
+                    >
+                      {airspaces?.length > 0 &&
+                        airspaces?.map((item, index) => (
+                          <AuctionItem
+                            data={item}
+                            key={index}
+                            onSelectItem={handleSelectItem}
+                            onUpdateItem={handleUpdateItem}
+                            selected={
+                              !!selectedItems.find(
+                                (selectedItem) =>
+                                  selectedItem.propertyId === item.propertyId
+                              )
+                            }
+                            disabled={
+                              selectedItemId !== null &&
+                              selectedItemId !== item.propertyId
+                            } // Disable if another item is selected
+                          />
+                        ))}
+                    </InfiniteScroll>
+                  ) : (
+                    <div className="text-center col-span-2 text-light-grey">
+                      {!loading && "No auctions found"}
+                    </div>
+                  )}
+                </>
               )}
 
               {/* <div className="flex justify-between gap-4"> */}
@@ -143,9 +158,9 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
       {isProcessing ? (
         <div className="fixed inset-0 z-50 flex items-start py-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]	">
           {transactionStatus === TransactionStatusEnum.PENDING ? (
-            <div className="w-full h-full flex flex-col items-center justify-center">
+            <div className="w-full h-full flex flex-col gap-4 items-center justify-center">
               <Spinner />
-              <span className="mt-2 text-white font-semibold">
+              <span className="animate-pulse text-white font-semibold">
                 Processing...
               </span>
             </div>
@@ -175,41 +190,45 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
             <div className="text-center">Create Auction</div>
             <div>Select the properties you want to auction</div>
 
-            {loading ? (
-              <div className="w-full h-full flex flex-col items-center justify-center">
+            {airspaces.length === 0 && loading ? (
+              <div className="w-full h-full flex gap-4 flex-col items-center justify-center">
                 <Spinner />
-                <span className="mt-24">Fetching Verified Airspaces...</span>
+                <span className="animate-pulse">
+                  Fetching Verified Airspaces...
+                </span>
               </div>
             ) : (
-              airspaceList && 
-              <InfiniteScroll
-                dataLength={airspaceList?.length}
-                next={handleNextPage}
-                hasMore={hasMore}
-                loader={<Spinner />}
-                height={450}
-                className="flex flex-col gap-3 thin-scrollbar"
-              >
-                {airspaceList?.length > 0 &&
-                  airspaceList?.map((item, index) => (
-                    <AuctionItem
-                      data={item}
-                      key={index}
-                      onSelectItem={handleSelectItem}
-                      onUpdateItem={handleUpdateItem}
-                      selected={
-                        !!selectedItems.find(
-                          (selectedItem) =>
-                            selectedItem.propertyId === item.propertyId
-                        )
-                      }
-                      disabled={
-                        selectedItemId !== null &&
-                        selectedItemId !== item.propertyId
-                      } // Disable if another item is selected
-                    />
-                  ))}
-              </InfiniteScroll>
+              airspaces && (
+                <InfiniteScroll
+                  dataLength={airspaceList?.length}
+                  next={handleNextPage}
+                  hasMore={hasMore}
+                  loader={<Spinner />}
+                  height={450}
+                  className="flex flex-col gap-3 thin-scrollbar"
+                >
+                  <></>
+                  {airspaces?.length > 0 &&
+                    airspaces?.map((item, index) => (
+                      <AuctionItem
+                        data={item}
+                        key={index}
+                        onSelectItem={handleSelectItem}
+                        onUpdateItem={handleUpdateItem}
+                        selected={
+                          !!selectedItems.find(
+                            (selectedItem) =>
+                              selectedItem.propertyId === item.propertyId
+                          )
+                        }
+                        disabled={
+                          selectedItemId !== null &&
+                          selectedItemId !== item.propertyId
+                        } // Disable if another item is selected
+                      />
+                    ))}
+                </InfiniteScroll>
+              )
             )}
 
             <div className="flex justify-between gap-4">

@@ -57,15 +57,18 @@ const useAuction = () => {
         if (web3auth && web3auth?.status !== "connected") return;
 
         setLoading(true);
-        const assetId = airspaceList.length > 0 ? airspaceList.at(-1)?.id : "";
+        const assetId =
+          airspaceList.length > 0
+            ? airspaceList[airspaceList.length - 1]?.id
+            : "";
 
         const airspaces = await getPropertiesByUserAddress(
           user?.blockchainAddress,
           "landToken",
           10,
-          String(assetId)
+          String(assetId),
+          true
         );
-        console.log({ airspaces });
 
         if (airspaces.length < 10) {
           setHasMore(false);
@@ -83,7 +86,7 @@ const useAuction = () => {
         setLoading(false);
       }
     })();
-  }, [web3auth?.status, pageNumber, isTriggerRefresh]);
+  }, [pageNumber, isTriggerRefresh]);
 
   const handleNextPage = () => {
     if (!hasMore) return;

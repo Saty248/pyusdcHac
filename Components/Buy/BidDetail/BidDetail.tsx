@@ -6,6 +6,7 @@ import { useMobile } from "@/hooks/useMobile";
 
 import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
+import { shortenAddress } from "@/utils";
 
 interface BidDetailsProps {
   auctionDetailData: AuctionDataI | undefined;
@@ -61,7 +62,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {auctionDetailData?.properties[0]?.address}
+              {shortenAddress(auctionDetailData?.properties[0]?.address, 35)}
             </p>
           </div>
           <div>

@@ -60,8 +60,12 @@ const Buy = () => {
   >("FAIL");
   const [auctionDetailData, setAuctionDetailData] = useState<AuctionDataI>();
   const [showAuctionList, setShowAuctionList] = useState<boolean>(true);
-  const [txHash,setTxHash] = useState('');
-  const { auctions, hasMore, loading,setPage } = useFetchAuctions(1,10,searchTerm);
+  const [txHash, setTxHash] = useState("");
+  const { auctions, hasMore, loading, setPage } = useFetchAuctions(
+    1,
+    10,
+    searchTerm
+  );
 
   useDrawBidPolygons({ map, auctions });
 
@@ -132,7 +136,11 @@ const Buy = () => {
       </Head>
 
       {isLoading && <Backdrop onClick={() => {}} />}
-      {isLoading && <Spinner />}
+      {isLoading && (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Spinner />
+        </div>
+      )}
       {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-clip ">
           <Sidebar />
@@ -175,7 +183,7 @@ const Buy = () => {
               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <AuctionExplorer
-                  setSearchTerm={(value: string) => setSearchTerm(value)}
+                    setSearchTerm={(value: string) => setSearchTerm(value)}
                     auctions={auctions}
                     setPage={setPage}
                     loading={loading}
@@ -187,7 +195,7 @@ const Buy = () => {
               )}
               {showAuctionList && (
                 <AuctionExplorerMobile
-                loading={loading}
+                  loading={loading}
                   auctions={auctions}
                   setPage={setPage}
                   hasMorePage={hasMore}

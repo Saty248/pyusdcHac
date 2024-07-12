@@ -12,7 +12,7 @@ interface AuctionExplorerMobileProps {
   auctions: AuctionDataI[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
-  loading:boolean;
+  loading: boolean;
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
   setAuctionDetailData: React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
@@ -61,10 +61,10 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
           >
             {" "}
             {loading && (
-              <div className="w-full flex justify-center items-center">
-                <div className="">
+              <div className="w-full h-full flex justify-center items-center">
+                <div className="flex flex-col gap-4">
                   <Spinner />
-                  <div className="mt-28">Fetching Auctions...</div>
+                  <div className="animate-pulse">Fetching Auctions...</div>
                 </div>
               </div>
             )}

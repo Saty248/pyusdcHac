@@ -43,6 +43,8 @@ const BuyFilter = () => {
     dispatch(setActiveFilters(activeFilters));
   };
 
+  console.log({ activeFilters });
+
   return (
     <>
       <div className="flex items-center justify-center gap-4">

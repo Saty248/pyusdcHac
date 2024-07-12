@@ -5,9 +5,7 @@ import Spinner from "../Spinner";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-
 const PortfolioList = ({ title, selectAirspace }) => {
-
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -15,8 +13,8 @@ const PortfolioList = ({ title, selectAirspace }) => {
     loading,
     airspaceList,
     pageNumber,
-    activeTab
-  } = usePortfolioList()
+    activeTab,
+  } = usePortfolioList();
 
   return (
     <div
@@ -54,16 +52,13 @@ const PortfolioList = ({ title, selectAirspace }) => {
       </div>
 
       {loading ? (
-        <div>
-          {" "}
+        <div className="flex items-center justify-center w-full h-full">
           <Spinner />
         </div>
       ) : (
         <>
           <div className="flex flex-col gap-[15px] min-h-[20rem]">
-            {airspaceList &&
-              airspaceList[0] &&
-              airspaceList[0].address ? (
+            {airspaceList && airspaceList[0] && airspaceList[0].address ? (
               airspaceList?.map((airspace, index) => (
                 <PortfolioItem
                   airspaceName={airspace?.address}
@@ -87,9 +82,7 @@ const PortfolioList = ({ title, selectAirspace }) => {
               >
                 <RxCaretLeft />
               </button>
-              <div>
-                {pageNumber}
-              </div>
+              <div>{pageNumber}</div>
               <button
                 onClick={handleNextPage}
                 disabled={airspaceList?.length < 9}

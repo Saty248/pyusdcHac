@@ -42,3 +42,10 @@ export function convertDate(dateString: Date | string | null): string {
 
   return isoString;
 }
+
+export function shortenAddress(address: string, maxLength: number): string {
+  if (address.length <= maxLength) {
+    return address;
+  }
+  return address.substring(0, maxLength - 3) + "...";
+}

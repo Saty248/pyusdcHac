@@ -12,11 +12,11 @@ import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
 import ReferralCodeService from "@/services/ReferralCodeService";
-import { Web3authContext } from '@/providers/web3authProvider';
-import useInitAuth from '@/hooks/useInitAuth';
-import useAuthRedirect from '@/hooks/useAuthRedirect';
+import { Web3authContext } from "@/providers/web3authProvider";
+import useInitAuth from "@/hooks/useInitAuth";
+import useAuthRedirect from "@/hooks/useAuthRedirect";
 import Link from "next/link";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
 import EmailInput from "@/Components/Auth/EmailInput";
 import { useAppSelector } from "@/redux/store";
@@ -34,18 +34,24 @@ const ReferralCodeRedirect = () => {
   const queryParams = useParams();
 
   const { getReferralByCode } = ReferralCodeService();
-  const { web3auth, setProvider } = useContext(Web3authContext)
+  const { web3auth, setProvider } = useContext(Web3authContext);
   const { init } = useInitAuth();
 
   useEffect(() => {
     if (!queryParams?.referralCode) return;
     (async () => {
       try {
-        const responseData = await getReferralByCode(String(queryParams?.referralCode));
+        const responseData = await getReferralByCode(
+          String(queryParams?.referralCode)
+        );
         if (!responseData) setDoesCodeExist(false);
-        else if (responseData && responseData.statusCode === 500) setDoesCodeExist(false);
+        else if (responseData && responseData.statusCode === 500)
+          setDoesCodeExist(false);
         else {
-          localStorage.setItem("referralCode", JSON.stringify({ response: responseData }));
+          localStorage.setItem(
+            "referralCode",
+            JSON.stringify({ response: responseData })
+          );
           setDoesCodeExist(true);
         }
       } catch (error) {
@@ -56,12 +62,10 @@ const ReferralCodeRedirect = () => {
     })();
   }, [queryParams?.referralCode]);
 
-
   const { isWaitingScreenVisible } = useAppSelector((state) => {
     const { isWaitingScreenVisible } = state.userReducer;
     return { isWaitingScreenVisible };
   }, shallowEqual);
-
 
   const loginUser = async (isEmail: boolean) => {
     try {
@@ -104,7 +108,6 @@ const ReferralCodeRedirect = () => {
     }
   };
 
-
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
@@ -113,7 +116,11 @@ const ReferralCodeRedirect = () => {
   return (
     <Fragment>
       {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+      {isLoading && (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Spinner />
+        </div>
+      )}
       {!doesCodeExist && !isLoading && (
         <div className="w-screen h-screen flex items-center justify-center flex-col gap-5 text-[#222222]">
           <p className="font-bold text-3xl">Oops!</p>
@@ -135,7 +142,12 @@ const ReferralCodeRedirect = () => {
         <div className="h-screen w-screen md:flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
-              <Image src={'/images/logo.svg'} alt="Company's logo" width={199} height={77} />
+              <Image
+                src={"/images/logo.svg"}
+                alt="Company's logo"
+                width={199}
+                height={77}
+              />
               <p className="font-normal text-xl text-[#222222] text-center">
                 Welcome to SkyTrade
               </p>
@@ -275,7 +287,6 @@ const ReferralCodeRedirect = () => {
         </div>
       )}
       {isWaitingScreenVisible && doesCodeExist && <LoadingMessage />}
-
     </Fragment>
   );
 };

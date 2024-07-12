@@ -14,7 +14,7 @@ interface AuctionExplorerProps {
   auctions: AuctionDataI[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
-  loading:boolean;
+  loading: boolean;
   setShowBidDetail: React.Dispatch<React.SetStateAction<boolean>>;
   setAuctionDetailData: React.Dispatch<React.SetStateAction<AuctionDataI>>;
 }
@@ -28,7 +28,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   setShowBidDetail,
   setAuctionDetailData,
 }) => {
-  const [searchValue,setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const { searchAuctions } = MarketplaceService();
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
@@ -51,9 +51,9 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
-  const handleSearchAuctions = async () =>{
-    setSearchTerm(searchValue)
-  }
+  const handleSearchAuctions = async () => {
+    setSearchTerm(searchValue);
+  };
 
   return (
     <>
@@ -82,7 +82,9 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
               placeholder="Search auctions..."
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' ? handleSearchAuctions():''}
+              onKeyDown={(e) =>
+                e.key === "Enter" ? handleSearchAuctions() : ""
+              }
               className="focus:outline-none w-10/12 text-[14px]"
             />
             <div className="w-4 h-4">
@@ -96,35 +98,39 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
             className="h-[410px] overflow-y-auto thin-scrollbar"
           >
             {" "}
-            {loading && (
-              <div className="w-full flex justify-center items-center">
-                <div className="">
+            {loading ? (
+              <div className="w-full h-2/3 flex justify-center items-center">
+                <div className="flex flex-col gap-4">
                   <Spinner />
-                  <div className="mt-28">Fetching Auctions...</div>
+                  <div className="animate-pulse">Fetching Auctions...</div>
                 </div>
               </div>
-            )}
-            {!loading && auctions && auctions?.length > 0 && (
-              <InfiniteScroll
-                dataLength={auctions.length}
-                next={handleLoadMore}
-                hasMore={hasMorePage}
-                loader={undefined}
-                scrollableTarget="scrollableDiv"
-                className="w-full grid grid-cols-2 gap-4 mb-4"
-              >
-                {auctions.length > 0 ? (
-                  auctions.map((item, index) => (
-                    <div key={index} onClick={() => handleShowBidDetail(index)}>
-                      <AuctionCard data={item} />
-                    </div>
-                  ))
+            ) : (
+              <>
+                {!loading && auctions && auctions?.length > 0 ? (
+                  <InfiniteScroll
+                    dataLength={auctions.length}
+                    next={handleLoadMore}
+                    hasMore={hasMorePage}
+                    loader={undefined}
+                    scrollableTarget="scrollableDiv"
+                    className="w-full grid grid-cols-2 gap-4 mb-4"
+                  >
+                    {auctions.map((item, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleShowBidDetail(index)}
+                      >
+                        <AuctionCard data={item} />
+                      </div>
+                    ))}
+                  </InfiniteScroll>
                 ) : (
                   <div className="text-center col-span-2 text-light-grey">
                     No auctions found
                   </div>
                 )}
-              </InfiniteScroll>
+              </>
             )}
           </div>
         </div>

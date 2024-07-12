@@ -52,8 +52,7 @@ const Funds = () => {
         setSolBalance(solbalance1);
       }
     };
-    fetchbalance()
-      .catch(console.error);
+    fetchbalance().catch(console.error);
   }, [solbalance, user, web3authStatus]);
 
   useEffect(() => {
@@ -116,14 +115,20 @@ const Funds = () => {
         <title>SkyTrade - Wallet</title>
       </Head>
       {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+      {isLoading && (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Spinner />
+        </div>
+      )}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           <PageHeader pageTitle={"Funds"} />
           <section className="relative  w-full h-full py-6 md:py-[37px]  flex flex-col gap-8 mb-[78.22px]  md:mb-0 overflow-y-scroll sm:pl-[68.82px] sm:pr-[55px]">
             <div className="flex sm:gap-[50px] flex-wrap justify-center">
-              <div className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}>
+              <div
+                className={`${isMobile ? "w-full flex flex-col gap-5 items-center sm:items-start" : "flex flex-col gap-5 items-center sm:items-start"}`}
+              >
                 <AvailableBalance solbalance={solbalance} />
                 <DepositAndWithdraw
                   walletId={user?.blockchainAddress || ""}

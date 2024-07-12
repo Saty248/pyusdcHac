@@ -77,7 +77,9 @@ const Portfolio = () => {
         )}
       {isLoading &&
         createPortal(
-          <Spinner />,
+          <div className="flex items-center justify-center w-screen h-screen">
+            <Spinner />
+          </div>,
           document?.getElementById("backdrop-root") as HTMLElement
         )}
       {selectedAirspace !== null && <Backdrop onClick={onCloseModal} />}

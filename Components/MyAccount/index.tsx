@@ -97,13 +97,13 @@ const Account = () => {
     setIsLoading(true);
     // @ts-ignore
     const client = new Persona.Client({
-        templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
-        referenceId: user?.id.toString(),
-        environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
-        onReady: () => {
-            setIsLoading(false);
-            client.open();
-        },
+      templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
+      referenceId: user?.id.toString(),
+      environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
+      onReady: () => {
+        setIsLoading(false);
+        client.open();
+      },
     });
   };
 
@@ -112,7 +112,12 @@ const Account = () => {
       {isLoading &&
         createPortal(<Backdrop />, document?.getElementById("backdrop-root")!)}
       {isLoading &&
-        createPortal(<Spinner />, document?.getElementById("backdrop-root")!)}
+        createPortal(
+          <div className="flex items-center justify-center w-screen h-screen">
+            <Spinner />
+          </div>,
+          document?.getElementById("backdrop-root")!
+        )}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
