@@ -4,16 +4,20 @@ import ReactSlider from "react-slider";
 import FilterTab from "./FilterTab";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { shallowEqual } from "react-redux";
-import { setActiveFilters } from "@/redux/slices/userSlice";
+import { setActiveFilters, setPriceRange } from "@/redux/slices/userSlice";
 
 const BuyFilter = () => {
+  const { priceRange } = useAppSelector((state) => {
+    const { priceRange } = state.userReducer;
+    return { priceRange };
+  });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 0]);
+  // const [priceRange, setPriceRange] = useState([0, 0]);
   const [pricePerSqFt, setPricePerSqFt] = useState([0, 0]);
   const dispatch = useAppDispatch();
 
-  const handlePriceRangeChange = (newRange) => {
-    setPriceRange(newRange);
+  const handlePriceRangeChange = (newRange: number[]) => {
+    dispatch(setPriceRange(newRange));
   };
 
   const handlePricePerSqFtChange = (newRange) => {
@@ -40,10 +44,9 @@ const BuyFilter = () => {
 
   const handleSetActiveFilters = () => {
     const activeFilters = calculateActiveFilters();
+
     dispatch(setActiveFilters(activeFilters));
   };
-
-  console.log({ activeFilters });
 
   return (
     <>
@@ -75,14 +78,14 @@ const BuyFilter = () => {
           <FilterTab
             title="Total Price Range"
             range={priceRange}
-            setRange={(value: number[]) => setPriceRange(value)}
+            setRange={(value: number[]) => handlePriceRangeChange(value)}
           />
 
-          <FilterTab
+          {/* <FilterTab
             title="Price Per Square Foot"
             range={pricePerSqFt}
             setRange={(value: number[]) => setPricePerSqFt(value)}
-          />
+          /> */}
           <button
             onClick={handleSetActiveFilters}
             className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"

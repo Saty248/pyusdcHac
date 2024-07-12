@@ -14,6 +14,7 @@ interface UserState {
   airspaceList: PropertyData[];
   selectedproperty: PropertyData[];
   isTriggerRefresh: boolean;
+  priceRange: number[];
 }
 
 const initialState: UserState = {
@@ -29,6 +30,7 @@ const initialState: UserState = {
   airspaceList: [],
   selectedproperty: [],
   isTriggerRefresh: false,
+  priceRange: [0, 0],
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -80,6 +82,10 @@ const userSlice: Slice<UserState> = createSlice({
     setIsTriggerRefresh: (state, action: PayloadAction<boolean>) => {
       state.isTriggerRefresh = action.payload;
     },
+
+    setPriceRange: (state, action: PayloadAction<number[]>) => {
+      state.priceRange = action.payload;
+    },
   },
 });
 
@@ -96,5 +102,6 @@ export const {
   setAirspaceList,
   setSelectedproperty,
   setIsTriggerRefresh,
+  setPriceRange,
 } = userSlice.actions;
 export default userSlice.reducer;

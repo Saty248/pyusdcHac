@@ -26,7 +26,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [pricePerSqFt, setPricePerSqFt] = useState([0, 0]);
-  const [searchValue,setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const { activeFilters, isCreateAuctionModalOpen } = useAppSelector(
     (state) => {
@@ -47,10 +47,9 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
     const activeFilters = calculateActiveFilters();
     dispatch(setActiveFilters(activeFilters));
   };
-  const handleSearchAuctions = async () =>{
-    setSearchTerm(searchValue)
-  }
-
+  const handleSearchAuctions = async () => {
+    setSearchTerm(searchValue);
+  };
 
   return (
     <div className="md:hidden fixed top-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center">
@@ -63,7 +62,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
             placeholder="Search auctions..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' ? handleSearchAuctions():''}
+            onKeyDown={(e) => (e.key === "Enter" ? handleSearchAuctions() : "")}
             className="focus:outline-none min-w-[200px] text-[14px]"
           />
 
@@ -89,11 +88,11 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
             range={priceRange}
             setRange={(value: number[]) => setPriceRange(value)}
           />
-          <FilterTab
+          {/* <FilterTab
             title="Price Per Square Foot"
             range={pricePerSqFt}
             setRange={(value: number[]) => setPricePerSqFt(value)}
-          />
+          /> */}
           <button
             onClick={handleSetActiveFilters}
             className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
