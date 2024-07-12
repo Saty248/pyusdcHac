@@ -244,29 +244,3 @@ export interface KeyI {
   timestamp: number;
   date: string;
 }
-
-export type defaultData = {
-  address:string,
-  title:string,
-  rent: boolean,
-  sell: boolean,
-  hasPlanningPermission: boolean|null|string,
-  hasChargingStation: boolean,
-  hasLandingDeck: boolean,
-  hasStorageHub: boolean,
-  sellingPrice: string,
-  timezone: string,
-  transitFee:string,
-  isFixedTransitFee: boolean,
-  noFlyZone: boolean,
-  weekDayRanges: [
-    { fromTime: number, toTime: 21, isAvailable: boolean, weekDayId: 0 },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-  ],
-};
-
