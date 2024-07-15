@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 env:
   SRV_IP: "16.171.132.230"
+  build_env_var: ${{ vars.DEV_FRONTEND_ENV }}
 
 jobs:
   # Build job
@@ -50,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build App
-        run: yarn build
+        run: echo "$build_env_var" > .env.local && cat .env.local && yarn build
       - name: Create deployment artifact 
         env:
           GITHUB_SHA: ${{ github.sha }}
