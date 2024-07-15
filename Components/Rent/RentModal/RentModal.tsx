@@ -22,7 +22,6 @@ import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
-import { TextField, Box } from '@mui/material';
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 
@@ -118,21 +117,23 @@ const RentModal: React.FC<RentModalProps> = ({
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };
+        };       
   
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
   
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
+        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess); 
       }else{
-        toast.error('something went wrong!')
+        toast.error('something went wrong!')        
       }
+      localStorage.removeItem("rentData")
     } catch (error) {
       setFinalAns({ status: "Rent failed", message: error.message });
+      localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
-      localStorage.removeItem("rentData")
+      
     }
   };
 
