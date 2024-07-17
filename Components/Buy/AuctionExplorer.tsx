@@ -10,7 +10,7 @@ import { LoadingSpinner } from "../Icons";
 import Spinner from "../Spinner";
 import MarketplaceService from "@/services/MarketplaceService";
 interface AuctionExplorerProps {
-  setSearchTerm: (value: string) => void;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   auctions: AuctionDataI[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
@@ -29,7 +29,6 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   setAuctionDetailData,
 }) => {
   const [searchValue, setSearchValue] = useState("");
-  const { searchAuctions } = MarketplaceService();
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
     const { isCreateAuctionModalOpen } = state.userReducer;
     return { isCreateAuctionModalOpen };
@@ -51,7 +50,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
-  const handleSearchAuctions = async () => {
+  const handleSearchAuctions = () => {
     setSearchTerm(searchValue);
   };
 

@@ -127,7 +127,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           <div className="w-full bg-[#0653EA] text-white rounded-lg ">
             <button
               disabled={!currentUserBid}
-              className="w-full h-[42px]"
+              className={`w-full h-[42px] ${currentUserBid ? 'cursor-pointer' : 'cursor-not-allowed'} }`}
               onClick={onPlaceBid}
             >
               Place a Bid

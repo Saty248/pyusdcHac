@@ -185,7 +185,7 @@ const Buy = () => {
               {!isMobile && (
                 <div className="flex justify-start items-start">
                   <AuctionExplorer
-                    setSearchTerm={(value: string) => setSearchTerm(value)}
+                    setSearchTerm={setSearchTerm}
                     auctions={auctions}
                     setPage={setPage}
                     loading={loading}
