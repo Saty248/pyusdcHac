@@ -88,6 +88,7 @@ const Buy = () => {
           type: "fill",
           source: {
             type: "geojson",
+            //@ts-ignore
             data: {
               type: "Feature",
               geometry: {
@@ -114,6 +115,7 @@ const Buy = () => {
       setCoordinates,
       setAddressData,
       setIsLoading,
+      //@ts-ignore
       setMarker,
       map,
       marker

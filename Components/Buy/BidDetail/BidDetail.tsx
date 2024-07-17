@@ -36,6 +36,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
 
     setCurrentUserBid(inputValue);
   };
+  //@ts-ignore
   const endDate = new Date(auctionDetailData?.endDate);
   const timeLeft = getTimeLeft(endDate);
   const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
@@ -115,6 +116,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 name="currentBid"
                 id="currentBid"
                 placeholder=" place your bid here"
+                //@ts-ignore
                 value={currentUserBid}
                 required
                 onChange={handleCurrentBidInputChanged}
