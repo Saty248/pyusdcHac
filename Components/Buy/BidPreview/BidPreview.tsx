@@ -23,6 +23,7 @@ interface BidPreviewProps {
   setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
   auctionDetailData: AuctionDataI | undefined;
   currentUserBid: number | null;
+  setCurrentUserBid: (number: number | null) => void;
   onClose: () => void;
   setBidResponseStatus: React.Dispatch<
     React.SetStateAction<"SUCCESS" | "FAIL">
@@ -33,6 +34,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   auctionDetailData,
   setBidResponseStatus,
   currentUserBid,
+  setCurrentUserBid,
   onClose,
   setShowSuccessAndErrorPopup,
 }) => {

@@ -29,7 +29,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">
           <div className="text-sm text-[#727272]">Highest Bid</div>
-          <div className="text-sm text-black font-bold">{data.highestBid}</div>
+          <div className="text-sm text-black font-bold">${data.highestBid}</div>
         </div>
         <div className="flex flex-col items-end">
           <div className="text-sm text-[#727272]">Time Left</div>

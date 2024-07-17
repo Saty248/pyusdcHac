@@ -227,6 +227,7 @@ const Buy = () => {
               {showBidPreview && (
                 <BidPreview
                   setTxHash={setTxHash}
+                  setCurrentUserBid={setCurrentUserBid}
                   setBidResponseStatus={setBidResponseStatus}
                   setShowSuccessAndErrorPopup={setShowSuccessAndErrorPopup}
                   auctionDetailData={auctionDetailData}

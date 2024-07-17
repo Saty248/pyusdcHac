@@ -44,9 +44,9 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   //   );
   // }
 
-  const handleShowBidDetail = (index) => {
+  const handleShowBidDetail = (item) => {
     setShowBidDetail(true);
-    setAuctionDetailData(auctions[index]);
+    setAuctionDetailData(item);
   };
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
@@ -122,7 +122,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                       .map((item, index) => (
                         <div
                           key={index}
-                          onClick={() => handleShowBidDetail(index)}
+                          onClick={() => handleShowBidDetail(item)}
                         >
                           <AuctionCard data={item} />
                         </div>

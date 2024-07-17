@@ -115,6 +115,12 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
               <div className="font-normal mt-[36px] text-sm leading-[21px] text-center text-[#FFFFFF]">
                 <p>Wait for your bid to be reviewed by the owner.</p>
                 <p>You will get notified once it’s done.</p>
+                <p className="text-sm">
+                  View transaction on{" "}
+                  <a className="underline" href={txHash} target="blank">
+                    solscan.io
+                  </a>
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-1">
