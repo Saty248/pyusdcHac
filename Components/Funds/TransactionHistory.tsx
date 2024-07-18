@@ -142,11 +142,21 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   };
 
   const renderTransactionRows = () => {
-    const filteredTransactions = searchQuery
-    ? transactionList.filter(transaction => transaction.transactionHash.includes(searchQuery))
-    : transactionList;
-  return filteredTransactions?.map((item) => (
-  
+    if (!transactionList || !Array.isArray(transactionList)) {
+      return null;
+    }
+
+    const trimmedSearchQuery = searchQuery.toLowerCase().trim();
+
+    // Filter transactions based on search query
+    const filteredTransactions = trimmedSearchQuery
+      ? transactionList.filter(transaction =>
+        transaction.transactionHash.toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.difference.toString().toLowerCase().includes(trimmedSearchQuery)
+      )
+      : transactionList;
+
+    return filteredTransactions.map(item => (
       <tr key={item.transactionHash}>
         <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
         <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
@@ -160,6 +170,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
       </tr>
     ));
   };
+
 
   return (
     <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
