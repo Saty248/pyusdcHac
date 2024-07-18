@@ -19,7 +19,7 @@ export async function POST (request: NextRequest){
       api_key: process.env.FRONTEND_API_KEY,
     };
 
-    const response = await axios.post(`${process.env.SERVER_URL}/services/persona`, reqBody, { headers });
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/services/persona`, reqBody, { headers });
 
     const resData = response.data;
 
