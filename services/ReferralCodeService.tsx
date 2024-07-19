@@ -3,6 +3,17 @@ import Service from "./Service"
 const ReferralCodeService = () => {
   const { getRequest, patchRequest } = Service();
 
+  const getReferralHistory = async (limit: number, page: number) => {
+    try {
+      const response = await getRequest({
+        uri: `/referral-code/find-referral-history?limit=${limit}&page=${page}`,
+      })
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const getReferralByCode = async (referralCode: string) => {
     try {
       const response = await getRequest({
@@ -52,6 +63,7 @@ const ReferralCodeService = () => {
 
 
   return { 
+    getReferralHistory,
     getReferralByCode,
     getReferralCodeById,
     updateReferral,

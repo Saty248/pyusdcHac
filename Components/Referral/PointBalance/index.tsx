@@ -5,12 +5,13 @@ import { FC } from "react";
 
 interface PropsI {
   point: string | null;
+  isLoading: boolean;
 }
 
-const PointBalance: FC<PropsI> = ({ point }) => {
+const PointBalance: FC<PropsI> = ({ point, isLoading }) => {
 
   return (
-    <div className="w-full md:w-[35%] px-4 md:px-[44px]">
+    <div className="w-full md:w-[45%] px-4 md:px-[44px]">
       <div className="py-5 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
         <div className="flex items-end justify-end">
           <div className="w-12 h-12 md:w-[44px] md:h-[42px] rounded-full bg-[#E9F5FE] flex items-center justify-center">
@@ -18,8 +19,8 @@ const PointBalance: FC<PropsI> = ({ point }) => {
           </div>
         </div>
         <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
-        {!point ? (
-          <div className="mt-4">
+        {isLoading ? (
+          <div className="mt-4 md:my-5 md:h-14 flex justify-start items-center">
             <BalanceLoader />
           </div>
         ) : (
@@ -27,6 +28,7 @@ const PointBalance: FC<PropsI> = ({ point }) => {
         )}
 
       </div>
+
     </div>
   );
 };

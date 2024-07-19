@@ -32,7 +32,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
           </ul>
        </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-9 px-[35px] md:px-[51px]">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-9 px-[35px] md:px-[51px] md:mt-6">
         <Item
           icon={<ShareIcon color={undefined} />}
           title={"Share"}

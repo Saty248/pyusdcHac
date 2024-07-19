@@ -11,7 +11,7 @@ const Switcher:React.FC<SwitcherProps> = ({ sections, activeSection, setActiveSe
         <div
           key={text}
           onClick={() => setActiveSection(index)}
-          className={`${index === activeSection ? "bg-[#222222] text-white" : "bg-[#2222221A] text-[#222222]"} cursor-pointer text-[15px] font-normal p-[10px] rounded-[30px]`}
+          className={`${index === activeSection ? "bg-[#222222] text-white" : "bg-[#2222221A] text-[#222222]"} cursor-pointer text-[15px] font-normal p-[10px] rounded-md`}
         >
           {text}
         </div>
