@@ -22,12 +22,12 @@ import {
 } from "../../types";
 import Sidebar from "../Shared/Sidebar";
 import { useMobile } from "@/hooks/useMobile";
+import axios from "axios";
 
 const Funds = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<number>(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [transactionHistory, setTransactionHistory] = useState<any>();
+
   const [refetchBal, setreFetchBal] = useState<boolean>(true);
   const { user, web3authStatus } = useAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
@@ -57,59 +57,7 @@ const Funds = () => {
       .catch(console.error);
   }, [solbalance, user, web3authStatus]);
 
-  useEffect(() => {
-    if (user) {
-      fetch(
-        `https://api.solana.fm/v0/accounts/${user?.blockchainAddress}/transfers?inflow=true&outflow=true&mint=${process.env.NEXT_PUBLIC_MINT_ADDRESS}&page=1`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            return response.json().then((errorData) => {
-              throw new Error(errorData.error);
-            });
-          }
 
-          return response.json();
-        })
-        .then((result) => {
-          if (result.results) {
-            setTransactionHistory(result.results);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [user, web3authStatus]);
-
-  useEffect(() => {
-    if (transactionHistory) {
-      const collectedTransactions: KeyI[] = [];
-
-      for (const trans of transactionHistory) {
-        trans.data.forEach((key: KeyI) => {
-          const date = new Date(key.timestamp * 1000);
-          const month = date.toLocaleString("default", { month: "short" });
-          const day = date.getDate();
-          const year = date.getFullYear();
-          const hour = date.getHours().toString().padStart(2, "0");
-          const minute = date.getMinutes().toString().padStart(2, "0");
-          const second = date.getSeconds().toString().padStart(2, "0");
-
-          //   key.date = `${month} ${day}, ${year} ${hour}:${minute}:${second}`;
-          key.date = `${month} ${day}, ${year}`;
-
-          if (key.token && key.amount >= 10000) {
-            key.hash = trans.transactionHash.substring(0, 15) + "...";
-            key.transHash = trans.transactionHash;
-            collectedTransactions.push(key);
-          }
-        });
-      }
-
-      setTransactions(collectedTransactions);
-    }
-  }, [transactionHistory, user, web3authStatus]);
 
   return (
     <Fragment>
@@ -136,7 +84,7 @@ const Funds = () => {
                   tokenBalance={tokenBalance}
                 />
               </div>
-              <TransactionHistory transactions={transactions} user={user} />
+              <TransactionHistory isLoading={isLoading} setIsLoading={setIsLoading}/>
             </div>
           </section>
         </div>

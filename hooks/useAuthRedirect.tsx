@@ -8,7 +8,7 @@ import useAuth from "@/hooks/useAuth";
 import { Web3authContext } from "@/providers/web3authProvider";
 import UserService from "@/services/UserService";
 import { useRouter } from "next/navigation";
-import { setCategory, setIsWaitingScreenVisible } from "@/redux/slices/userSlice";
+import { setCategory } from "@/redux/slices/userSlice";
 
 
 const useAuthRedirect = () => {
@@ -33,7 +33,6 @@ const useAuthRedirect = () => {
     (async () => {
       try {
         if (web3auth?.status === "connected" && provider) {
-          dispatch(setIsWaitingScreenVisible(true));
           localStorage.setItem("isWaitingScreenVisible", JSON.stringify(true));
 
           const userInformation = await web3auth.getUserInfo();
@@ -59,13 +58,10 @@ const useAuthRedirect = () => {
             router.replace(`/auth/join`);
           }
           setIsRedirecting(true);
-          dispatch(setIsWaitingScreenVisible(false));
           localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
         }
       } catch (error) {
         console.error(error);
-        dispatch(setIsWaitingScreenVisible(false));
-        localStorage.setItem("isWaitingScreenVisible", JSON.stringify(false));
       }
     })();
   }, [web3auth?.status]);

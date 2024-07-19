@@ -135,12 +135,12 @@ const ReferralCodeRedirect = () => {
         <div className="h-screen w-screen md:flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
-              <Image src={'/images/logo.svg'} alt="Company's logo" width={199} height={77} />
+              <Image src={'/images/logo-1.svg'} alt="Company's logo" width={199} height={77} />
               <p className="font-normal text-xl text-[#222222] text-center">
                 Welcome to SkyTrade
               </p>
               <p className="font-bold text-base text-[#4285F4] text-center px-[68px]">
-                You have an awesome friend who referred you to earn 50 extra SKY
+                You have an awesome friend who referred you to earn 5 extra SKY
                 points!
               </p>
               <p className="font-normal text-[16px] text-[#222222] text-center">
@@ -192,7 +192,7 @@ const ReferralCodeRedirect = () => {
             >
               <p className="text-base font-normal text-[#222222]">Register</p>
               <p className="text-sm text-light-grey text-center">
-                Sign up to get rewarded with 50 credit
+                Sign up to get rewarded with 5 credit
               </p>
               <EmailInput
                 emailRef={emailRef}

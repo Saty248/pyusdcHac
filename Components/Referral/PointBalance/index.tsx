@@ -1,30 +1,14 @@
 import { GiftIcon } from "@/Components/Icons";
 import { BalanceLoader } from "@/Components/Wrapped";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 
 interface PropsI {
-  registeredFriends: number;
+  point: string | null;
+  isLoading: boolean;
 }
 
-const PointBalance: FC<PropsI> = ({ registeredFriends }) => {
-
-  const [skyPoints, setSkyPoints] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('user');
-      const userParsed = userData ? JSON.parse(userData) : {};
-      let userTotalPoint = 0;
-      if (Object.keys(userParsed).length > 0 && userParsed.totalPoint) {
-        userTotalPoint = Number(userParsed?.totalPoint);
-      }
-      const hasUsedReferralCodePoint = userParsed?.usedReferralCodeId ? 50 : 0;
-      const points = (50 * registeredFriends) + hasUsedReferralCodePoint + userTotalPoint;
-      setSkyPoints(String(points))
-    }
-  }, [registeredFriends]);
-
+const PointBalance: FC<PropsI> = ({ point, isLoading }) => {
 
   return (
     <div className="w-full md:w-[45%] px-4 md:px-[44px]">
@@ -35,12 +19,12 @@ const PointBalance: FC<PropsI> = ({ registeredFriends }) => {
           </div>
         </div>
         <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
-        {!skyPoints ? (
+        {isLoading ? (
           <div className="mt-4 md:my-5 md:h-14 flex justify-start items-center">
             <BalanceLoader />
           </div>
         ) : (
-          <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{skyPoints} SKY Points</div>
+          <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{point} SKY Points</div>
         )}
 
       </div>

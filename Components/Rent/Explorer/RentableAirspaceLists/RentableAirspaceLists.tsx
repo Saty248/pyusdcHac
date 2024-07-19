@@ -2,14 +2,13 @@ import { BalanceLoader } from "@/Components/Wrapped";
 import React, {  useState } from "react";
 import { Map, Marker } from "mapbox-gl";
 import RentableAirspace from "./RentableAirspace";
-import { useRentableAirspaces } from "@/hooks/useRentableAirspaces";
 import { PropertyData } from "@/types";
 interface RentableAirspaceListsProps {
   loadingReg: boolean;
   regAdressShow: boolean;
   registeredAddress: PropertyData[];
-  map: Map | null;
-  marker: Marker;
+   map: Map | null; 
+  marker: Marker | null | undefined;
   rentData: PropertyData | undefined | null;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
@@ -23,20 +22,13 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
   loadingReg,
   regAdressShow,
   registeredAddress,
-  map,
+   map, 
   marker,
   setMarker,
   setRentData,
   setShowClaimModal,
 }) => {
   const [selectedAddress, setSelectedAddress] = useState<number | null | undefined>();
-  useRentableAirspaces({
-    map,
-    setRentData,
-    setShowClaimModal,
-    setLoadingRegAddresses,
-    setRegisteredAddress,
-  });
 
   return (
     <div className="w-full">
@@ -54,7 +46,7 @@ const RentableAirspaceLists: React.FC<RentableAirspaceListsProps> = ({
           {registeredAddress.map((item) => (
             <RentableAirspace
               item={item}
-              map={map}
+               map={map} 
               marker={marker}
               selectedAddress={selectedAddress}
               setMarker={setMarker}

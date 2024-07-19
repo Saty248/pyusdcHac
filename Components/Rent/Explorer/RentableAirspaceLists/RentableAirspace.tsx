@@ -5,8 +5,8 @@ import { changeRentMarkerColor } from "@/utils/maputils";
 
 interface RentableAirspaceProps {
   item: PropertyData;
-  map: Map | null;
-  marker: Marker;
+   map: Map | null; 
+  marker: Marker| null | undefined;
   setSelectedAddress: React.Dispatch<React.SetStateAction<number>>;
   selectedAddress: number | null |undefined;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
@@ -16,7 +16,7 @@ interface RentableAirspaceProps {
 
 const RentableAirspace: React.FC<RentableAirspaceProps> = ({
   item,
-  map,
+   map, 
   marker,
   setSelectedAddress,
   selectedAddress,
@@ -33,15 +33,15 @@ const RentableAirspace: React.FC<RentableAirspaceProps> = ({
       <div
         key={item.id}
         data-value={item.address}
-        onClick={() =>
+          onClick={() =>
           changeRentMarkerColor(
-            map,
+             map, 
             setSelectedAddress,
             marker,
             setMarker,
             item
           )
-        }
+        }  
         className={
           item.id !== selectedAddress
             ? ` p-5 text-left text-[#913636] w-full flex justify-between items-center text-[12px]`
