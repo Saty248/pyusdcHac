@@ -31,7 +31,8 @@ const Service = () => {
     }
   };
 
-  const createHeader = async ({ isPublic }: {
+  const createHeader = async ({ isPublic, uri }: {
+    uri: string;
     isPublic?: boolean;
   }) => {
     try {
@@ -41,12 +42,10 @@ const Service = () => {
         const solanaWallet = new SolanaWallet(provider);
         const accounts = await solanaWallet.requestAccounts();
   
-        const domain = window.location.host;
-        const origin = window.location.origin;
         const payload = new SIWPayload();
   
-        payload.domain = domain;
-        payload.uri = origin;
+        payload.domain = String(process.env.NEXT_PUBLIC_FRONTEND_DOMAIN);
+        payload.uri = String(process.env.NEXT_PUBLIC_FRONTEND_URI);
         payload.address = accounts[0];
         payload.statement = "Sign in to SkyTrade app.";
         payload.version = "1";
@@ -80,6 +79,7 @@ const Service = () => {
       return {
         ...newHeader,
         api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
+        uri,
       }
 
     } catch (error) {
@@ -89,12 +89,12 @@ const Service = () => {
 
   const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
-      const headers = await createHeader({ isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
       return await axios({
         method: "get",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         headers,
       });
     } catch (error) {
@@ -109,13 +109,13 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "post",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         data: { ...postData },
         headers,
       });
@@ -131,13 +131,13 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "patch",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         data: { ...postData },
         headers,
       });
@@ -153,13 +153,13 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "delete",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         data: { ...postData },
         headers,
       });
