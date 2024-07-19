@@ -20,7 +20,7 @@ const useFetchBalance = () => {
       const interval = setInterval(async () => {
         try {
           const response = await axios.post(
-            String(process.env.NEXT_PUBLIC_SOLANA_API),
+            String(process.env.NEXT_PUBLIC_RPC_TARGET),
             {
               jsonrpc: "2.0",
               id: 1,

@@ -6,9 +6,6 @@ import Head from "next/head";
 import { AuthForm } from "@/Components/Auth";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import {
-  setIsWaitingScreenVisible,
-} from "@/redux/slices/userSlice";
 import useAuthRedirect from "@/hooks/useAuthRedirect";
 
 const Signup: React.FC = () => {
@@ -24,13 +21,6 @@ const Signup: React.FC = () => {
   }, shallowEqual);
 
 
-  useEffect(() => {
-    const isWaitingScreen = localStorage.getItem("isWaitingScreenVisible");
-    if (isWaitingScreen) {
-      const isWaiting = JSON.parse(isWaitingScreen);
-      dispatch(setIsWaitingScreenVisible(isWaiting));
-    }
-  }, []);
 
   return (
     <>
@@ -38,7 +28,7 @@ const Signup: React.FC = () => {
         <title>SkyTrade - Login</title>
       </Head>
       {!isWaitingScreenVisible && !isRedirecting && (
-        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll rounded max-sm:bg-[white]">
+        <div className="relative flex h-screen w-screen items-center justify-center overflow-y-scroll overflow-x-hidden rounded max-sm:bg-[white] ">
           <AuthForm
             isLogin={isLogin}
             setIsLogin={setIsLogin}

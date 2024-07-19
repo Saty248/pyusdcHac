@@ -1,3 +1,5 @@
+'use client'
+
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,8 +31,8 @@ interface SidebarItemMobileProps {
 }
 
 const Sidebar = () => {
-  // const router = useRouter();
   const pathname = usePathname()
+
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext)
   const { signOut } = useAuth();
   const [showMobileNavbar, setShowMobileNavbar] = useState(false);
@@ -45,44 +47,57 @@ const Sidebar = () => {
   }, [])
 
 
-  const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications }: SidebarItemProps) => {
-    const [isActive, setIsActive] = useState(false)
+  const SidebarItem = ({ href, text, children, style, onClick, numberOfUnseenNotifications}: SidebarItemProps) => {
+    const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
-      let isActiveVal = href ? href.includes(localStorage.getItem('currentTab') || String(pathname)) : false;
-      setIsActive(isActiveVal)
-    }, [])
-
-    if (onClick !== undefined) {
-      return (
-        <div title={text} onClick={onClick} className={`${style || ''} cursor-default py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
-          <div className='w-6 h-6 flex items-center justify-center'>
-            {React.cloneElement(children as React.ReactElement, { isActive })}
-          </div>
-          {
-            !isCollapsed &&
-            <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[14.64px] tracking-[1%]`}>{text}</p>
-          }
-        </div>
-      )
-    }
-
-    return (
-      <Link title={text} target={text === 'Help Center' ? "_blank" : "_self"} href={href || ""} className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}>
-        <div className='relative w-6 h-6 flex items-center justify-center'>
+      const currentTab = localStorage.getItem('currentTab');
+      const isActiveVal = href ? href.includes(currentTab || window.location.pathname) : false;
+      setIsActive(isActiveVal);
+    }, [href]);
+  
+    const content = (
+      <>
+        <div className='w-6 h-6 flex items-center justify-center'>
           {React.cloneElement(children as React.ReactElement, { isActive })}
-          {(numberOfUnseenNotifications !== undefined && numberOfUnseenNotifications >= 1 && isCollapsed) && <div className='absolute bg-[#E04F64] left-[110%] top-1/2 -translate-y-1/2 p-[7px] text-white w-[18px] h-[19px] text-[11.89px] leading-[0px] font-normal flex items-center justify-center rounded-[3px]'>{numberOfUnseenNotifications}</div>}
         </div>
-        {
-          !isCollapsed &&
-          <>
-            <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[14.64px] tracking-[1%]`}>{text}</p>
-            {(!isCollapsed && numberOfUnseenNotifications !== undefined&& numberOfUnseenNotifications >= 1) && <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>{numberOfUnseenNotifications}</div>}
-          </>
-        }
+        {!isCollapsed && (
+          <p className={`${isActive ? 'font-semibold text-[#4285F4]' : 'font-normal text-[#5D7285]'} text-[14.64px] tracking-[1%]`}>
+            {text}
+          </p>
+        )}
+        {(!isCollapsed && numberOfUnseenNotifications !== undefined && numberOfUnseenNotifications >= 1) && (
+          <div className='bg-[#E04F64] p-[7px] text-white w-[18px] h-[19px] text-[11.89px] font-normal flex items-center justify-center rounded-[3px] ml-auto leading-[0px]'>
+            {numberOfUnseenNotifications}
+          </div>
+        )}
+      </>
+    );
+  
+    if (onClick) {
+      return (
+        <div
+          title={text}
+          onClick={onClick}
+          className={`${style || ''} cursor-default py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}
+        >
+          {content}
+        </div>
+      );
+    }
+  
+    return (
+      <Link
+        title={text}
+        target={text === 'Help Center' ? '_blank' : '_self'}
+        href={href || ''}
+        className={`${style || ''} ${href ? 'cursor-pointer' : 'cursor-not-allowed'} relative py-[7.32px] flex items-center gap-[14.64px] px-[14.64px] w-full hover:text-[#4285F4] hover:bg-[#E9F5FE] hover:font-semibold ${isActive && 'bg-[#E9F5FE] text-[#4285F4]'} rounded-[3.66px]`}
+      >
+        {content}
       </Link>
-    )
-  }
+    );
+  };
+  
 
   const SidebarItemMobile = ({ href, text, children, onClick, numberOfUnseenNotifications }: SidebarItemMobileProps) => {
     const isActive = href ? String(pathname).includes(href) : false;
@@ -126,7 +141,7 @@ const Sidebar = () => {
       >
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo-no-chars.png'}
+            src={'/images/logo-no-chars-1.png'}
             alt="Company's logo"
             width={isCollapsed ? 44.62 : 0}
             height={isCollapsed ? 51 : 0}
@@ -136,7 +151,7 @@ const Sidebar = () => {
         </Link>
         <Link href={'/dashboard'}>
           <Image
-            src={'/images/logo.svg'}
+            src={'/images/logo-1.svg'}
             alt="Company's logo"
             width={isCollapsed ? 0 : 147}
             height={isCollapsed ? 0 : 58}
@@ -159,14 +174,15 @@ const Sidebar = () => {
         {user?.blockchainAddress && <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon isActive={false} />} />}
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon isActive={false} /> : <ArrowCompressIcon isActive={false} />} />
       </aside>
-      <nav className='flex md:hidden fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
-        <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false}  />} numberOfUnseenNotifications={0} />
-        <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />
-      </nav>
-
+      {isMobile && !showMobileNavbar && (
+        <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
+          <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />
+        </nav>
+      )}
       {showMobileNavbar && isMobile && (
         <MobileNavbar setShowMobileNavbar={setShowMobileNavbar} />
       )}

@@ -15,9 +15,9 @@ interface ExplorerMobileProps {
   loading: boolean;
   regAdressShow: boolean;
   registeredAddress: PropertyData[];
-  map: Map | null;
+   map: Map | null; 
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
-  marker: Marker | null;
+  marker: Marker | null | undefined;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
@@ -32,7 +32,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
   showOptions,
   regAdressShow,
   registeredAddress,
-  map,
+   map, 
   marker,
   setMarker,
   setShowClaimModal,
@@ -58,7 +58,7 @@ const ExplorerMobile: React.FC<ExplorerMobileProps> = ({
       </div>
       <RentableAirspaceLists
         loadingReg={loadingReg}
-        map={map}
+         map={map} 
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}

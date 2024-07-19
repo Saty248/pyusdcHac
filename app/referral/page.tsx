@@ -13,6 +13,8 @@ import AlertMessage from "@/Components/Referral/AlertMessage";
 import ReferralProgramOverview from "@/Components/Referral/ReferralProgramOverview/ReferralProgramOverview";
 import Sidebar from "@/Components/Shared/Sidebar";
 import PointBalance from "@/Components/Referral/PointBalance";
+import RewardService from "@/services/RewardService";
+import { UserRewards } from "@/types";
 
 const Referral = () => {
   const [fetchingCode, setFetchingCode] = useState<boolean>(false);
@@ -25,23 +27,37 @@ const Referral = () => {
   });
   const { user, web3authStatus } = useAuth();
   const { retrieveUserReferralData } = UserService();
+  const { getUserRewardsInfo } = RewardService();
   const sections = ["The Program", "Share", "My Referrals"];
+
+  const [userRewards, setUserRewards] = useState<UserRewards | null>(null);
+
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
+      if (!user || !web3authStatus) return;
       try {
         setFetchingCode(true);
-        if (!user) return;
-        const responseData = await retrieveUserReferralData();
-        if (responseData) {
-          setData(responseData);
-          setFetchingCode(false);
-        }
+
+        const [referralData, rewardsInfo] = await Promise.all([
+          retrieveUserReferralData(),
+          getUserRewardsInfo()
+        ]);
+
+        if (referralData) setData(referralData);
+        if (rewardsInfo) setUserRewards(rewardsInfo);
+
+        setFetchingCode(false);
       } catch (error) {
         console.log(error);
         setFetchingCode(false);
-      }
-    })();
+      } 
+    };
+
+    fetchData();
   }, [user, web3authStatus]);
+
+  const skyPoint: string | null = userRewards?.stats._sum.point?.toString() ?? '0';
+
 
   return (
     <Fragment>
@@ -61,7 +77,7 @@ const Referral = () => {
             />
             <AlertMessage />
 
-            <PointBalance registeredFriends={data?.registeredFriends} />
+            <PointBalance point={skyPoint} />
 
             <ReferralProgramOverview
               activeSection={activeSection}

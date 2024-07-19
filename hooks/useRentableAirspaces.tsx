@@ -7,7 +7,7 @@ import { Bounds, PropertyData } from "@/types";
 import { toast } from "react-toastify";
 
 interface UseRentableAirspacesProps {
-  map: Map;
+  map: Map | null;
   setRentData: React.Dispatch<React.SetStateAction<PropertyData>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   setLoadingRegAddresses: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +28,7 @@ export const useRentableAirspaces = ({
         
 
     const getRentableProperties = async (bounds: Bounds) => {
-        setLoadingRegAddresses(true);
+         setLoadingRegAddresses(true);
         const responseData: PropertyData[] = await findPropertiesByCoordinates({
             postData: {
                 minLongitude: bounds._sw.lng,
@@ -56,7 +56,7 @@ export const useRentableAirspaces = ({
                 setShowClaimModal(true);
             });
               });
-        }
+        } 
     };
 
     const handleMove = async (

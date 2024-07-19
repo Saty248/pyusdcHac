@@ -24,6 +24,7 @@ import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/locals
 import { useMobile } from "@/hooks/useMobile";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
+
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
@@ -116,20 +117,23 @@ const RentModal: React.FC<RentModalProps> = ({
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };
+        };       
   
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
   
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
+        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess); 
       }else{
-        toast.error('something went wrong!')
+        toast.error('something went wrong!')        
       }
+      localStorage.removeItem("rentData")
     } catch (error) {
       setFinalAns({ status: "Rent failed", message: error.message });
+      localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
+      
     }
   };
 
@@ -160,10 +164,11 @@ const RentModal: React.FC<RentModalProps> = ({
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {!isMobile && (<Backdrop />)}
+         {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
+        {!isMobile && (<Backdrop onClick={() => { setShowClaimModal(false)}}/>)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
           className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
@@ -218,6 +223,24 @@ const RentModal: React.FC<RentModalProps> = ({
               disablePast
               maxDate={maxDate}
               shouldDisableTime={shouldDisableTime}
+              slotProps={{
+                popper: {
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [-10, -30],
+                    },
+                  },
+                  {
+                    name: 'preventOverflow',
+                    options: {
+                      altAxis: true, 
+                    },
+                  },
+                ],
+              }
+              }}
             />
           </div>
         </div>
@@ -242,6 +265,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </LoadingButton>
         </div>
       </div>
+      {/* </Box> */}
     </LocalizationProvider>
   );
 };

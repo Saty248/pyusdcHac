@@ -48,7 +48,7 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
         <Item
           icon={<GiftIcon isActive={true} />}
           title={"Earn"}
-          text={"You and your friends are rewarded with 50 SKY points and more"}
+          text={"You and your friends are rewarded with 5 SKY points and more"}
         />
       </div>
     </Fragment>
