@@ -150,7 +150,9 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
     const filteredTransactions = trimmedSearchQuery
       ? transactionList.filter(transaction =>
         transaction.transactionHash.toLowerCase().includes(trimmedSearchQuery) ||
-        transaction.difference.toString().toLowerCase().includes(trimmedSearchQuery)
+        transaction.difference.toString().toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.time.toString().toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.type.toString().toLowerCase().includes(trimmedSearchQuery)
       )
       : transactionList;
 
