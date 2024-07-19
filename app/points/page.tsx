@@ -62,13 +62,13 @@ const Points = () => {
   return (
     <Fragment>
       <Head>
-        <title>SkyTrade - Points</title>
+        <title>SkyTrade - Points Program</title>
       </Head>
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-          <PageHeader pageTitle={"Points"} />
+          <PageHeader pageTitle={"Points Program"} />
           <section className="relative w-full h-full py-6 md:py-[37px] flex flex-col gap-8 mb-[78.22px] md:mb-0 overflow-y-scroll">
             <Switcher
               sections={sections}

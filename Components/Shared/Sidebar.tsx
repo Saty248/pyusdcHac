@@ -163,7 +163,7 @@ const Sidebar = () => {
 
         <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
         <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
-        <SidebarItem href={'/points'} text={'Points'} children={<GiftIcon isActive={false} />} />
+        <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIcon isActive={false} />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={'https://sky.trade/waitlist'} target={'_blank'} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
