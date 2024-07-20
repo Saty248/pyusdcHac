@@ -18,7 +18,7 @@ interface RequestI {
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
-  const TIMEOUT = 600000;
+  const TIMEOUT = 300000;
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
