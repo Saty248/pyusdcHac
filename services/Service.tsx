@@ -18,6 +18,8 @@ interface RequestI {
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
+  const TIMEOUT = 600000;
+
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
     if (
@@ -92,6 +94,7 @@ const Service = () => {
 
       return await axios({
         method: "get",
+        timeout: TIMEOUT,
         url: `/api/proxy?${Date.now()}`,
         headers,
       });
@@ -114,6 +117,7 @@ const Service = () => {
       return await axios({
         method: "post",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -136,6 +140,7 @@ const Service = () => {
       return await axios({
         method: "patch",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -158,6 +163,7 @@ const Service = () => {
       return await axios({
         method: "delete",
         url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
