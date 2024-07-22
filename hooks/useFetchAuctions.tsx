@@ -37,16 +37,10 @@ const useFetchAuctions = (
         priceRange[0] === 0 &&
         priceRange[1] === 0
       ) {
-        console.log("this one?");
         response = await getAuctions(page, limit);
       } else if (activeFilters && (priceRange[0] > 0 || priceRange[1] > 0)) {
         const minPrice = priceRange[0];
         const maxPrice = priceRange[1];
-        const postData = {
-          minPrice,
-          maxPrice,
-        };
-        console.log("this one??");
 
         response = await filterAuctions(minPrice, maxPrice);
         console.log({ response });
@@ -69,10 +63,6 @@ const useFetchAuctions = (
   useEffect(() => {
     fetchData();
   }, [web3auth?.status, page, isTriggerRefresh, searchParam, activeFilters]);
-
-  // useEffect(() => {
-  //   filterData();
-  // }, [activeFilters]);
 
   return { loading, page, auctions, hasMore, setPage };
 };
