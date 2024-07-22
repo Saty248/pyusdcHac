@@ -13,10 +13,9 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+
 const Service = () => {
   const { provider } = useContext(Web3authContext);
-
-  console.log({ NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL })
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
