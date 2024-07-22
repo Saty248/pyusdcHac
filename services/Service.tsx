@@ -13,7 +13,6 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
-
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
