@@ -40,6 +40,7 @@ const useAuth = () => {
   const signIn = ({ user }: { user: User }) => {
     if (user) dispatch(setUser(user));
     localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("showbanner", "true");
   };
 
   const signOut = async () => {
