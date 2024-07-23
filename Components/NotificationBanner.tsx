@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 const NotificationBanner: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
    useEffect(() => {
     if (localStorage.getItem("showbanner")) {
