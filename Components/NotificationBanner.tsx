@@ -7,14 +7,13 @@ const NotificationBanner: React.FC = () => {
    useEffect(() => {
     if (localStorage.getItem("showbanner")) {
       setIsVisible(true);
-      localStorage.removeItem("showbanner");
     }
   }, []);
 
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem("showBanner", "false");
+    localStorage.removeItem("showbanner");
   };
 
   if (!isVisible) return null;
