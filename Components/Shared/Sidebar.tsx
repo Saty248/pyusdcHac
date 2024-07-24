@@ -22,6 +22,12 @@ import { useMobile } from "@/hooks/useMobile";
 import navbarTabs from "@/helpers/navbarTabs";
 import { usePathname } from "next/navigation";
 import MobileNavbar from "../MobileNavbar";
+import { SolanaWallet } from "@web3auth/solana-provider";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { ConnectionConfig, Web3authContextType } from "@/types";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { setUserSolBalance } from "@/redux/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 
 interface SidebarItemProps {
   href?: string;
@@ -41,13 +47,40 @@ interface SidebarItemMobileProps {
 }
 
 const Sidebar = () => {
+  const { userSolBalance } = useAppSelector((state) => {
+    const { userSolBalance } = state.userReducer;
+    return { userSolBalance };
+  });
+  const { provider } = useContext(Web3authContext) as Web3authContextType;
+
   // const router = useRouter();
   const pathname = usePathname();
   const { isCollapsed, setIsCollapsed } = useContext(SidebarContext);
   const { signOut } = useAuth();
   const [showMobileNavbar, setShowMobileNavbar] = useState(false);
   const { isMobile } = useMobile();
-  const { user } = useAuth();
+  const { user, web3authStatus } = useAuth();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let fetchbalance = async () => {
+      if (user && provider) {
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();
+        const connectionConfig: ConnectionConfig = await solanaWallet.request({
+          method: "solana_provider_config",
+          params: [],
+        });
+
+        const connection = new Connection(connectionConfig.rpcTarget);
+        const solbalance1 = await connection.getBalance(
+          new PublicKey(accounts[0])
+        );
+        dispatch(setUserSolBalance(solbalance1));
+      }
+    };
+    fetchbalance().catch(console.error);
+  }, [user, web3authStatus]);
 
   const SidebarItem = ({
     href,

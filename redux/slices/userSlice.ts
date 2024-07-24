@@ -1,5 +1,6 @@
 import { CategoryI, PropertyData, User, UserUSDWalletBalanceI } from "@/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
+import { number } from "yup";
 
 interface UserState {
   newAirspaceModal: boolean;
@@ -9,6 +10,7 @@ interface UserState {
   user: User | null;
   isWaitingScreenVisible: boolean;
   userUSDWalletBalance: UserUSDWalletBalanceI;
+  userSolBalance: number;
   activeFilters: number;
   isCreateAuctionModalOpen: boolean;
   airspaceList: PropertyData[];
@@ -23,6 +25,7 @@ const initialState: UserState = {
   airspaceData: {},
   category: { email: "", blockchainAddress: "" },
   user: null,
+  userSolBalance: 0,
   isWaitingScreenVisible: false,
   userUSDWalletBalance: { amount: "0", isLoading: true },
   activeFilters: 0,
@@ -86,6 +89,10 @@ const userSlice: Slice<UserState> = createSlice({
     setPriceRange: (state, action: PayloadAction<number[]>) => {
       state.priceRange = action.payload;
     },
+
+    setUserSolBalance: (state, action: PayloadAction<number>) => {
+      state.userSolBalance = action.payload;
+    },
   },
 });
 
@@ -103,5 +110,6 @@ export const {
   setSelectedproperty,
   setIsTriggerRefresh,
   setPriceRange,
+  setUserSolBalance,
 } = userSlice.actions;
 export default userSlice.reducer;

@@ -46,12 +46,18 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { createBid, submitSignature } = MarketplaceService();
   const handleBid = async () => {
+    console.log({ auctionDetailData });
+    console.log({ currentUserBid });
     try {
       setIsLoading(true);
-      if(currentUserBid && auctionDetailData && (currentUserBid < auctionDetailData?.price)){
-        toast.error('bid value less than the minimum bid price!');
+      if (
+        currentUserBid &&
+        auctionDetailData &&
+        currentUserBid < auctionDetailData?.price
+      ) {
+        toast.error("bid value less than the minimum bid price!");
         setIsLoading(false);
-        return ;
+        return;
       }
       const postData = {
         assetId: auctionDetailData?.assetId,

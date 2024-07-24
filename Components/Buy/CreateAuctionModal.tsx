@@ -56,6 +56,8 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
 
   console.log(airspaceList.filter((item) => item.status === 1));
 
+  console.log({ airspaceList });
+
   if (isMobile) {
     return (
       <>

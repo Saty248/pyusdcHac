@@ -13,7 +13,6 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
-
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
@@ -26,12 +25,15 @@ const Service = () => {
       error.response?.data?.errorMessage
     ) {
       if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage);
+        toast.error(JSON.parse(error.response?.data?.errorMessage));
       }
     }
   };
 
-  const createHeader = async ({ uri, isPublic }: {
+  const createHeader = async ({
+    uri,
+    isPublic,
+  }: {
     uri: string;
     isPublic?: boolean;
   }) => {
@@ -82,7 +84,11 @@ const Service = () => {
     }
   };
 
-  const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
+  const getRequest = async ({
+    uri,
+    isPublic,
+    suppressErrorReporting,
+  }: RequestI) => {
     try {
       const headers = await createHeader({ uri, isPublic });
 
