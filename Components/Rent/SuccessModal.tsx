@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
+import {CircledCloseIcon, SuccessIconwhite,CloseIconWhite} from "../Icons";
 import { getTokenLink } from "@/hooks/utils";
 import Link from "next/link";
 
 import { PropertyData } from "@/types";
+import Backdrop from "../Backdrop";
 
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,7 +38,14 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     };
   }, [setShowSuccess, setShowClaimModal]);
 
+  const handalClosePop = () => {
+    setShowSuccess(false);
+    setShowClaimModal(false);
+  }
+
   return (
+    <div>  
+      <Backdrop onClick={handalClosePop}/>
     <div
       ref={modalRef}
       className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
@@ -61,7 +69,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
-            <CloseIconWhite />
+            <CircledCloseIcon/>
           )}
         </div>
         {finalAns?.status === "Rent Successful" ? (
@@ -142,10 +150,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
         ) : (
           <>
             <button
-              onClick={() => {
-                setShowSuccess(false);
-                setShowClaimModal(false);
-              }}
+              onClick={handalClosePop}
               className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-lg"
             >
               Close
@@ -154,6 +159,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
         )}
       </div>
     </div>
+    </div>
+
   );
 };
 export default SuccessModal;
