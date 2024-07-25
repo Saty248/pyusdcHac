@@ -8,7 +8,7 @@ import {
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import SuccessModal from "../SuccessModal";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { VersionedTransaction } from "@solana/web3.js";
@@ -54,7 +54,8 @@ const RentModal: React.FC<RentModalProps> = ({
   const { provider } = useContext(Web3authContext);
   const {getRentedTimes} = PropertiesService()
   localStorage.setItem('rentData',JSON.stringify(rentData));
-  const [rentedTimes, setRentedTimes] = useState<string[]>([]);
+  const rentedTimes = useRef([])
+
   useEffect(() => {
     if(user){
       getTokenBalance(user, setTokenBalance);
@@ -65,8 +66,9 @@ const RentModal: React.FC<RentModalProps> = ({
   const fetchAndSetRentedTimes = async () => {
     const rentedData = await getRentedTimes(rentData?.id as string);
     const checkStartTimes = rentedData?.map(item => item.startTime);
-    setRentedTimes(checkStartTimes || []); 
+    rentedTimes.current = checkStartTimes || []
   };
+  
 
   useEffect(() => {
     if (rentData?.id) {
@@ -172,7 +174,7 @@ const RentModal: React.FC<RentModalProps> = ({
     }
 
     const time = value.toDate().getTime();
-    const isTimeRented  = rentedTimes.some((rentedTime) => {
+    const isTimeRented  = rentedTimes.current.some((rentedTime) => {
       const rentedStart = new Date(rentedTime).getTime();
       return time === rentedStart;
     });
