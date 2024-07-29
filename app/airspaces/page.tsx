@@ -606,7 +606,7 @@ const Airspaces: React.FC = () => {
                 {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
                 {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
                 {!showSuccessPopUp && !isMobile &&(<div>
-                  <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} />
+                  <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} setDrawMode={setIsDrawMode}/>
                   </div>
                 )}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (

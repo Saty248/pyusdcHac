@@ -5,14 +5,16 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 interface PolygonToolProps {
   drawTool: MapboxDraw; 
   isDrawMode: boolean; 
+  setDrawMode: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const PolygonTool = ({ drawTool,isDrawMode }: PolygonToolProps) => {
+const PolygonTool = ({ drawTool,isDrawMode, setDrawMode }: PolygonToolProps) => {
 
   const deletePolygon = () => {
     const selectedFeatures = drawTool.getSelectedIds();
     if (selectedFeatures.length > 0) {
       drawTool.delete(selectedFeatures);
+      setDrawMode(false)
     }
   };
   
@@ -28,7 +30,12 @@ const PolygonTool = ({ drawTool,isDrawMode }: PolygonToolProps) => {
         <button
           className={`px-2 py-2 rounded-lg ${isDrawMode && "bg-pure-blue"} hover:bg-pure-blue group `}
           onClick={() => {
-            drawTool?.changeMode("draw_polygon");
+            if(drawTool){
+
+              drawTool?.changeMode("draw_polygon");
+              setDrawMode(true)
+            }
+
           }}
         >
           <div className="flex gap-2">
