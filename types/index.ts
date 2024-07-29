@@ -261,4 +261,6 @@ export interface AuctionDataI {
   owner: string;
   price: number;
   properties: PropertyData;
+  bids: any[];
+  totalBid: number;
 }

@@ -8,6 +8,28 @@ interface AuctionCardProps {
 const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate);
+
+  const getStatus = (endDate) => {
+    const now = new Date();
+    const timeDiff = endDate.getTime() - now.getTime();
+
+    if (timeDiff <= 0) {
+      return (
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-green-600"></div>
+          <div>Complete</div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
+          <div>Ongoing</div>
+        </div>
+      );
+    }
+  };
+
   const { latitude, longitude, title } = data?.properties[0] || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
   return (
@@ -20,12 +42,17 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data }) => {
           objectFit="cover"
         />
       </div>
+
       <div className="px-4 py-2 flex flex-col items-start">
-        <div className="text-sm text-black font-bold">Name</div>
+        <div className="text-sm text-black font-bold flex items-center justify-between w-full">
+          Name
+          <div className="text-xs text-[#727272]">{getStatus(endDate)}</div>
+        </div>
         <div className="text-sm text-[#727272] truncate w-[95%] text-left">
           {title}
         </div>
       </div>
+
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">
           <div className="text-sm text-[#727272]">Highest Bid</div>

@@ -1,4 +1,5 @@
 import "./global.css";
+import "animate.css";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import Script from "next/script";
@@ -16,7 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import type { Metadata } from "next";
 import { Head } from "next/document";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Sky Trade",
@@ -80,17 +81,17 @@ export default function RootLayout({
               <ToastContainer style={{ width: "500px" }} />
               <div id="backdrop-root"></div>
               <div id="modal-root"></div>
-              
-            <NextTopLoader
-              color="#2299DD"
-              initialPosition={0.08}
-              crawlSpeed={200}
-              height={3}
-              crawl={true}
-              showSpinner={false}
-              easing="ease"
-              speed={300}
-              shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+
+              <NextTopLoader
+                color="#2299DD"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={3}
+                crawl={true}
+                showSpinner={false}
+                easing="ease"
+                speed={300}
+                shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
               {children}
             </SidebarProvider>

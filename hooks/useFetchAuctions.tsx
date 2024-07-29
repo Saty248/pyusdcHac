@@ -24,8 +24,6 @@ const useFetchAuctions = (
   const [loading, setLoading] = useState<boolean>(false);
   const { web3auth } = useContext(Web3authContext);
 
-  console.log({ priceRange });
-
   const fetchData = async () => {
     try {
       setLoading(true);

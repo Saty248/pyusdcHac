@@ -9,15 +9,16 @@ import Image1 from "@/public/images/AHImage.png";
 import { useMobile } from "@/hooks/useMobile";
 import useAuth from "@/hooks/useAuth";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
-import { VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { AuctionDataI } from "@/types";
 import MarketplaceService from "@/services/MarketplaceService";
 import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
 import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { toast } from "react-toastify";
+import useAuction from "@/hooks/useAuction";
 
 interface BidPreviewProps {
   setTxHash: React.Dispatch<React.SetStateAction<string>>;
@@ -39,15 +40,45 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   onClose,
   setShowSuccessAndErrorPopup,
 }) => {
+  const { userSolBalance } = useAppSelector((state) => {
+    const { userSolBalance } = state.userReducer;
+    return {
+      userSolBalance,
+    };
+  });
+
+  const { userUSDWalletBalance } = useAuction();
+
   const { isMobile } = useMobile();
   const { user } = useAuth();
   const dispatch = useAppDispatch();
   const { provider } = useContext(Web3authContext);
   const [isLoading, setIsLoading] = useState(false);
   const { createBid, submitSignature } = MarketplaceService();
+  console.log({ user });
+
   const handleBid = async () => {
+    if (user?.blockchainAddress === auctionDetailData?.owner) {
+      return toast.error("You cannot bid on your own property!");
+    }
+
+    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    if (balance === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
+      );
+    }
+
+    if (parseFloat(userUSDWalletBalance.amount) === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
+      );
+    }
+    console.log({ userUSDWalletBalance });
     console.log({ auctionDetailData });
+    console.log({ userSolBalance });
     console.log({ currentUserBid });
+    // return;
     try {
       setIsLoading(true);
       if (

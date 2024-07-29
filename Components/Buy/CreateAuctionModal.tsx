@@ -9,6 +9,7 @@ import useAuction, { TransactionStatusEnum } from "@/hooks/useAuction";
 import Spinner from "../Spinner";
 import SuccessFailPopup from "./SuccessFailPopup";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { HiMiniPlusSmall, HiMiniMinusSmall } from "react-icons/hi2";
 
 interface CreateAuctionModalProps {
   onClose: any;
@@ -36,11 +37,13 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     loading,
     airspaceList,
     handleNextPage,
+    handlePrevPage,
     hasMore,
     handleSelectItem,
     handleAddProperties,
     handleUpdateItem,
     txHash,
+    pageNumber,
     isProcessing,
     setIsProcessing,
     transactionStatus,
@@ -50,11 +53,15 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   } = useAuction();
 
   useEffect(() => {
-    const valid = airspaceList.filter((item) => item.status === 1);
-    setAirspaces(valid);
-  }, airspaceList);
-
-  console.log(airspaceList.filter((item) => item.status === 1));
+    if (pageNumber < 3) {
+      const valid = airspaceList.filter((item) => item.status === 1);
+      setAirspaces(valid);
+    } else {
+      console.log("================================");
+      console.log({ airspaceList });
+      console.log("================================");
+    }
+  }, [airspaceList]);
 
   console.log({ airspaceList });
 
@@ -94,7 +101,15 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
               </div>
 
               <div className="text-center">Create Auction</div>
-              <div>Select the properties you want to auction</div>
+              <div className="flex justify-between">
+                {" "}
+                <div>Select the properties you want to auctions</div>
+                <div className="text-black">
+                  <HiMiniPlusSmall />
+                  {pageNumber}
+                  <HiMiniMinusSmall />
+                </div>
+              </div>
 
               {loading ? (
                 <div className="w-full h-full flex flex-col gap-4 items-center justify-center">
@@ -106,14 +121,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
               ) : (
                 <>
                   {airspaces.length > 0 ? (
-                    <InfiniteScroll
-                      dataLength={airspaceList?.length}
-                      next={handleNextPage}
-                      hasMore={hasMore}
-                      loader={<Spinner />}
-                      height={450}
-                      className="flex flex-col gap-3 thin-scrollbar"
-                    >
+                    <div className="flex flex-col gap-3 thin-scrollbar">
                       {airspaces?.length > 0 &&
                         airspaces?.map((item, index) => (
                           <AuctionItem
@@ -133,7 +141,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                             } // Disable if another item is selected
                           />
                         ))}
-                    </InfiniteScroll>
+                    </div>
                   ) : (
                     <div className="text-center col-span-2 text-light-grey">
                       {!loading && "No auctions found"}
@@ -190,47 +198,59 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
             </div>
 
             <div className="text-center">Create Auction</div>
-            <div>Select the properties you want to auction</div>
+            <div className="flex justify-between w-full">
+              {" "}
+              <div>Select the properties you want to auctions</div>
+              <div className="text-black flex items-center gap-2">
+                <button
+                  disabled={pageNumber === 1}
+                  onClick={handlePrevPage}
+                  className={` ${pageNumber === 1 ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
+                >
+                  <HiMiniMinusSmall />
+                </button>
+                <span className="font-sm font-thin">{pageNumber}</span>
+                <button
+                  disabled={!hasMore}
+                  onClick={handleNextPage}
+                  className={` ${!hasMore ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
+                >
+                  <HiMiniPlusSmall />
+                </button>
+              </div>
+            </div>
 
-            {airspaces.length === 0 && loading ? (
+            {loading ? (
               <div className="w-full h-full flex gap-4 flex-col items-center justify-center">
                 <Spinner />
                 <span className="animate-pulse">
-                  Fetching Verified Airspaces...
+                  {pageNumber === 1
+                    ? "Fetching Verified Airspaces..."
+                    : "Fetching some more..."}
                 </span>
               </div>
             ) : (
-              airspaces && (
-                <InfiniteScroll
-                  dataLength={airspaceList?.length}
-                  next={handleNextPage}
-                  hasMore={hasMore}
-                  loader={<Spinner />}
-                  height={450}
-                  className="flex flex-col gap-3 thin-scrollbar"
-                >
-                  <></>
-                  {airspaces?.length > 0 &&
-                    airspaces?.map((item, index) => (
-                      <AuctionItem
-                        data={item}
-                        key={index}
-                        onSelectItem={handleSelectItem}
-                        onUpdateItem={handleUpdateItem}
-                        selected={
-                          !!selectedItems.find(
-                            (selectedItem) =>
-                              selectedItem.propertyId === item.propertyId
-                          )
-                        }
-                        disabled={
-                          selectedItemId !== null &&
-                          selectedItemId !== item.propertyId
-                        } // Disable if another item is selected
-                      />
-                    ))}
-                </InfiniteScroll>
-              )
+              <div className="flex flex-col gap-3 thin-scrollbar overflow-auto h-[450px]">
+                {airspaces?.length > 0 &&
+                  airspaces?.map((item, index) => (
+                    <AuctionItem
+                      data={item}
+                      key={index}
+                      onSelectItem={handleSelectItem}
+                      onUpdateItem={handleUpdateItem}
+                      selected={
+                        !!selectedItems.find(
+                          (selectedItem) =>
+                            selectedItem.propertyId === item.propertyId
+                        )
+                      }
+                      disabled={
+                        selectedItemId !== null &&
+                        selectedItemId !== item.propertyId
+                      } // Disable if another item is selected
+                    />
+                  ))}
+              </div>
             )}
 
             <div className="flex justify-between gap-4">

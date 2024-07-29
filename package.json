@@ -32,6 +32,7 @@
     "@web3auth/openlogin-adapter": "^8.4.0",
     "@web3auth/sign-in-with-web3": "^3.1.0",
     "@web3auth/solana-provider": "^8.4.0",
+    "animate.css": "^4.1.1",
     "autoprefixer": "10.4.14",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",

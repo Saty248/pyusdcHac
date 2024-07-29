@@ -28,12 +28,13 @@ const AirspaceRentalService = () => {
     callerAddress: string | undefined,
     type: string,
     limit: string | number,
-    afterAssetId?: string
+    afterAssetId?: string,
+    pageNumber: number = 1
   ) => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-assets?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
+        uri: `/private/airspace-rental/retrieve-assets?callerAddress=${callerAddress}&type=${type}&limit=${limit}&page=${pageNumber}&afterAssetId=${afterAssetId || ""}`,
       });
       if (!response) {
         return [];
