@@ -15,8 +15,8 @@ const SuccessPopUp = ({ isVisible, setShowSuccessPopUp }: PropsI) => {
       <div className="text-light-green text-base gap-3">
         Congratulations on claiming your piece of the sky successfully!
       </div>
-      <div className="w-3 h-3 cursor-pointer" onClick={() => setShowSuccessPopUp(false)}>
-        <CloseIcon />
+      <div className=" cursor-pointer text-light-green text-lg font-bold" onClick={() => setShowSuccessPopUp(false)}>
+        X
       </div>
     </div>
   );

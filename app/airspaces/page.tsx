@@ -89,6 +89,7 @@ const Airspaces: React.FC = () => {
   const pathname = usePathname()
   const [drawTool, setDrawTool] = useState(null);
   const [isDrawMode, setIsDrawMode] = useState(false);
+  const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false)
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -172,6 +173,7 @@ const Airspaces: React.FC = () => {
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`
           );
           const data = await response.json();
+          setDontShowAddressOnInput(true)
           if (data.features && data.features.length > 0) {
             setAddress(data.features[0].place_name);
             setData((prev) => {return {...prev, address: data.features[0].place_name}})
@@ -386,7 +388,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async () => {
+  const onClaim = async (_address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
       
@@ -422,7 +424,7 @@ const Airspaces: React.FC = () => {
       }
 
       const postData = {
-        address,
+        address: _address || address,
         ownerId: user.id,
         propertyStatusId: 0,
         hasChargingStation,
@@ -467,6 +469,7 @@ const Airspaces: React.FC = () => {
         setShowClaimModal(false);
         setData({ ...defaultData });
       }
+      setDontShowAddressOnInput(false)
     } catch (error) {
       console.error(error);
       toast.error("Error when creating property.")
@@ -571,6 +574,7 @@ const Airspaces: React.FC = () => {
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
+                      setDontShowAddressOnInput(false)
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
@@ -581,6 +585,8 @@ const Airspaces: React.FC = () => {
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
@@ -621,6 +627,8 @@ const Airspaces: React.FC = () => {
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
               </div>
