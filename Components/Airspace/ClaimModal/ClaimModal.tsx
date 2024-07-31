@@ -9,6 +9,7 @@ import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
+import { defaultData } from "../../../types";
 
 interface PropsI {
   onCloseModal: () => void;
@@ -202,6 +203,7 @@ export const ClaimModal = ({
                   setTimeZone={(timezone) =>
                     setData((prev) => ({ ...prev, timezone }))
                   }
+                  data={data}
                 />
               </div>
             </div>
