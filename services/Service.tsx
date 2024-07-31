@@ -14,7 +14,6 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
-
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
@@ -35,52 +34,57 @@ const Service = () => {
     Sentry.captureException(error);
   };
 
-  const createHeader = async ({ uri, isPublic }: {
+  const createHeader = async ({ isPublic, uri }: {
     uri: string;
     isPublic?: boolean;
   }) => {
     try {
-      if (isPublic === true) {
-        return {
-          URI: uri,
+      let newHeader = {};
+
+      if (provider && !isPublic) {
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();
+  
+        const payload = new SIWPayload();
+  
+        payload.domain = String(process.env.NEXT_PUBLIC_FRONTEND_DOMAIN);
+        payload.uri = String(process.env.NEXT_PUBLIC_FRONTEND_URI);
+        payload.address = accounts[0];
+        payload.statement = "Sign in to SkyTrade app.";
+        payload.version = "1";
+        payload.chainId = 1;
+  
+        const header = { t: "sip99" };
+        const network = "solana";
+  
+        let message = new SIWWeb3({ header, payload, network });
+  
+        const messageText = message.prepareMessage();
+        const msg = new TextEncoder().encode(messageText);
+        const result = await solanaWallet.signMessage(msg);
+  
+        const signature = base58.encode(result);
+  
+        newHeader = {
+          "Content-Type": "application/json",
+          sign: signature,
+          time: message.payload.issuedAt,
+          nonce: message.payload.nonce,
+          address: accounts[0],
+        };
+
+      } else {
+        newHeader = {
           "Content-Type": "application/json",
         };
       }
-      if (!provider) return;
-
-      const solanaWallet = new SolanaWallet(provider);
-      const accounts = await solanaWallet.requestAccounts();
-
-      const domain = window.location.host;
-      const origin = window.location.origin;
-      const payload = new SIWPayload();
-
-      payload.domain = domain;
-      payload.uri = origin;
-      payload.address = accounts[0];
-      payload.statement = "Sign in to SkyTrade app.";
-      payload.version = "1";
-      payload.chainId = 1;
-
-      const header = { t: "sip99" };
-      const network = "solana";
-
-      let message = new SIWWeb3({ header, payload, network });
-
-      const messageText = message.prepareMessage();
-      const msg = new TextEncoder().encode(messageText);
-      const result = await solanaWallet.signMessage(msg);
-
-      const signature = base58.encode(result);
 
       return {
-        "Content-Type": "application/json",
-        URI: uri,
-        sign: signature,
-        time: message.payload.issuedAt,
-        nonce: message.payload.nonce,
-        address: accounts[0],
-      };
+        ...newHeader,
+        api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
+        uri,
+      }
+
     } catch (error) {
       console.error(error);
     }
@@ -88,10 +92,9 @@ const Service = () => {
 
   const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
-
       return await axios({
         method: "get",
         timeout: TIMEOUT,
@@ -110,7 +113,7 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
@@ -133,7 +136,7 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
@@ -156,7 +159,7 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 

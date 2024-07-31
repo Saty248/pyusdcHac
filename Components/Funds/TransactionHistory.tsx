@@ -35,16 +35,15 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   const [isNext, setIsNext] = useState<boolean>(true);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [transactionList, setTransactionList] = useState<TransactionListI[]>([]);
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     (async () => {
       try {
         if ((web3auth && web3auth?.status !== "connected") || !user) return;
         setIsLoading(true);
-
         const connection = new Connection(targetRpcUrl);
-        const blockchainAddress = user.blockchainAddress;
-
+        const blockchainAddress = user?.blockchainAddress;
         let options = {};
 
         const lastTxHash = transactionList.length > 0 ? transactionList.at(-1)?.lastTransactionSignature : "";
@@ -61,7 +60,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
           };
         }
         const tokenAcc = await connection.getTokenAccountsByOwner(
-          new PublicKey(blockchainAddress),
+          new PublicKey(user?.blockchainAddress as string),
           { mint: new PublicKey(minterAddress) }
         );
         const _txs = await connection.getSignaturesForAddress(
@@ -71,23 +70,24 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
         const txs = _txs.slice(-limit);
         const signatureList = txs.map(transaction => transaction.signature);
         const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
-
         const data = transactionDetails?.map((item, idx) => {
           const preTokenBalObject = item?.meta?.preTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
-
           const postTokenBalObject = item?.meta?.postTokenBalances?.filter((item) => {
             return item.owner == blockchainAddress && item.mint == minterAddress;
           });
-
           let difference = 0;
           if (preTokenBalObject || postTokenBalObject) {
-            if (preTokenBalObject && postTokenBalObject) {
+            
+            if ((preTokenBalObject && preTokenBalObject.length >0) && (postTokenBalObject && postTokenBalObject.length >0)) {
+              
               difference = (postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number) - (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
-            } else if (!preTokenBalObject && postTokenBalObject) {
+            } else if ((!preTokenBalObject || preTokenBalObject.length <=0) && postTokenBalObject ) {
+              
               difference = postTokenBalObject[0]?.uiTokenAmount?.uiAmount as number;
-            } else if (preTokenBalObject) {
+            } else if (preTokenBalObject && preTokenBalObject.length > 0) {
+              
               difference = (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
             }
           }
@@ -104,7 +104,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             time: moment.unix(item?.blockTime as number).format("MMM D, YYYY"),
             transactionHash: signatureList[idx],
             type,
-            difference: difference.toString() == 'NaN' ? 'Non USDC Transaction' : formatNumber(difference),
+            difference: difference.toString() == 'NaN' ? '1st transaction' : formatNumber(difference),
             firstTransactionSignature: signatureList[0],
             lastTransactionSignature: signatureList[signatureList.length - 1],
           };
@@ -138,7 +138,23 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
   };
 
   const renderTransactionRows = () => {
-    return transactionList?.map((item) => (
+    if (!transactionList || !Array.isArray(transactionList)) {
+      return null;
+    }
+
+    const trimmedSearchQuery = searchQuery.toLowerCase().trim();
+
+    // Filter transactions based on search query
+    const filteredTransactions = trimmedSearchQuery
+      ? transactionList.filter(transaction =>
+        transaction.transactionHash.toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.difference.toString().toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.time.toString().toLowerCase().includes(trimmedSearchQuery) ||
+        transaction.type.toString().toLowerCase().includes(trimmedSearchQuery)
+      )
+      : transactionList;
+
+    return filteredTransactions.map(item => (
       <tr key={item.transactionHash}>
         <td className='py-6 text-[#222222] px-5 w-2/12 whitespace-nowrap'>{item.time}</td>
         <td className='py-6 text-[#222222] text-clip px-5 w-2/12 underline whitespace-nowrap'>
@@ -153,21 +169,23 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
     ));
   };
 
+
   return (
     <div className="flex flex-col gap-5 flex-1 min-w-[89%] sm:min-w-[600px]">
       <div className="md:flex sm:flex-col md:flex-row justify-start sm:justify-between items-center">
         <p className="flex font-medium text-xl pt-[14px] md:px-0 px-2 pb-[14px] sm:p-0 text-[#222222] w-[89%] ">
           Transaction History
         </p>
-        <div className='flex md:px-0 px-2 items-center'>
+        <div className='flex md:px-0 px-2 justify-end items-center md:w-full '>
           <div
-            className="relative px-[22px] md:py-[16px] py-3 bg-white md:w-[89%] rounded-lg"
+            className="relative px-[22px] md:py-[16px] py-3 bg-white rounded-lg"
             style={{ border: "1px solid #87878D" }}
           >
             <input
               type="text"
               name="searchTransactions"
               id="searchTransactions"
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Transactions"
               className="outline-none w-full pr-[20px]"
             />
@@ -176,7 +194,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             </div>
           </div>
           <div
-            className='w-[15%] h-[15%] md:h-[20%] md:w-[20%] cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
+            className='w-12 h-12 md:h-12  md:w-12 cursor-pointer  bg-[#0653EA] text-center font-medium ml-5 p-1 rounded-md'
             onClick={handleReset}
           >
             <RefreshIcon />
