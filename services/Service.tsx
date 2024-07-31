@@ -14,6 +14,7 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
@@ -98,7 +99,7 @@ const Service = () => {
       return await axios({
         method: "get",
         timeout: TIMEOUT,
-        url: `/api/proxy?${Date.now()}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         headers,
       });
     } catch (error) {
@@ -119,7 +120,7 @@ const Service = () => {
 
       return await axios({
         method: "post",
-        url: `/api/proxy?${Date.now()}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -142,7 +143,7 @@ const Service = () => {
 
       return await axios({
         method: "patch",
-        url: `/api/proxy?${Date.now()}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -165,7 +166,7 @@ const Service = () => {
 
       return await axios({
         method: "delete",
-        url: `/api/proxy?${Date.now()}`,
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
