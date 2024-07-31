@@ -7,10 +7,10 @@ import { defaultData } from "../../../../types";
 
 interface PropsI {
   setTimeZone: (timeZone: string) => void;
-  data:defaultData
+  data: defaultData
 }
 
-const TimeZoneSelect = ({ setTimeZone,data }: PropsI) => {
+const TimeZoneSelect = ({ data, setTimeZone }: PropsI) => {
   const labelStyle = "original";
   const timezones = {
     ...allTimezones,
@@ -21,8 +21,8 @@ const TimeZoneSelect = ({ setTimeZone,data }: PropsI) => {
     labelStyle,
     timezones,
   });
-  
-  const selectedLabel=data.timezone
+
+  const selectedLabel = data.timezone
   const handleTimeZoneChange = (event) => {
     const selectedTimeZone = event.target.value;
     setTimeZone(selectedTimeZone);
