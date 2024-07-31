@@ -28,11 +28,9 @@ module.exports = withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    // Suppresses source map uploading logs during build
-    silent: true,
-    org: "skytrade-hq",
-    project: "skytrade_fe",
-    url: "https://sentry.io/"
+    org: process.env.NEXT_PUBLIC_SENTRY_ORG,
+    project: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
   },
   {
     // For all available options, see:

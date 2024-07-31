@@ -3,14 +3,12 @@ import {
   useTimezoneSelect,
   allTimezones,
 } from "react-timezone-select";
-import { defaultData } from "../../../../types";
 
 interface PropsI {
   setTimeZone: (timeZone: string) => void;
-  data:defaultData
 }
 
-const TimeZoneSelect = ({ setTimeZone,data }: PropsI) => {
+const TimeZoneSelect = ({ setTimeZone }: PropsI) => {
   const labelStyle = "original";
   const timezones = {
     ...allTimezones,
@@ -21,12 +19,20 @@ const TimeZoneSelect = ({ setTimeZone,data }: PropsI) => {
     labelStyle,
     timezones,
   });
-  
-  const selectedLabel=data.timezone
+  const [selectedLabel, setSelectedLabel] = useState("Europe/London");
   const handleTimeZoneChange = (event) => {
     const selectedTimeZone = event.target.value;
-    setTimeZone(selectedTimeZone);
+    const parsedTimeZone = parseTimezone(selectedTimeZone);
+    const gmtOffset = parsedTimeZone.offset;
+    if (gmtOffset) {
+      const gmtString =
+        parseInt(String(gmtOffset)) >= 0 ? `GMT+${gmtOffset}` : `GMT${gmtOffset}`;
+  
+      setTimeZone(gmtString);
+    }
+    setSelectedLabel(selectedTimeZone);
   };
+
   return (
     <Fragment>
       <label
