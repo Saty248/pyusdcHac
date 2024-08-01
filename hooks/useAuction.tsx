@@ -70,7 +70,7 @@ const useAuction = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const { getAuctionableProperties } = AirspaceRentalService();
+  const { getAuctionableProperties , getPropertiesByUserAddress} = AirspaceRentalService();
 
   console.log({ userUSDWalletBalance });
 
@@ -84,13 +84,19 @@ const useAuction = () => {
           airspaceList.length > 0
             ? airspaceList[airspaceList.length - 1]?.id
             : "";
-
-        const airspaces = await getAuctionableProperties(
+        console.log(user?.blockchainAddress,assetId,"hello 2")
+        // const airspaces = await getAuctionableProperties(
+        //   user?.blockchainAddress,
+        //   "landToken",
+        //   10,
+        //   String(assetId),
+        //   pageNumber
+        // );
+        const airspaces = await getPropertiesByUserAddress(
           user?.blockchainAddress,
           "landToken",
           10,
           String(assetId),
-          pageNumber
         );
 
         if (airspaces.length < 10) {

@@ -54,7 +54,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
 
   useEffect(() => {
     if (pageNumber < 3) {
-      const valid = airspaceList.filter((item) => item.status === 1);
+      const valid = airspaceList?.filter((item) => item.status === 1);
       setAirspaces(valid);
     } else {
       console.log("================================");

@@ -1,5 +1,5 @@
 import "./global.css";
-import "animate.css";
+// import "animate.css";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import Script from "next/script";
