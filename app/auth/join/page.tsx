@@ -15,12 +15,8 @@ import PartOne from "@/Components/Auth/PartOne";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCategory } from "@/redux/slices/userSlice";
 import { toast } from "react-toastify";
-
-interface RootState {
-  value: {
-    category: any;
-  };
-}
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 const IndividualSignup: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -37,19 +33,17 @@ const IndividualSignup: React.FC = () => {
   const [part, setPart] = useState(0);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const newsletterRef = useRef<HTMLInputElement>(null);
   const referralCodeRef = useRef<HTMLInputElement>(null);
 
-  const [referralCode1, setReferralCode] = useState({ id: "", code: "" });
-  const [status, setStatus] = useState(0);
+  const [referralCode, setReferralCode] = useState({ id: "", code: "" });
+  const [status, setStatus] = useState<number | null>(null);
   const [isNameValid, setIsNameValid] = useState(true);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
-  const [isReferralCodeValid, setIsReferralCodeValid] = useState(true);
-  const [newsletter, setNewsletter] = useState(false);
+  const [isStatusValid, setIsStatusValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [pageLoad, setPageLoad] = useState(true);
   const [referralDisabled, setReferralDisabled] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("This field is mandatory");
 
   useEffect(() => {
     const categoryData = localStorage.getItem("category");
@@ -71,13 +65,6 @@ const IndividualSignup: React.FC = () => {
   }, []);
 
 
-  const checkReferralCodeIsValid = (referralCode1: {
-    id: string;
-    code: string;
-  }) => {
-    return true;
-  };
-
   const isEmailValid = (email: string) => {
     const regex = /^\S+@\S+\.\S+$/;
     return regex.test(email);
@@ -87,42 +74,39 @@ const IndividualSignup: React.FC = () => {
     e.preventDefault();
 
     try {
-      const referralCode = referralCodeRef.current?.value;
 
       if (name === "") {
         setIsNameValid(false);
-        return;
       }
 
       const phoneCheck = await checkPhoneIsValid(phoneNumber);
       if (!phoneCheck.status) {
         setIsPhoneNumberValid(false);
         setErrorMessage(phoneCheck.message);
-        return;
-      }
-
-      if (!checkReferralCodeIsValid(referralCode1)) {
-        setIsReferralCodeValid(false);
-        return;
-      }
-
-      if (!checkReferralCodeIsValid(referralCode1)) {
-        setIsReferralCodeValid(false);
-        return;
       }
 
       if (!isEmailValid(category.email)) {
         toast.error("Login: email is not valid");
+      }
+      if (status === null) {
+        setIsStatusValid(false);
+      }
+      if (
+        name === "" ||
+        !phoneCheck.status ||
+        status === null ||
+        !isEmailValid(category.email)
+      ) {
         return;
       }
 
       const userInfo = {
         ...category,
         name,
-        newsletter,
+        newsletter: false,
         categoryId: status,
         phoneNumber,
-        referralCode: referralCode1.code,
+        referralCode: referralCode.code,
       };
 
       setIsLoading(true);
@@ -221,21 +205,24 @@ const IndividualSignup: React.FC = () => {
                 >
                   Phone<span className="text-[#E04F64]">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={phoneNumber}
-                  onChange={(e) => {
-                    setIsPhoneNumberValid(true);
-                    setPhoneNumber(e.target.value);
-                  }}
-                  placeholder="Enter your phone number"
+                <div
                   className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
                   style={{
                     border: isPhoneNumberValid
                       ? "1px solid #87878D"
                       : "1px solid #E04F64",
                   }}
-                />
+                >
+                  <PhoneInput
+                    defaultCountry="us"
+                    value={phoneNumber}
+                    onChange={(phone) => {
+                      setIsPhoneNumberValid(true);
+                      setPhoneNumber(phone);
+                    }}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
                 {!isPhoneNumberValid && (
                   <p className="text-[11px] italic text-red-600">
                     {errorMessage}
@@ -245,20 +232,29 @@ const IndividualSignup: React.FC = () => {
               <div className="relative flex flex-col gap-[5px] w-full">
                 <label
                   className="text-[14px] font-normal"
-                  style={{ color: "rgba(0, 0, 0, 0.50)" }}
+                  style={{
+                    color: isStatusValid ? "rgba(0, 0, 0, 0.50)" : "#E04F64",
+                  }}
                 >
                   Your status<span className="text-[#E04F64]">*</span>
                 </label>
                 <div className="flex flex-col gap-[11px]">
                   <label
                     className="rounded-lg py-4 px-[22px] flex gap-[14.5px] items-center text-[14px]"
-                    style={{ border: "1px solid #87878D" }}
+                    style={{
+                      border: isStatusValid
+                        ? "1px solid #87878D"
+                        : "1px solid #E04F64",
+                    }}
                   >
                     <input
                       className="relative w-[16.67px] h-[16.67px] p-[2.5px]"
                       checked={status === 0}
                       value={0}
-                      onChange={(e) => setStatus(Number(e.target.value))}
+                      onChange={(e) => {
+                        setIsStatusValid(true);
+                        setStatus(Number(e.target.value));
+                      }}
                       style={{
                         appearance: "none",
                         border:
@@ -284,7 +280,10 @@ const IndividualSignup: React.FC = () => {
                       className="relative w-[16.67px] h-[16.67px] p-[2.5px]"
                       checked={status === 1}
                       value={1}
-                      onChange={(e) => setStatus(Number(e.target.value))}
+                      onChange={(e) => {
+                        setIsStatusValid(true);
+                        setStatus(Number(e.target.value));
+                      }}
                       style={{
                         appearance: "none",
                         border:
@@ -303,7 +302,7 @@ const IndividualSignup: React.FC = () => {
                     I'm a corporate entity
                   </label>
                 </div>
-                {false && (
+                {!isStatusValid && (
                   <p className="text-[11px] italic text-red-600">
                     This field is mandatory
                   </p>
@@ -313,9 +312,7 @@ const IndividualSignup: React.FC = () => {
                 <label
                   className="text-[14px] font-normal"
                   style={{
-                    color: isReferralCodeValid
-                      ? "rgba(0, 0, 0, 0.50)"
-                      : "#E04F64",
+                    color: "rgba(0, 0, 0, 0.50)"
                   }}
                 >
                   Referral Code
@@ -323,27 +320,20 @@ const IndividualSignup: React.FC = () => {
                 <input
                   type="referralCode"
                   ref={referralCodeRef}
-                  value={referralCode1.code}
+                  value={referralCode.code?.toUpperCase()}
                   placeholder="Enter referral code"
                   onChange={(event) => {
                     setReferralCode({
-                      ...referralCode1,
-                      code: event.target.value,
+                      ...referralCode,
+                      code: event.target.value?.toUpperCase(),
                     });
                   }}
                   disabled={referralDisabled}
                   className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
                   style={{
-                    border: isReferralCodeValid
-                      ? "1px solid #87878D"
-                      : "1px solid #E04F64",
+                    border: "1px solid #87878D"
                   }}
                 />
-                {!isReferralCodeValid && (
-                  <p className="text-[11px] italic text-red-600">
-                    Invalid referral code
-                  </p>
-                )}
               </div>
               <div
                 className="w-full bg-[#0653EA] py-[16px] flex items-center justify-center text-white font-normal text-[15px] rounded-lg cursor-pointer"

@@ -195,7 +195,7 @@ const DepositAndWithdraw = ({
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
       hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
-      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
+      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_API_KEY),
       defaultAsset: 'SOLANA_USDC',
       swapAsset: 'SOLANA_USDC',
       userAddress: user?.blockchainAddress,

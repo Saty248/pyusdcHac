@@ -60,22 +60,27 @@ const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: Accordi
         {isOpen && (
           <div className=" p-4">
             <ul>
-              {supportedMethods.map((method, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleSelection(method)}
-                  className="flex items-center cursor-pointer hover:bg-gray-100 p-2"
-                >
-                  <Image
-                    src={method.icon}
-                    alt="Placeholder"
-                    className="w-8 h-8 mr-2"
-                    width={12}
-                    height={12}
-                  />
-                  <p>{method.name}</p>
-                </li>
-              ))}
+              {supportedMethods.map((method, index) => {
+                if (activeSection === 1 && method.name === "Ramp") return null;
+                else {
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => handleSelection(method)}
+                      className="flex items-center cursor-pointer hover:bg-gray-100 p-2"
+                    >
+                      <Image
+                        src={method.icon}
+                        alt="Placeholder"
+                        className="w-8 h-8 mr-2"
+                        width={12}
+                        height={12}
+                      />
+                      <p>{method.name}</p>
+                    </li>
+                  )
+                }
+              })}
             </ul>
           </div>
         )}
