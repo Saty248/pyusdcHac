@@ -18,13 +18,13 @@ const PointBalance: FC<PropsI> = ({ point, isLoading }) => {
             <div className="w-6 h-6"><GiftIcon isActive={true} /></div>
           </div>
         </div>
-        <div className="text-[32px] md:text-2xl font-semibold">SKY Points Balance</div>
+        <div className="text-xl md:text-xl font-semibold">SKY Points Balance</div>
         {isLoading ? (
           <div className="mt-4 md:my-5 md:h-14 flex justify-start items-center">
             <BalanceLoader />
           </div>
         ) : (
-          <div className="text-blue-500 font-semibold text-2xl md:text-4xl my-2 md:my-5">{point} SKY Points</div>
+          <div className="text-blue-500 font-semibold text-xl md:text-xl my-2 md:my-5">{point} SKY Points</div>
         )}
 
       </div>
