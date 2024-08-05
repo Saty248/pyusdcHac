@@ -4,10 +4,10 @@ import VariableFeeRentalRangesSelect from "./VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./TimeZoneSelect";
 import WeekDayRangesForm from "./WeekDayRangesForm";
 import FacilityFeaturesSelect from "./FacilityFeaturesSelect";
-import { WeekDayRange } from "@/types";
+import { defaultData, WeekDayRange } from "@/types";
 interface RentalDetailsProps {
   transitFee:string;
-  timezone:string;
+  data:defaultData;
   weekDayRanges:WeekDayRange[];
   hasLandingDeck:boolean;
   hasChargingStation:boolean;
@@ -15,7 +15,7 @@ interface RentalDetailsProps {
   setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-  const RentalDetails: React.FC<RentalDetailsProps> = ({ transitFee, timezone,weekDayRanges,hasLandingDeck,hasChargingStation,hasStorageHub,setData }) => {
+  const RentalDetails: React.FC<RentalDetailsProps> = ({ transitFee, data,weekDayRanges,hasLandingDeck,hasChargingStation,hasStorageHub,setData }) => {
   return (
     <Fragment>
       <h2 className="text-[#222222] font-normal text-[20px] leading-[3rem]">
@@ -40,6 +40,7 @@ interface RentalDetailsProps {
         <div className="flex-1 mt-4 md:mt-0">
           <TimeZoneSelect
             setTimeZone={(timezone) => setData((prev) => ({ ...prev, timezone }))}
+            data={data}
           />
         </div>
       </div>

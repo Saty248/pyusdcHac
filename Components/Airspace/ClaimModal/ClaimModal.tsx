@@ -9,6 +9,7 @@ import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
+import { defaultData } from "../../../types";
 
 interface PropsI {
   onCloseModal: () => void;
@@ -74,8 +75,8 @@ export const ClaimModal = ({
   };
   return ( 
     <div>
-    <Backdrop onClick={() => {}} />
-    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-dvh h-dvh md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+    <Backdrop onClick={onCloseModal}/>
+    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -202,6 +203,7 @@ export const ClaimModal = ({
                   setTimeZone={(timezone) =>
                     setData((prev) => ({ ...prev, timezone }))
                   }
+                  data={data}
                 />
               </div>
             </div>
