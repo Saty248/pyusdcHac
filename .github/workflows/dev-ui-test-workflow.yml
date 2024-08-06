@@ -28,7 +28,7 @@ jobs:
         cd ./qa-automation &&
         pip install playwright && \
         pip install pyperclip && \
-        pip instal regex && playwright install-deps && playwright install
+        pip install regex && playwright install-deps && playwright install
 
     - name: Run the automation script
       run: |
