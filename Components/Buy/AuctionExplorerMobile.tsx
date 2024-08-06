@@ -26,10 +26,10 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
   setAuctionDetailData,
 }) => {
   const [toggleTray, setToggleTray] = useState(false);
-  const handleTrayToggle = (index) => {
+  const handleTrayToggle = (item) => {
     setToggleTray(false);
     setShowBidDetail(true);
-    setAuctionDetailData(auctions[index]);
+    setAuctionDetailData(item);
   };
 
   // const dispatch = useAppDispatch();
@@ -84,9 +84,9 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
                       <div
                         className="mx-auto mb-[15px]"
                         key={index}
-                        onClick={() => handleTrayToggle(index)}
+                        // onClick={() => handleTrayToggle(item)}
                       >
-                        <AuctionCard data={item} />
+                        <AuctionCard data={item} handleShowBidDetail={handleTrayToggle}/>
                       </div>
                     ))
                 ) : (

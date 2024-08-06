@@ -8,11 +8,15 @@ import { AuctionDataI } from "@/types";
 interface useDrawBidPolygonsProps {
   map: Map | null;
   auctions: AuctionDataI[];
+  setShowBidDetail:any;
+  setAuctionDetailData:any;
 }
 
 export const useDrawBidPolygons = ({
   map,
   auctions,
+  setShowBidDetail,
+  setAuctionDetailData
 }: useDrawBidPolygonsProps) => {
   const { isMobile } = useMobile();
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -21,7 +25,6 @@ export const useDrawBidPolygons = ({
 
   const customPopupStyles = `
     .mapboxgl-popup-close-button {
-      display: ${isMobile ? "block" : "none"};
       position: absolute;
       top: 9px;
       right: 11px;
@@ -73,6 +76,7 @@ export const useDrawBidPolygons = ({
     function convertVertexDataFormatToPolygonFormat(data) {
       return data.map(item => [item.longitude, item.latitude]);
     }
+
     if (mapLoaded && map && auctions && auctions?.length > 0) {
       auctions.forEach((auction, index) => {
         const id = auction?.properties[0]?.id;
@@ -87,17 +91,17 @@ export const useDrawBidPolygons = ({
 
           const markerElement = marker.getElement();
           if (markerElement && marker && map) {
-            handleMouseEvent(isMobile, markerElement, marker, map, auction);
+            handleMouseEvent(isMobile, markerElement, marker, map, auction,setShowBidDetail,setAuctionDetailData);
           }
         } else {
           markersRef.current[id].setLngLat(lngLat);
         }
 
-        if (!polygonsRef.current[id]) {
-          const vertexAreaPolygon = convertVertexDataFormatToPolygonFormat(auction?.properties[0]?.vertexes)
-          drawPolygons(map, id, vertexAreaPolygon);
-          polygonsRef.current[id] = true;
-        }
+        // if (!polygonsRef.current[id]) {
+        //   const vertexAreaPolygon = convertVertexDataFormatToPolygonFormat(auction?.properties[0]?.vertexes)
+        //   drawPolygons(map, id, vertexAreaPolygon);
+        //   polygonsRef.current[id] = true;
+        // }
       });
     }
   }, [mapLoaded, map, auctions, isMobile]);

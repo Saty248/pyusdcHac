@@ -1,0 +1,117 @@
+[
+    {
+      "assetId": "123abc",
+      "endDate": "2024-12-31T00:00:00.000Z",
+      "highestBid": 5000,
+      "id": 1,
+      "listType": "Auction",
+      "metadata": [
+        { "image_url": "fjkgl" },
+        { "image_url": "iirkjn" }
+      ],
+      "owner": "Jane Smith",
+      "price": 5500,
+      "properties": [{
+        "id": 101,
+        "address": "123 Main St",
+        "hasChargingStation": true,
+        "hasLandingDeck": false,
+        "hasStorageHub": true,
+        "isRentableAirspace": false,
+        "title": "Charming Bungalow",
+        "name": "Main St Bungalow",
+        "transitFee": "5%",
+        "noFlyZone": false,
+        "isFixedTransitFee": true,
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "timezone": "EST",
+        "weekDayRanges": [
+          { "day": "Monday", "open": "08:00", "close": "18:00" },
+          { "day": "Tuesday", "open": "08:00", "close": "18:00" }
+        ]
+      }],
+      "bids": [
+        { "bidder": "Alice", "bidOffer": 4800 },
+        { "bidder": "Bob", "bidOffer": 5000 }
+      ],
+      "totalBid": 2
+    },
+    {
+      "assetId": "456def",
+      "endDate": "2024-11-30T00:00:00.000Z",
+      "highestBid": 7000,
+      "id": 2,
+      "listType": "Auction",
+      "metadata": [
+        { "image_url": "abcde" },
+        { "image_url": "fghij" }
+      ],
+      "owner": "Peter Parker",
+      "price": 7500,
+      "properties": [{
+        "id": 102,
+        "address": "456 Elm St",
+        "hasChargingStation": false,
+        "hasLandingDeck": true,
+        "hasStorageHub": false,
+        "isRentableAirspace": true,
+        "title": "Modern Apartment",
+        "name": "Elm St Apartment",
+        "transitFee": "10%",
+        "noFlyZone": true,
+        "isFixedTransitFee": false,
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "timezone": "PST",
+        "weekDayRanges": [
+          { "day": "Wednesday", "open": "09:00", "close": "17:00" },
+          { "day": "Thursday", "open": "09:00", "close": "17:00" }
+        ]
+      }],
+      "bids": [
+        { "bidder": "Charlie", "bidOffer": 6900 },
+        { "bidder": "Dave", "bidOffer": 7000 }
+      ],
+      "totalBid": 3
+    },
+    {
+      "assetId": "789ghi",
+      "endDate": "2024-10-31T00:00:00.000Z",
+      "highestBid": 6000,
+      "id": 3,
+      "listType": "Auction",
+      "metadata": [
+        { "image_url": "klmno" },
+        { "image_url": "pqrst" }
+      ],
+      "owner": "Clark Kent",
+      "price": 6500,
+      "properties": [{
+        "id": 103,
+        "address": "789 Oak St",
+        "hasChargingStation": true,
+        "hasLandingDeck": true,
+        "hasStorageHub": true,
+        "isRentableAirspace": true,
+        "title": "Luxury Condo",
+        "name": "Oak St Condo",
+        "transitFee": "15%",
+        "noFlyZone": false,
+        "isFixedTransitFee": true,
+        "latitude": 51.5074,
+        "longitude": -0.1278,
+        "timezone": "GMT",
+        "weekDayRanges": [
+          { "day": "Friday", "open": "10:00", "close": "16:00" },
+          { "day": "Saturday", "open": "10:00", "close": "16:00" }
+        ]
+      }],
+      "bids": [
+        { "bidder": "Eve", "bidOffer": 5800 },
+        { "bidder": "Frank", "bidOffer": 6000 }
+      ],
+      "totalBid": 4
+    }
+  ]
+  

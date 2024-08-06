@@ -67,7 +67,8 @@ const Buy = () => {
     searchTerm
   );
 
-  useDrawBidPolygons({ map, auctions });
+  useDrawBidPolygons({ map, auctions , setShowBidDetail,
+    setAuctionDetailData });
 
   useEffect(() => {
     if (map) return;

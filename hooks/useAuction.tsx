@@ -70,7 +70,7 @@ const useAuction = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const { getAuctionableProperties , getPropertiesByUserAddress} = AirspaceRentalService();
+  const { getAuctionableProperties , getPropertiesByUserAddress , getTotalAirspacesByUserAddress} = AirspaceRentalService();
 
   console.log({ userUSDWalletBalance });
 
@@ -92,18 +92,26 @@ const useAuction = () => {
         //   String(assetId),
         //   pageNumber
         // );
+        
         const airspaces = await getPropertiesByUserAddress(
           user?.blockchainAddress,
           "landToken",
           10,
           String(assetId),
         );
+        // const airspaces = await getTotalAirspacesByUserAddress(user?.blockchainAddress)
 
-        if (airspaces.length < 10) {
-          setHasMore(false);
-        }
-
+        // if (airspaces.length < 10) {
+        //   setHasMore(false);
+        // }
+        // if (airspaces?.previews?.length < 10) {
+        //   setHasMore(false);
+        // }
+        // console.log(airspaces?.previews,"please")
+        console.log(airspaces,"test airspaces")
         dispatch(setAirspaceList(airspaces || []));
+
+        // dispatch(setAirspaceList(airspaces?.previews || []));
       } catch (error) {
         console.error(error);
       } finally {
@@ -181,29 +189,46 @@ const useAuction = () => {
     console.log("==========================");
 
     setSelectedItems((prevSelectedItems) => {
+      // const isItemSelected = prevSelectedItems.find(
+      //   (selectedItem) => selectedItem.propertyId === item.propertyId
+      // );
       const isItemSelected = prevSelectedItems.find(
-        (selectedItem) => selectedItem.propertyId === item.propertyId
+        (selectedItem) => selectedItem.propertyId === item.id
       );
-
       let updatedItems;
       if (isItemSelected) {
+        // updatedItems = prevSelectedItems.filter(
+        //   (selectedItem) => selectedItem.propertyId !== item.propertyId
+        // );
         updatedItems = prevSelectedItems.filter(
-          (selectedItem) => selectedItem.propertyId !== item.propertyId
+          (selectedItem) => selectedItem.propertyId !== item.id
         );
         setSelectedItemId(null); // Deselect the item
       } else {
+        // updatedItems = [
+        //   ...prevSelectedItems,
+        //   {
+        //     assetId: item.id,
+        //     propertyId: item.propertyId,
+        //     name: item.address,
+        //     minSalePrice: 0,
+        //     endDate: null,
+        //   },
+        // ];
+        // @ts-ignore
         updatedItems = [
           ...prevSelectedItems,
           {
             assetId: item.id,
-            propertyId: item.propertyId,
+            // propertyId: item.propertyId,
+            propertyId: item.id,
             name: item.address,
             minSalePrice: 0,
             endDate: null,
           },
         ];
-        // @ts-ignore
-        setSelectedItemId(item?.propertyId); // Select the item
+        // setSelectedItemId(item?.propertyId); // Select the item
+        setSelectedItemId(item?.id);
       }
 
       return updatedItems;
