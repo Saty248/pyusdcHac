@@ -2,8 +2,6 @@
 name: DEV UI Tests
 
 on:
-  push:
-    branches: [ "test-qa-workflow" ]
   workflow_dispatch:
 
 jobs:
@@ -11,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Get UI Tests Repository
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
       with:
         repository: SkyTradeLinks/qa-automation
         persist-credentials: true
