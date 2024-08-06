@@ -8,9 +8,9 @@ const ReferralActivities: React.FC = () => {
   const { isMobile } = useMobile();
   const [showActivities, setShowActivities] = useState(false);
   return (
-    <div className="mt-4 md:mt-0 w-full md:w-[44%] px-4 md:px-[44px]">
-    <div className=" py-2 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
-      <div className=" py-2">
+    <div className="mt-4 md:mt-0 w-full md:w-w-1/2 px-4 md:px-8">
+    <div className=" py-5 px-4 md:px-6 rounded-[30px] bg-white  w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+      <div className="">
         <h3 className="text-xl font-semibold mt-4">How can I earn SKY Points?</h3>
           {isMobile ? (
            <div className="flex flex-col w-full mt-4 space-y-1">

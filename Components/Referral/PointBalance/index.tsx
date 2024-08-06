@@ -11,21 +11,21 @@ interface PropsI {
 const PointBalance: FC<PropsI> = ({ point, isLoading }) => {
 
   return (
-    <div className="w-full md:w-[45%] px-4 md:px-[44px]">
-      <div className="py-5 px-4 md:px-[15px] rounded-[30px] bg-white gap-4 md:gap-[15px] w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
-        <div className="flex items-end justify-end">
-          <div className="w-12 h-12 md:w-[44px] md:h-[42px] rounded-full bg-[#E9F5FE] flex items-center justify-center">
-            <div className="w-6 h-6"><GiftIcon isActive={true} /></div>
-          </div>
-        </div>
-        <div className="text-xl md:text-xl font-semibold">SKY Points Balance</div>
-        {isLoading ? (
-          <div className="mt-4 md:my-5 md:h-14 flex justify-start items-center">
+    <div className="w-full md:w-w-1/2 px-4 md:px-8">
+      <div className="py-5 px-4 md:px-6 rounded-[30px] bg-white w-full shadow-xl" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+      <div className="flex items-center ">
+      <div className=" h-4 ml-auto"><GiftIcon isActive={true}/></div>
+     </div>
+        <div className="text-xl md:text-xl font-semibold mt-4">SKY Points Balance</div>
+       <div className="mt-9 mb-4">
+       {isLoading ? (
+          <div className=" md:h-14 flex justify-start items-center">
             <BalanceLoader />
           </div>
         ) : (
-          <div className="text-blue-500 font-semibold text-xl md:text-xl my-2 md:my-5">{point} SKY Points</div>
+          <div className="text-blue-500 font-semibold text-xl md:text-xl ">{point} SKY Points</div>
         )}
+       </div>
 
       </div>
 

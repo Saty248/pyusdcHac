@@ -68,53 +68,15 @@ export const EarthIcon = ({ isActive }) => {
 
 export const GiftIcon = ({ isActive }) => {
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 25 25"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="2.58984"
-        y="7.04004"
-        width="20"
-        height="5"
-        rx="2"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4.58984 12.04H20.5898V19.04C20.5898 20.1446 19.6944 21.04 18.5898 21.04H6.58984C5.48527 21.04 4.58984 20.1446 4.58984 19.04V12.04Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M12.5898 7.04004V21.04"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5.58984 5.27442C5.58984 4.04433 6.58703 3.04004 7.81712 3.04004H8.71888C10.8568 3.04004 12.5898 4.77313 12.5898 6.91101V6.91101C12.5898 6.98227 12.5321 7.04004 12.4608 7.04004H7.34984C6.37782 7.04004 5.58984 6.24644 5.58984 5.27442V5.27442Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M19.5898 5.27442C19.5898 4.04433 18.5927 3.04004 17.3626 3.04004H16.4608C14.3229 3.04004 12.5898 4.77313 12.5898 6.91101V6.91101C12.5898 6.98227 12.6476 7.04004 12.7189 7.04004H17.8298C18.8019 7.04004 19.5898 6.24644 19.5898 5.27442V5.27442Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="47" height="45" viewBox="0 0 47 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse opacity="0.5" cx="23.3115" cy="22.125" rx="23.3115" ry="22.125" fill="#CCE3FC"/>
+    <rect x="12.1666" y="17.2915" width="21.6667" height="5.20833" rx="2" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14.3334 22.5H31.6667V29.875C31.6667 30.9796 30.7713 31.875 29.6667 31.875H16.3334C15.2288 31.875 14.3334 30.9796 14.3334 29.875V22.5Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M23 17.2915V31.8748" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M15.4166 15.4583C15.4166 14.1697 16.4613 13.125 17.75 13.125H18.9677C21.1947 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 22.9398 17.2917 22.8656 17.2917H17.25C16.2374 17.2917 15.4166 16.4709 15.4166 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M30.5834 15.4583C30.5834 14.1697 29.5387 13.125 28.25 13.125H27.0323C24.8053 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 23.0602 17.2917 23.1344 17.2917H28.75C29.7626 17.2917 30.5834 16.4709 30.5834 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+    
   );
 };
 
