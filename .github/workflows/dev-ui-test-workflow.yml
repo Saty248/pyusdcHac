@@ -1,5 +1,5 @@
 
-name: DEV TEST UI
+name: DEV UI Tests
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
 
     - name: Run the automation script
       run: |
-        pwd && ls -all && cd ./qa-automation && ls -all && cd /script && python sky_dev_qa_automation.py
+        pwd && ls -all && cd ./qa-automation && ls -all && cd script && python sky_dev_qa_automation.py
   
 
 
