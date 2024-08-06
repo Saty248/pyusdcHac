@@ -1,10 +1,9 @@
 import { useEffect, useRef } from "react";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
+import { CloseIconWhite, SuccessIconwhite, CloseIcon } from "../Icons";
 import { getTokenLink } from "@/hooks/utils";
 import Link from "next/link";
-
 import { PropertyData } from "@/types";
-
+import Backdrop from "../Backdrop";
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns:
@@ -38,6 +37,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   }, [setShowSuccess, setShowClaimModal]);
 
   return (
+    <div>
+    <Backdrop/>
     <div
       ref={modalRef}
       className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
@@ -53,7 +54,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
           <div className="hidden sm:block absolute top-[10px] right-[10px] cursor-pointer">
-            <CloseIconWhite />
+            <CloseIcon />
           </div>
         </div>
 
@@ -153,6 +154,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };
