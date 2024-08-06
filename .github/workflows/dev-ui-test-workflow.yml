@@ -14,7 +14,9 @@ jobs:
       uses: actions/checkout@master
       with:
         repository: SkyTradeLinks/qa-automation
-        ssh-key: ${{ secrets.PRIVATE_KEY_B }}
+        persist-credentials: true
+        submodules: recursive
+        ssh-key: ${{ secrets.PRIVATE_KEY_QA }}
         path: ./qa-automation
     - name: Set up Python
       uses: actions/setup-python@v2
