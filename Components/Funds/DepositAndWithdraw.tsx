@@ -194,10 +194,12 @@ const DepositAndWithdraw = ({
   const handleOnAndOffRamp = () => {
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
-      hostLogoUrl: 'https://app.sky.trade/images/logo.svg',
-      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_TEST_API_KEY),
+      hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
+      hostApiKey: String(process.env.NEXT_PUBLIC_RAMP_API_KEY),
       defaultAsset: 'SOLANA_USDC',
+      swapAsset: 'SOLANA_USDC',
       userAddress: user?.blockchainAddress,
+      userEmailAddress: user?.email,
       enabledFlows: [activeSection === 0 ? 'ONRAMP' : 'OFFRAMP'],
       ...(process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet" && {
         url: "https://app.demo.ramp.network",

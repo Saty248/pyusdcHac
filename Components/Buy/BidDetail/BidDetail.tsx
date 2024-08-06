@@ -78,14 +78,14 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   const isAuctionComplete = endDate ? new Date() > endDate : false;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-50 bottom-[74px] sm:bottom-0 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
       {openBidsModal && (
         <BidsViewModal
           auctionDetailData={auctionDetailData}
           onClose={() => setOpenBidsModal(false)}
         />
       )}
-      <div className="fixed bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md">
+      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md">
         {isMobile && (
           <div
             onClick={onCloseModal}

@@ -17,7 +17,7 @@ interface ExplorerProps {
   registeredAddress: PropertyData[];
   map: Map | null;
   setRegisteredAddress: React.Dispatch<React.SetStateAction<PropertyData[]>>;
-  marker: Marker | null;
+  marker: Marker | null | undefined;
   setMarker: React.Dispatch<React.SetStateAction<Marker>>;
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
   rentData: PropertyData | null | undefined;
@@ -66,7 +66,7 @@ const Explorer: React.FC<ExplorerProps> = ({
       />
       <RentableAirspaceLists
         loadingReg={loadingReg}
-        map={map}
+         map={map} 
         marker={marker}
         regAdressShow={regAdressShow}
         registeredAddress={registeredAddress}

@@ -1,2 +1,2 @@
-const navbarTabs=['/dashboard','/airspaces','/rent','/referral','/marketplace','/buy','/portfolio','/funds']
+const navbarTabs=['/dashboard','/airspaces','/rent','/points','/marketplace','/portfolio','/funds']
 export default navbarTabs

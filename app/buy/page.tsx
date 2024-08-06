@@ -196,7 +196,7 @@ const Buy = () => {
                   />
                 </div>
               )}
-              {showAuctionList && (
+              {showAuctionList && auctions && (
                 <AuctionExplorerMobile
                   loading={loading}
                   auctions={auctions}

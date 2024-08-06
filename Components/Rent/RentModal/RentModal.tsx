@@ -22,6 +22,8 @@ import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
 
 interface RentModalProps {
   setShowClaimModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,7 +48,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
-    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
+    { status: string; message?: string | undefined } | null | undefined
   >();
   const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
@@ -115,20 +117,45 @@ const RentModal: React.FC<RentModalProps> = ({
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };
+        };       
   
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
+
+        console.log({ executionResponse })
   
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess);
+
+        if (executionResponse && executionResponse.errorMessage) {
+          toast.error(executionResponse.errorMessage);
+          return;
+        }
+        if (executionResponse) {
+          if (executionResponse.data && executionResponse.data.status === "success") {
+            setFinalAns({
+              status: "Rent Successful",
+              message: executionResponse.data.message,
+            });
+          } else {
+            if (executionResponse.data) {
+              setFinalAns({
+                status: "Rent failed",
+                message: executionResponse.data.message,
+              });
+            }
+          }
+          setShowSuccess(true);
+        }
       }else{
-        toast.error('something went wrong!')
+        toast.error('something went wrong!')        
       }
+      localStorage.removeItem("rentData")
     } catch (error) {
       setFinalAns({ status: "Rent failed", message: error.message });
+      localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
+      
     }
   };
 
@@ -155,13 +182,15 @@ const RentModal: React.FC<RentModalProps> = ({
       return false;
     }
   };
+  
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {!isMobile && (<Backdrop />)}
+         {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
+        {!isMobile && (<Backdrop onClick={() => { setShowClaimModal(false)}}/>)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
-        className="touch-manipulation fixed top-1/2 left-1/2 sm:left-2/3 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
+        className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
       >
         <div
           className=" touch-manipulation relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
@@ -180,11 +209,7 @@ const RentModal: React.FC<RentModalProps> = ({
             <h2 className="text-[#222222] font-medium text-xl text-center">
               Airspace Details
             </h2>
-            <div className="w-[20px] h-[20px] ml-3">
-              <InfoIcon />
-            </div>
           </div>
-
           <div
             onClick={() => {
               setShowClaimModal(false);
@@ -220,6 +245,24 @@ const RentModal: React.FC<RentModalProps> = ({
               disablePast
               maxDate={maxDate}
               shouldDisableTime={shouldDisableTime}
+              slotProps={{
+                popper: {
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [-10, -30],
+                    },
+                  },
+                  {
+                    name: 'preventOverflow',
+                    options: {
+                      altAxis: true, 
+                    },
+                  },
+                ],
+              }
+              }}
             />
           </div>
         </div>
@@ -235,15 +278,16 @@ const RentModal: React.FC<RentModalProps> = ({
           >
             Cancel
           </div>
-          <button
-            disabled={isLoading}
+          <LoadingButton
             onClick={handleRentAirspace}
-            className="touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
+            isLoading={isLoading} 
+            className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
-          </button>
+          </LoadingButton>
         </div>
       </div>
+      {/* </Box> */}
     </LocalizationProvider>
   );
 };

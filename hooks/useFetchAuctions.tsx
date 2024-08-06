@@ -18,7 +18,7 @@ const useFetchAuctions = (
   );
   const dispatch = useAppDispatch();
   const { getAuctions, searchAuctions, filterAuctions } = MarketplaceService();
-  const [auctions, setAuctions] = useState<AuctionDataI[]>([]);
+  const [auctions, setAuctions] = useState<AuctionDataI[] | null>(null);
   const [page, setPage] = useState<number>(initialPage);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);

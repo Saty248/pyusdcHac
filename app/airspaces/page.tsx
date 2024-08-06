@@ -1,11 +1,11 @@
 "use client";
 
-import useAuth from "@/hooks/useAuth";
-import { useMobile } from "@/hooks/useMobile";
-import PropertiesService from "@/services/PropertiesService";
+import useAuth from "../../hooks/useAuth";
+import { useMobile } from "../../hooks/useMobile";
+import PropertiesService from "../../services/PropertiesService";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { LngLat } from "mapbox-gl";
 import maplibregl, { Marker } from "maplibre-gl";
 import { toast } from "react-toastify";
 import {
@@ -14,29 +14,33 @@ import {
 } from "@/helpers/localstorage";
 import axios from "axios";
 import Head from "next/head";
-import Backdrop from "@/Components/Backdrop";
-import Spinner from "@/Components/Spinner";
-import Sidebar from "@/Components/Shared/Sidebar";
-import PageHeader from "@/Components/PageHeader";
-import ExplorerMobile from "@/Components/Airspace/Explorer/ExplorerMobile";
-import HowToModal from "@/Components/Airspace/HowToModal";
-import ClaimModal from "@/Components/Airspace/ClaimModal/ClaimModal";
-import SuccessModal from "@/Components/Airspace/SuccessModal";
-import Explorer from "@/Components/Airspace/Explorer/Explorer";
-import Slider from "@/Components/Airspace/Slider";
-import SuccessPopUp from "@/Components/Airspace/SuccessPopUp";
-import FailurePopUp from "@/Components/Airspace/FailurePopUp";
+import Backdrop from "../../Components/Backdrop";
+import Spinner from "../../Components/Spinner";
+import Sidebar from "../../Components/Shared/Sidebar";
+import PageHeader from "../../Components/PageHeader";
+import ExplorerMobile from "../../Components/Airspace/Explorer/ExplorerMobile";
+import HowToModal from "../../Components/Airspace/HowToModal";
+import {ClaimModal} from "../../Components/Airspace/ClaimModal/ClaimModal";
+import SuccessModal from "../../Components/Airspace/SuccessModal";
+import Explorer from "../../Components/Airspace/Explorer/Explorer";
+import Slider from "../../Components/Airspace/Slider";
+import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
+import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon } from "@/Components/Icons";
-import ZoomControllers from "@/Components/ZoomControllers";
+import { HelpQuestionIcon } from "../../Components/Icons";
+import ZoomControllers from "../../Components/ZoomControllers";
+import { useTour } from "@reactour/tour";
+import { defaultData } from "../../types";
+import React from "react";
 
 const Airspaces: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
-  const [map, setMap] = useState<any>(null);
+  const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const { isMobile } = useMobile();
-  const [showMobileMap, setShowMobileMap] = useState<boolean>(false);
+  const { setIsOpen, currentStep, isOpen } = useTour();
+  const [showMobileMap, setShowMobileMap] = useState<boolean>(isOpen);
   const [showHowToModal, setShowHowToModal] = useState<boolean>(false);
   // variables
   const [address, setAddress] = useState<string>("");
@@ -46,10 +50,10 @@ const Airspaces: React.FC = () => {
     longitude: "",
     latitude: "",
   });
-  const [marker, setMarker] = useState<Marker | null>(null);
-  const defaultData = {
+  const [marker, setMarker] = useState<mapboxgl.Marker| null>(null);
+  const defaultData: defaultData = {
     address: address,
-    name: "",
+    title: "",
     rent: true,
     sell: false,
     hasPlanningPermission: null,
@@ -57,7 +61,7 @@ const Airspaces: React.FC = () => {
     hasLandingDeck: false,
     hasStorageHub: false,
     sellingPrice: "0",
-    timezone: "UTC+0",
+    timezone: "Europe/london",
     transitFee: "1-99",
     isFixedTransitFee: false,
     noFlyZone: false,
@@ -101,7 +105,7 @@ const Airspaces: React.FC = () => {
     if (map) return;
 
     const createMap = () => {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
 
       const newMap = new mapboxgl.Map({
         container: "map",
@@ -115,6 +119,9 @@ const Airspaces: React.FC = () => {
         // attributionControl: false
       });
 
+      newMap.on("render", function () {
+        newMap.resize()
+      });
       newMap.on("load", function () {
         newMap.addLayer({
           id: "maine",
@@ -123,6 +130,7 @@ const Airspaces: React.FC = () => {
             type: "geojson",
             data: {
               type: "Feature",
+              properties:[],
               geometry: {
                 type: "Polygon",
                 coordinates: [],
@@ -203,14 +211,14 @@ const Airspaces: React.FC = () => {
         }
 
         const coordinates = data.features[0].geometry.coordinates;
-        const endPoint: any = [coordinates[0], coordinates[1]];
-
+        const endPoint = [coordinates[0], coordinates[1]];
+        let  temp:mapboxgl.LngLatLike={lng:coordinates[0] ,lat:coordinates[1]}
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setIsLoading(false);
         setAddress(data.features[0]?.place_name);
 
-        map.flyTo({
-          center: endPoint,
+        map?.flyTo({
+          center: temp,
           zoom: 16,
         });
 
@@ -218,18 +226,22 @@ const Airspaces: React.FC = () => {
           marker.remove();
         }
 
-        let el = document.createElement("div");
-        el.id = "markerWithExternalCss";
+
 
         // Add the new marker to the map and update the marker state
-        const newMarker = new maplibregl.Marker(el)
-          .setLngLat(endPoint)
-          .addTo(map);
+        const newMarker = new mapboxgl.Marker({
+          color: "#3FB1CE",
+          
+      })
+          .setLngLat(temp)
+          .addTo(map as mapboxgl.Map);
+          
         setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
         console.error(error);
-        toast.error("invalid address");
+
+        toast.error("invalid address")
       }
     };
 
@@ -243,18 +255,18 @@ const Airspaces: React.FC = () => {
 
     if ((propertyAddress || geoLocation) && !address) {
       // this condition prevent rerenderings,
-
-      if (
-        (propertyAddress && propertyAddress.length > 2) ||
-        (geoLocation && geoLocation.length > 2)
-      ) {
-        if (geoLocation) {
-          // prioritizing the geolocation over Property Address as it is more consistant
-          setFlyToAddress(geoLocation);
-        } else if (propertyAddress) {
-          setFlyToAddress(propertyAddress);
+      if(isMobile){
+        setShowMobileMap(true)
+      }
+      if (((propertyAddress && propertyAddress.length > 2) || (geoLocation && geoLocation.length > 2))) {
+        if (geoLocation) {   // prioritizing the geolocation over Property Address as it is more consistant             
+          setFlyToAddress(geoLocation)
+        } else if (propertyAddress){
+          setFlyToAddress(propertyAddress)
         }
       }
+      
+    
     }
 
     if (flyToAddress === address) setShowOptions(false);
@@ -297,6 +309,32 @@ const Airspaces: React.FC = () => {
     setShowOptions(false);
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("showTour")) {
+      setIsOpen(true);
+      localStorage.removeItem("showTour");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentStep === 1 && isMobile) {
+      setShowMobileMap(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentStep === 3 && isMobile) {
+      setShowClaimModal(true);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowMobileMap(false);
+      setShowClaimModal(false);
+    }
+  }, [isOpen]);
+
   const onClaim = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
@@ -311,7 +349,7 @@ const Airspaces: React.FC = () => {
       setClaimButtonLoading(true);
       const {
         address,
-        name,
+        title,
         hasChargingStation,
         hasLandingDeck,
         hasPlanningPermission,
@@ -327,8 +365,8 @@ const Airspaces: React.FC = () => {
       const longitude = Number(coordinates.longitude);
       let errors: string[] = [];
 
-      if (!name) {
-        errors.push("Please enter a name for the Airspace");
+      if (!title) {
+        errors.push('Please enter a name for the Airspace');
       }
 
       const postData = {
@@ -339,7 +377,7 @@ const Airspaces: React.FC = () => {
         hasLandingDeck,
         hasStorageHub,
         isRentableAirspace: rent,
-        title: name,
+        title,
         transitFee,
         noFlyZone,
         isFixedTransitFee,
@@ -395,7 +433,14 @@ const Airspaces: React.FC = () => {
       return;
     }
     try {
-      const ipResponse = await axios.get("https://api.ipify.org/?format=json");
+      const propertyAddress = searchParams?.get('propertyAddress')
+    const geoLocation = searchParams?.get('geoLocation');
+
+      if(propertyAddress || geoLocation){
+        //do nothing
+      }
+      else{
+        const ipResponse = await axios.get("https://api.ipify.org/?format=json");
       const ipAddress = ipResponse.data.ip;
       const ipGeolocationApiUrl = await axios.get(
         `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
@@ -410,6 +455,7 @@ const Airspaces: React.FC = () => {
         center: [longitude, latitude],
         zoom: 15,
       });
+    }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -422,8 +468,7 @@ const Airspaces: React.FC = () => {
   const handleOpenAirspaceMap = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
-  };
-
+  } 
   return (
     <Fragment>
       <Head>
@@ -437,10 +482,10 @@ const Airspaces: React.FC = () => {
       )}
 
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        {!showMobileMap && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
-          {showMobileMap && isMobile && (
+          {((showMobileMap && isMobile) ||
+            (isOpen && currentStep === 1 && isMobile)) && (
             <ExplorerMobile
               onGoBack={() => setShowMobileMap(false)}
               address={address}
@@ -461,27 +506,28 @@ const Airspaces: React.FC = () => {
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
-              className={`!absolute !left-0 !top-0 !m-0 !h-screen !w-screen`}
+              className={`!absolute !left-0 !top-0 !m-0 !h-[100%] !w-[100%] `}
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            {isMobile && showMobileMap && flyToAddress && address && (
+            <Sidebar />
+             {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
               <div
                 onClick={() => {
                   setShowClaimModal(true);
                   setIsLoading(true);
                 }}
-                className="absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
+                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
               >
                 Claim Airspace
               </div>
             )}
             {isMobile && (
               <Fragment>
-                {showClaimModal && (
+                {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       removePubLicUserDetailsFromLocalStorageOnClose(
@@ -489,6 +535,8 @@ const Airspaces: React.FC = () => {
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
+                      setData({...defaultData})
+
                     }}
                     data={data}
                     setData={setData}
@@ -523,17 +571,10 @@ const Airspaces: React.FC = () => {
                     setIsLoading(true);
                   }}
                 />
-                <Slider />
-                <SuccessPopUp
-                  isVisible={showSuccessPopUp}
-                  setShowSuccessPopUp={setShowSuccessPopUp}
-                />
-                <FailurePopUp
-                  isVisible={showFailurePopUp}
-                  errorMessages={errorMessages}
-                />
-
-                {showClaimModal && (
+                <div className="hidden sm:block"><Slider /></div>
+                {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
+                {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
+                {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       removePubLicUserDetailsFromLocalStorageOnClose(
@@ -541,6 +582,7 @@ const Airspaces: React.FC = () => {
                       );
                       setShowClaimModal(false);
                       setIsLoading(false);
+                      setData({...defaultData})
                     }}
                     data={data}
                     setData={setData}
@@ -550,7 +592,7 @@ const Airspaces: React.FC = () => {
                 )}
               </div>
             )}
-            {!showMobileMap && (
+            {(!showMobileMap || isOpen) && (
               <div className="flex h-full w-full flex-col md:hidden">
                 <div
                   onClick={() => setShowMobileMap(true)}
@@ -562,7 +604,7 @@ const Airspaces: React.FC = () => {
                     <br />
                     Claim your airspace 🚀✨
                   </div>
-                  <div className="w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
+                  <div className="claim-step w-full rounded-lg bg-[#0653EA] p-[12px] text-center text-base font-normal text-white">
                     Claim your airspace
                   </div>
                 </div>

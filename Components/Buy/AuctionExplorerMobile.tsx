@@ -46,7 +46,7 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center rounded-t-[30px]">
+      <div className="md:hidden fixed bottom-[74px] left-0 w-full z-20 bg-white p-4  text-center rounded-t-[30px]">
         <div
           onClick={() => setToggleTray(!toggleTray)}
           className="flex flex-col items-center justify-center gap-4"

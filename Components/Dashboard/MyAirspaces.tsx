@@ -6,7 +6,6 @@ import {
   ChevronRightIcon,
 } from "../Shared/Icons";
 import Item from "@/Components/Dashboard/Item";
-import WorldMap from "@/Components/WorldMap";
 import { BalanceLoader } from "@/Components/Wrapped";
 import { PropertyData } from "@/types";
 
@@ -40,9 +39,6 @@ const MyAirspaces: FC<MyAirspacesProps> = ({
         <BalanceLoader />
       ) : (
         <div className="flex flex-col items-center gap-[29px]">
-          <div className="w-[265.81px] h-[131.01px]">
-            <WorldMap coloredCountries={["Spain"]} />
-          </div>
           <div className="flex flex-col items-center gap-[7px] w-full">
             {airspaces.length === 0 && (
               <p className="text-[17px] text-[#222222] font-normal px-[55px] text-center">
