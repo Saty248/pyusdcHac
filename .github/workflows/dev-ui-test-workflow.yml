@@ -32,7 +32,7 @@ jobs:
 
     - name: Run the automation script
       run: |
-        cd script && python3 sky_dev_qa_automation.py
+        pwd && ls -all && cd script && python sky_dev_qa_automation.py
   
 
 
