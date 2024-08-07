@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CloseIconWhite, SuccessIconwhite, CloseIcon } from "../Icons";
-import { getTokenLink } from "@/hooks/utils";
+import { getTransactionLink } from "@/hooks/utils";
 import Link from "next/link";
 import { PropertyData } from "@/types";
 import Backdrop from "../Backdrop";
@@ -69,7 +69,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <>
             <div className="w-full mt-6">
               <h1 className=" font-medium text-xl text-center text-[#FFFFFF] font-poppins">
-                Your rental order is complete
+                Your rental order is being processed
               </h1>
             </div>
           </>
@@ -87,13 +87,13 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <div className="font-normal text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status === "Rent Successful" && (
               <div>
-                'You rented'{" "}
+                'Your rental for'{" "}
                 {rentData && (
                   <>
                     <span className=" text-lg font-bold">{`${rentData.address}`}</span>{" "}
                   </>
                 )}
-                {` for `}{" "}
+                  {`is being processed. The rental amount is`}{" "}
                 {rentData && (
                   <span className=" text-lg font-bold">
                     ${rentData.price}
@@ -122,10 +122,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <>
             <Link
               target="_blank"
-              href={getTokenLink(finalAns.message)}
+              href={getTransactionLink(finalAns.message)}
               className="py-2 font-bold text-center text-[#FFFFFF] text-[14px] underline"
             >
-              Transaction Link
+              View Transaction Link
             </Link>
           </>
         )}
