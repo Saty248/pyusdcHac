@@ -11,7 +11,7 @@ import Spinner from "../Spinner";
 import MarketplaceService from "@/services/MarketplaceService";
 interface AuctionExplorerProps {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  auctions: AuctionDataI[];
+  auctions: AuctionDataI[] | null;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   hasMorePage: boolean;
   loading: boolean;
