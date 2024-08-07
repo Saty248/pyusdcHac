@@ -19,6 +19,18 @@ const Service = () => {
 
   const TIMEOUT = 300000;
 
+  const isLocalhostUrl = (url: string): boolean => {
+    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
+    return localhostRegex.test(url);
+  }
+
+  const getRequestUrl = (uri: string): string => {
+    const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
+
+    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
+    else return `${serverUrl}/api/proxy?${Date.now()}`;
+  }
+
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.error(error);
     if (
@@ -71,6 +83,10 @@ const Service = () => {
           time: message.payload.issuedAt,
           nonce: message.payload.nonce,
           address: accounts[0],
+          // Support localhost
+          sign_issue_at: message.payload.issuedAt,
+          sign_nonce: message.payload.nonce,
+          sign_address: accounts[0],
         };
 
       } else {
@@ -102,7 +118,7 @@ const Service = () => {
       return await axios({
         method: "get",
         timeout: TIMEOUT,
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         headers,
       });
     } catch (error) {
@@ -123,7 +139,7 @@ const Service = () => {
 
       return await axios({
         method: "post",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -146,7 +162,7 @@ const Service = () => {
 
       return await axios({
         method: "patch",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -169,7 +185,7 @@ const Service = () => {
 
       return await axios({
         method: "delete",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
