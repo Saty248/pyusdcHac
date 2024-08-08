@@ -19,6 +19,22 @@ const AirspaceRentalService = () => {
     }
   }
 
+  const getRetrievePendingRentalAirspace = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/airspace-rental/retrieve-pending-rental-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+      })
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   const getUnverifiedAirspaces = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
     try {
       if (!callerAddress) return [];
@@ -109,7 +125,8 @@ const AirspaceRentalService = () => {
     createMintRentalToken,
     executeMintRentalToken,
     getTotalAirspacesByUserAddress, 
-    getSingleAsset
+    getSingleAsset,
+    getRetrievePendingRentalAirspace
   };
 };
 
