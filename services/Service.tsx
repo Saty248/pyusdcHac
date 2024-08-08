@@ -14,22 +14,36 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+const TIMEOUT = 300000;
+const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later."
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
-  const TIMEOUT = 300000;
+  const isLocalhostUrl = (url: string): boolean => {
+    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
+    return localhostRegex.test(url);
+  }
+
+  const getRequestUrl = (uri: string): string => {
+    const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
+
+    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
+    else return `${serverUrl}/api/proxy?${Date.now()}`;
+  }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
-    console.error(error);
     if (
       !suppressErrorReporting &&
-      error.response &&
-      error.response.status === 500 &&
-      error.response?.data?.errorMessage
+      error.response  
     ) {
-      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage);
+        
+      const backendError = error.response.data.errorMesagge
+
+      if (backendError  && backendError !== "UNAUTHORIZED") {
+        toast.error(backendError);
+      } else {
+        toast.error(CUSTOM_ERROR_MESSAGE);
       }
     }
     Sentry.captureException(error);
@@ -72,6 +86,10 @@ const Service = () => {
           time: message.payload.issuedAt,
           nonce: message.payload.nonce,
           address: accounts[0],
+          // Support localhost
+          sign_issue_at: message.payload.issuedAt,
+          sign_nonce: message.payload.nonce,
+          sign_address: accounts[0],
         };
 
       } else {
@@ -99,7 +117,7 @@ const Service = () => {
       return await axios({
         method: "get",
         timeout: TIMEOUT,
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         headers,
       });
     } catch (error) {
@@ -120,7 +138,7 @@ const Service = () => {
 
       return await axios({
         method: "post",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -143,7 +161,7 @@ const Service = () => {
 
       return await axios({
         method: "patch",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,
@@ -166,7 +184,7 @@ const Service = () => {
 
       return await axios({
         method: "delete",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
         timeout: TIMEOUT,
         data: { ...postData },
         headers,

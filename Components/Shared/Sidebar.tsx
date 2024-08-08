@@ -4,7 +4,7 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon, MenuIcon } from './Icons';
+import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, GiftIconsidebar,EarthIconsidebar,HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon, MenuIcon, } from './Icons';
 import useAuth from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
 import { useMobile } from "@/hooks/useMobile";
@@ -162,8 +162,8 @@ const Sidebar = () => {
         </Link>
 
         <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
-        <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
-        <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIcon isActive={false} />} />
+        <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIconsidebar isActive={false} />} />
+        <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIconsidebar isActive={false} />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={'https://sky.trade/waitlist'} target={'_blank'} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
@@ -178,7 +178,7 @@ const Sidebar = () => {
       {isMobile && !showMobileNavbar && (
         <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
           <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
-          <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<EarthIcon isActive={false} />} numberOfUnseenNotifications={0} />
+          <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<GiftIconsidebar isActive={false} />} numberOfUnseenNotifications={0} />
           <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
           <SidebarItemMobile href={'/portfolio'} text={"Portfolio"} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
           <SidebarItemMobile onClick={handleMenuClick} text={"Menu"} children={<MenuIcon isActive={false} />} numberOfUnseenNotifications={0} />

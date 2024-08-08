@@ -31,3 +31,10 @@ export const getTokenLink = (tokenId) => {
   }
   else return `https://solscan.io/token/${tokenId}`;
 }
+
+export const getTransactionLink = (signature) => {
+  if (process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet") {
+    return `https://solscan.io/tx/${signature}?cluster=devnet`;
+  }
+  else return `https://solscan.io/tx/${signature}`;
+}
