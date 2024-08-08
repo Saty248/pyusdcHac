@@ -14,22 +14,25 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+const TIMEOUT = 300000;
+const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later."
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
-  const TIMEOUT = 300000;
-
+  
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
-    console.error(error);
     if (
       !suppressErrorReporting &&
-      error.response &&
-      error.response.status === 500 &&
-      error.response?.data?.errorMessage
+      error.response  
     ) {
-      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage);
+        
+      const backendError = error.response.data.errorMesagge
+
+      if (backendError  && backendError !== "UNAUTHORIZED") {
+        toast.error(backendError);
+      } else {
+        toast.error(CUSTOM_ERROR_MESSAGE);
       }
     }
     Sentry.captureException(error);
@@ -119,12 +122,12 @@ const Service = () => {
       if (!isPublic && !headers) return null;
 
       return await axios({
-        method: "post",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
-        timeout: TIMEOUT,
-        data: { ...postData },
-        headers,
-      });
+              method: "post",
+              url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+              timeout: TIMEOUT,
+              data: { ...postData },
+              headers,
+            })    
     } catch (error) {
       toastError(error, suppressErrorReporting);
     }
