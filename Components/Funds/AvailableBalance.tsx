@@ -25,7 +25,6 @@ const AvailableBalance = () => {
   const [isSpinning, setIsSpinning] = useState(false);
 
 
-
   const handleBalance = async () => {
   try {
         const userBalance  = await fetchBalance(user)
