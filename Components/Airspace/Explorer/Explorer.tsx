@@ -47,7 +47,7 @@ const Explorer = ({
           )}
         </div>
       </div>
-      <p className=" border text-[15px] font-normal text-[#222222] break-words">
+      <p className="  text-[15px] font-normal text-[#222222] break-words">
         Ready to claim your airspace? No registered airspace yet, but exciting
         times ahead!
       </p>
