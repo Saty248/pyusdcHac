@@ -7,7 +7,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
+        uri: `/public/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
       });
       if (!response) {
         return [];
@@ -23,7 +23,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-pending-rental-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+        uri: `/public/airspace-rental/retrieve-pending-rental-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
       })
       if (!response) {
         return [];
@@ -39,7 +39,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+        uri: `/public/airspace-rental/retrieve-unverified-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
       })
       if (!response) {
         return [];
@@ -55,7 +55,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-rejected-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
+        uri: `/public/airspace-rental/retrieve-rejected-airspace?callerAddress=${callerAddress}&limit=${limit}&page=${page || "1"}`
       })
       if (!response) {
         return [];
@@ -70,7 +70,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
+        uri: `/public/airspace-rental/retrieve-total-airspace?callerAddress=${callerAddress}`,
       })
       return response?.data;
     } catch (error) {
@@ -83,7 +83,7 @@ const AirspaceRentalService = () => {
     try {
       if (!assetId) return null;
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-single-asset/${assetId}`,
+        uri: `/public/airspace-rental/retrieve-single-asset/${assetId}`,
       })
       return response?.data;
     } catch (error) {
