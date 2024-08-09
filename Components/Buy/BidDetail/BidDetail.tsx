@@ -8,6 +8,9 @@ import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import { shortenAddress } from "@/utils";
 import { useEffect, useState } from "react";
 import BidsViewModal from "./BidsView";
+import Accordion from "./Accordion";
+import AirspaceHistory from "./AirspaceHistory";
+import CustomTable from "./CustomTable";
 
 interface BidDetailsProps {
   auctionDetailData: AuctionDataI | undefined;
@@ -76,6 +79,40 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   console.log({ sortedBids });
 
   const isAuctionComplete = endDate ? new Date() > endDate : false;
+  const previousBidData = [
+    {
+      price: '$100',
+      date: "15 december 2023",
+      from: "Jane Doe",
+    },
+    {
+      price: '$95',
+      date: "5 december 2023",
+      from: "Jane Doe",
+    },
+    {
+      price: '$91',
+      date: "29 november 2023",
+      from: "Jane Doe",
+    },
+  ];
+  const airspaceHistoryMockData = [
+    {
+      price: "Rental",
+      date: "15 december 2023",
+      from: "bcndkl,spuifijdczvè”yçh",
+    },
+    {
+      price: "Rental",
+      date: "5 december 2023",
+      from: "bvqnx,,qzidjcn-’bfszdxd",
+    },
+    {
+      price: "Sell",
+      date: "29 november 2023",
+      from: "adncjdjf, chzjneofjiochui",
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 bottom-[74px] sm:bottom-0 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
@@ -85,7 +122,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           onClose={() => setOpenBidsModal(false)}
         />
       )}
-      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[530px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md">
+      <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[640px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md thin-scrollbar short-scrollbar">
         {isMobile && (
           <div
             onClick={onCloseModal}
@@ -223,6 +260,28 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   Place a Bid
                 </button>
               </div>
+                <hr />
+                <div>
+                  <Accordion
+                    // title={`Previous Bid (${totalBId})`}
+                    title={`Previous Bid 3`}
+                    content={<CustomTable header={["Price", "Date", "From"]} body={previousBidData} />}
+                  />
+                </div>
+                <hr />
+                <div>
+                  <Accordion
+                    title={"Airspace History"}
+                    content={
+                      <AirspaceHistory
+                        airspaceHistory={airspaceHistoryMockData}
+                        totalLifeTimeIncome={200.0}
+                        MtdTotalIncome={200.0}
+                        WtdTotalIncome={200.0}
+                      />
+                    }
+                  />
+                </div>
             </>
           )}
         </div>

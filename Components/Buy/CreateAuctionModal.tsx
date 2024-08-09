@@ -92,7 +92,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
           </div>
         ) : (
           <div className="fixed bottom-[74px] left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-end">
-            <div className="relative flex flex-col justify-between w-full h-[685px] bg-white rounded-t-[30px] p-8">
+            <div className="relative flex flex-col justify-between w-full h-[560px] sm:h-[685px] bg-white rounded-t-[30px] p-8">
               {/* <div
                 onClick={onClose}
                 className="absolute right-[1rem] top-[1rem] cursor-pointer"

@@ -203,9 +203,10 @@ const BidPreview: React.FC<BidPreviewProps> = ({
                 </div>
               </div>
               <div className="flex">
-                <div>ID::</div>
+                <div>Expiration Date:</div>
                 <div className="text-light-grey pl-[15px]">
-                  {auctionDetailData?.id}
+                  {/* {auctionDetailData?.id} */}
+                  15 january 2024 at 11:49 AM
                 </div>
               </div>
               <div className="flex">

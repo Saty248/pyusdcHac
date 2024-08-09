@@ -43,7 +43,7 @@ const AirspaceHistory: React.FC<AirspaceHistoryProps> = ({
       </div>
       <>
         <CustomTable
-          header={["Price", "Date", "From"]}
+          header={["Type", "Date", "From"]}
           body={airspaceHistory}
         />
       </>
