@@ -1,5 +1,6 @@
 import { formatDate } from "@/utils";
 import React, { Fragment } from "react";
+
 import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
 import {
   Page,
@@ -10,46 +11,55 @@ import {
   pdf,
   Image,
 } from "@react-pdf/renderer";
+import { useAppSelector } from "@/redux/store";
 
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#fff",
-    padding: 30,
+    paddingRight: 30,
+    paddingLeft: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   section: {
     margin: 10,
-    padding: 10,
-    fontSize: 14,
-    lineHeight: 12,
+    paddingVertical: 10,
+    fontSize: 12,
+    lineHeight: 1.5,
   },
   bold: {
     fontWeight: "bold",
   },
   footer: {
     fontSize: 12,
-    textAlign: "center",
-    marginTop: 20,
+    textAlign: "left",
+    marginTop: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   image: {
-    width: 100,
-    height: 100,
-    marginVertical: 10,
+    width: 200,
+    height: 60,
+    marginVertical: 20,
+    margin: "right",
   },
 
   mapImage: {
     margin: "auto",
-    width: 400,
-    height: 200,
+    width: 450,
+    height: 300,
     marginVertical: 10,
   },
 });
 
 const Certificate = ({
+  user,
   rentalId,
   dateOfRent,
   timeFrame,
@@ -61,12 +71,13 @@ const Certificate = ({
 }) => (
   <Document>
     <Page style={styles.page}>
-      {logo && <Image style={styles.image} src={"/images/logo-1.svg"} />}
+      {logo && <Image style={styles.image} src={"/images/logwo.png"} />}
       <Text style={styles.title}>Rental Certificate</Text>
       <View style={styles.section}>
         <Text>
-          This certifies that [User's Name] has successfully rented an airspace
-          on SkyTrade for the following details:
+          This certifies that {user.name}, with the blockchain address{" "}
+          {user.blockchainAddress} has successfully rented an airspace on
+          SkyTrade with the following details:
         </Text>
         <Text style={styles.bold}>Rental ID: {rentalId}</Text>
         <Text style={styles.bold}>Date of Rental: {dateOfRent}</Text>{" "}
@@ -85,17 +96,28 @@ const Certificate = ({
           mentioned above. This agreement is subject to SkyTrade's Rental
           Agreement and Terms of Service.
         </Text>
+
+        <Text>
+          If you have any questions or require more information, please contact
+          the SkyTrade team and we will reach out at our earliest convenience.
+        </Text>
       </View>
       <View style={styles.footer}>
         <Text>SkyTrade Team</Text>
-        <Text>www.sky.trade</Text>
-        <Text>[ST phone number and legal infos]</Text>
+        <Text>Website: https://app.sky.trade</Text>
+        <Text>E-mail: info@sky.trade</Text>
       </View>
     </Page>
   </Document>
 );
 
 const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
+  const { user } = useAppSelector((state) => {
+    const { user } = state.userReducer;
+    return { user };
+  });
+
+  console.log({ user });
   const handleGenerateCertificate = async () => {
     const rentalId = airspace?.id;
     const dateOfRent = formatDate(airspace?.metadata?.endTime);
@@ -106,6 +128,7 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
 
     const certificate = (
       <Certificate
+        user={user}
         longitude={2.12282}
         latitude={41.380898}
         rentalId={rentalId}
