@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "left",
     marginTop: 30,
-    paddingVertical: 10,
+
     paddingHorizontal: 20,
   },
   image: {
@@ -49,6 +49,9 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 20,
     margin: "right",
+  },
+  mb: {
+    marginTop: 10,
   },
 
   mapImage: {
@@ -67,12 +70,12 @@ const Certificate = ({
   longitude,
   latitude,
   amount,
-  logo,
-  qrCode,
+  // logo,
+  // qrCode,
 }) => (
   <Document>
     <Page style={styles.page}>
-      {logo && <Image style={styles.image} src={"/images/logwo.png"} />}
+      <Image style={styles.image} src={"/images/logwo.png"} />
       <Text style={styles.title}>Rental Certificate</Text>
       <View style={styles.section}>
         <Text>
@@ -80,9 +83,10 @@ const Certificate = ({
           {user.blockchainAddress} has successfully rented an airspace on
           SkyTrade with the following details:
         </Text>
+        <Text style={[styles.bold, styles.mb]}></Text>
         <Text style={styles.bold}>Rental ID: {rentalId}</Text>
         <Text style={styles.bold}>Date of Rental: {dateOfRent}</Text>{" "}
-        <Text style={styles.bold}>Time Frame: {timeFrame}</Text>
+        <Text style={styles.bold}>Expiration Date: {timeFrame}</Text>
         <Text style={styles.bold}>Amount: {amount}</Text>
       </View>
 
@@ -121,11 +125,9 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
   console.log({ activePortfolioTab });
   const handleGenerateCertificate = async () => {
     const rentalId = airspace?.id;
-    const dateOfRent = formatDate(airspace?.metadata?.endTime);
-    const timeFrame = "9:00 AM - 5:00 PM"; // This should be dynamically set
-    const amount = "$100"; // This should be dynamically set
-    const logo = "/path/to/logo.png"; // Replace with actual path
-    const qrCode = "/path/to/qr-code.png"; // Replace with actual path
+    const dateOfRent = formatDate(airspace?.metadata?.startTime);
+    const timeFrame = formatDate(airspace?.metadata?.endTime);
+    const amount = `$${airspace?.currentPrice}`;
 
     const certificate = (
       <Certificate
@@ -136,8 +138,8 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
         dateOfRent={dateOfRent}
         timeFrame={timeFrame}
         amount={amount}
-        logo={logo}
-        qrCode={qrCode}
+        // logo={logo}
+        // qrCode={qrCode}
       />
     );
 
