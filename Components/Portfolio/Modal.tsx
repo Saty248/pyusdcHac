@@ -39,9 +39,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     fontSize: 12,
-    // textAlign: "left",
     marginTop: 30,
-
     paddingHorizontal: 10,
   },
   image: {
