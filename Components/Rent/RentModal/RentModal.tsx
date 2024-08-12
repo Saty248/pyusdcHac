@@ -8,7 +8,7 @@ import {
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import SuccessModal from "../SuccessModal";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { VersionedTransaction } from "@solana/web3.js";
@@ -23,6 +23,7 @@ import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import PropertiesService from "@/services/PropertiesService";
 
 
 interface RentModalProps {
@@ -51,18 +52,31 @@ const RentModal: React.FC<RentModalProps> = ({
     { status: string; message?: string | undefined } | null | undefined
   >();
   const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
-  const { createMintRentalToken, executeMintRentalToken } =
-    AirspaceRentalService();
+  const { createMintRentalToken, executeMintRentalToken } = AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
-
+  const {getRentedTimes} = PropertiesService()
   localStorage.setItem('rentData',JSON.stringify(rentData));
-  
+  const rentedTimes = useRef([])
+
   useEffect(() => {
     if(user){
       getTokenBalance(user, setTokenBalance);
     }
     
   }, [user]);
+
+  const fetchAndSetRentedTimes = async () => {
+    const rentedData = await getRentedTimes(rentData?.id as string);
+    const checkStartTimes = rentedData?.map(item => item.startTime);
+    rentedTimes.current = checkStartTimes || []
+  };
+  
+
+  useEffect(() => {
+    if (rentData?.id) {
+      fetchAndSetRentedTimes();
+    }
+  }, [rentData]);
 
   const handleRentAirspace = async () => {
     try {
@@ -155,7 +169,6 @@ const RentModal: React.FC<RentModalProps> = ({
       localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
-      
     }
   };
 
@@ -169,7 +182,11 @@ const RentModal: React.FC<RentModalProps> = ({
       />
     );
   }
+
+
+
   const shouldDisableTime = (value, view) => {
+   
     if (view === "minutes" && value.minute() >= 1 && value.minute() <= 29) {
       return true;
     } else if (
@@ -178,11 +195,17 @@ const RentModal: React.FC<RentModalProps> = ({
       value.minute() <= 59
     ) {
       return true;
-    } else {
-      return false;
     }
+
+    const time = value.toDate().getTime();
+    const isTimeRented  = rentedTimes.current.some((rentedTime) => {
+      const rentedStart = new Date(rentedTime).getTime();
+      return time === rentedStart;
+    });
+    return isTimeRented 
+ 
+   
   };
-  
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -133,19 +133,19 @@ export const UserIcon = () => {
     )
 }
 
-
 export const ShareIcon = ({ color }) => {
     return (
-        <svg width="63" height="64" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="47" height="45" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="31.5" cy="32" r="31.5" fill="#E9F5FE"/>
         <path d="M43 20.5L17.5 28.4706L28.75 34.75M43 20.5L34.75 46L28.75 34.75M43 20.5L28.75 34.75" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         
     );
   };
+  
   export const EarthIcon = () => {
     return (
-      <svg width="63" height="64" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="47" height="45" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="31.5" cy="32" r="31.5" fill="#E9F5FE"/>
       <circle cx="32" cy="32.5" r="13.5" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M33.4999 19.072C32.9779 19.5114 32.5076 20.0298 32.1075 20.6238C29.7933 24.0592 30.7022 28.7202 34.1376 31.0344C34.4088 31.217 34.6876 31.3796 34.9723 31.5225C37.9999 33.0417 39.1558 30.9941 40.7951 32.0984C41.8584 32.8147 42.1398 34.2573 41.4235 35.3207C40.6728 36.435 39.4999 36.9999 39.7029 38.8251C39.8174 39.8552 40.4503 40.7429 41.2703 41.4999" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -289,7 +289,7 @@ export const CloseIcon = () => {
 
     )
 }
-export const CloseIconWhite = () => {
+export const CircledCloseIcon = () => {
     return (
         <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g clip-path="url(#clip0_3630_22935)">
