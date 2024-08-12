@@ -72,7 +72,7 @@ const PortfolioList = ({ title, selectAirspace }) => {
               airspaceList[0].address ? (
               airspaceList?.map((airspace, index) => (
                 <PortfolioItem
-                  airspaceName={airspace?.title}
+                  airspaceName={airspace?.property?.title ? airspace?.property?.title : airspace?.title ? airspace?.title : airspace?.address }
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
