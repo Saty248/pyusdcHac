@@ -48,7 +48,7 @@ const RentModal: React.FC<RentModalProps> = ({
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
-    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
+    { status: string; message?: string | undefined } | null | undefined
   >();
   const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
@@ -122,8 +122,30 @@ const RentModal: React.FC<RentModalProps> = ({
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
+
+        console.log({ executionResponse })
   
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess); 
+
+        if (executionResponse && executionResponse.errorMessage) {
+          toast.error(executionResponse.errorMessage);
+          return;
+        }
+        if (executionResponse) {
+          if (executionResponse.data && executionResponse.data.status === "success") {
+            setFinalAns({
+              status: "Rent Successful",
+              message: executionResponse.data.message,
+            });
+          } else {
+            if (executionResponse.data) {
+              setFinalAns({
+                status: "Rent failed",
+                message: executionResponse.data.message,
+              });
+            }
+          }
+          setShowSuccess(true);
+        }
       }else{
         toast.error('something went wrong!')        
       }

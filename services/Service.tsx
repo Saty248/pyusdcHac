@@ -1,10 +1,11 @@
-import React, { Fragment, useContext } from "react";
+import { useContext } from "react";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import { Web3authContext } from "@/providers/web3authProvider";
 import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
+import * as Sentry from "@sentry/nextjs";
 
 interface RequestI {
   uri: string;
@@ -13,23 +14,39 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+const TIMEOUT = 300000;
+const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later."
+
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
-  console.log({ NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL })
+  const isLocalhostUrl = (url: string): boolean => {
+    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
+    return localhostRegex.test(url);
+  }
+
+  const getRequestUrl = (uri: string): string => {
+    const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
+
+    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
+    else return `${serverUrl}/api/proxy?${Date.now()}`;
+  }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
-    console.error(error);
     if (
       !suppressErrorReporting &&
-      error.response &&
-      error.response.status === 500 &&
-      error.response?.data?.errorMessage
+      error.response  
     ) {
-      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage);
+        
+      const backendError = error.response.data.errorMesagge
+
+      if (backendError  && backendError !== "UNAUTHORIZED") {
+        toast.error(backendError);
+      } else {
+        toast.error(CUSTOM_ERROR_MESSAGE);
       }
     }
+    Sentry.captureException(error);
   };
 
   const createHeader = async ({ isPublic, uri }: {
@@ -69,6 +86,10 @@ const Service = () => {
           time: message.payload.issuedAt,
           nonce: message.payload.nonce,
           address: accounts[0],
+          // Support localhost
+          sign_issue_at: message.payload.issuedAt,
+          sign_nonce: message.payload.nonce,
+          sign_address: accounts[0],
         };
 
       } else {
@@ -95,7 +116,8 @@ const Service = () => {
       if (!isPublic && !headers) return null;
       return await axios({
         method: "get",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
+        url: getRequestUrl(uri),
         headers,
       });
     } catch (error) {
@@ -116,7 +138,8 @@ const Service = () => {
 
       return await axios({
         method: "post",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -138,7 +161,8 @@ const Service = () => {
 
       return await axios({
         method: "patch",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -160,7 +184,8 @@ const Service = () => {
 
       return await axios({
         method: "delete",
-        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });

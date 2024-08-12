@@ -9,7 +9,7 @@ export const DashboardIcon = ({ isActive }) => {
     )
 }
 
-export const EarthIcon = ({ isActive }) => {
+export const EarthIconsidebar = ({ isActive }) => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="10.5898" cy="10.7683" r="9" stroke={isActive ? '#4285F4' : '#5D7285'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -20,7 +20,7 @@ export const EarthIcon = ({ isActive }) => {
     )
 }
 
-export const GiftIcon = ({ isActive }) => {
+export const GiftIconsidebar = ({ isActive }) => {
     return (
         <svg width="100%" height="100%" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="2.58984" y="7.04004" width="20" height="5" rx="2" stroke={isActive ? '#4285F4' : '#5D7285'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -135,12 +135,39 @@ export const UserIcon = () => {
 
 export const ShareIcon = ({ color }) => {
     return (
-        <svg width="100%" height="100%" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M27 1.5L1.5 9.47058L12.75 15.75M27 1.5L18.75 27L12.75 15.75M27 1.5L12.75 15.75" stroke={color || '#4285F4'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="47" height="45" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="31.5" cy="32" r="31.5" fill="#E9F5FE"/>
+        <path d="M43 20.5L17.5 28.4706L28.75 34.75M43 20.5L34.75 46L28.75 34.75M43 20.5L28.75 34.75" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-
-    )
-}
+        
+    );
+  };
+  
+  export const EarthIcon = () => {
+    return (
+      <svg width="47" height="45" viewBox="0 0 63 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="31.5" cy="32" r="31.5" fill="#E9F5FE"/>
+      <circle cx="32" cy="32.5" r="13.5" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M33.4999 19.072C32.9779 19.5114 32.5076 20.0298 32.1075 20.6238C29.7933 24.0592 30.7022 28.7202 34.1376 31.0344C34.4088 31.217 34.6876 31.3796 34.9723 31.5225C37.9999 33.0417 39.1558 30.9941 40.7951 32.0984C41.8584 32.8147 42.1398 34.2573 41.4235 35.3207C40.6728 36.435 39.4999 36.9999 39.7029 38.8251C39.8174 39.8552 40.4503 40.7429 41.2703 41.4999" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 28.4202C21.6228 28.8151 23.1245 29.7518 24.209 31.189C25.365 32.721 25.8442 34.5527 25.6968 36.3257C25.6187 37.2647 26.2311 38.2125 27.0191 38.7291C27.3999 38.9787 27.7448 39.297 28.0348 39.6812C29.3188 41.3828 29.0626 43.7667 27.5 45.1612" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+  
+    );
+  };
+  
+  export const GiftIcon = () => {
+    return (
+      <svg width="47" height="45" viewBox="0 0 47 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse opacity="0.5" cx="23.3115" cy="22.125" rx="23.3115" ry="22.125" fill="#CCE3FC"/>
+      <rect x="12.1666" y="17.2915" width="21.6667" height="5.20833" rx="2" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14.3334 22.5H31.6667V29.875C31.6667 30.9796 30.7713 31.875 29.6667 31.875H16.3334C15.2288 31.875 14.3334 30.9796 14.3334 29.875V22.5Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M23 17.2915V31.8748" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15.4166 15.4583C15.4166 14.1697 16.4613 13.125 17.75 13.125H18.9677C21.1947 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 22.9398 17.2917 22.8656 17.2917H17.25C16.2374 17.2917 15.4166 16.4709 15.4166 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M30.5834 15.4583C30.5834 14.1697 29.5387 13.125 28.25 13.125H27.0323C24.8053 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 23.0602 17.2917 23.1344 17.2917H28.75C29.7626 17.2917 30.5834 16.4709 30.5834 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      
+    );
+  };
 
 export const FacebookIcon = () => {
     return (
