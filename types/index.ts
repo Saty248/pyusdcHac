@@ -269,4 +269,3 @@ export type defaultData = {
     { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
   ],
 };
-

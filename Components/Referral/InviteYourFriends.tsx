@@ -56,7 +56,7 @@ const InviteYourFriends:React.FC<InviteYourFriendsProps> = ({ referralCode }) =>
         <div
           onClick={handleReferUser}
           className={`absolute right-[5px] top-1/2 -translate-y-1/2 bg-[#0653EA] w-[38px] h-[41px]  flex items-center justify-center ${isLoading ? "cursor-wait" : "cursor-pointer"} rounded-lg`}>
-          <div className="w-[15px] h-[15px]">
+          <div className="w-6 h-6">
             <ShareIcon color={"white"} />
           </div>
         </div>

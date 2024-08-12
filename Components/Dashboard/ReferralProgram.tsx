@@ -9,9 +9,9 @@ const ReferralProgram: FC = () => {
   return (
     <Item
       title={"Referral Program"}
-      icon={<GiftIcon isActive />}
+      icon={<GiftIcon  />}
       linkText={"View referral program"}
-      href={"/referral"}
+      href={"/points"}
       style={"h-fit"}
     >
       <div className="flex md:flex-col items-center justify-center gap-[8.37px] md:px-[17px] text-xs">
@@ -24,7 +24,7 @@ const ReferralProgram: FC = () => {
         />
         <Path />
         <ReferralProgramItem
-          icon={<EarthIcon isActive={true} />}
+          icon={<EarthIcon />}
           title={"Register & Claim"}
           text={
             "Let them register and claim their airspaces using your referral link or code"
@@ -32,7 +32,7 @@ const ReferralProgram: FC = () => {
         />
         <Path />
         <ReferralProgramItem
-          icon={<GiftIcon isActive={true} />}
+          icon={<GiftIcon />}
           title={"Earn"}
           text={
             <Fragment>
