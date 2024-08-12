@@ -11,6 +11,7 @@ export enum PortfolioTabEnum {
   UNVERIFIED,
   REJECTED,
   RENTED,
+  PENDING_RENTAL
 }
 
 const usePortfolioList = () => {
@@ -33,6 +34,7 @@ const usePortfolioList = () => {
   const {
     getPropertiesByUserAddress,
     getUnverifiedAirspaces,
+    getRetrievePendingRentalAirspace,
     getRejectedAirspaces,
   } = AirspaceRentalService();
 
@@ -64,6 +66,15 @@ const usePortfolioList = () => {
             user?.blockchainAddress,
             pageNumber,
             10
+          );
+          if (airspaceResp && airspaceResp.items) {
+            airspaces = airspaceResp.items;
+          }
+        } else if (activeTab === PortfolioTabEnum.PENDING_RENTAL) {
+          const airspaceResp = await getRetrievePendingRentalAirspace(
+            user?.blockchainAddress,
+            pageNumber,
+            10,
           );
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;

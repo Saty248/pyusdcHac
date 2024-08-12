@@ -35,6 +35,12 @@ const PortfolioListMobile = ({ selectAirspace }) => {
           Rented Airspaces
         </div>
         <div
+          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
+        >
+          Pending Rented Airspaces
+        </div>
+        <div
           className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
