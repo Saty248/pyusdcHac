@@ -12,6 +12,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { useAppSelector } from "@/redux/store";
+import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
 const styles = StyleSheet.create({
   page: {
@@ -112,12 +113,12 @@ const Certificate = ({
 );
 
 const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
-  const { user } = useAppSelector((state) => {
-    const { user } = state.userReducer;
-    return { user };
+  const { user, activePortfolioTab } = useAppSelector((state) => {
+    const { user, activePortfolioTab } = state.userReducer;
+    return { user, activePortfolioTab };
   });
 
-  console.log({ user });
+  console.log({ activePortfolioTab });
   const handleGenerateCertificate = async () => {
     const rentalId = airspace?.id;
     const dateOfRent = formatDate(airspace?.metadata?.endTime);
@@ -234,10 +235,14 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
               Cancel
             </div>
             <button
+              disabled={activePortfolioTab !== PortfolioTabEnum.RENTED}
               onClick={handleGenerateCertificate}
               className="flex-1 text-white rounded-[5px] bg-blue-500 text-center py-[10px] px-[20px] flex items-center justify-center"
             >
-              Generate Certificate
+              {activePortfolioTab === PortfolioTabEnum.RENTED
+                ? "Generate Certificate"
+                : "Edit"}
+              {/* Generate Certificate */}
             </button>
           </div>
         )}
