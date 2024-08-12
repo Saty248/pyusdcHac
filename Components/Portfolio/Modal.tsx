@@ -12,7 +12,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { useAppSelector } from "@/redux/store";
-import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
 const styles = StyleSheet.create({
   page: {
@@ -39,10 +39,10 @@ const styles = StyleSheet.create({
   },
   footer: {
     fontSize: 12,
-    textAlign: "left",
+    // textAlign: "left",
     marginTop: 30,
 
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   image: {
     width: 200,
@@ -70,8 +70,6 @@ const Certificate = ({
   longitude,
   latitude,
   amount,
-  // logo,
-  // qrCode,
 }) => (
   <Document>
     <Page style={styles.page}>
@@ -122,7 +120,6 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
     return { user, activePortfolioTab };
   });
 
-  console.log({ activePortfolioTab });
   const handleGenerateCertificate = async () => {
     const rentalId = airspace?.id;
     const dateOfRent = formatDate(airspace?.metadata?.startTime);
@@ -138,8 +135,6 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
         dateOfRent={dateOfRent}
         timeFrame={timeFrame}
         amount={amount}
-        // logo={logo}
-        // qrCode={qrCode}
       />
     );
 
@@ -209,9 +204,7 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
               <p className="font-normal text-[12px] text-[#838187]">
                 Offer received
               </p>
-              <p className="font-bold text-2xl text-[#222222]">
-                {/*  {USDollar.format(99.87)} */}
-              </p>
+              <p className="font-bold text-2xl text-[#222222]"></p>
             </div>
             <div
               onClick={onCloseModal}
@@ -239,12 +232,11 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
             <button
               disabled={activePortfolioTab !== PortfolioTabEnum.RENTED}
               onClick={handleGenerateCertificate}
-              className="flex-1 text-white rounded-[5px] bg-blue-500 text-center py-[10px] px-[20px] flex items-center justify-center"
+              className={`${activePortfolioTab === PortfolioTabEnum.RENTED ? "bg-blue-500" : "bg-gray-300"} flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
             >
               {activePortfolioTab === PortfolioTabEnum.RENTED
                 ? "Generate Certificate"
                 : "Edit"}
-              {/* Generate Certificate */}
             </button>
           </div>
         )}

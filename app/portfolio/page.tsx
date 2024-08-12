@@ -65,8 +65,6 @@ const Portfolio = () => {
     setSelectedAirspace(x);
   };
 
-  console.log({ selectedAirspace });
-
   return (
     <Fragment>
       <Head>
