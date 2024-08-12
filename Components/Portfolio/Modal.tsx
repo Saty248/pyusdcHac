@@ -123,12 +123,14 @@ const Modal = ({ airspace, onCloseModal, isOffer = false }) => {
     const dateOfRent = formatDate(airspace?.metadata?.startTime);
     const timeFrame = formatDate(airspace?.metadata?.endTime);
     const amount = `$${airspace?.currentPrice}`;
+    const longitude = airspace?.property?.longitude;
+    const latitude = airspace?.property?.latitude;
 
     const certificate = (
       <Certificate
         user={user}
-        longitude={2.12282}
-        latitude={41.380898}
+        longitude={longitude}
+        latitude={latitude}
         rentalId={rentalId}
         dateOfRent={dateOfRent}
         timeFrame={timeFrame}
