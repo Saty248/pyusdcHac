@@ -142,8 +142,8 @@ export const getTokenBalance = (user, setTokenBalance) => {
             },
         ],
     };
-    if (process.env.NEXT_PUBLIC_SOLANA_API) {
-        fetch(process.env.NEXT_PUBLIC_SOLANA_API, {
+    if (process.env.NEXT_PUBLIC_RPC_TARGET) {
+        fetch(process.env.NEXT_PUBLIC_RPC_TARGET, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

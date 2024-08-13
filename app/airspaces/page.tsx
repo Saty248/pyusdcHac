@@ -27,6 +27,7 @@ import Link from "next/link";
 import { HelpQuestionIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
+import { defaultData } from "../../types";
 import React from "react";
 import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 
@@ -49,7 +50,7 @@ const Airspaces: React.FC = () => {
     latitude: "",
   });
   const [marker, setMarker] = useState<mapboxgl.Marker| null>(null);
-  const defaultData = {
+  const defaultData: defaultData = {
     address: address,
     title: "",
     rent: true,
@@ -59,7 +60,7 @@ const Airspaces: React.FC = () => {
     hasLandingDeck: false,
     hasStorageHub: false,
     sellingPrice: "0",
-    timezone: "UTC+0",
+    timezone: "Europe/london",
     transitFee: "1-99",
     isFixedTransitFee: false,
     noFlyZone: false,
@@ -485,7 +486,6 @@ const Airspaces: React.FC = () => {
       {isLoading && <Spinner />}
 
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        {!isMobile && <Sidebar />}
         <div className="flex h-full w-full flex-col">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
           {((showMobileMap && isMobile) ||
@@ -514,6 +514,7 @@ const Airspaces: React.FC = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
+            <Sidebar />
              {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
               <div
                 onClick={() => {

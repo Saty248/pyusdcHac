@@ -1,3 +1,4 @@
+
 export const DashboardIcon = ({ isActive }) => {
   return (
     <svg
@@ -67,53 +68,15 @@ export const EarthIcon = ({ isActive }) => {
 
 export const GiftIcon = ({ isActive }) => {
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 25 25"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="2.58984"
-        y="7.04004"
-        width="20"
-        height="5"
-        rx="2"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M4.58984 12.04H20.5898V19.04C20.5898 20.1446 19.6944 21.04 18.5898 21.04H6.58984C5.48527 21.04 4.58984 20.1446 4.58984 19.04V12.04Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M12.5898 7.04004V21.04"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5.58984 5.27442C5.58984 4.04433 6.58703 3.04004 7.81712 3.04004H8.71888C10.8568 3.04004 12.5898 4.77313 12.5898 6.91101V6.91101C12.5898 6.98227 12.5321 7.04004 12.4608 7.04004H7.34984C6.37782 7.04004 5.58984 6.24644 5.58984 5.27442V5.27442Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M19.5898 5.27442C19.5898 4.04433 18.5927 3.04004 17.3626 3.04004H16.4608C14.3229 3.04004 12.5898 4.77313 12.5898 6.91101V6.91101C12.5898 6.98227 12.6476 7.04004 12.7189 7.04004H17.8298C18.8019 7.04004 19.5898 6.24644 19.5898 5.27442V5.27442Z"
-        stroke={isActive ? "#4285F4" : "#5D7285"}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="47" height="45" viewBox="0 0 47 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse opacity="0.5" cx="23.3115" cy="22.125" rx="23.3115" ry="22.125" fill="#CCE3FC"/>
+    <rect x="12.1666" y="17.2915" width="21.6667" height="5.20833" rx="2" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14.3334 22.5H31.6667V29.875C31.6667 30.9796 30.7713 31.875 29.6667 31.875H16.3334C15.2288 31.875 14.3334 30.9796 14.3334 29.875V22.5Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M23 17.2915V31.8748" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M15.4166 15.4583C15.4166 14.1697 16.4613 13.125 17.75 13.125H18.9677C21.1947 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 22.9398 17.2917 22.8656 17.2917H17.25C16.2374 17.2917 15.4166 16.4709 15.4166 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M30.5834 15.4583C30.5834 14.1697 29.5387 13.125 28.25 13.125H27.0323C24.8053 13.125 23 14.9303 23 17.1573V17.1573C23 17.2315 23.0602 17.2917 23.1344 17.2917H28.75C29.7626 17.2917 30.5834 16.4709 30.5834 15.4583V15.4583Z" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+    
   );
 };
 
@@ -607,6 +570,37 @@ export const MagnifyingGlassIcon = () => {
   );
 };
 
+export const RefreshIcon = () => {
+  return (
+    <svg
+      fill="none"
+      version="1.1"
+      id="Layer_1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      viewBox="0 0 383.748 383.748"
+      xmlSpace="preserve"
+    >
+      <g>
+        <path
+          d="M62.772,95.042C90.904,54.899,137.496,30,187.343,30c83.743,0,151.874,68.13,151.874,151.874h30
+		C369.217,81.588,287.629,0,187.343,0c-35.038,0-69.061,9.989-98.391,28.888C70.368,40.862,54.245,56.032,41.221,73.593
+		L2.081,34.641v113.365h113.91L62.772,95.042z"
+          fill="#ffffff"
+          fillOpacity="1"
+        />
+        <path
+          d="M381.667,235.742h-113.91l53.219,52.965c-28.132,40.142-74.724,65.042-124.571,65.042
+		c-83.744,0-151.874-68.13-151.874-151.874h-30c0,100.286,81.588,181.874,181.874,181.874c35.038,0,69.062-9.989,98.391-28.888
+		c18.584-11.975,34.707-27.145,47.731-44.706l39.139,38.952V235.742z"
+          fill="#ffffff"
+          fillOpacity="1"
+        />
+      </g>
+    </svg>
+  );
+};
+
 export const WarningIcon = () => {
   return (
     <svg
@@ -678,7 +672,7 @@ export const ChevronRightIcon = () => {
   );
 };
 
-export const CloseIcon = () => {
+export const CloseIconBlack = () => {
   return (
     <svg
       width="100%"
@@ -691,6 +685,14 @@ export const CloseIcon = () => {
         d="M14.3767 0.358305C13.9425 -0.0759428 13.241 -0.0759428 12.8067 0.358305L7.36195 5.79197L1.91714 0.34717C1.4829 -0.0870776 0.781418 -0.0870776 0.34717 0.34717C-0.0870776 0.781418 -0.0870776 1.4829 0.34717 1.91714L5.79197 7.36195L0.34717 12.8067C-0.0870776 13.241 -0.0870776 13.9425 0.34717 14.3767C0.781418 14.811 1.4829 14.811 1.91714 14.3767L7.36195 8.93192L12.8067 14.3767C13.241 14.811 13.9425 14.811 14.3767 14.3767C14.811 13.9425 14.811 13.241 14.3767 12.8067L8.93192 7.36195L14.3767 1.91714C14.7998 1.49403 14.7998 0.781419 14.3767 0.358305Z"
         fill="#222222"
       />
+    </svg>
+  );
+};
+
+export const CloseIcon = () => {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.3767 0.358305C13.9425 -0.0759428 13.241 -0.0759428 12.8067 0.358305L7.36195 5.79197L1.91714 0.34717C1.4829 -0.0870776 0.781418 -0.0870776 0.34717 0.34717C-0.0870776 0.781418 -0.0870776 1.4829 0.34717 1.91714L5.79197 7.36195L0.34717 12.8067C-0.0870776 13.241 -0.0870776 13.9425 0.34717 14.3767C0.781418 14.811 1.4829 14.811 1.91714 14.3767L7.36195 8.93192L12.8067 14.3767C13.241 14.811 13.9425 14.811 14.3767 14.3767C14.811 13.9425 14.811 13.241 14.3767 12.8067L8.93192 7.36195L14.3767 1.91714C14.7998 1.49403 14.7998 0.781419 14.3767 0.358305Z" fill="white"/>
     </svg>
   );
 };
@@ -913,14 +915,14 @@ export const ZoomInIcon = () => {
         cy="12"
         r="5"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 12H12M14 12H12M12 12V10M12 12V14"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -941,14 +943,14 @@ export const ZoomOutIcon = () => {
         cy="12"
         r="5"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 12H12H14"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1012,3 +1014,18 @@ export const VerificationIcon = () => {
 };
 
 
+export const HistoryArrowIcon  = () => {
+  return(
+    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#clip0_1_8236)">
+      <path d="M6.93359 7.80078L10.8004 3.93397L6.93359 0.0671611" stroke="#5D7285" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10.8008 3.93335H0.771484" stroke="#5D7285" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <defs>
+      <clipPath id="clip0_1_8236">
+      <rect width="11" height="8" fill="white" transform="translate(0.771484)"/>
+      </clipPath>
+      </defs>
+      </svg>
+  )
+}

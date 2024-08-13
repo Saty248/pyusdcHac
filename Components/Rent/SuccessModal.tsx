@@ -1,14 +1,13 @@
 import { useEffect, useRef } from "react";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
-import { getTokenLink } from "@/hooks/utils";
+import { CloseIconWhite, SuccessIconwhite, CloseIcon } from "../Icons";
+import { getTransactionLink } from "@/hooks/utils";
 import Link from "next/link";
-
 import { PropertyData } from "@/types";
-
+import Backdrop from "../Backdrop";
 interface SuccessModalProps {
   setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   finalAns:
-    | { status: string; message?: string | undefined; tokenId?: string }
+    | { status: string; message?: string | undefined; }
     | null
     | undefined;
   rentData: PropertyData | undefined | null;
@@ -38,6 +37,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   }, [setShowSuccess, setShowClaimModal]);
 
   return (
+    <div>
+    <Backdrop/>
     <div
       ref={modalRef}
       className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
@@ -53,7 +54,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           className="w-[26px] h-[26px] absolute top-[10px] right-[10px] "
         >
           <div className="hidden sm:block absolute top-[10px] right-[10px] cursor-pointer">
-            <CloseIconWhite />
+            <CloseIcon />
           </div>
         </div>
 
@@ -68,7 +69,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <>
             <div className="w-full mt-6">
               <h1 className=" font-medium text-xl text-center text-[#FFFFFF] font-poppins">
-                Your rental order is complete
+                Your rental order is being processed
               </h1>
             </div>
           </>
@@ -86,13 +87,13 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <div className="font-normal text-lg leading-7 text-center text-[#FFFFFF] font-poppins">
             {finalAns?.status === "Rent Successful" && (
               <div>
-                'You rented'{" "}
+                'Your rental for'{" "}
                 {rentData && (
                   <>
                     <span className=" text-lg font-bold">{`${rentData.address}`}</span>{" "}
                   </>
                 )}
-                {` for `}{" "}
+                  {`is being processed. The rental amount is`}{" "}
                 {rentData && (
                   <span className=" text-lg font-bold">
                     ${rentData.price}
@@ -121,10 +122,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           <>
             <Link
               target="_blank"
-              href={getTokenLink(finalAns.tokenId)}
+              href={getTransactionLink(finalAns.message)}
               className="py-2 font-bold text-center text-[#FFFFFF] text-[14px] underline"
             >
-              Transaction Link
+              View Transaction Link
             </Link>
           </>
         )}
@@ -153,6 +154,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };
