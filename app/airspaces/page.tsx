@@ -6,7 +6,6 @@ import PropertiesService from "../../services/PropertiesService";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
-import maplibregl, { Marker } from "maplibre-gl";
 import { toast } from "react-toastify";
 import {
   removePubLicUserDetailsFromLocalStorage,
@@ -31,6 +30,8 @@ import { HelpQuestionIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
 import { defaultData } from "../../types";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
 
 const Airspaces: React.FC = () => {
@@ -85,10 +86,12 @@ const Airspaces: React.FC = () => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } =
-    useAuth();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const [drawTool, setDrawTool] = useState(null);
+  const [isDrawMode, setIsDrawMode] = useState(false);
+  const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false)
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -103,6 +106,7 @@ const Airspaces: React.FC = () => {
   // new map is created if not rendered
   useEffect(() => {
     if (map) return;
+    if (!user) return;
 
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
@@ -118,6 +122,17 @@ const Airspaces: React.FC = () => {
         ],
         // attributionControl: false
       });
+
+      const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+        defaultMode: "draw_polygon",
+      });
+      setDrawTool(draw);
+      newMap.addControl(draw);
 
       newMap.on("render", function () {
         newMap.resize()
@@ -144,6 +159,35 @@ const Airspaces: React.FC = () => {
         });
       });
 
+      const handleCoordinates = async (e) => {
+        setIsDrawMode(true);
+        setIsLoading(true);
+        const drawnFeatures = draw.getAll();
+        if (drawnFeatures.features.length > 0) {
+          const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
+         let el = document.createElement("div");
+         el.id = "markerWithExternalCss";
+          new mapboxgl.Marker(el).setLngLat(coordinates).addTo(newMap);
+          const longitude = coordinates[0];
+          const latitude = coordinates[1];
+          setCoordinates({ longitude, latitude });
+          const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`
+          );
+          const data = await response.json();
+          setDontShowAddressOnInput(true)
+          if (data.features && data.features.length > 0) {
+            setAddress(data.features[0].place_name);
+            setData((prev) => {return {...prev, address: data.features[0].place_name}})
+            setShowClaimModal(true);
+            setFlyToAddress(data.features[0].place_name);
+          }
+        }
+      };
+
+      newMap.on("draw.create", handleCoordinates);
+      newMap.on("draw.update", handleCoordinates);
+
       setMap(newMap);
 
       //doesnt move the map to iplocation when user persisted initial state in
@@ -153,10 +197,16 @@ const Airspaces: React.FC = () => {
       }
     };
     createMap();
-  }, []);
+  }, [user]);
+
 
   //gets address suggestions
   useEffect(() => {
+    if(isDrawMode){
+      setIsDrawMode(false)
+      return
+    }
+
     if (!address) return setShowOptions(false);
 
     let timeoutId: NodeJS.Timeout;
@@ -335,7 +385,7 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async () => {
+  const onClaim = async (_address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
 
@@ -370,7 +420,7 @@ const Airspaces: React.FC = () => {
       }
 
       const postData = {
-        address,
+        address: _address || address,
         ownerId: user.id,
         propertyStatusId: 0,
         hasChargingStation,
@@ -416,6 +466,7 @@ const Airspaces: React.FC = () => {
         setShowClaimModal(false);
         setData({ ...defaultData });
       }
+      setDontShowAddressOnInput(false)
     } catch (error) {
       console.error(error);
       toast.error("Error when creating property.");
@@ -530,9 +581,8 @@ const Airspaces: React.FC = () => {
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
-                      removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData"
-                      );
+                      setDontShowAddressOnInput(false)
+                      removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({...defaultData})
@@ -542,6 +592,8 @@ const Airspaces: React.FC = () => {
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && (
@@ -574,6 +626,10 @@ const Airspaces: React.FC = () => {
                 <div className="hidden sm:block"><Slider /></div>
                 {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
                 {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
+                {!showSuccessPopUp && !isMobile &&(<div>
+                  <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} setDrawMode={setIsDrawMode}/>
+                  </div>
+                )}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
@@ -588,6 +644,8 @@ const Airspaces: React.FC = () => {
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
               </div>

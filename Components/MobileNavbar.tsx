@@ -1,18 +1,9 @@
-import React, { ReactNode } from "react";
-import {
-  DashboardIcon,
-  DroneIcon,
-  EarthIcon,
-  GiftIcon,
-  HelpQuestionIcon,
-  LogoutIcon,
-  MapIcon,
-  ShoppingBagsIcon,
-  WalletIcon,
-} from "./Icons";
-import useAuth from "@/hooks/useAuth";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React, { ReactNode } from 'react';
+import {  DashboardIcon, DroneIcon, EarthIcon, GiftIcon, HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon } from './Icons';
+import useAuth from '@/hooks/useAuth';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { EarthIconsidebar, GiftIconsidebar } from './Shared/Icons';
 
 interface PropsI {
   setShowMobileNavbar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,8 +70,8 @@ const MobileNavbar = ({ setShowMobileNavbar }: PropsI) => {
         </div>
         <div className='bg-white mt-4 px-6 flex flex-col gap-4 text-lg'>
             <SidebarItem href={'/dashboard'} text={'Dashboard'} children={<DashboardIcon isActive={false} />} />
-            <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIcon isActive={false} />} />
-             <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIcon isActive={false} />} />
+            <SidebarItem href={'/airspaces'} text={'Airspaces'} children={<EarthIconsidebar isActive={false} />} />
+             <SidebarItem href={'/points'} text={'Points Program'} children={<GiftIconsidebar isActive={false} />} />
             <div className='bg-[#00000012] w-full h-[1px]' />
             <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>
             <SidebarItem

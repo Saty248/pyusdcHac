@@ -13,7 +13,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
             <LocationPointIcon />
           </div>
           <p className="font-normal text-[#222222] text-[14px] flex-1">
-            {airspaceName.length > 15 ?  airspaceName.slice(0, 25) + ' ...' : airspaceName}
+            {airspaceName && airspaceName.length > 15 ?  airspaceName.slice(0, 25) + ' ...' : airspaceName}
           </p>
         </div>
         <div className="flex gap-[10px] items-center">
