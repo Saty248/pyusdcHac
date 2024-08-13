@@ -1,8 +1,7 @@
 import MarkerPopup from "@/Components/Buy/MarkerPopup";
 import mapboxgl, { Map, Marker } from "mapbox-gl";
-import maplibregl from "maplibre-gl";
-import ReactDOM from "react-dom";
-
+import { createRoot } from "react-dom/client";
+import '@/Components/Buy/BuyMarkerPopup.css'
 export const handleMouseEvent = (
   isMobile,
   markerElement,
@@ -20,7 +19,8 @@ export const handleMouseEvent = (
     />
   );
   const placeholder = document.createElement("div");
-  ReactDOM.render(el, placeholder);
+  const root = createRoot(placeholder);
+  root.render(el);
   if (!isMobile) {
     markerElement.addEventListener("mouseenter", () => {
       const elementToRemove = document.querySelector(
@@ -40,14 +40,14 @@ export const handleMouseEvent = (
   } else {
     markerElement.addEventListener("touchend", (e) => {
       const elementToRemove = document.querySelector(
-        ".marker-popup-hovered-class"
+        ".marker-popup-hovered-class.mobile"
       );
       if (elementToRemove) elementToRemove.remove();
-      else {
+      if (!elementToRemove) {
         new mapboxgl.Popup({
           closeOnClick: false,
           offset: [0, -20],
-          className: "marker-popup-hovered-class",
+          className: "marker-popup-hovered-class mobile",
         })
           .setLngLat(marker.getLngLat())
           .setDOMContent(placeholder)

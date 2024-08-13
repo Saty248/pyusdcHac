@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import Image1 from "../../public/images/AHImage.png";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import { AuctionDataI } from "@/types";
 
