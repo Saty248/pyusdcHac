@@ -99,7 +99,42 @@ export type User = {
     codeChanged: boolean;
   } | null;
   usedReferralCodeId: number | null;
+  isUserRewardClaimed: boolean;
 };
+
+interface Reward {
+  id: string;
+  rewardId: string;
+  email: string;
+  taskType: string;
+  point: number;
+  createdAt: string;
+  updateAt: string;
+}
+
+interface RewardStats {
+  _count: {
+    point: number;
+  };
+  _sum: {
+    point: number | null;
+  };
+  _avg: {
+    point: number | null;
+  };
+  _min: {
+    point: number | null;
+  };
+  _max: {
+    point: number | null;
+  };
+}
+
+export interface UserRewards {
+  stats: RewardStats;
+  rewards: Reward[];
+}
+
 
 export type Bounds = {
   _ne: {
@@ -209,3 +244,28 @@ export interface KeyI {
   timestamp: number;
   date: string;
 }
+
+export type defaultData = {
+  address:string,
+  title:string,
+  rent: boolean,
+  sell: boolean,
+  hasPlanningPermission: boolean|null|string,
+  hasChargingStation: boolean,
+  hasLandingDeck: boolean,
+  hasStorageHub: boolean,
+  sellingPrice: string,
+  timezone: string,
+  transitFee:string,
+  isFixedTransitFee: boolean,
+  noFlyZone: boolean,
+  weekDayRanges: [
+    { fromTime: number, toTime: 21, isAvailable: boolean, weekDayId: 0 },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
+  ],
+};
