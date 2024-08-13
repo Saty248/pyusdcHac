@@ -1,10 +1,11 @@
-import React, { Fragment, useContext } from "react";
+import { useContext } from "react";
 import { SolanaWallet } from "@web3auth/solana-provider";
 import { Payload as SIWPayload, SIWWeb3 } from "@web3auth/sign-in-with-web3";
 import { Web3authContext } from "@/providers/web3authProvider";
 import axios from "axios";
 import base58 from "bs58";
 import { toast } from "react-toastify";
+import * as Sentry from "@sentry/nextjs";
 
 interface RequestI {
   uri: string;
@@ -13,70 +14,96 @@ interface RequestI {
   suppressErrorReporting?: boolean;
 }
 
+const TIMEOUT = 300000;
+const CUSTOM_ERROR_MESSAGE = "An Error occured! Please try again later."
 
 const Service = () => {
   const { provider } = useContext(Web3authContext);
 
+  const isLocalhostUrl = (url: string): boolean => {
+    const localhostRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/;
+    return localhostRegex.test(url);
+  }
+
+  const getRequestUrl = (uri: string): string => {
+    const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
+
+    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
+    else return `${serverUrl}/api/proxy?${Date.now()}`;
+  }
+
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
-    console.error(error);
     if (
       !suppressErrorReporting &&
-      error.response &&
-      error.response.status === 500 &&
-      error.response?.data?.errorMessage
+      error.response  
     ) {
-      if (error.response?.data?.errorMessage !== "UNAUTHORIZED") {
-        toast.error(error.response?.data?.errorMessage);
+        
+      const backendError = error.response.data.errorMesagge
+
+      if (backendError  && backendError !== "UNAUTHORIZED") {
+        toast.error(backendError);
+      } else {
+        toast.error(CUSTOM_ERROR_MESSAGE);
       }
     }
+    Sentry.captureException(error);
   };
 
-  const createHeader = async ({ uri, isPublic }: {
+  const createHeader = async ({ isPublic, uri }: {
     uri: string;
     isPublic?: boolean;
   }) => {
     try {
-      if (isPublic === true) {
-        return {
-          URI: uri,
+      let newHeader = {};
+
+      if (provider && !isPublic) {
+        const solanaWallet = new SolanaWallet(provider);
+        const accounts = await solanaWallet.requestAccounts();
+  
+        const payload = new SIWPayload();
+  
+        payload.domain = String(process.env.NEXT_PUBLIC_FRONTEND_DOMAIN);
+        payload.uri = String(process.env.NEXT_PUBLIC_FRONTEND_URI);
+        payload.address = accounts[0];
+        payload.statement = "Sign in to SkyTrade app.";
+        payload.version = "1";
+        payload.chainId = 1;
+  
+        const header = { t: "sip99" };
+        const network = "solana";
+  
+        let message = new SIWWeb3({ header, payload, network });
+  
+        const messageText = message.prepareMessage();
+        const msg = new TextEncoder().encode(messageText);
+        const result = await solanaWallet.signMessage(msg);
+  
+        const signature = base58.encode(result);
+  
+        newHeader = {
+          "Content-Type": "application/json",
+          sign: signature,
+          time: message.payload.issuedAt,
+          nonce: message.payload.nonce,
+          address: accounts[0],
+          // Support localhost
+          sign_issue_at: message.payload.issuedAt,
+          sign_nonce: message.payload.nonce,
+          sign_address: accounts[0],
+        };
+
+      } else {
+        newHeader = {
           "Content-Type": "application/json",
         };
       }
-      if (!provider) return;
-
-      const solanaWallet = new SolanaWallet(provider);
-      const accounts = await solanaWallet.requestAccounts();
-
-      const domain = window.location.host;
-      const origin = window.location.origin;
-      const payload = new SIWPayload();
-
-      payload.domain = domain;
-      payload.uri = origin;
-      payload.address = accounts[0];
-      payload.statement = "Sign in to SkyTrade app.";
-      payload.version = "1";
-      payload.chainId = 1;
-
-      const header = { t: "sip99" };
-      const network = "solana";
-
-      let message = new SIWWeb3({ header, payload, network });
-
-      const messageText = message.prepareMessage();
-      const msg = new TextEncoder().encode(messageText);
-      const result = await solanaWallet.signMessage(msg);
-
-      const signature = base58.encode(result);
 
       return {
-        "Content-Type": "application/json",
-        URI: uri,
-        sign: signature,
-        time: message.payload.issuedAt,
-        nonce: message.payload.nonce,
-        address: accounts[0],
-      };
+        ...newHeader,
+        api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
+        uri,
+      }
+
     } catch (error) {
       console.error(error);
     }
@@ -84,13 +111,13 @@ const Service = () => {
 
   const getRequest = async ({ uri, isPublic, suppressErrorReporting }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
-
       return await axios({
         method: "get",
-        url: `/api/proxy?${Date.now()}`,
+        timeout: TIMEOUT,
+        url: getRequestUrl(uri),
         headers,
       });
     } catch (error) {
@@ -105,13 +132,14 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "post",
-        url: `/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -127,13 +155,14 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "patch",
-        url: `/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
@@ -149,13 +178,14 @@ const Service = () => {
     suppressErrorReporting,
   }: RequestI) => {
     try {
-      const headers = await createHeader({ uri, isPublic });
+      const headers = await createHeader({ isPublic, uri });
 
       if (!isPublic && !headers) return null;
 
       return await axios({
         method: "delete",
-        url: `/api/proxy?${Date.now()}`,
+        url: getRequestUrl(uri),
+        timeout: TIMEOUT,
         data: { ...postData },
         headers,
       });
