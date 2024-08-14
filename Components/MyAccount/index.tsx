@@ -105,9 +105,9 @@ const Account = () => {
             client.open();
         },
         onComplete:  () => {
-          setPersonalInformation((prev) => {
-            return {...prev, KYCStatusId: 1}
-          })
+          // setPersonalInformation((prev) => {
+          //   return {...prev, KYCStatusId: 1}
+          // })
         }
     });
   };
