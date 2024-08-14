@@ -1,14 +1,31 @@
-import React, { useState} from 'react';
-import { CancelIconWhite, SuccessIcon, } from "../Icons";
+import React, { useState, useEffect} from 'react';
+import { CancelIconWhite, SuccessIcon, SuccessIconwhite} from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
+import { FiX } from 'react-icons/fi';  // A close icon from react-icons
+
 
 const VerificationSuccessPopup: React.FC = () => {
     const { isMobile } = useMobile();
     const [showPopup, setShowPopup] = useState(true);
 
-    const handleClose = () => {
-        setShowPopup(false); 
-    }
+    // const handleClose = () => {
+    //     setShowPopup(false); 
+    // }
+
+ 
+
+  const [spinning, setSpinning] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setSpinning(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setSpinning(false); 
+    setShowPopup(false); 
+  };
+
+
 
   return (
     <>
@@ -22,13 +39,13 @@ const VerificationSuccessPopup: React.FC = () => {
         {isMobile ? (
           <>
             <div className="flex justify-center items-center w-24 h-24">
-              <SuccessIcon />
+              <SuccessIconwhite />
             </div>
             <div className="flex flex-col gap-6 text-center text-white w-60">
               <p className="text-xl font-medium">
                 Thanks, your additional documents have been successfully submitted.
               </p>
-              <p className="text-sm font-normal px-8">
+              <p className="text-sm font-normal ">
                 Wait for our team to review your documents. Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.
               </p>
               <div className="flex justify-center items-center">
@@ -44,9 +61,17 @@ const VerificationSuccessPopup: React.FC = () => {
               <div className="w-4 h-4">
                 <SuccessIcon />
               </div>
-              <div className="p-2 text-green-500">
+              <div className="p-2 text-green-500 text-[14px]">
                 <p>Thanks, your additional documents have been successfully submitted.</p>
               </div>
+             
+            
+              <button
+                  className="text-black rounded-full w-4 h-4 flex items-center justify-center text-sm cursor-pointer"
+                  onClick={handleClose}
+                >
+                  ✖
+                </button>
             </div>
           </div>
         )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
 import { CloseIcon } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
+import Service from '@/services/Service';
 
 
 interface PopupProps {
@@ -12,16 +13,25 @@ interface PopupProps {
 
 const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDoc }) => {
     const { isMobile } = useMobile();
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState<File | null>(null);
+    const {postRequest } = Service();
+   
     
-  const onDrop = (acceptedFiles) => {
-    setFiles(acceptedFiles);
+  const onDrop = (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles[0]);
   };
  const { getRootProps } = useDropzone({ onDrop });
 
   if (!showPopup) return null;
 
-  const handleclick =() =>{
+  const handleclick = async() =>{
+   
+    
+    const response = await postRequest({
+      uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
+      postData: files
+    })
+    console.log({response})
     setShowAdditionalDoc(true)
     closePopup()
   }
@@ -61,7 +71,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
        { isMobile ?(
          <p className="text-base font-medium text-[#87878D]">click to upload Document</p>
         ):(
-        <p className="text-base font-medium text-[#87878D]">Drag here or click to upload</p>  
+        <p className="text-base font-medium text-[#87878D]">{files ? files.name : 'Drag here or click to upload'}</p>  
         )}
         </div>
         <button  onClick={ handleclick} className="mt-4 px-6 py-2 text-white bg-dark-blue text-base">

@@ -16,6 +16,7 @@ const AccountVerification = ({
   console.log(KYCStatusId , "KYCStatusId")
   const [showPopup, setShowPopup] = useState(false);
   const [showAdditionalDoc, setShowAdditionalDoc] = useState(false)
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -85,7 +86,7 @@ const AccountVerification = ({
    </div>
 )}
 
-{KYCStatusId === 5 && (
+{KYCStatusId === 6 && (
     <div className="flex flex-col py-[17px] md:px-[25px] px-[20px] rounded-[30px] gap-[15px] bg-white"  style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
     <div className="flex items-center justify-between">
       <h2 className="text-xl font-medium text-[#222222]">
@@ -106,7 +107,7 @@ const AccountVerification = ({
   </div> 
 
 )}
-
+{KYCStatusId === 5 && (
 <div className="flex flex-col py-[17px] md:px-[25px] px-[20px] rounded-[30px] gap-[15px] bg-white"  style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
     <div className="flex items-center justify-between">
       <h2 className="text-xl font-medium text-[#222222]">
@@ -145,21 +146,12 @@ const AccountVerification = ({
     </div>
     )}
    </div>    
-
-
-
-
-      {/* <div>  
-      <p className="font-normal text-base text-[#87878D]">Your account verification is currently under review. This step is crucial for security and compliance reasons. Please await confirmation to enjoy full access to our services. Rest assured, your data is securely handled. If you have any questions, feel free to contact our support team. Thank you for your patience.</p>
-      <p className="font-bold text-base text-[#87878D]">Once your KYC verification is successfully completed, you'll instantly earn 10 SKY points.</p>
-    </div> */}
-
-
-    </div>
+  </div>
+  )}
 
 
     {showAdditionalDoc && (
-     <div className="p-4 mt-8 rounded-[30px] bg-white shadow-lg" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+     <div className="py-4 px-4 mt-8 rounded-[30px] bg-white shadow-lg" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[15px]">
        <div className="">
        <h2 className="text-xl font-semibold">My Additional Documents</h2>
@@ -168,17 +160,41 @@ const AccountVerification = ({
      <div className="w-full md:w-[38%] flex flex-col md:flex-row justify-center items-center gap-6 mt-4 md:mt-0">
        <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
          <FileIcon />
-         <div>
-           <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
-           <p className="text-sm">“Document Name”</p>
-         </div>
+         {uploadedFile && (
+         <div className="file-preview mt-4">
+          <a
+            href={URL.createObjectURL(uploadedFile)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#1F7DFD] text-sm underline"
+          >
+            {uploadedFile}
+          </a>
+        </div>
+      )}
+       <div>
+     <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
+     <p className="text-sm">“Document Name”</p>
+     </div>
        </div>
        <div className="px-6 py-4 flex justify-center items-center border rounded-md gap-4">
          <FileIcon />
-         <div>
-           <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
-           <p className="text-sm">“Document Name”</p>
-         </div>
+         {uploadedFile && (
+        <div className="file-preview mt-4">
+          <a
+            href={URL.createObjectURL(uploadedFile)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#1F7DFD] text-sm underline"
+          >
+            {uploadedFile}
+          </a>
+        </div>
+      )}
+     <div>
+     <p className="text-[#1F7DFD] text-sm">file_name.jpg</p>
+     <p className="text-sm">“Document Name”</p>
+     </div>
        </div>
      </div>
   </div>
@@ -191,9 +207,9 @@ const AccountVerification = ({
         )}
 
 
-      {/* {showAdditionalDoc && (
+      {showAdditionalDoc && (
         <VerificationSuccessPopup />
-      )} */}
+      )}
 
 
 
