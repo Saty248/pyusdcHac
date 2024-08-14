@@ -12,6 +12,8 @@ const AccountVerification = ({
   isLoading,
   onVerifyMyAccount,
 }: AccountVerificationProps) => {
+
+  
   return (
  <div>
    {KYCStatusId === 0 && (
@@ -20,9 +22,7 @@ const AccountVerification = ({
       <h1 className="text-xl font-medium text-[#222222]  text-center">🚀 Attention Airspace Owner!</h1>
       <h1 className="text-xl font-medium text-[#222222] block md:hidden">Account verification</h1>
       <p className="text-sm font-normal text-[#838187] text-center leading-6">Your airspace awaits verification by our operation team. Your account is not verified. We verify the identity of our customers to assess potential risks, prevent fraud, and comply with legal and regulatory requirements. Complete your KYC to expedite the process and ensure swift approval. Plus,<span className="text-[#87878D] text-sm font-bold" > earn 10 SKY points </span> as a token of our appreciation! Don't delay - verify now and unlock the full potential of your airspace!</p>
-   
         <button  onClick={onVerifyMyAccount}  className="text-sm font-medium w-full px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Verify my identity Now</button>
-    
     </div>
       <div className="hidden md:block md:w-[50%]">
         <img

@@ -29,7 +29,7 @@ const Account = () => {
     });
 
   const { user, updateProfile, web3authStatus } = useAuth();
-  const { updateUser } = UserService();
+  const { updateUser, getUser } = UserService();
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -104,6 +104,11 @@ const Account = () => {
             setIsLoading(false);
             client.open();
         },
+        onComplete:  () => {
+          setPersonalInformation((prev) => {
+            return {...prev, KYCStatusId: 1}
+          })
+        }
     });
   };
 
