@@ -4,10 +4,7 @@ import PortfolioItem from "./PortfolioItem";
 import Spinner from "../Spinner";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-
-
 const PortfolioList = ({ title, selectAirspace }) => {
-
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -17,7 +14,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
     pageNumber,
     activeTab
   } = usePortfolioList()
-
   return (
     <div
       className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
@@ -58,7 +54,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
           Rejected Airspaces
         </div>
       </div>
-
       {loading ? (
         <div>
           {" "}
@@ -72,7 +67,7 @@ const PortfolioList = ({ title, selectAirspace }) => {
               airspaceList[0].address ? (
               airspaceList?.map((airspace, index) => (
                 <PortfolioItem
-                  airspaceName={airspace?.property?.title ? airspace?.property?.title : airspace?.title ? airspace?.title : airspace?.address }
+                  airspaceName={airspace?.address}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
@@ -83,7 +78,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
               <AirspacesEmptyMessage />
             )}
           </div>
-
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
@@ -110,5 +104,4 @@ const PortfolioList = ({ title, selectAirspace }) => {
     </div>
   );
 };
-
 export default PortfolioList;

@@ -4,7 +4,6 @@ import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-
 const PortfolioListMobile = ({ selectAirspace }) => {
   const {
     handleTabSwitch,
@@ -15,7 +14,6 @@ const PortfolioListMobile = ({ selectAirspace }) => {
     pageNumber,
     activeTab
   } = usePortfolioList();
-
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -53,7 +51,6 @@ const PortfolioListMobile = ({ selectAirspace }) => {
           Rejected Airspaces
         </div>
       </div>
-
       {loading ? (
         <div>
           {" "}
@@ -67,7 +64,7 @@ const PortfolioListMobile = ({ selectAirspace }) => {
               airspaceList[0].address ? (
               airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
-                airspaceName={airspace?.property?.title ? airspace?.property?.title : airspace?.title ? airspace?.title : airspace?.address }
+                  airspaceName={airspace?.address}
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
@@ -78,7 +75,6 @@ const PortfolioListMobile = ({ selectAirspace }) => {
               <AirspacesEmptyMessage />
             )}
           </div>
-
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
@@ -105,5 +101,4 @@ const PortfolioListMobile = ({ selectAirspace }) => {
     </div>
   );
 };
-
 export default PortfolioListMobile;
