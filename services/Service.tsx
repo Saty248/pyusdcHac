@@ -33,12 +33,13 @@ const Service = () => {
   }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
+    console.log(error)
     if (
       !suppressErrorReporting &&
       error.response  
     ) {
         
-      const backendError = error.response.data.errorMesagge
+      const backendError = error.response.data.errorMesagge || error.response.data.data.message
 
       if (backendError  && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
