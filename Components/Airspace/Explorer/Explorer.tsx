@@ -69,14 +69,14 @@ const Explorer = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col h-auto max-h-60 overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
+          <div className="absolute left-0 top-[55px] w-full flex-col h-[279px] overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
             {addresses.map((item) => {
               return (
                 <div
                   key={item.id}
                   // value={item.place_name}
                   onClick={() => handleSelectAddress(item.place_name)}
-                  className="w-full p-5 text-left text-[#222222]"
+                  className="w-full p-4 text-left text-[#222222]"
                   style={{
                     borderBottom: "0.2px solid #DBDBDB",
                   }}
@@ -87,7 +87,7 @@ const Explorer = ({
                     </div>
 
                     <div className="w-[90%]">
-                    {item.place_name}
+                      {item.place_name}
                     </div>
                   </div>
                 </div>
