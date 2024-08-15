@@ -53,17 +53,12 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   } = useAuction();
 
   useEffect(() => {
-    if (pageNumber < 3) {
-      const valid = airspaceList.filter((item) => item.status === 1);
-      setAirspaces(valid);
-    } else {
-      console.log("================================");
-      console.log({ airspaceList });
-      console.log("================================");
-    }
+    setAirspaces(airspaceList);
   }, [airspaceList]);
 
-  console.log({ airspaceList });
+  console.log({ airspaces });
+  console.log({ selectedItems });
+  console.log({ selectedItemId });
 
   if (isMobile) {
     return (
@@ -132,12 +127,13 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                             selected={
                               !!selectedItems.find(
                                 (selectedItem) =>
-                                  selectedItem.propertyId === item.propertyId
+                                  selectedItem.propertyId === item.id
                               )
                             }
+                            //@ts-ignore
                             disabled={
                               selectedItemId !== null &&
-                              selectedItemId !== item.propertyId
+                              selectedItemId !== item.id
                             } // Disable if another item is selected
                           />
                         ))}
@@ -241,14 +237,13 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                       onUpdateItem={handleUpdateItem}
                       selected={
                         !!selectedItems.find(
-                          (selectedItem) =>
-                            selectedItem.propertyId === item.propertyId
+                          (selectedItem) => selectedItem.propertyId === item.id
                         )
                       }
+                      //@ts-ignore
                       disabled={
-                        selectedItemId !== null &&
-                        selectedItemId !== item.propertyId
-                      } // Disable if another item is selected
+                        selectedItemId !== null && selectedItemId !== item.id
+                      }
                     />
                   ))}
               </div>

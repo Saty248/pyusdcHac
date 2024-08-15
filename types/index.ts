@@ -135,7 +135,6 @@ export interface UserRewards {
   rewards: Reward[];
 }
 
-
 export type Bounds = {
   _ne: {
     lat: number;
@@ -246,28 +245,58 @@ export interface KeyI {
 }
 
 export type defaultData = {
-  address:string,
-  title:string,
-  rent: boolean,
-  sell: boolean,
-  hasPlanningPermission: boolean|null|string,
-  hasChargingStation: boolean,
-  hasLandingDeck: boolean,
-  hasStorageHub: boolean,
-  sellingPrice: string,
-  timezone: string,
-  transitFee:string,
-  isFixedTransitFee: boolean,
-  noFlyZone: boolean,
+  address: string;
+  title: string;
+  rent: boolean;
+  sell: boolean;
+  hasPlanningPermission: boolean | null | string;
+  hasChargingStation: boolean;
+  hasLandingDeck: boolean;
+  hasStorageHub: boolean;
+  sellingPrice: string;
+  timezone: string;
+  transitFee: string;
+  isFixedTransitFee: boolean;
+  noFlyZone: boolean;
   weekDayRanges: [
-    { fromTime: number, toTime: 21, isAvailable: boolean, weekDayId: 0 },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-    { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
-  ],
+    { fromTime: number; toTime: 21; isAvailable: boolean; weekDayId: 0 },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+    {
+      fromTime: number;
+      toTime: number;
+      isAvailable: boolean;
+      weekDayId: number;
+    },
+  ];
 };
 
 export interface AuctionPropertyI {
@@ -288,11 +317,10 @@ export interface AuctionPropertyI {
 }
 
 export type AuctionListingI = {
-  propertyId: number;
-  listingType: string;
-  isActive: boolean;
-  listingPrice: number;
-  endDate: Date | null;
+  assetId: string;
+  seller: string;
+  initialPrice: number;
+  secsDuration: number;
 };
 
 export type AuctionSubmitI = {

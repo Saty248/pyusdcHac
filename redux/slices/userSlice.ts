@@ -17,6 +17,9 @@ interface UserState {
   selectedproperty: PropertyData[];
   isTriggerRefresh: boolean;
   priceRange: number[];
+  endDate: string | null;
+  minSalePrice: number;
+  assetId: string;
 }
 
 const initialState: UserState = {
@@ -34,6 +37,9 @@ const initialState: UserState = {
   selectedproperty: [],
   isTriggerRefresh: false,
   priceRange: [0, 0],
+  endDate: null,
+  minSalePrice: 0,
+  assetId: "",
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -93,6 +99,15 @@ const userSlice: Slice<UserState> = createSlice({
     setUserSolBalance: (state, action: PayloadAction<number>) => {
       state.userSolBalance = action.payload;
     },
+    setEndDate: (state, action: PayloadAction<string | null>) => {
+      state.endDate = action.payload;
+    },
+    setMinSalePrice: (state, action: PayloadAction<number>) => {
+      state.minSalePrice = action.payload;
+    },
+    setAssetId: (state, action: PayloadAction<string>) => {
+      state.assetId = action.payload;
+    },
   },
 });
 
@@ -111,5 +126,8 @@ export const {
   setIsTriggerRefresh,
   setPriceRange,
   setUserSolBalance,
+  setEndDate,
+  setMinSalePrice,
+  setAssetId,
 } = userSlice.actions;
 export default userSlice.reducer;
