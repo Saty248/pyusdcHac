@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
 import { CloseIcon } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
@@ -9,9 +9,10 @@ interface PopupProps {
   showPopup: boolean;
   closePopup: () => void;
   setShowAdditionalDoc:React.Dispatch<React.SetStateAction<boolean>>
+  setShowSuccessToast: Dispatch<SetStateAction<boolean>>
 }
 
-const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDoc }) => {
+const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDoc,setShowSuccessToast }) => {
     const { isMobile } = useMobile();
     const [files, setFiles] = useState<File | null>(null);
     const {postRequest } = Service();
@@ -25,11 +26,14 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
   if (!showPopup) return null;
 
   const handleclick = async() =>{
+    if(!files) return
     const response = await postRequest({
       uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
       postData: files
     })
-    console.log({response})
+    console.log(response)
+    setShowSuccessToast(true)
+    setTimeout(() => setShowSuccessToast(false), 5000);
     setShowAdditionalDoc(true)
     closePopup()
   }

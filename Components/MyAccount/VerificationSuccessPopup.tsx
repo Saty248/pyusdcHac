@@ -1,27 +1,14 @@
 import React, { useState, useEffect} from 'react';
 import { CancelIconWhite, SuccessIcon, SuccessIconwhite} from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
-import { FiX } from 'react-icons/fi';  // A close icon from react-icons
 
 
 const VerificationSuccessPopup: React.FC = () => {
     const { isMobile } = useMobile();
     const [showPopup, setShowPopup] = useState(true);
 
-    // const handleClose = () => {
-    //     setShowPopup(false); 
-    // }
-
- 
-
-  const [spinning, setSpinning] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setSpinning(false), 5000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleClose = () => {
-    setSpinning(false); 
     setShowPopup(false); 
   };
 

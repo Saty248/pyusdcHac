@@ -134,7 +134,7 @@ const Account = () => {
               KYCStatusId={personalInformation.KYCStatusId}
               isLoading={isLoading}
               onVerifyMyAccount={onVerifyMyAccount}
-            />
+               />
             <PersonalInformation
               personalInformation={personalInformation}
               setPersonalInformation={setPersonalInformation}
