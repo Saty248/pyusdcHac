@@ -61,7 +61,8 @@ const useAuction = () => {
   );
   const [txHash, setTxHash] = useState<string | null | undefined>(null);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
-  const { createAuction, submitAuction, getAuctions } = MarketplaceService();
+  const { createAuction, submitAuction, getAuctionableProperties } =
+    MarketplaceService();
   const { provider } = useContext(Web3authContext);
   const [pageNumber, setPageNumber] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -69,8 +70,6 @@ const useAuction = () => {
 
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
-
-  const { getAuctionableProperties , getPropertiesByUserAddress , getTotalAirspacesByUserAddress} = AirspaceRentalService();
 
   console.log({ userUSDWalletBalance });
 
@@ -84,34 +83,20 @@ const useAuction = () => {
           airspaceList.length > 0
             ? airspaceList[airspaceList.length - 1]?.id
             : "";
-        console.log(user?.blockchainAddress,assetId,"hello 2")
-        // const airspaces = await getAuctionableProperties(
-        //   user?.blockchainAddress,
-        //   "landToken",
-        //   10,
-        //   String(assetId),
-        //   pageNumber
-        // );
-        
-        const airspaces = await getPropertiesByUserAddress(
+
+        const airspaces = await getAuctionableProperties(
           user?.blockchainAddress,
           "landToken",
           10,
-          String(assetId),
+          String(assetId)
+          // pageNumber
         );
-        // const airspaces = await getTotalAirspacesByUserAddress(user?.blockchainAddress)
 
-        // if (airspaces.length < 10) {
-        //   setHasMore(false);
-        // }
-        // if (airspaces?.previews?.length < 10) {
-        //   setHasMore(false);
-        // }
-        // console.log(airspaces?.previews,"please")
-        console.log(airspaces,"test airspaces")
+        if (airspaces.length < 10) {
+          setHasMore(false);
+        }
+
         dispatch(setAirspaceList(airspaces || []));
-
-        // dispatch(setAirspaceList(airspaces?.previews || []));
       } catch (error) {
         console.error(error);
       } finally {
@@ -189,46 +174,29 @@ const useAuction = () => {
     console.log("==========================");
 
     setSelectedItems((prevSelectedItems) => {
-      // const isItemSelected = prevSelectedItems.find(
-      //   (selectedItem) => selectedItem.propertyId === item.propertyId
-      // );
       const isItemSelected = prevSelectedItems.find(
-        (selectedItem) => selectedItem.propertyId === item.id
+        (selectedItem) => selectedItem.propertyId === item.propertyId
       );
+
       let updatedItems;
       if (isItemSelected) {
-        // updatedItems = prevSelectedItems.filter(
-        //   (selectedItem) => selectedItem.propertyId !== item.propertyId
-        // );
         updatedItems = prevSelectedItems.filter(
-          (selectedItem) => selectedItem.propertyId !== item.id
+          (selectedItem) => selectedItem.propertyId !== item.propertyId
         );
         setSelectedItemId(null); // Deselect the item
       } else {
-        // updatedItems = [
-        //   ...prevSelectedItems,
-        //   {
-        //     assetId: item.id,
-        //     propertyId: item.propertyId,
-        //     name: item.address,
-        //     minSalePrice: 0,
-        //     endDate: null,
-        //   },
-        // ];
-        // @ts-ignore
         updatedItems = [
           ...prevSelectedItems,
           {
             assetId: item.id,
-            // propertyId: item.propertyId,
-            propertyId: item.id,
+            propertyId: item.propertyId,
             name: item.address,
             minSalePrice: 0,
             endDate: null,
           },
         ];
-        // setSelectedItemId(item?.propertyId); // Select the item
-        setSelectedItemId(item?.id);
+        // @ts-ignore
+        setSelectedItemId(item?.propertyId); // Select the item
       }
 
       return updatedItems;

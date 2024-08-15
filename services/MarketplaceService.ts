@@ -4,6 +4,27 @@ import Service from "./Service";
 const MarketplaceService = () => {
   const { getRequest, postRequest } = Service();
 
+  const getAuctionableProperties = async (
+    callerAddress: string | undefined,
+    type: string,
+    limit: string | number,
+    afterAssetId?: string
+  ) => {
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/auction-house/get-auctionable-airspaces`,
+      });
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   const getAuctions = async (page: number = 1, limit: number = 10) => {
     try {
       const response = await getRequest({
@@ -16,6 +37,22 @@ const MarketplaceService = () => {
   };
 
   const createAuction = async ({ postData }: { postData: AuctionListingI }) => {
+    try {
+      const response = await postRequest({
+        uri: `/market/nft`,
+        postData,
+      });
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createAuctionTx = async ({
+    postData,
+  }: {
+    postData: AuctionListingI;
+  }) => {
     try {
       const response = await postRequest({
         uri: `/market/nft`,
@@ -100,6 +137,7 @@ const MarketplaceService = () => {
   };
 
   return {
+    getAuctionableProperties,
     getAuctions,
     createAuction,
     submitAuction,
@@ -107,6 +145,7 @@ const MarketplaceService = () => {
     filterAuctions,
     createBid,
     submitSignature,
+    createAuctionTx,
   };
 };
 

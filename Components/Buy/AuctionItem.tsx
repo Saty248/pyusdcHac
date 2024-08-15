@@ -40,6 +40,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   };
 
   const handleMinSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("e.target.value", e.target.value);
     setMinSalePrice(e.target.value);
     onUpdateItem(
       data?.propertyId || null,
@@ -49,7 +50,9 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   };
 
   const handleEndDateChange = (date: Date | null) => {
+    console.log({ date });
     setEndDate(date);
+    // return;
     onUpdateItem(
       data?.propertyId || null,
       parseFloat(minSalePrice) || 0,
@@ -69,7 +72,6 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
     <div
       // className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
       className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out `}
-    
     >
       <div
         onClick={handleToggleClick}
