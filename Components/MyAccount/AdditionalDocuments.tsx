@@ -25,8 +25,6 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
   if (!showPopup) return null;
 
   const handleclick = async() =>{
-   
-    
     const response = await postRequest({
       uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
       postData: files
@@ -69,7 +67,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
           className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
         >
        { isMobile ?(
-         <p className="text-base font-medium text-[#87878D]">click to upload Document</p>
+         <p className="text-base font-medium text-[#87878D]">{files ? files.name : 'click to upload Document'}</p>
         ):(
         <p className="text-base font-medium text-[#87878D]">{files ? files.name : 'Drag here or click to upload'}</p>  
         )}
