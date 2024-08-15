@@ -1,5 +1,5 @@
-import React, { useState} from 'react';
-import { CancelIconWhite, SuccessIcon, } from "../Icons";
+import React, { useEffect, useState} from 'react';
+import { CancelIconWhite, SuccessIcon,SuccessIconwhite } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
 
 const VerificationSuccessPopup: React.FC = () => {
@@ -9,6 +9,10 @@ const VerificationSuccessPopup: React.FC = () => {
     const handleClose = () => {
         setShowPopup(false); 
     }
+
+  
+ 
+  
 
   return (
     <>
@@ -22,7 +26,7 @@ const VerificationSuccessPopup: React.FC = () => {
         {isMobile ? (
           <>
             <div className="flex justify-center items-center w-24 h-24">
-              <SuccessIcon />
+              <SuccessIconwhite />
             </div>
             <div className="flex flex-col gap-6 text-center text-white w-60">
               <p className="text-xl font-medium">
@@ -44,9 +48,16 @@ const VerificationSuccessPopup: React.FC = () => {
               <div className="w-4 h-4">
                 <SuccessIcon />
               </div>
-              <div className="p-2 text-green-500">
+              <div className="p-2 text-green-500 text-[14px]">
                 <p>Thanks, your additional documents have been successfully submitted.</p>
               </div>
+
+              <button
+                  className="text-black rounded-full w-4 h-4 flex items-center justify-center text-sm cursor-pointer"
+                  onClick={handleClose}
+                >
+                  ✖
+                </button>
             </div>
           </div>
         )}

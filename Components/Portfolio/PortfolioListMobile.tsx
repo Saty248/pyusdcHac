@@ -6,7 +6,7 @@ import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
 
-const PortfolioListMobile = ({ selectAirspace }) => {
+const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) => {
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -41,17 +41,18 @@ const PortfolioListMobile = ({ selectAirspace }) => {
         >
           Pending Rented Airspaces
         </div>
-        <div
-          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+        <div className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 flex items-center justify-between`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
-          Pending Verification
-          <div  className="relative w-[24px] h-[24px]">
+          <span className="flex-1">Pending Verification</span>
+
+          <div className="relative w-[24px] h-[24px] ml-2">
             <div className="absolute inset-0 bg-[#F79663] text-white text-xs flex items-center justify-center rounded-md">
               1
             </div>
+          </div>
         </div>
-        </div>
+
         <div
           className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
@@ -77,6 +78,9 @@ const PortfolioListMobile = ({ selectAirspace }) => {
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
+                  uploadedDoc={uploadedDoc}
+                  setUploadedDoc={setUploadedDoc}
+                  isDocumentRequired={index === 0}
                   selectAirspace={() => selectAirspace(airspace)}
                 />
               ))
@@ -84,9 +88,9 @@ const PortfolioListMobile = ({ selectAirspace }) => {
               <AirspacesEmptyMessage />
             )}
 
-         {activeTab === PortfolioTabEnum.UNVERIFIED &&(
+         {/* {activeTab === PortfolioTabEnum.UNVERIFIED &&(
           <UploadedDocuments />
-          )}
+          )} */}
           </div>
 
           <div className="flex flex-col w-full text-gray-600">

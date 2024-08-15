@@ -1,27 +1,43 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
 import { CloseIcon } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
-import UploadedDocuments from './UploadedDocuments';
+import Service from '@/services/Service';
 
 
 interface PopupProps {
   showPopup: boolean;
   closePopup: () => void;
-  showUploadedDoc: any
+  setUploadedDoc: Dispatch<SetStateAction<File[]>>
+  setShowSuccessToast: Dispatch<SetStateAction<boolean>>
 }
 
-const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, showUploadedDoc }) => {
+const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, setUploadedDoc, setShowSuccessToast }) => {
     const { isMobile } = useMobile();
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState<File | null>(null);
+    const {postRequest } = Service();
 
-    
-  const onDrop = (acceptedFiles) => {
-    setFiles(acceptedFiles);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles[0]);
   };
  const { getRootProps } = useDropzone({ onDrop });
 
   if (!showPopup) return null;
+
+  const handleclick = async() =>{
+    if(!files) return
+    const response = await postRequest({
+      uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
+      postData: files
+    })
+    console.log({response})
+    setUploadedDoc((prev) => [...prev, files])
+    setShowSuccessToast(true)
+    setTimeout(() => setShowSuccessToast(false), 2000);
+    closePopup()
+  }
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -62,10 +78,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, showUploadedDoc })
         <p className="text-base font-medium text-[#87878D]">Drag here or click to upload</p>  
         )}
         </div>
-        <button onClick={() => {
-          showUploadedDoc(true)
-          closePopup()
-        }} className="mt-4 px-6 py-2 text-white bg-dark-blue text-base">
+        <button onClick={handleclick} className="mt-4 px-6 py-2 text-white bg-dark-blue text-base">
           Submit Additional Documents
         </button>
       </div>

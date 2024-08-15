@@ -4,7 +4,7 @@ import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
+const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocumentRequired }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const handleButtonClick = () => {
@@ -53,6 +53,19 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
               )}
             
             </div>
+
+            {/* {isDocumentRequired && (
+            <div className="flex justify-between items-center gap-12 w-full">
+            <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
+            <p className="text-orange-500 font-normal text-sm">
+              Additional documents requested
+            </p>
+            </div> 
+            <div className="w-[7px] h-[14px]">
+                <ChevronRightIcon />
+              </div>
+            </div>
+        )} */}
             
         {/* <div className=" mt-4 flex justify-start items-center gap-2">
               <div className="w-6 h-6">
@@ -63,12 +76,12 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
               </p>
           </div> */}
 
-<UploadedDocuments />
+{/* <UploadedDocuments /> */}
         </div>
        </div>
         
            
-        {/* <div className="flex justify-between items-center gap-12 w-full">
+        <div className="flex justify-between items-center gap-12 w-full">
         <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
          <p className="text-orange-500 font-normal text-sm">
            Additional documents requested
@@ -77,14 +90,14 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace }) => {
          <div className="w-[7px] h-[14px]">
             <ChevronRightIcon />
           </div>
-        </div> */}
+        </div>
 
    
 
 
-            {showPopup && (
+            {/* {showPopup && (
             <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} />
-            )}
+            )} */}
 
           </div>
 

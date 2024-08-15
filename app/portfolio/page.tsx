@@ -23,6 +23,7 @@ const Portfolio = () => {
   const {getPropertyById} = PropertiesService()
   const { getSingleAsset } = AirspaceRentalService()
   const searchParams = useSearchParams()
+  const [uploadedDoc, setUploadedDoc] =useState<File[]>([])
   
   const id = searchParams?.get("id");
 
@@ -86,14 +87,15 @@ const Portfolio = () => {
         <Sidebar />
         <div className="w-full h-full flex flex-col">
           {selectedAirspace !== null && (
-            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} />
+            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} uploadedDoc={uploadedDoc}/>
           )}
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace}
-            />
+              selectAirspace={selectAirspace} 
+              uploadedDoc={uploadedDoc}
+              setUploadedDoc={setUploadedDoc}            />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
             <PortfolioListMobile selectAirspace={selectAirspace} />
