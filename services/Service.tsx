@@ -28,20 +28,19 @@ const Service = () => {
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
-    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
-    else return `${serverUrl}/api/proxy?${Date.now()}`;
+    return `${serverUrl}${uri}`
   }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
     console.log(error)
     if (
       !suppressErrorReporting &&
-      error.response  
+      error.response
     ) {
-        
+
       const backendError = error.response.data.errorMesagge || error.response.data.data.message
 
-      if (backendError  && backendError !== "UNAUTHORIZED") {
+      if (backendError && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
       } else {
         toast.error(CUSTOM_ERROR_MESSAGE);
@@ -60,33 +59,30 @@ const Service = () => {
       if (provider && !isPublic) {
         const solanaWallet = new SolanaWallet(provider);
         const accounts = await solanaWallet.requestAccounts();
-  
+
         const payload = new SIWPayload();
-  
+
         payload.domain = String(process.env.NEXT_PUBLIC_FRONTEND_DOMAIN);
         payload.uri = String(process.env.NEXT_PUBLIC_FRONTEND_URI);
         payload.address = accounts[0];
         payload.statement = "Sign in to SkyTrade app.";
         payload.version = "1";
         payload.chainId = 1;
-  
+
         const header = { t: "sip99" };
         const network = "solana";
-  
+
         let message = new SIWWeb3({ header, payload, network });
-  
+
         const messageText = message.prepareMessage();
         const msg = new TextEncoder().encode(messageText);
         const result = await solanaWallet.signMessage(msg);
-  
+
         const signature = base58.encode(result);
-  
+
         newHeader = {
           "Content-Type": "application/json",
           sign: signature,
-          time: message.payload.issuedAt,
-          nonce: message.payload.nonce,
-          address: accounts[0],
           // Support localhost
           sign_issue_at: message.payload.issuedAt,
           sign_nonce: message.payload.nonce,
@@ -102,7 +98,6 @@ const Service = () => {
       return {
         ...newHeader,
         api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
-        uri,
       }
 
     } catch (error) {
