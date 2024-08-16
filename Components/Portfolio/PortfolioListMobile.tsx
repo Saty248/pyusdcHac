@@ -41,7 +41,7 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
         >
           Pending Rented Airspaces
         </div>
-        <div className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 flex items-center justify-between`}
+        <div className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap flex`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           <span className="flex-1">Pending Verification</span>
@@ -89,7 +89,7 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
             )}
 
          {/* {activeTab === PortfolioTabEnum.UNVERIFIED &&(
-          <UploadedDocuments />
+          <UploadedDocuments uploadedDoc={uploadedDoc} />
           )} */}
           </div>
 

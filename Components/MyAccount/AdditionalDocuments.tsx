@@ -14,29 +14,52 @@ interface PopupProps {
 
 const Popup: React.FC<PopupProps> = ({ showPopup, closePopup, setUploadedDoc, setShowSuccessToast }) => {
     const { isMobile } = useMobile();
-    const [files, setFiles] = useState<File | null>(null);
+    const [file, setFile] = useState<File | null>(null);
     const {postRequest } = Service();
 
 
-  const onDrop = (acceptedFiles: File[]) => {
-    setFiles(acceptedFiles[0]);
+  const onDrop = (acceptedFile: File[]) => {
+    setFile(acceptedFile[0]);
   };
  const { getRootProps } = useDropzone({ onDrop });
 
   if (!showPopup) return null;
 
-  const handleclick = async() =>{
-    if(!files) return
-    const response = await postRequest({
-      uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
-      postData: files
-    })
-    console.log({response})
-    setUploadedDoc((prev) => [...prev, files])
-    setShowSuccessToast(true)
+  const handleclick = async () => {
+    if (!file) return;
+    const sensitiveFileTypes = ['application/pdf', 'application/vnd.ms-excel'];
+    const nonSensitiveFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  
+    const isSensitive = sensitiveFileTypes.includes(file?.type);
+    const isNonSensitive = nonSensitiveFileTypes.includes(file?.type);
+  
+    let response;
+    if (isSensitive) {
+      response = await postRequest({
+        uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${file?.type}&fileName=${file?.name}`,
+        postData: file,
+      });
+    } else if (isNonSensitive) {
+      response = await postRequest({
+        uri: `/private/aws-s3/generate-s3-non-sensitive-upload-url?fileType=${file?.type}&fileName=${file?.name}`,
+        postData: file,
+      });
+    }else{
+      console.error(`Unsupported file type: ${file?.type}`);
+      alert(`The file type ${file?.type} is not supported for upload.`);
+      return;
+    }
+  
+    console.log({ response });
+    console.log(file.type,"cccccccccc")
+    console.log(file,"cccccccccc")
+  
+    setUploadedDoc((prev) => [...prev, file]);
+    setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 2000);
-    closePopup()
-  }
+    closePopup();
+  };
+  
 
 
   return (

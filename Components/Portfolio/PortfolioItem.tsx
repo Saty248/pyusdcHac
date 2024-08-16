@@ -66,7 +66,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         
 
 
-{uploadedDoc.length > 0 && isDocumentRequired && (
+  {uploadedDoc.length > 0 && isDocumentRequired && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
@@ -75,7 +75,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
                  Documents under review
           </p>
           </div>
-)}
+   )}
         
         <div className="w-[7px] h-[14px]">
           <ChevronRightIcon />
@@ -83,7 +83,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
       </div>
       </div>
      
-   {uploadedDoc.length > 0 && isDocumentRequired && <UploadedDocuments uploadedDoc={uploadedDoc}/>}
+   {uploadedDoc?.length > 0 && isDocumentRequired && <UploadedDocuments uploadedDoc={uploadedDoc}/>}
 
       {showPopup && (
         <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} />

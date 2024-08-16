@@ -4,8 +4,9 @@ import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocumentRequired }) => {
+const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocumentRequired,setUploadedDoc,uploadedDoc }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false)
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -20,7 +21,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocume
         className=" shadow-md px-4 py-6 items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer w-screen"
          >
 
-          <div className="flex items-center justify-between gap-[10px] rounded-lg">
+          <div className="items-center justify-between gap-[10px] rounded-lg">
           <div className="flex items-center gap-[10px] flex-1">
               <div className="w-6 h-6">
                 <LocationPointIcon />
@@ -29,7 +30,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocume
                 {airspaceName.length > 15 ?  airspaceName.slice(0, 25) + ' ...' : airspaceName}
               </p>
             </div>
-            <div className="flex">
+            <div className="">
             <div className="flex mt-2 gap-[10px] items-center">
               {!!tags[0] && (
                 <div onClick={selectAirspace} className="w-20 bg-[#DBDBDB] text-[#222222] text-sm font-normal p-2 cursor-pointer rounded-[3px]">
@@ -53,44 +54,42 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocume
               )}
             
             </div>
-
-            {/* {isDocumentRequired && (
-            <div className="flex justify-between items-center gap-12 w-full">
+            {isDocumentRequired && (
+            <div className="flex justify-between items-center gap-12 w-full mt-4">
             <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
             <p className="text-orange-500 font-normal text-sm">
               Additional documents requested
             </p>
             </div> 
-            <div className="w-[7px] h-[14px]">
-                <ChevronRightIcon />
-              </div>
+          <div className="w-[7px] h-[14px]">
+              <ChevronRightIcon />
             </div>
-        )} */}
+          </div>
+        )}
             
-        {/* <div className=" mt-4 flex justify-start items-center gap-2">
-              <div className="w-6 h-6">
-              <ReviewVerificationIcon />
-              </div>
-              <p className="text-orange-500 font-normal text-sm">
-                    Documents under review
-              </p>
-          </div> */}
+            {uploadedDoc?.length > 0 && isDocumentRequired && (
+                <div className=" mt-4 flex justify-start items-center gap-2">
+                <div className="w-6 h-6">
+                <ReviewVerificationIcon />
+                </div>
+                <p className="text-orange-500 font-normal text-sm">
+                      Documents under review
+                </p>
+            </div>
+            )}
+      
+      {uploadedDoc?.length > 0 && isDocumentRequired && <UploadedDocuments uploadedDoc={uploadedDoc}/>}
+      
+      {showPopup && (
+        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} />
+        )}
+ 
+        {showSuccessToast &&  <VerificationSuccessPopup />}
 
-{/* <UploadedDocuments /> */}
         </div>
        </div>
         
-           
-        <div className="flex justify-between items-center gap-12 w-full">
-        <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
-         <p className="text-orange-500 font-normal text-sm">
-           Additional documents requested
-         </p>
-        </div> 
-         <div className="w-[7px] h-[14px]">
-            <ChevronRightIcon />
-          </div>
-        </div>
+         
 
    
 

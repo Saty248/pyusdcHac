@@ -98,7 +98,7 @@ const Portfolio = () => {
               setUploadedDoc={setUploadedDoc}            />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
-            <PortfolioListMobile selectAirspace={selectAirspace} />
+            <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />
           </section>
         </div>
       </div>
