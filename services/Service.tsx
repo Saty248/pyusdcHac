@@ -28,8 +28,7 @@ const Service = () => {
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
-    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
-    else return `${serverUrl}/api/proxy?${Date.now()}`;
+    return `${serverUrl}${uri}`
   }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
@@ -84,9 +83,6 @@ const Service = () => {
         newHeader = {
           "Content-Type": "application/json",
           sign: signature,
-          time: message.payload.issuedAt,
-          nonce: message.payload.nonce,
-          address: accounts[0],
           // Support localhost
           sign_issue_at: message.payload.issuedAt,
           sign_nonce: message.payload.nonce,
@@ -102,7 +98,6 @@ const Service = () => {
       return {
         ...newHeader,
         api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
-        uri,
       }
 
     } catch (error) {
