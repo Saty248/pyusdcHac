@@ -21,4 +21,4 @@ jobs:
         with:
           repository: SkyTradeLinks/qa-automation
           event-type: trigger-automation
-          token: ${{ secrets.PRIVATE_KEY_QA }}# Use custom token
+          token: ${{ secrets.PRIVATE_KEY_QA }}
