@@ -2,7 +2,9 @@
 name: DEV UI Tests
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - dev-deploy
 
 jobs:
   ui_tests:
@@ -22,6 +24,8 @@ jobs:
         python-version: '3.12.3'  # Specify the Python version you need
     - name: Install dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y xclip
         python -m pip install --upgrade pip &&
         cd ./qa-automation && \
         pip install -r requirements.txt && \
@@ -33,8 +37,3 @@ jobs:
       run: |
         pwd && ls -all && cd ./qa-automation && ls -all && cd script && \
         xvfb-run --server-args='-screen 0, 1920x1080x24' python -u sky_dev_qa_automation.py
-  
-
-
-
-  
