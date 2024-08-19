@@ -9,7 +9,8 @@ import {
   setIsTriggerRefresh,
   setUserUSDWalletBalance,
 } from "@/redux/slices/userSlice";
-import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, VersionedTransaction,Connection } from "@solana/web3.js";
+import { SolanaWallet } from "@web3auth/solana-provider";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import MarketplaceService from "@/services/MarketplaceService";
 import { toast } from "react-toastify";
@@ -61,7 +62,7 @@ const useAuction = () => {
   );
   const [txHash, setTxHash] = useState<string | null | undefined>(null);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
-  const { createAuction, submitAuction, getAuctions } = MarketplaceService();
+  const { createAuction, submitSignature,submitAuction, getAuctions, getAuctionableAirspaces } = MarketplaceService();
   const { provider } = useContext(Web3authContext);
   const [pageNumber, setPageNumber] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -70,7 +71,7 @@ const useAuction = () => {
   const { user } = useAuth();
   const { web3auth } = useContext(Web3authContext);
 
-  const { getAuctionableProperties , getPropertiesByUserAddress , getTotalAirspacesByUserAddress} = AirspaceRentalService();
+  const {  getPropertiesByUserAddress , getTotalAirspacesByUserAddress} = AirspaceRentalService();
 
   console.log({ userUSDWalletBalance });
 
@@ -85,20 +86,7 @@ const useAuction = () => {
             ? airspaceList[airspaceList.length - 1]?.id
             : "";
         console.log(user?.blockchainAddress,assetId,"hello 2")
-        // const airspaces = await getAuctionableProperties(
-        //   user?.blockchainAddress,
-        //   "landToken",
-        //   10,
-        //   String(assetId),
-        //   pageNumber
-        // );
-        
-        const airspaces = await getPropertiesByUserAddress(
-          user?.blockchainAddress,
-          "landToken",
-          10,
-          String(assetId),
-        );
+        const airspaces = await getAuctionableAirspaces(1,10);
         // const airspaces = await getTotalAirspacesByUserAddress(user?.blockchainAddress)
 
         // if (airspaces.length < 10) {
@@ -108,7 +96,7 @@ const useAuction = () => {
         //   setHasMore(false);
         // }
         // console.log(airspaces?.previews,"please")
-        console.log(airspaces,"test airspaces")
+        console.log(airspaces,"test airspaces 1")
         dispatch(setAirspaceList(airspaces || []));
 
         // dispatch(setAirspaceList(airspaces?.previews || []));
@@ -253,25 +241,25 @@ const useAuction = () => {
   const handleAddProperties = async () => {
     console.log({ selectedItems });
     // return;
-    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    // const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
     // const balance = 0;
 
-    console.log({ balance });
-    if (balance === 0) {
-      return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
-      );
-    }
+    // console.log({ balance });
+    // if (balance === 0) {
+    //   return toast.info(
+    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
+    //   );
+    // }
 
-    if (parseFloat(userUSDWalletBalance.amount) === 0) {
-      return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
-      );
-    }
+    // if (parseFloat(userUSDWalletBalance.amount) === 0) {
+    //   return toast.info(
+    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
+    //   );
+    // }
 
-    if (selectedItems.length === 0) {
-      return toast.info("You must select an Airspace to continue");
-    }
+    // if (selectedItems.length === 0) {
+    //   return toast.info("You must select an Airspace to continue");
+    // }
 
     console.log("Selected Items:", selectedItems);
     setIsProcessing(true);
@@ -279,45 +267,51 @@ const useAuction = () => {
 
     try {
       const postData = {
-        propertyId: selectedItems[0].propertyId,
-        listingType: "Auction",
-        isActive: true,
-        listingPrice: selectedItems[0].minSalePrice,
-        endDate: selectedItems[0].endDate,
+        // assetId: "9SgBVTh47TDMVUExdB9bLsbsKGTRbAjRSa2CU9ANaF5Q",
+        assetId: "76R1XPqGh9aVwSBcN8LJ4hM1QHspHK3nLQmUPQo8qDVc",
+        seller: "8nUQ9RZLLJkeJPFHatJUF9zVpg4cT7RZ6NHVJFfPpTaC",
+        initialPrice: 1,
+        secsDuration: 15*24*3600,
       };
       console.log({ postData });
-
+      // const response = true;
       const response = await createAuction({ postData });
-      console.log({ response });
-      if (response && response.tx) {
-        const transaction1 = VersionedTransaction.deserialize(
+      // console.log({ response },"response from createauction");
+      // const connection = new Connection('https://api.devnet.solana.com', { commitment: 'finalized' })
+      if (response && response?.tx ) {
+        const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response.tx[0], "base64"))
         );
 
-        const transaction2 = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(response.tx[1], "base64"))
-        );
+        
+        // const solanaWallet = new SolanaWallet(provider);
+        // const signedTx = await solanaWallet.signTransaction(transaction);
+        const signedTx = await executeTransaction(transaction, provider);
+        // const tx2 = await executeTransaction(transaction2, provider);
 
-        const tx1 = await executeTransaction(transaction1, provider);
-        const tx2 = await executeTransaction(transaction2, provider);
+        if (signedTx ) {
+          console.log({ signedTx },"tx1");
+          // console.log({ selectedItems });
 
-        if (tx1 && tx2) {
-          console.log({ tx1, tx2 });
-          console.log({ selectedItems });
-
-          const postData: AuctionSubmitI = {
-            signatures: [tx1, tx2],
-            assetId: selectedItems[0].assetId,
+          const postData: any = {
+            serializedTx: signedTx,
           };
-          console.log("==========================");
-          console.log({ postData });
-          console.log("==========================");
 
-          const result = await submitAuction({ postData });
+          // const sig = await connection.sendTransaction(transaction)
+          // await connection.confirmTransaction(sig, 'finalized');
+          // console.log("sig test 1: ", sig)
 
-          if (result && result.txid.length > 0) {
-            console.log({ result });
-            setTxHash(result.txid[0]);
+
+          const sig = await submitSignature({postData});
+          // console.log("==========================");
+          // console.log({ postData });
+          // console.log("==========================");
+
+          // const result = await submitAuction({ postData });
+
+          if (sig) {
+            console.log({ sig },"test last sig");
+            setTxHash(sig);
             dispatch(setIsTriggerRefresh(true));
             setTransactionStatus(TransactionStatusEnum.SUCCESS);
             setResponseStatus("SUCCESS");

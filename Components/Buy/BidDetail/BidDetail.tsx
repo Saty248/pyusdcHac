@@ -11,6 +11,7 @@ import BidsViewModal from "./BidsView";
 import Accordion from "./Accordion";
 import AirspaceHistory from "./AirspaceHistory";
 import CustomTable from "./CustomTable";
+import Carousel from "@/Components/Shared/Carousel";
 
 interface BidDetailsProps {
   auctionDetailData: AuctionDataI | undefined;
@@ -113,6 +114,10 @@ const BidDetails: React.FC<BidDetailsProps> = ({
       from: "adncjdjf, chzjneofjiochui",
     },
   ];
+  const images = [{ "image_url": "/images/imagetest1.jpg" },
+    { "image_url": "/images/imagetest2.jpg" },
+    { "image_url": "/images/imagetest3.jpg" }]
+    images[0] = {image_url:imageUrl};
 
   return (
     <div className="fixed inset-0 z-50 bottom-[74px] sm:bottom-0 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
@@ -148,13 +153,15 @@ const BidDetails: React.FC<BidDetailsProps> = ({
             <div className="text-sm text-[#727272]">{getStatus(endDate)}</div>
           </div>
           <div>
-            <div className="relative w-full h-[130px]">
-              <Image
+            <div className="relative w-full h-[130px] ">
+              {/* <Image
                 src={imageUrl}
                 alt={`Map at ${latitude}, ${longitude}`}
                 layout="fill"
                 objectFit="cover"
-              />
+              /> */}
+      <Carousel images={images} />
+
             </div>
           </div>
           <div className="flex justify-between px-[15px] py-[10px] bg-[#4285F4] bg-opacity-5">

@@ -28,8 +28,8 @@ const Service = () => {
   const getRequestUrl = (uri: string): string => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
-    if (isLocalhostUrl(serverUrl)) return `${serverUrl}${uri}`
-    else return `${serverUrl}/api/proxy?${Date.now()}`;
+    return `${serverUrl}${uri}`
+    
   }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {

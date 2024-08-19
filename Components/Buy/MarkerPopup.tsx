@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import { AuctionDataI } from "@/types";
+import Carousel from "../Shared/Carousel";
 
 interface MarkerPopupProps {
   auction: AuctionDataI;
@@ -19,6 +20,11 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
       setShowBidDetail(true);
       setAuctionDetailData(item);
     };
+    const images = [{ "image_url": "/images/imagetest1.jpg" },
+      { "image_url": "/images/imagetest2.jpg" },
+      { "image_url": "/images/imagetest3.jpg" }]
+      images[0] = {image_url:imageUrl};
+  
   return (
     <div
       className={
@@ -26,12 +32,14 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
       }
     >
       <div className={" w-1/2 sm:w-[266px] relative h-[151px]"}>
-        <Image
+        {/* <Image
           src={imageUrl}
           alt={`Map at ${latitude}, ${longitude}`}
           layout="fill"
           objectFit="cover"
-        />
+        /> */}
+      <Carousel images={images} />
+
       </div>
       <div
         className={"w-1/2 h-[151px] sm:w-[266px] flex flex-col justify-between"}

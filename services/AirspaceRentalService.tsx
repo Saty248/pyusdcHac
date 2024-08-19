@@ -7,7 +7,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
+        uri: `/public/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`
       });
       if (!response) {
         return [];
@@ -116,27 +116,7 @@ const AirspaceRentalService = () => {
       console.error(error);
     }
   }
-  const getAuctionableProperties = async (
-    callerAddress: string | undefined,
-    type: string,
-    limit: string | number,
-    afterAssetId?: string,
-    pageNumber: number = 1
-  ) => {
-    try {
-      if (!callerAddress) return [];
-      const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-assets?callerAddress=${callerAddress}&type=${type}&limit=${limit}&page=${pageNumber}&afterAssetId=${afterAssetId || ""}`,
-      });
-      if (!response) {
-        return [];
-      }
-      return response?.data;
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
+
 
   return { 
     getPropertiesByUserAddress,
@@ -147,7 +127,6 @@ const AirspaceRentalService = () => {
     getTotalAirspacesByUserAddress, 
     getSingleAsset,
     getRetrievePendingRentalAirspace,
-    getAuctionableProperties
   };
 };
 
