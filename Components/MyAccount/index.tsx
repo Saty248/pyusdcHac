@@ -46,6 +46,7 @@ const Account = () => {
   }, [user, web3authStatus]);
 
   const updateDataHandler = async (e) => {
+    
     e.preventDefault();
     if (!user) return toast.error("User not logged in");
 
@@ -104,10 +105,9 @@ const Account = () => {
             setIsLoading(false);
             client.open();
         },
-        onComplete:  () => {
-          setPersonalInformation((prev) => {
-            return {...prev, KYCStatusId: 5}
-          })
+        onComplete:  async() => {
+          const responseData = await getUser();
+          console.log(responseData, "responseData")
         }
     });
   };
