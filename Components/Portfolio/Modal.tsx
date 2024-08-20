@@ -28,15 +28,12 @@ const handleEdit = async () => {
   if (!user || inputValue === airspace?.address) return;
   setIsEditLoading(true);
   const editResponse = await editAirSpaceAddress({ address: inputValue, propertyId: airspace.id });
-  console.log(editResponse, "editResponse");
-
-  console.log(airspace, "airspace");
+  if(!editResponse) return
   const airspaceResp = await getUnverifiedAirspaces(
     user?.blockchainAddress,
     pageNumber,
     10,
   );
-  console.log(airspaceResp, "airspaceResp")
   setAirspaceList(airspaceResp.items);
   setIsEditLoading(false);
 };
