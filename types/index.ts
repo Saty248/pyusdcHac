@@ -73,6 +73,16 @@ export type PropertyData = {
   status?:number;
   type?:string;
   hasPlanningPermission?:string | null;
+  requestDocument?:{
+    actionType: string;
+    dateCreated : string;
+    dateUpdated : string;
+    description : string;
+    id: number;
+    referenceId : number;
+    status : string;
+    userId: number;
+  }
 };
 export type User = {
   KYCStatusId: number;

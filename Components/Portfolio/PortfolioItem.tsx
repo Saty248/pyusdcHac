@@ -4,7 +4,7 @@ import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, isDocumentRequired,uploadedDoc}) => {
+const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc}) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const [showSuccessToast, setShowSuccessToast] = useState(false)
@@ -17,7 +17,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
   const closePopup = () => {
     setShowPopup(false);
   };
-
+  console.log()
   return (
     <div
       className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer"
@@ -56,7 +56,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         )}
 
 
-        {isDocumentRequired && (
+        {requestDocument && (
         <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
         <p className="text-orange-500 font-normal text-sm">
           Additional documents requested
@@ -66,7 +66,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         
 
 
-  {uploadedDoc.length > 0 && isDocumentRequired && (
+  {uploadedDoc.length > 0 && requestDocument && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
@@ -83,10 +83,10 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
       </div>
       </div>
      
-   {uploadedDoc?.length > 0 && isDocumentRequired && <UploadedDocuments uploadedDoc={uploadedDoc}/>}
+   {uploadedDoc?.length > 0 && requestDocument && <UploadedDocuments  uploadedDoc={uploadedDoc} requestDocument = {requestDocument}/>}
 
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} />
+        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument} />
         )}
  
   {showSuccessToast &&  <VerificationSuccessPopup />}

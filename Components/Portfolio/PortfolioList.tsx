@@ -85,7 +85,7 @@ const PortfolioList = ({ title, selectAirspace, setUploadedDoc, uploadedDoc }) =
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
-                  isDocumentRequired={index === 0}
+                  requestDocument={airspace?.requestDocument}
                   selectAirspace={() => selectAirspace(airspace)}
                   uploadedDoc={uploadedDoc}
                   setUploadedDoc={setUploadedDoc}
