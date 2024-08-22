@@ -92,14 +92,10 @@ const BidPreview: React.FC<BidPreviewProps> = ({
         return;
       }
       const postData = {
-        // assetId: auctionDetailData?.assetId,
-        // callerBlockchainAddress: user?.blockchainAddress,
-        // bidOffer: currentUserBid,
-        // bidType: "Auction",
-        auction:auctionDetailData?.assetId,
-        amount : currentUserBid
+        account:'8nUQ9RZLLJkeJPFHatJUF9zVpg4cT7RZ6NHVJFfPpTaC',
       };
-      const response: any = await createBid({ postData });
+      const auction = auctionDetailData?.id.toString();
+      const response: any = await createBid( postData , auction, currentUserBid);
       if (response && response?.data && response?.data?.tx) {
         const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response?.data?.tx, "base64"))

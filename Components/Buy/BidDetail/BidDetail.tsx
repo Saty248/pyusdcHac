@@ -29,7 +29,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
   currentUserBid,
 }) => {
   const { isMobile } = useMobile();
-  const [openBidsModal, setOpenBidsModal] = useState(false);
 
   const handleCurrentBidInputChanged = (e) => {
     let inputValue = e.target.value;
@@ -121,12 +120,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bottom-[74px] sm:bottom-0 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
-      {openBidsModal && (
-        <BidsViewModal
-          auctionDetailData={auctionDetailData}
-          onClose={() => setOpenBidsModal(false)}
-        />
-      )}
+
       <div className="fixed bottom-0  sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[560px] md:h-[640px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] md:shadow-md thin-scrollbar short-scrollbar">
         {isMobile && (
           <div
@@ -171,27 +165,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               </p>
               <h1 className="text-[14px] leading-[26px] font-bold text-[#050505]">
                 ${auctionDetailData?.highestBid}
-              </h1>
-            </div>
-
-            <div className="flex flex-col gap-[2px]">
-              <p className="text-[14px] leading-[26px] text-[#727272]">
-                Minimum Bid
-              </p>
-              <h1 className="text-[14px] text-center leading-[26px] font-bold text-[#050505]">
-                ${auctionDetailData?.price}
-              </h1>
-            </div>
-
-            <div className="flex flex-col gap-[2px]">
-              <p className="text-[14px] leading-[26px] text-[#727272] flex items-center gap-1">
-                Total Bids
-                <button onClick={() => setOpenBidsModal(true)}>
-                  <IoExpand className="animate-pulse hover:scale-120" />
-                </button>
-              </p>
-              <h1 className="text-[14px] text-center leading-[26px] font-bold text-[#050505]">
-                {auctionDetailData?.totalBid}
               </h1>
             </div>
 

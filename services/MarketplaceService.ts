@@ -67,12 +67,10 @@ const MarketplaceService = () => {
     }
   };
 
-  const createBid = async ({ postData }) => {
+  const createBid = async ( postData ,auction , amount) => {
     try {
-      // console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
-      console.log(postData,"hello");
       const response = await postRequest({
-        uri: "/private/auction-house/generate-place-bid-tx",
+        uri: `/private/auction-house/generate-place-bid-tx?auction=${auction}&amount=${parseFloat(amount)}`,
         postData,
       });
 

@@ -29,16 +29,16 @@ const Service = () => {
     const serverUrl = String(process.env.NEXT_PUBLIC_SERVER_URL);
 
     return `${serverUrl}${uri}`
-    
   }
 
   const toastError = (error: any, suppressErrorReporting?: boolean) => {
+    console.log(error)
     if (
       !suppressErrorReporting &&
       error.response  
     ) {
         
-      const backendError = error.response.data.errorMesagge
+      const backendError = error.response.data.errorMesagge || error.response.data.data.message
 
       if (backendError  && backendError !== "UNAUTHORIZED") {
         toast.error(backendError);
@@ -83,9 +83,6 @@ const Service = () => {
         newHeader = {
           "Content-Type": "application/json",
           sign: signature,
-          time: message.payload.issuedAt,
-          nonce: message.payload.nonce,
-          address: accounts[0],
           // Support localhost
           sign_issue_at: message.payload.issuedAt,
           sign_nonce: message.payload.nonce,
@@ -101,7 +98,6 @@ const Service = () => {
       return {
         ...newHeader,
         api_key: process.env.NEXT_PUBLIC_FRONTEND_API_KEY, // TODO: remove
-        uri,
       }
 
     } catch (error) {
