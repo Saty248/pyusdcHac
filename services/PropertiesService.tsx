@@ -76,6 +76,21 @@ const PropertiesService = () => {
     }
   }
 
+  const getRentedTimes = async (propertyId: string | number)=>{
+    try {
+      const response = await getRequest({
+        uri: `/private/properties/get-rental-timeframe/${propertyId}`
+      })
+      console.log(response , "response")
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+ 
+  
+
 
   return { 
     findPropertiesByCoordinates,
@@ -83,7 +98,8 @@ const PropertiesService = () => {
     claimProperty,
     updateClaimedProperty,
     deleteProperty,
-    getClaimedPropertiesByUserAddress
+    getClaimedPropertiesByUserAddress,
+    getRentedTimes
   };
 };
 
