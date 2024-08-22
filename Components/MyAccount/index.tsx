@@ -16,34 +16,18 @@ import { PersonalInformationType } from "../../types";
 import React from "react";
 import Sidebar from "../Shared/Sidebar";
 import { checkPhoneIsValid } from "../Auth/PhoneValidation";
+import useKycStatusId from "@/hooks/useKycStatusId";
 
 const Account = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [personalInformation, setPersonalInformation] =
-    useState<PersonalInformationType>({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      newsletter: false,
-      KYCStatusId: 0,
-    });
+  const { user, updateProfile } = useAuth();
+const {personalInformation, setPersonalInformation} = useKycStatusId()
 
-  const { user, updateProfile, web3authStatus } = useAuth();
+
   const { updateUser, getUser } = UserService();
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (!user) return;
-    const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
-    setPersonalInformation({
-      name,
-      email,
-      phoneNumber,
-      newsletter,
-      KYCStatusId,
-    });
-  }, [user, web3authStatus]);
+  const { signIn } = useAuth();
 
   const updateDataHandler = async (e) => {
     
@@ -108,6 +92,10 @@ const Account = () => {
         onComplete:  async() => {
           const responseData = await getUser();
           console.log(responseData, "responseData")
+          if (responseData?.id) {
+            localStorage.setItem("user", JSON.stringify(responseData));
+            signIn({ user: responseData });}
+          setPersonalInformation((prev) => {return{...prev, KYCStatusId: responseData.KYCStatusId}})
         }
     });
   };
