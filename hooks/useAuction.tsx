@@ -61,7 +61,7 @@
 //   );
 //   const [txHash, setTxHash] = useState<string | null | undefined>(null);
 //   const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
-//   const { createAuction, submitAuction, getAuctionableProperties } =
+//   const { createAuction, submitAuction, getAuctionableAirspaces } =
 //     MarketplaceService();
 //   const { provider } = useContext(Web3authContext);
 //   const [pageNumber, setPageNumber] = useState(1);
@@ -80,7 +80,7 @@
 
 //         setLoading(true);
 
-//         const airspaces = await getAuctionableProperties(
+//         const airspaces = await getAuctionableAirspaces(
 //           user?.blockchainAddress,
 //           pageNumber
 //         );
@@ -342,7 +342,12 @@ import {
   setIsTriggerRefresh,
   setUserUSDWalletBalance,
 } from "@/redux/slices/userSlice";
-import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import {
+  LAMPORTS_PER_SOL,
+  VersionedTransaction,
+  Connection,
+} from "@solana/web3.js";
+import { SolanaWallet } from "@web3auth/solana-provider";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
 import MarketplaceService from "@/services/MarketplaceService";
 import { toast } from "react-toastify";
@@ -404,7 +409,7 @@ const useAuction = () => {
   );
   const [txHash, setTxHash] = useState<string | null | undefined>(null);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null); // Track the selected item
-  const { createAuction, submitAuction, getAuctionableProperties } =
+  const { createAuction, submitAuction, getAuctionableAirspaces } =
     MarketplaceService();
   const { provider } = useContext(Web3authContext);
   const [pageNumber, setPageNumber] = useState(1);
@@ -427,10 +432,7 @@ const useAuction = () => {
             ? airspaceList[airspaceList.length - 1]?.id
             : "";
 
-        const airspaces = await getAuctionableProperties(
-          user?.blockchainAddress,
-          pageNumber
-        );
+        const airspaces = await getAuctionableAirspaces(pageNumber);
 
         if (airspaces.length < 10) {
           setHasMore(false);
@@ -510,7 +512,7 @@ const useAuction = () => {
 
   const handleSelectItem = (item: PropertyData) => {
     if (item.layers) {
-      //@ts-ignore
+      // @ts-ignore
       dispatch(setAssetId(item?.layers[0].tokenId));
     }
     setSelectedItems((prevSelectedItems) => {
@@ -544,23 +546,6 @@ const useAuction = () => {
     });
   };
 
-  // const handleUpdateItem = (
-  //   id: number,
-  //   minSalePrice: number,
-  //   endDate: Date | null
-  // ) => {
-  //   console.log({ endDate });
-  //   setSelectedItems((prevSelectedItems) => {
-  //     const updatedItems = prevSelectedItems.map((selectedItem) =>
-  //       selectedItem.propertyId === id
-  //         ? { ...selectedItem, minSalePrice, endDate }
-  //         : selectedItem
-  //     );
-  //     console.log({ updatedItems });
-  //     return updatedItems;
-  //   });
-  // };
-
   const handleUpdateItem = (
     id: number,
     minSalePrice: number,
@@ -580,11 +565,8 @@ const useAuction = () => {
 
   const handleAddProperties = async () => {
     console.log({ selectedItems });
-    // return;
     const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
-    // const balance = 0;
 
-    // console.log({ balance });
     if (balance === 0) {
       return toast.info(
         "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
@@ -601,9 +583,7 @@ const useAuction = () => {
       return toast.info("You must select an Airspace to continue");
     }
 
-    // console.log("Selected Items:", selectedItems);
-    // setIsProcessing(true);
-    // return;
+    setIsProcessing(true);
 
     try {
       const dateStr = convertDate(endDate);
@@ -619,7 +599,6 @@ const useAuction = () => {
       };
 
       console.log({ postData });
-
       const response = await createAuction({ postData });
       console.log({ response });
       // return;
@@ -628,12 +607,7 @@ const useAuction = () => {
           new Uint8Array(Buffer.from(response.tx[0], "base64"))
         );
 
-        // const transaction2 = VersionedTransaction.deserialize(
-        //   new Uint8Array(Buffer.from(response.tx[1], "base64"))
-        // );
-
         const tx1 = await executeTransaction(transaction1, provider);
-        // const tx2 = await executeTransaction(transaction2, provider);
 
         if (tx1) {
           console.log({ tx1 });
@@ -642,11 +616,8 @@ const useAuction = () => {
           const postData = {
             serializedTx: tx1,
           };
-          console.log("==========================");
-          console.log({ postData });
-          console.log("==========================");
 
-          const result = await submitAuction({ postData });
+          const result = await submitAuction(postData);
 
           if (result && result.txSignature.length > 0) {
             console.log({ result });

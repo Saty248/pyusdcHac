@@ -1,6 +1,7 @@
 import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
-import Image from "next/image";
+
+import Carousel from "../Shared/Carousel";
 interface AuctionCardProps {
   data: AuctionDataI;
   handleShowBidDetail:Function;
@@ -30,18 +31,18 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data ,handleShowBidDetail}) =
       );
     }
   };
-
+console.log(data,"helo test data")
   const { latitude, longitude, title } = data?.properties[0] || {};
+  const images = [{ "image_url": "/images/imagetest1.jpg" },
+  { "image_url": "/images/imagetest2.jpg" },
+  { "image_url": "/images/imagetest3.jpg" }]
+
   const imageUrl = getMapboxStaticImage(latitude, longitude);
+  images[0] = {image_url:imageUrl};
   return (
     <div className="w-[350px] md:w-full h-[278px] rounded-lg shadow-md overflow-hidden" style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}>
       <div className="relative w-full h-[130px]">
-        <Image
-          src={imageUrl}
-          alt={`Map at ${latitude}, ${longitude}`}
-          layout="fill"
-          objectFit="cover"
-        />
+      <Carousel images={images} />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold flex items-center justify-between w-full">

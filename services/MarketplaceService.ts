@@ -23,10 +23,15 @@ const MarketplaceService = () => {
     }
   };
 
-  const getAuctions = async (page: number = 1, limit: number = 10) => {
+  const getAuctions = async (
+    page: number = 1,
+    limit: number = 10,
+    min_price = 0,
+    max_price = 1000
+  ) => {
     try {
       const response = await getRequest({
-        uri: `/market/nft?page=${page}&limit=${limit}`,
+        uri: `/private/auction-house/get-all-auctions?page=${page}&limit=${limit}&min_price=${min_price}&max_price=${max_price}`,
       });
       return response?.data;
     } catch (error) {
@@ -34,7 +39,7 @@ const MarketplaceService = () => {
     }
   };
 
-  const createAuction = async ({ postData }: { postData: AuctionListingI }) => {
+  const createAuction = async ({ postData }: { postData: any }) => {
     try {
       const response = await postRequest({
         uri: `/private/auction-house/generate-create-auction-tx`,
@@ -56,13 +61,14 @@ const MarketplaceService = () => {
         uri: `/market/nft`,
         postData,
       });
+      console.log("test create auction", response);
       return response?.data;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const submitAuction = async ({ postData }) => {
+  const submitAuction = async (postData: { serializedTx: string }) => {
     try {
       const response = await postRequest({
         uri: `/private/auction-house/send-tx`,
@@ -101,11 +107,10 @@ const MarketplaceService = () => {
     }
   };
 
-  const createBid = async ({ postData }) => {
+  const createBid = async (postData, auction, amount) => {
     try {
-      // console.log(assetId,callerBlockchainAddress,bidOffer,bidType,'why')
       const response = await postRequest({
-        uri: "/market/nft/bid",
+        uri: `/private/auction-house/generate-place-bid-tx?auction=${auction}&amount=${parseFloat(amount)}`,
         postData,
       });
 
@@ -122,7 +127,7 @@ const MarketplaceService = () => {
       console.log(postData, "postData");
       // console.log(assetId,signature)
       const response = await postRequest({
-        uri: "/market/nft/tx/submit",
+        uri: "/private/auction-house/send-tx",
         postData,
       });
       console.log(response, "hello from service");
@@ -131,6 +136,17 @@ const MarketplaceService = () => {
       console.error(error);
       console.log("error here 2 thanks", error);
       return [];
+    }
+  };
+  const getAuctionableAirspaces = async (page: number, limit: number = 10) => {
+    try {
+      const response = await getRequest({
+        uri: `/private/auction-house/get-auctionable-airspaces?page=${page}&limit=${limit}`,
+      });
+      console.log(response?.data, "hello auctionable");
+      return response?.data;
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -144,6 +160,7 @@ const MarketplaceService = () => {
     createBid,
     submitSignature,
     createAuctionTx,
+    getAuctionableAirspaces,
   };
 };
 

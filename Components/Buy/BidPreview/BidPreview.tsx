@@ -19,6 +19,7 @@ import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { toast } from "react-toastify";
 import useAuction from "@/hooks/useAuction";
+import Carousel from "@/Components/Shared/Carousel";
 
 interface BidPreviewProps {
   setTxHash: React.Dispatch<React.SetStateAction<string>>;
@@ -91,12 +92,10 @@ const BidPreview: React.FC<BidPreviewProps> = ({
         return;
       }
       const postData = {
-        assetId: auctionDetailData?.assetId,
-        callerBlockchainAddress: user?.blockchainAddress,
-        bidOffer: currentUserBid,
-        bidType: "Auction",
+        account:'8nUQ9RZLLJkeJPFHatJUF9zVpg4cT7RZ6NHVJFfPpTaC',
       };
-      const response: any = await createBid({ postData });
+      const auction = auctionDetailData?.id.toString();
+      const response: any = await createBid( postData , auction, currentUserBid);
       if (response && response?.data && response?.data?.tx) {
         const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response?.data?.tx, "base64"))
@@ -140,6 +139,11 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   };
   const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
+  const images = [{ "image_url": "/images/imagetest1.jpg" },
+    { "image_url": "/images/imagetest2.jpg" },
+    { "image_url": "/images/imagetest3.jpg" }]
+    images[0] = {image_url:imageUrl};
+
   return (
     <div className="fixed inset-0 bottom-[74px] sm:bottom-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
       <div className="fixed bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[510px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
@@ -184,13 +188,15 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           </div>
           <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
             <div className="relative h-[130px]">
-              <div className="relative w-full h-[130px]">
-                <Image
+              <div className="relative w-full h-[130px] ">
+                {/* <Image
                   src={imageUrl}
                   alt={`Map at ${latitude}, ${longitude}`}
                   layout="fill"
                   objectFit="cover"
-                />
+                /> */}
+                  <Carousel images={images} />
+
               </div>
             </div>
           </div>
@@ -257,7 +263,8 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             onClick={handleBid}
             className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
           >
-            <button onClick={() => handleBid()}>Confirm Bid</button>
+            {/* <button onClick={() => handleBid()}>Confirm Bid</button> */}
+            Confirm Bid
           </LoadingButton>
         </div>
       </div>

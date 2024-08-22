@@ -6,8 +6,9 @@
       "id": 1,
       "listType": "Auction",
       "metadata": [
-        { "image_url": "fjkgl" },
-        { "image_url": "iirkjn" }
+        { "image_url": "/images/imagetest1.jpg" },
+        { "image_url": "/images/imagetest2.jpg" },
+        { "image_url": "/images/imagetest3.jpg" }
       ],
       "owner": "Jane Smith",
       "price": 5500,
@@ -44,8 +45,9 @@
       "id": 2,
       "listType": "Auction",
       "metadata": [
-        { "image_url": "abcde" },
-        { "image_url": "fghij" }
+        { "image_url": "/images/imagetest1.jpg" },
+        { "image_url": "/images/imagetest2.jpg" },
+        { "image_url": "/images/imagetest3.jpg" }
       ],
       "owner": "Peter Parker",
       "price": 7500,
@@ -81,9 +83,10 @@
       "highestBid": 6000,
       "id": 3,
       "listType": "Auction",
-      "metadata": [
-        { "image_url": "klmno" },
-        { "image_url": "pqrst" }
+     "metadata": [
+        { "image_url": "/images/imagetest1.jpg" },
+        { "image_url": "/images/imagetest2.jpg" },
+        { "image_url": "/images/imagetest3.jpg" }
       ],
       "owner": "Clark Kent",
       "price": 6500,

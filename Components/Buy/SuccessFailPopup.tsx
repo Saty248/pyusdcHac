@@ -117,7 +117,11 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
                 <p>You will get notified once it’s done.</p>
                 <p className="text-sm">
                   View transaction on{" "}
-                  <a className="underline" href={txHash} target="blank">
+                  <a
+                    className="underline"
+                    href={`https://solscan.io/tx/${txHash}`}
+                    target="blank"
+                  >
                     solscan.io
                   </a>
                 </p>
@@ -129,7 +133,11 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
                 </p>
                 <p className="text-sm">
                   View transaction on{" "}
-                  <a className="underline" href={txHash} target="blank">
+                  <a
+                    className="underline"
+                    href={`https://solscan.io/tx/${txHash}`}
+                    target="blank"
+                  >
                     solscan.io
                   </a>
                 </p>

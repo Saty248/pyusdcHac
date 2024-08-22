@@ -12,7 +12,7 @@ const AirspaceRentalService = () => {
     try {
       if (!callerAddress) return [];
       const response = await getRequest({
-        uri: `/private/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
+        uri: `/public/airspace-rental/retrieve-tokens?callerAddress=${callerAddress}&type=${type}&limit=${limit}&afterAssetId=${afterAssetId || ""}`,
       });
       if (!response) {
         return [];

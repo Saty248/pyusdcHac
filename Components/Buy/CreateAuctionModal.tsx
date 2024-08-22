@@ -56,7 +56,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     setAirspaces(airspaceList);
   }, [airspaceList]);
 
-  console.log({ airspaces });
+  console.log({ txHash });
   console.log({ selectedItems });
   console.log({ selectedItemId });
 

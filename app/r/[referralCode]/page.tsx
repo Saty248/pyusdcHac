@@ -3,7 +3,6 @@
 import { Fragment, useState, useRef, useEffect, useContext } from "react";
 
 import { shallowEqual } from "react-redux";
-import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 
 import { WALLET_ADAPTERS } from "@web3auth/base";
@@ -11,55 +10,33 @@ import { WALLET_ADAPTERS } from "@web3auth/base";
 import Backdrop from "@/Components/Backdrop";
 import Spinner from "@/Components/Spinner";
 
-import ReferralCodeService from "@/services/ReferralCodeService";
-import { Web3authContext } from "@/providers/web3authProvider";
-import useInitAuth from "@/hooks/useInitAuth";
-import useAuthRedirect from "@/hooks/useAuthRedirect";
+import { Web3authContext } from '@/providers/web3authProvider';
+import useInitAuth from '@/hooks/useInitAuth';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 import Link from "next/link";
 import { toast } from "react-toastify";
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
 import EmailInput from "@/Components/Auth/EmailInput";
 import { useAppSelector } from "@/redux/store";
+import { useParams, useRouter } from "next/navigation";
 
 const ReferralCodeRedirect = () => {
   const { isRedirecting } = useAuthRedirect();
 
   const [emailValid, setEmailValid] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isNewsletterChecked, setIsNewsletterChecked] = useState(false);
-  const [doesCodeExist, setDoesCodeExist] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
   const queryParams = useParams();
 
-  const { getReferralByCode } = ReferralCodeService();
-  const { web3auth, setProvider } = useContext(Web3authContext);
+  const { web3auth, setProvider } = useContext(Web3authContext)
   const { init } = useInitAuth();
 
   useEffect(() => {
     if (!queryParams?.referralCode) return;
-    (async () => {
-      try {
-        const responseData = await getReferralByCode(
-          String(queryParams?.referralCode)
-        );
-        if (!responseData) setDoesCodeExist(false);
-        else if (responseData && responseData.statusCode === 500)
-          setDoesCodeExist(false);
-        else {
-          localStorage.setItem(
-            "referralCode",
-            JSON.stringify({ response: responseData })
-          );
-          setDoesCodeExist(true);
-        }
-      } catch (error) {
-        console.log("response: error", error);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+
+    localStorage.setItem("referralCode", String(queryParams.referralCode));
   }, [queryParams?.referralCode]);
 
   const { isWaitingScreenVisible } = useAppSelector((state) => {
@@ -116,29 +93,8 @@ const ReferralCodeRedirect = () => {
   return (
     <Fragment>
       {isLoading && <Backdrop />}
-      {isLoading && (
-        <div className="flex items-center justify-center w-screen h-screen">
-          <Spinner />
-        </div>
-      )}
-      {!doesCodeExist && !isLoading && (
-        <div className="w-screen h-screen flex items-center justify-center flex-col gap-5 text-[#222222]">
-          <p className="font-bold text-3xl">Oops!</p>
-          <p className="max-w-[400px] text-center">
-            It seems like you've taken a wrong turn. The referral code you
-            entered doesn't match any in our records. Double-check the code and
-            make sure there are no typos. Good luck!
-          </p>
-          <div
-            className="text-[#222222] p-4 rounded hover:text-white cursor-pointer hover:bg-[#222222]"
-            style={{ border: "1px solid #222222" }}
-            onClick={() => router.replace("/auth")}
-          >
-            Go to login
-          </div>
-        </div>
-      )}
-      {doesCodeExist && !isWaitingScreenVisible && !isRedirecting && (
+      {isLoading && <Spinner />}
+      {!isWaitingScreenVisible && !isRedirecting && (
         <div className="h-screen w-screen md:flex">
           <div className="flex-1 bg-white flex items-center justify-center">
             <div className="flex flex-col gap-[15px] px-[30px] py-[40px] items-center justify-center max-w-[577px]">
@@ -281,7 +237,8 @@ const ReferralCodeRedirect = () => {
           </div>
         </div>
       )}
-      {isWaitingScreenVisible && doesCodeExist && <LoadingMessage />}
+      {isWaitingScreenVisible && <LoadingMessage />}
+
     </Fragment>
   );
 };
