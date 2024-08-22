@@ -168,9 +168,7 @@ const Airspaces: React.FC = () => {
           const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
           const response = await fetch(mapboxGeocodingUrl);
-
           if (!response.ok) throw new Error("Error while getting addresses");
-
           const data = await response.json();
           if (data.features && data.features.length > 0) {
             setAddresses(data.features);
@@ -190,62 +188,54 @@ const Airspaces: React.FC = () => {
 
   //flies to the new address
   useEffect(() => {
-    if (!flyToAddress) return;
+    const propertyAddress = searchParams?.get('propertyAddress')
+    if (!flyToAddress && !propertyAddress) return;
 
     const goToAddress = async () => {
       try {
         setIsLoading(true);
-
-        const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
-
+        let mapBoxGeocodingUrl;
+        if(flyToAddress){
+          mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+        }else{
+          console.log('move')
+          mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${propertyAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+        }
         const response = await fetch(mapBoxGeocodingUrl);
-
         if (!response.ok)
           throw new Error("Error while getting new address location");
-
         const data = await response.json();
-
         if (!data.features || data.features.length === 0) {
           throw new Error("Address not found");
         }
-
         const coordinates = data.features[0].geometry.coordinates;
-        const endPoint = [coordinates[0], coordinates[1]];
         let  temp:mapboxgl.LngLatLike={lng:coordinates[0] ,lat:coordinates[1]}
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setIsLoading(false);
         setAddress(data.features[0]?.place_name)
-
         map?.flyTo({
           center: temp,
           zoom: 16,
         });
-
         if (marker) {
           marker.remove();
         }
-
-
-
-        // Add the new marker to the map and update the marker state
-        const newMarker = new mapboxgl.Marker({
-          color: "#3FB1CE",
-          
-      })
-          .setLngLat(temp)
-          .addTo(map as mapboxgl.Map);
-          
-        setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(error);
-
         toast.error("invalid address")
       }
     };
-
-    goToAddress();
+       goToAddress();
   }, [flyToAddress, map]);
+  useEffect(()=>{
+    if(map && coordinates[0] !== "" && coordinates[1] !== ""){
+      let  temp:mapboxgl.LngLatLike={lng:Number(coordinates.longitude) ,lat:Number(coordinates?.latitude)}
+        const newMarker = new mapboxgl.Marker({
+          color: "#3FB1CE",}).setLngLat(temp)
+          .addTo(map as mapboxgl.Map);
+          setMarker(newMarker);
+    }
+  },[map,coordinates])
 
   //adds address for the new address
   useEffect(() => {
@@ -367,6 +357,7 @@ const Airspaces: React.FC = () => {
       } = data;
       const latitude = Number(coordinates.latitude);
       const longitude = Number(coordinates.longitude);
+      console.log(coordinates,"test 2")
       let errors: string[] = [];
 
       if (!title) {
@@ -445,6 +436,7 @@ const Airspaces: React.FC = () => {
       const ipGeolocationApiUrl = await axios.get(
         `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
       );
+      console.log(ipGeolocationApiUrl,"ipGeolocationApiUrl")
       const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
       const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
 
