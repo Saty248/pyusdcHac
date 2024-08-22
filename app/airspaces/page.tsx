@@ -198,7 +198,6 @@ const Airspaces: React.FC = () => {
         if(flyToAddress){
           mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
         }else{
-          console.log('move')
           mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${propertyAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
         }
         const response = await fetch(mapBoxGeocodingUrl);
@@ -357,7 +356,6 @@ const Airspaces: React.FC = () => {
       } = data;
       const latitude = Number(coordinates.latitude);
       const longitude = Number(coordinates.longitude);
-      console.log(coordinates,"test 2")
       let errors: string[] = [];
 
       if (!title) {
@@ -436,7 +434,6 @@ const Airspaces: React.FC = () => {
       const ipGeolocationApiUrl = await axios.get(
         `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
       );
-      console.log(ipGeolocationApiUrl,"ipGeolocationApiUrl")
       const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
       const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
 
