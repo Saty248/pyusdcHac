@@ -56,7 +56,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         )}
 
 
-        {requestDocument && (
+        {requestDocument?.length>0 && (
         <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
         <p className="text-orange-500 font-normal text-sm">
           Additional documents requested
@@ -86,7 +86,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
    {uploadedDoc?.length > 0 && requestDocument && <UploadedDocuments  uploadedDoc={uploadedDoc} requestDocument = {requestDocument}/>}
 
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument} />
+        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument[0]} />
         )}
  
   {showSuccessToast &&  <VerificationSuccessPopup />}

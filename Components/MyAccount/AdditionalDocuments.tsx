@@ -57,22 +57,29 @@ const Popup: React.FC<PopupProps> = ({
   //   }
   //   return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
   // };
-
+  const fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
   const uploadImages = async (urls) => {
     try {
       await Promise.all(
         selectedFiles.map(async (file, index) => {
-          const formData = new FormData();
-          formData.append('file', file);
+          const blobData = fileToBlob(file)
+          // const formData = new FormData();
+          // formData.append('file', file);
+          // const blobData2 = new Blob([file], { type: file.type });
           let url = urls[index]?.awsUploadUrl
   
           try {
-            const response = await axios.put(url, formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            });
-            console.log(response,"happy");
+          //   const response = await axios.put(url,
+          //     //  formData, 
+          //     blobData,
+          //   //    {
+          //   //   headers: {
+          //   //     // 'Content-Type': 'multipart/form-data',
+          //   //     'Content-Type':file?.type,
+          //   //   },
+          //   // }
+          // );
+          //   console.log(response,"happy");
             // if (response.status === 200) {
             //   console.log(`${file.name} uploaded successfully`);
             // } else {
