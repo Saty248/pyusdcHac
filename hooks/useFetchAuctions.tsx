@@ -23,6 +23,7 @@ const useFetchAuctions = (
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const { web3auth } = useContext(Web3authContext);
+  console.log({ auctions });
 
   const fetchData = async () => {
     try {
@@ -44,13 +45,14 @@ const useFetchAuctions = (
         const maxPrice = priceRange[1];
 
         response = await filterAuctions(minPrice, maxPrice);
-        console.log({ response });
       } else {
         response = await searchAuctions(page, limit, searchParam);
       }
+
+      console.log({ response });
       const newData = response.data;
       setAuctions((prevData) =>
-        page === 1 ? newData : [...prevData, ...newData]
+        page === 1 ? response : [...prevData, ...response]
       );
       setHasMore(newData.length === limit);
     } catch (error) {

@@ -56,10 +56,6 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
     setAirspaces(airspaceList);
   }, [airspaceList]);
 
-  console.log({ txHash });
-  console.log({ selectedItems });
-  console.log({ selectedItemId });
-
   if (isMobile) {
     return (
       <>

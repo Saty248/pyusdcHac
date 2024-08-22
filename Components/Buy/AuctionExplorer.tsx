@@ -9,6 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { LoadingSpinner } from "../Icons";
 import Spinner from "../Spinner";
 import MarketplaceService from "@/services/MarketplaceService";
+
 interface AuctionExplorerProps {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   auctions: AuctionDataI[] | null;
@@ -113,7 +114,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                     hasMore={hasMorePage}
                     loader={undefined}
                     scrollableTarget="scrollableDiv"
-                    className={`w-full grid ${auctions?.length>5 ? "grid-cols-2" : "grid-cols-1"} gap-4 mb-4`}
+                    className={`w-full grid ${auctions?.length > 5 ? "grid-cols-2" : "grid-cols-1"} gap-4 mb-4`}
                   >
                     {auctions
                       .slice()
@@ -123,7 +124,10 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                           key={index}
                           // onClick={() => handleShowBidDetail(item)}
                         >
-                          <AuctionCard data={item} handleShowBidDetail={handleShowBidDetail}/>
+                          <AuctionCard
+                            data={item}
+                            handleShowBidDetail={handleShowBidDetail}
+                          />
                         </div>
                       ))}
                   </InfiniteScroll>
