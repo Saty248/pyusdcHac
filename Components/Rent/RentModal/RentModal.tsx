@@ -94,11 +94,11 @@ const RentModal: React.FC<RentModalProps> = ({
       if(rentData?.layers){
         
          //get the nonce data. and wait if needed
-         //console.log('here')
+        
          const nonceAccountEntry=await getNonceAccountEntry()
-          //console.log(nonceAccountEntry)
+          
          let nonceAccount =await createNonceIx(connection,new PublicKey(nonceAccountEntry.publicKey))
-        //console.log({nonceAccount})
+        
         
         
         const postData = {
