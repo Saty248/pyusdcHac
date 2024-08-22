@@ -35,7 +35,7 @@ const IndividualSignup: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const referralCodeRef = useRef<HTMLInputElement>(null);
 
-  const [referralCode, setReferralCode] = useState({ id: "", code: "" });
+  const [referralCode, setReferralCode] = useState<string>('');
   const [status, setStatus] = useState<number | null>(null);
   const [isNameValid, setIsNameValid] = useState(true);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
@@ -58,8 +58,7 @@ const IndividualSignup: React.FC = () => {
     if (typeof window !== "undefined") {
       const codeString = localStorage.getItem("referralCode");
       if (!codeString) return;
-      const { id, code } = JSON.parse(codeString).response;
-      setReferralCode({ id, code });
+      setReferralCode(decodeURIComponent(codeString));
       setReferralDisabled(true);
     }
   }, []);
@@ -106,7 +105,7 @@ const IndividualSignup: React.FC = () => {
         newsletter: false,
         categoryId: status,
         phoneNumber,
-        referralCode: referralCode.code,
+        referralCode,
       };
 
       setIsLoading(true);
@@ -329,13 +328,10 @@ const IndividualSignup: React.FC = () => {
                 <input
                   type="referralCode"
                   ref={referralCodeRef}
-                  value={referralCode.code?.toUpperCase()}
+                  value={referralCode.toUpperCase()}
                   placeholder="Enter referral code"
                   onChange={(event) => {
-                    setReferralCode({
-                      ...referralCode,
-                      code: event.target.value?.toUpperCase(),
-                    });
+                    setReferralCode(event.target.value?.toUpperCase());
                   }}
                   disabled={referralDisabled}
                   className="rounded-lg font-sans placeholder:font-medium placeholder:text-[#B8B8B8] placeholder:text-sm py-4 px-[22px] focus:outline-none"
