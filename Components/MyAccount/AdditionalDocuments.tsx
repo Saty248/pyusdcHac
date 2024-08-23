@@ -22,7 +22,7 @@ const Popup: React.FC<PopupProps> = ({
   requestDocument,
 }) => {
   const { isMobile } = useMobile();
-  const { generateS3UploadUrl } = DocumentUploadServices();
+  const { generateS3UploadUrl ,updateDocument} = DocumentUploadServices();
   // const [file, setFile] = useState<File | null>(null);
   const { postRequest } = Service();
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -63,28 +63,28 @@ const Popup: React.FC<PopupProps> = ({
       await Promise.all(
         selectedFiles.map(async (file, index) => {
           const blobData = fileToBlob(file)
-          // const formData = new FormData();
-          // formData.append('file', file);
+          const formData = new FormData();
+          formData.append('file', file);
           // const blobData2 = new Blob([file], { type: file.type });
           let url = urls[index]?.awsUploadUrl
   
           try {
-          //   const response = await axios.put(url,
-          //     //  formData, 
-          //     blobData,
-          //   //    {
-          //   //   headers: {
-          //   //     // 'Content-Type': 'multipart/form-data',
-          //   //     'Content-Type':file?.type,
-          //   //   },
-          //   // }
-          // );
-          //   console.log(response,"happy");
-            // if (response.status === 200) {
-            //   console.log(`${file.name} uploaded successfully`);
-            // } else {
-            //   console.error(`${file.name} upload failed`);
-            // }
+            const response = await axios.put(url,
+               formData, 
+              // blobData,
+               {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                // 'Content-Type':file?.type,
+              },
+            }
+          );
+            console.log(response,"happy");
+            if (response.status === 200) {
+              console.log(`${file.name} uploaded successfully`);
+            } else {
+              console.error(`${file.name} upload failed`);
+            }
           } catch (error) {
             // console.error(`Error uploading ${file.name}:`, error);
             console.log('error 2',error)
@@ -109,6 +109,10 @@ const Popup: React.FC<PopupProps> = ({
    console.log(urls,"urls");
    const upload = await uploadImages(urls)
    console.log(upload ,"helo test 1")
+  const path = urls[0]?.key;
+  console.log(path,"path");
+  const result = await updateDocument(path,requestDocument?.id)
+  console.log(result , "happy ")
     // const uploadImage = async () => {
     //   // const response1 = await generateS3UploadUrl(
     //   //   file?.type,
