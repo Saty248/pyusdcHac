@@ -66,7 +66,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         
 
 
-  {uploadedDoc.length > 0 && requestDocument && (
+  {requestDocument[0]?.document && requestDocument && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
