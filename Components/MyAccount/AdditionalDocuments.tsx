@@ -57,20 +57,26 @@ const Popup: React.FC<PopupProps> = ({
   //   }
   //   return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
   // };
-  const fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
+  // const fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
   const uploadImages = async (urls) => {
     try {
       await Promise.all(
         selectedFiles.map(async (file, index) => {
-          const blobData = fileToBlob(file)
+        // const file = selectedFiles[0];
+          // const blobData = fileToBlob(selectedFiles)
           const formData = new FormData();
           formData.append('file', file);
+          
           // const blobData2 = new Blob([file], { type: file.type });
-          let url = urls[index]?.awsUploadUrl
-  
+          console.log(urls[index],"te45")
+          let url = urls[index]?.uploadUrl?.uploadUrl
+          // let url = "https://s3.eu-north-1.amazonaws.com/docs-982153-dev.sky.trade/docs/24026/POWER_OF_ATTORNEY.1724406758778.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIARO5RX5RAXXVLKOO4%2F20240823%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20240823T095238Z&X-Amz-Expires=300&X-Amz-Signature=666e5873bf4be7dc019a31a0d1e54a5678a9b7d9b022f773e65cda62bdd9d4bb&X-Amz-SignedHeaders=host&x-id=PutObject"
+          formData.append('url', url);
+          console.log(url,"url test")
           try {
-            const response = await axios.put(url,
+            const response = await axios.put('http://localhost:3000/api/persona',
                formData, 
+               
               // blobData,
                {
               headers: {
@@ -107,11 +113,12 @@ const Popup: React.FC<PopupProps> = ({
     console.log(selectedFiles,"hello")
    const urls = await getPresignedUrls(selectedFiles);  
    console.log(urls,"urls");
+  // let urls = [];
    const upload = await uploadImages(urls)
    console.log(upload ,"helo test 1")
-  const path = urls[0]?.key;
-  console.log(path,"path");
-  const result = await updateDocument(path,requestDocument?.id)
+  const path = urls[0]?.key.toString();
+  // console.log(path,"path");
+  const result = await updateDocument(path,Number(requestDocument?.id))
   console.log(result , "happy ")
     // const uploadImage = async () => {
     //   // const response1 = await generateS3UploadUrl(
