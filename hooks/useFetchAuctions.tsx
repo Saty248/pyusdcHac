@@ -48,11 +48,10 @@ const useFetchAuctions = (
       } else {
         response = await searchAuctions(page, limit, searchParam);
       }
-
-      console.log({ response });
-      const newData = response.data;
+      
+      const newData = response;
       setAuctions((prevData) =>
-        page === 1 ? response : [...prevData, ...response]
+        page === 1 ? newData : [...prevData, ...newData]
       );
       setHasMore(newData.length === limit);
     } catch (error) {

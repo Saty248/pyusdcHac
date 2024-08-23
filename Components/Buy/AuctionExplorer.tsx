@@ -36,13 +36,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
   });
 
   const dispatch = useAppDispatch();
-  // const { loading } = useFetchAuctions();
-  // let filteredAuctions = data;
-  // if(data?.length>0){
-  //   const filteredAuctions = data.filter((auction) =>
-  //     auction?.properties[0]?.title.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-  // }
+
 
   const handleShowBidDetail = (item) => {
     setShowBidDetail(true);

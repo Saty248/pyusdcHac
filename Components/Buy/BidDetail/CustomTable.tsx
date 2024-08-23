@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
+import MarketplaceService from "@/services/MarketplaceService";
+
 interface CustomTableProps{
   header:string[];
-  body:any[];
+  auctionId:number;
 }
-const CustomTable:React.FC<CustomTableProps> = ({ header, body }) => {
+const CustomTable:React.FC<CustomTableProps> = ({ header,auctionId }) => {
+  const { getAuctionWithBid} = MarketplaceService();
+
+  let body;
+  useEffect(()=>{
+    async function getBids(){
+      body = await getAuctionWithBid(auctionId)
+      console.log(body,"body")
+    }
+    getBids()
+  },[])
   return (
     <div className="flex flex-col flex-1 min-w-[89%] sm:min-w-[600px] my-[15px]">
       <div className="flex justify-center overflow-y-auto thin-scrollbar sm:h-[80%] thin-scrollbar">
@@ -23,7 +35,7 @@ const CustomTable:React.FC<CustomTableProps> = ({ header, body }) => {
                 </tr>
               </thead>
               <tbody>
-                {body.map((transaction, index) => (
+                {body && body.map((transaction, index) => (
                   <tr
                     key={transaction.id}
                     className={`${index % 2 === 0 ? "bg-white" : "bg-[#F0F4FA] sm:bg-[#F6FAFF]"} !rounded-lg `}

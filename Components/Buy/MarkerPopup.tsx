@@ -13,10 +13,9 @@ interface MarkerPopupProps {
 const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,setAuctionDetailData}) => {
   const endDate = new Date(auction?.endDate);
   const timeLeft = getTimeLeft(endDate);
-  const { latitude, longitude, title } = auction?.properties[0] || {};
+  const { latitude, longitude, title } = auction?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
       const handleShowBidDetail = (item) => {
-      console.log('detail called')
       setShowBidDetail(true);
       setAuctionDetailData(item);
     };
@@ -48,7 +47,7 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
           <div className="px-[15px] py-[5px] bg-white w-full">
             <h1 className="text-[14px] font-semibold leading-5 ">Name</h1>
             <p className="text-xs leading-[26px] text-[#727272] truncate w-[98%]">
-              {auction?.properties[0]?.title}
+              {auction?.layer?.property?.title}
             </p>
           </div>
           <div className="flex justify-between items-center flex-end h-[46px] px-[15px] w-full bg-[#4285F4]/5 ">

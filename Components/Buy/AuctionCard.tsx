@@ -11,6 +11,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   data,
   handleShowBidDetail,
 }) => {
+
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate);
 
@@ -34,7 +35,6 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
       );
     }
   };
-  console.log(data, "helo test data");
   const { latitude, longitude, title } = data?.layer?.property || {};
   const images = [
     { image_url: "/images/imagetest1.jpg" },
@@ -65,7 +65,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">
           <div className="text-sm text-[#727272]">Highest Bid</div>
-          <div className="text-sm text-black font-bold">${data.highestBid}</div>
+          <div className="text-sm text-black font-bold">${data.currentPrice}</div>
         </div>
         <div className="flex flex-col items-end">
           <div className="text-sm text-[#727272]">Time Left</div>

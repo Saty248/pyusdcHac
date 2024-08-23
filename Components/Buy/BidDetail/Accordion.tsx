@@ -15,9 +15,10 @@ const Accordion: React.FC<AccordionProps> = ({ content, title }) => {
 
   return (
     <div>
-      <div
-        className="flex justify-between items-center cursor-pointer"
+      <button
+        className="flex justify-between items-center cursor-not-allowed "
         onClick={toggleAccordion}
+        disabled
       >
         {
           <div className="text-light-black text-[15px] leading-[22.5px] font-500">
@@ -28,7 +29,7 @@ const Accordion: React.FC<AccordionProps> = ({ content, title }) => {
         <div className="transform transition-transform duration-300 text-[#868686]">
           {isOpen ? chevronDownIcon() : chevronUpIcon()}
         </div>
-      </div>
+      </button>
       {isOpen && <div>{content}</div>}
     </div>
   );

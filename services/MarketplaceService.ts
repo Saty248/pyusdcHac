@@ -51,22 +51,22 @@ const MarketplaceService = () => {
     }
   };
 
-  const createAuctionTx = async ({
-    postData,
-  }: {
-    postData: AuctionListingI;
-  }) => {
-    try {
-      const response = await postRequest({
-        uri: `/market/nft`,
-        postData,
-      });
-      console.log("test create auction", response);
-      return response?.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const createAuctionTx = async ({
+  //   postData,
+  // }: {
+  //   postData: AuctionListingI;
+  // }) => {
+  //   try {
+  //     const response = await postRequest({
+  //       uri: `/market/nft`,
+  //       postData,
+  //     });
+  //     console.log("test create auction", response);
+  //     return response?.data;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const submitAuction = async (postData: { serializedTx: string }) => {
     try {
@@ -81,15 +81,14 @@ const MarketplaceService = () => {
   };
 
   const searchAuctions = async (
-    page: number = 1,
-    limit: number = 10,
-    searchParam: string | undefined
+    // page: number = 1,
+    // limit: number = 10,
+    search_text: string | undefined
   ) => {
     try {
       const response = await getRequest({
-        uri: `/market/nft/search?searchParam=${searchParam}&page=${page}&limit=${limit}`,
+        uri: `/private/auction-house/search-auctions?search_text=${search_text}`,
       });
-      console.log(response?.data, "hello search");
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -149,6 +148,17 @@ const MarketplaceService = () => {
       console.error(error);
     }
   };
+  const getAuctionWithBid = async (auction_id: number) => {
+    try {
+      const response = await getRequest({
+        uri: `/private/auction-house/get-auction-with-bids?auction_id=${auction_id}`,
+      });
+      console.log(response?.data, "hello auctionable");
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return {
     getAuctionableProperties,
@@ -159,8 +169,9 @@ const MarketplaceService = () => {
     filterAuctions,
     createBid,
     submitSignature,
-    createAuctionTx,
+    // createAuctionTx,
     getAuctionableAirspaces,
+    getAuctionWithBid
   };
 };
 

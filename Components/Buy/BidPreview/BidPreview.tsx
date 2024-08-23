@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { toast } from "react-toastify";
 import useAuction from "@/hooks/useAuction";
 import Carousel from "@/Components/Shared/Carousel";
+import { formatDate } from "@/utils";
 
 interface BidPreviewProps {
   setTxHash: React.Dispatch<React.SetStateAction<string>>;
@@ -63,59 +64,60 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       return toast.error("You cannot bid on your own property!");
     }
 
-    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
-    if (balance === 0) {
-      return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
-      );
-    }
+    // const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    // if (balance === 0) {
+    //   return toast.info(
+    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
+    //   );
+    // }
 
-    if (parseFloat(userUSDWalletBalance.amount) === 0) {
-      return toast.info(
-        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
-      );
-    }
-    console.log({ userUSDWalletBalance });
-    console.log({ auctionDetailData });
-    console.log({ userSolBalance });
-    console.log({ currentUserBid });
+    // if (parseFloat(userUSDWalletBalance.amount) === 0) {
+    //   return toast.info(
+    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
+    //   );
+    // }
+    // console.log({ userUSDWalletBalance });
+    // console.log({ auctionDetailData });
+    // console.log({ userSolBalance });
+    // console.log({ currentUserBid });
     // return;
     try {
       setIsLoading(true);
       if (
         currentUserBid &&
         auctionDetailData &&
-        currentUserBid < auctionDetailData?.price
+        currentUserBid < auctionDetailData?.currentPrice
       ) {
         toast.error("bid value less than the minimum bid price!");
         setIsLoading(false);
         return;
       }
       const postData = {
-        account:'8nUQ9RZLLJkeJPFHatJUF9zVpg4cT7RZ6NHVJFfPpTaC',
+        account:user?.blockchainAddress,
       };
-      const auction = auctionDetailData?.id.toString();
+      const auction = auctionDetailData?.pdaAddress.toString();
       const response: any = await createBid( postData , auction, currentUserBid);
-      if (response && response?.data && response?.data?.tx) {
+      if (response  && response?.data && response?.data?.transaction) {
         const transaction = VersionedTransaction.deserialize(
-          new Uint8Array(Buffer.from(response?.data?.tx, "base64"))
+          new Uint8Array(Buffer.from(response?.data?.transaction, "base64"))
         );
         const signature = await executeTransaction(transaction, provider);
         if (signature) {
           const postData = {
-            signature: signature,
-            assetId: auctionDetailData?.assetId,
+            serializedTx: signature,
           };
           const result: any = await submitSignature({ postData });
           if (
             result == undefined ||
-            result?.data?.message == "failed to submit transaction"
+            result?.data?.txSignature == "" || 
+            result?.data?.txSignature == null ||
+            result?.status != 201
           ) {
             setBidResponseStatus("FAIL");
             setShowSuccessAndErrorPopup(true);
             onClose();
-          } else if (result?.data?.message == "Transaction submitted") {
-            setTxHash(result?.data?.txid);
+          } else if (result?.data?.txSignature) {
+            setTxHash(result?.data?.txSignature);
             setBidResponseStatus("SUCCESS");
             setShowSuccessAndErrorPopup(true);
             dispatch(setIsTriggerRefresh(true));
@@ -137,7 +139,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       setIsLoading(false);
     }
   };
-  const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
+  const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
   const images = [{ "image_url": "/images/imagetest1.jpg" },
     { "image_url": "/images/imagetest2.jpg" },
@@ -183,7 +185,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
               <LocationPointIcon />
             </div>
             <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {auctionDetailData?.properties[0]?.address}
+              {auctionDetailData?.layer?.property?.address}
             </p>
           </div>
           <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
@@ -211,8 +213,8 @@ const BidPreview: React.FC<BidPreviewProps> = ({
               <div className="flex">
                 <div>Expiration Date:</div>
                 <div className="text-light-grey pl-[15px]">
-                  {/* {auctionDetailData?.id} */}
-                  15 january 2024 at 11:49 AM
+                  {formatDate(auctionDetailData?.endDate)}
+                  {/* 15 january 2024 at 11:49 AM */}
                 </div>
               </div>
               <div className="flex">

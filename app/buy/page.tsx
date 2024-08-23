@@ -212,7 +212,7 @@ const Buy = () => {
                   setShowDetail={setShowBidDetail}
                   responseStatus={bidResponseStatus}
                   data={{
-                    address: auctionDetailData?.properties[0]?.address,
+                    address: auctionDetailData?.layer?.property?.address,
                     currentUserBid: currentUserBid,
                   }}
                   txHash={txHash}

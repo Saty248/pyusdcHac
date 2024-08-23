@@ -61,41 +61,40 @@ const BidDetails: React.FC<BidDetailsProps> = ({
       );
     }
   };
-
   const endDate = auctionDetailData
     ? new Date(auctionDetailData.endDate)
     : undefined;
   const timeLeft = endDate ? getTimeLeft(endDate) : undefined;
-  const { latitude, longitude, title } = auctionDetailData?.properties[0] || {};
+  const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
 
   useEffect(() => {
     setCurrentUserBid(null);
   }, []);
 
-  const sortedBids =
-    auctionDetailData?.bids.sort((a, b) => b.bidOffer - a.bidOffer) || null;
+  // const sortedBids =
+  //   auctionDetailData?.bids.sort((a, b) => b.bidOffer - a.bidOffer) || null;
 
-  console.log({ sortedBids });
+  // console.log({ sortedBids });
 
   const isAuctionComplete = endDate ? new Date() > endDate : false;
-  const previousBidData = [
-    {
-      price: '$100',
-      date: "15 december 2023",
-      from: "Jane Doe",
-    },
-    {
-      price: '$95',
-      date: "5 december 2023",
-      from: "Jane Doe",
-    },
-    {
-      price: '$91',
-      date: "29 november 2023",
-      from: "Jane Doe",
-    },
-  ];
+  // const previousBidData = [
+  //   {
+  //     price: '$100',
+  //     date: "15 december 2023",
+  //     from: "Jane Doe",
+  //   },
+  //   {
+  //     price: '$95',
+  //     date: "5 december 2023",
+  //     from: "Jane Doe",
+  //   },
+  //   {
+  //     price: '$91',
+  //     date: "29 november 2023",
+  //     from: "Jane Doe",
+  //   },
+  // ];
   const airspaceHistoryMockData = [
     {
       price: "Rental",
@@ -140,7 +139,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 <LocationPointIcon />
               </div>
               <p className="font-normal text-[#222222] text-[14px] flex-1 items-center justify-between">
-                {shortenAddress(auctionDetailData?.properties[0]?.address, 35)}
+                {shortenAddress(auctionDetailData?.layer?.property?.address, 35)}
               </p>
             </div>
 
@@ -164,10 +163,9 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 Highest Bid
               </p>
               <h1 className="text-[14px] leading-[26px] font-bold text-[#050505]">
-                ${auctionDetailData?.highestBid}
+                ${auctionDetailData?.currentPrice}
               </h1>
             </div>
-
             <div className="flex flex-col gap-[2px]">
               <p className="text-[14px] text-[#727272]">Time left</p>
               <h1 className="text-[14px] text-right font-bold text-[#050505]">
@@ -182,7 +180,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   <p className="text-[14px] leading-[26px] text-[#727272]">
                     Bid Winner
                   </p>
-                  <div className="flex items-center gap-8">
+                  {/* <div className="flex items-center gap-8">
                     <h1 className="text-[14px]  leading-[26px] font-bold text-[#050505]">
                       {shortenAddress(
                         (sortedBids && sortedBids[0]?.bidder) || "",
@@ -193,7 +191,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                     <h1 className="text-[14px]  leading-[26px] font-bold text-[#050505]">
                       $ {sortedBids && sortedBids[0]?.bidOffer}
                     </h1>
-                  </div>
+                  </div> */}
                 </div>
               ) : (
                 <p className="text-[14px] leading-[26px] text-[#727272] text-center italic">
@@ -241,15 +239,15 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 </button>
               </div>
                 <hr />
-                <div>
+                <div className="opacity-50">
                   <Accordion
                     // title={`Previous Bid (${totalBId})`}
                     title={`Previous Bid 3`}
-                    content={<CustomTable header={["Price", "Date", "From"]} body={previousBidData} />}
+                    content={<CustomTable header={["Price", "Date", "From"]} auctionId={auctionDetailData?.id} />}
                   />
                 </div>
                 <hr />
-                <div>
+                <div className="opacity-50">
                   <Accordion
                     title={"Airspace History"}
                     content={
