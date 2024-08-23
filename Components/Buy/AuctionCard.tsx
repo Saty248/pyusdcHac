@@ -4,10 +4,13 @@ import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 import Carousel from "../Shared/Carousel";
 interface AuctionCardProps {
   data: AuctionDataI;
-  handleShowBidDetail:Function;
+  handleShowBidDetail: Function;
 }
 
-const AuctionCard: React.FC<AuctionCardProps> = ({ data ,handleShowBidDetail}) => {
+const AuctionCard: React.FC<AuctionCardProps> = ({
+  data,
+  handleShowBidDetail,
+}) => {
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate);
 
@@ -31,18 +34,23 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ data ,handleShowBidDetail}) =
       );
     }
   };
-console.log(data,"helo test data")
-  const { latitude, longitude, title } = data?.properties[0] || {};
-  const images = [{ "image_url": "/images/imagetest1.jpg" },
-  { "image_url": "/images/imagetest2.jpg" },
-  { "image_url": "/images/imagetest3.jpg" }]
+  console.log(data, "helo test data");
+  const { latitude, longitude, title } = data?.layer?.property || {};
+  const images = [
+    { image_url: "/images/imagetest1.jpg" },
+    { image_url: "/images/imagetest2.jpg" },
+    { image_url: "/images/imagetest3.jpg" },
+  ];
 
   const imageUrl = getMapboxStaticImage(latitude, longitude);
-  images[0] = {image_url:imageUrl};
+  images[0] = { image_url: imageUrl };
   return (
-    <div className="w-[350px] md:w-full h-[278px] rounded-lg shadow-md overflow-hidden" style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}>
+    <div
+      className="w-[350px] md:w-full h-[278px] rounded-lg shadow-md overflow-hidden"
+      style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}
+    >
       <div className="relative w-full h-[130px]">
-      <Carousel images={images} />
+        <Carousel images={images} />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold flex items-center justify-between w-full">
@@ -65,10 +73,14 @@ console.log(data,"helo test data")
         </div>
       </div>
       <div className="flex justify-center px-[15px] py-[10px] h-[51px]">
-      <div className=" bg-[#0653EA] w-full flex items-center rounded-lg h-[31px]">
-      <button onClick={()=>handleShowBidDetail(data)} className="w-full text-white text-[14px] leading-[21px]">Place Bid</button>
-      </div>
-
+        <div className=" bg-[#0653EA] w-full flex items-center rounded-lg h-[31px]">
+          <button
+            onClick={() => handleShowBidDetail(data)}
+            className="w-full text-white text-[14px] leading-[21px]"
+          >
+            Place Bid
+          </button>
+        </div>
       </div>
     </div>
   );

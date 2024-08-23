@@ -4,17 +4,19 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { convertDate } from "@/utils";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { setEndDate, setMinSalePrice } from "@/redux/slices/userSlice";
 
 interface AuctionItemProps {
   data: PropertyData | AuctionPropertyI;
   onSelectItem: (item: PropertyData) => void;
   onUpdateItem: (
-    propertyId: number | null,
+    propertyId: string | number | null,
     minSalePrice: number | null,
     endDate: Date | string | null
   ) => void;
   selected: boolean;
-  // disabled: boolean;
+  disabled: boolean;
 }
 
 const AuctionItem: React.FC<AuctionItemProps> = ({
@@ -22,11 +24,38 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   onSelectItem,
   onUpdateItem,
   selected,
-  // disabled,
+  disabled,
 }) => {
+  const {
+    airspaceList,
+    isTriggerRefresh,
+    userSolBalance,
+    userUSDWalletBalance,
+    endDate,
+    minSalePrice,
+  } = useAppSelector((state) => {
+    const {
+      airspaceList,
+      isTriggerRefresh,
+      userSolBalance,
+      userUSDWalletBalance,
+      endDate,
+      minSalePrice,
+    } = state.userReducer;
+    return {
+      airspaceList,
+      isTriggerRefresh,
+      userSolBalance,
+      userUSDWalletBalance,
+      endDate,
+      minSalePrice,
+    };
+  });
+
   const [isOpen, setIsOpen] = useState(false);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [minSalePrice, setMinSalePrice] = useState<string>("");
+  const dispatch = useAppDispatch();
+  // const [endDate, setEndDate] = useState<Date | null>(null);
+  // const [minSalePrice, setMinSalePrice] = useState<string>("");
 
   const handleCheckboxClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     onSelectItem(data as PropertyData);
@@ -40,19 +69,22 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   };
 
   const handleMinSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMinSalePrice(e.target.value);
+    dispatch(setMinSalePrice(e.target.value));
     onUpdateItem(
       data?.propertyId || null,
       parseFloat(e.target.value) || 0,
-      endDate
+      convertDate(endDate)
     );
   };
 
   const handleEndDateChange = (date: Date | null) => {
-    setEndDate(date);
+    const dateResult = convertDate(date);
+
+    dispatch(setEndDate(date));
+    // return;
     onUpdateItem(
       data?.propertyId || null,
-      parseFloat(minSalePrice) || 0,
+      minSalePrice || 0,
       convertDate(date)
     );
   };
@@ -60,16 +92,13 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   const now = new Date();
   const maxDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
-  const isToday = endDate
-    ? now.toDateString() === endDate.toDateString()
-    : false;
+  const isToday = endDate ? now.toDateString() === endDate.toString() : false;
   const minTime = isToday ? now : new Date().setHours(0, 0);
 
   return (
     <div
-      // className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
-      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out `}
-    
+      className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
+      // className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out `}
     >
       <div
         onClick={handleToggleClick}

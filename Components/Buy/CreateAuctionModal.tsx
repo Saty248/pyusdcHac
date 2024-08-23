@@ -53,17 +53,8 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
   } = useAuction();
 
   useEffect(() => {
-    if (pageNumber < 3 && airspaceList && airspaceList?.length > 0) {
-      const valid = airspaceList?.filter((item) => item.propertyStatusId === 1);
-      setAirspaces(valid);
-    } else {
-      console.log("================================");
-      console.log({ airspaceList });
-      console.log("================================");
-    }
+    setAirspaces(airspaceList);
   }, [airspaceList]);
-
-  console.log({ airspaceList });
 
   if (isMobile) {
     return (
@@ -91,30 +82,24 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
             )}
           </div>
         ) : (
-          <div className="fixed bottom-[74px] left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-end">
-            <div className="relative flex flex-col justify-between w-full h-[560px] sm:h-[685px] bg-white rounded-t-[30px] p-8">
-              {/* <div
+          <div className="fixed bottom-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex items-end">
+            <div className="relative flex flex-col justify-between w-full h-[685px] bg-white rounded-t-[30px] p-8">
+              <div
                 onClick={onClose}
                 className="absolute right-[1rem] top-[1rem] cursor-pointer"
               >
                 <IoClose className="w-4 h-4" />
-              </div> */}
-              <div onClick={onClose}>
-              <div className="w-ful flex justify-center">
-                <div className="w-16 animate-pulse h-2 rounded-3xl bg-light-grey mb-[20px]"></div>
               </div>
-                <div className="text-center text-light-black font-medium leading-[30px] text-[20px] ">
-                  Create Auction
+
+              <div className="text-center">Create Auction</div>
+              <div className="flex justify-between">
+                {" "}
+                <div>Select the Airspace you would like to auction</div>
+                <div className="text-black">
+                  <HiMiniPlusSmall />
+                  {pageNumber}
+                  <HiMiniMinusSmall />
                 </div>
-                <div className="flex justify-between items-start">
-                  {" "}
-                  <div className="text-center text-[15px] leading-[21px]">
-                    Select the properties you want to auctions
-                  </div>
-                </div>
-                
-                
-                
               </div>
 
               {loading ? (
@@ -126,7 +111,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                 </div>
               ) : (
                 <>
-                  {airspaces.length > 0 ? (
+                  {airspaces && airspaces.length > 0 ? (
                     <div className="flex flex-col gap-3 thin-scrollbar">
                       {airspaces?.length > 0 &&
                         airspaces?.map((item, index) => (
@@ -138,42 +123,27 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                             selected={
                               !!selectedItems.find(
                                 (selectedItem) =>
-                                  selectedItem.propertyId === item.propertyId
+                                  selectedItem.propertyId === item.id
                               )
                             }
-                            // disabled={
-                            //   selectedItemId !== null &&
-                            //   selectedItemId !== item.propertyId
-                            // } // Disable if another item is selected
+                            //@ts-ignore
+                            disabled={
+                              selectedItemId !== null &&
+                              selectedItemId !== item.id
+                            } // Disable if another item is selected
                           />
                         ))}
                     </div>
                   ) : (
                     <div className="text-center col-span-2 text-light-grey">
-                      {!loading && "No auctions found"}
+                      You must have at least one verified airspace to create an
+                      auction
                     </div>
                   )}
                 </>
               )}
 
               {/* <div className="flex justify-between gap-4"> */}
-              <div className="text-black flex items-center gap-2 justify-end w-full">
-                <button
-                  disabled={pageNumber === 1}
-                  onClick={handlePrevPage}
-                  className={` ${pageNumber === 1 ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
-                >
-                  <HiMiniMinusSmall />
-                </button>
-                <span className="font-sm font-thin">{pageNumber}</span>
-                <button
-                  disabled={!hasMore}
-                  onClick={handleNextPage}
-                  className={` ${!hasMore ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
-                >
-                  <HiMiniPlusSmall />
-                </button>
-              </div>
               <Button
                 label="Add Properties to Auction"
                 onClick={handleAddProperties}
@@ -220,9 +190,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
               <IoClose className="w-4 h-4" />
             </div>
 
-            <div className="text-center text-light-black font-medium leading-[30px] text-[20px] ">
-              Create Auction
-            </div>
+            <div className="text-center">Create Auction</div>
             <div className="flex justify-between w-full">
               {" "}
               <div>Select the properties you want to auctions</div>
@@ -263,21 +231,15 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                       key={index}
                       onSelectItem={handleSelectItem}
                       onUpdateItem={handleUpdateItem}
-                      // selected={
-                      //   !!selectedItems.find(
-                      //     (selectedItem) =>
-                      //       selectedItem.propertyId === item.propertyId
-                      //   )
-                      // }
                       selected={
                         !!selectedItems.find(
                           (selectedItem) => selectedItem.propertyId === item.id
                         )
                       }
-                      // disabled={
-                      //   selectedItemId !== null &&
-                      //   selectedItemId !== item.propertyId
-                      // } // Disable if another item is selected
+                      //@ts-ignore
+                      disabled={
+                        selectedItemId !== null && selectedItemId !== item.id
+                      }
                     />
                   ))}
               </div>

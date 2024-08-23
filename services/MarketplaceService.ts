@@ -4,7 +4,31 @@ import Service from "./Service";
 const MarketplaceService = () => {
   const { getRequest, postRequest } = Service();
 
-  const getAuctions = async (page: number = 1, limit: number = 10, min_price = 0 , max_price = 1000) => {
+  const getAuctionableProperties = async (
+    callerAddress: string | undefined,
+    page?: number
+  ) => {
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/auction-house/get-auctionable-airspaces?page=${page}&limit=${10}`,
+      });
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const getAuctions = async (
+    page: number = 1,
+    limit: number = 10,
+    min_price = 0,
+    max_price = 1000
+  ) => {
     try {
       const response = await getRequest({
         uri: `/private/auction-house/get-all-auctions?page=${page}&limit=${limit}&min_price=${min_price}&max_price=${max_price}`,
@@ -21,17 +45,33 @@ const MarketplaceService = () => {
         uri: `/private/auction-house/generate-create-auction-tx`,
         postData,
       });
-      console.log('test create auction',response)
       return response?.data;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const submitAuction = async ({ postData }: { postData: AuctionSubmitI }) => {
+  const createAuctionTx = async ({
+    postData,
+  }: {
+    postData: AuctionListingI;
+  }) => {
     try {
       const response = await postRequest({
-        uri: `/market/nft/txs/submit`,
+        uri: `/market/nft`,
+        postData,
+      });
+      console.log("test create auction", response);
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const submitAuction = async (postData: { serializedTx: string }) => {
+    try {
+      const response = await postRequest({
+        uri: `/private/auction-house/send-tx`,
         postData,
       });
       return response?.data;
@@ -67,7 +107,7 @@ const MarketplaceService = () => {
     }
   };
 
-  const createBid = async ( postData ,auction , amount) => {
+  const createBid = async (postData, auction, amount) => {
     try {
       const response = await postRequest({
         uri: `/private/auction-house/generate-place-bid-tx?auction=${auction}&amount=${parseFloat(amount)}`,
@@ -98,7 +138,7 @@ const MarketplaceService = () => {
       return [];
     }
   };
-  const getAuctionableAirspaces = async (page:number,limit:number) => {
+  const getAuctionableAirspaces = async (page: number, limit: number = 10) => {
     try {
       const response = await getRequest({
         uri: `/private/auction-house/get-auctionable-airspaces?page=${page}&limit=${limit}`,
@@ -111,6 +151,7 @@ const MarketplaceService = () => {
   };
 
   return {
+    getAuctionableProperties,
     getAuctions,
     createAuction,
     submitAuction,
@@ -118,7 +159,8 @@ const MarketplaceService = () => {
     filterAuctions,
     createBid,
     submitSignature,
-    getAuctionableAirspaces
+    createAuctionTx,
+    getAuctionableAirspaces,
   };
 };
 
