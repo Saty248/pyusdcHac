@@ -9,7 +9,7 @@ const DocumentUploadServices = () => {
     try {
       if(!fileType || !requestId)return;
     const  response = await postRequest({
-        uri: `/private/aws-s3/generate-s3-upload-url?contentType=${fileType}&requestId=${requestId}`,
+        uri: `/private/request-document/generate-upload-url?contentType=${fileType}&requestId=${requestId}`,
       });
       console.log(response,"hello test")
       return response?.data;
@@ -22,7 +22,7 @@ const DocumentUploadServices = () => {
     try {
       if(!path || !requestId)return;
     const  response = await postRequest({
-        uri: `/private/aws-s3/update-document-metadata?filePath=${path}&requestId=${requestId}`,
+        uri: `/private/request-document/update-document-metadata?filePath=${path}&requestId=${requestId}`,
       });
       return response?.data;
     } catch (error) {
