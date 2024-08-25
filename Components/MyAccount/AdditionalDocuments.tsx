@@ -1,8 +1,11 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
 import { CloseIcon } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
 import Service from '@/services/Service';
+import useAuth from '@/hooks/useAuth';
+import axios from 'axios';
+import UserService from '@/services/UserService';
 
 
 interface PopupProps {
@@ -10,16 +13,25 @@ interface PopupProps {
   closePopup: () => void;
   setShowAdditionalDoc:React.Dispatch<React.SetStateAction<boolean>>
   setShowSuccessToast: Dispatch<SetStateAction<boolean>>
+  setUploadedDoc: React.Dispatch<React.SetStateAction<File[]>>
+  setShowUnderReviewDoc: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDoc,setShowSuccessToast }) => {
+const Popup: React.FC<PopupProps> = ({ showPopup,  closePopup,setShowAdditionalDoc,setShowSuccessToast,setUploadedDoc, setShowUnderReviewDoc}) => {
     const { isMobile } = useMobile();
     const [files, setFiles] = useState<File | null>(null);
-    const {postRequest } = Service();
+    const {postRequest} = Service();
+    const {user, signIn} = useAuth()
+    const { getUser } = UserService();
    
+    const requestedDoc = useMemo(() => {
+      return user?.requestDocument.find((doc) => doc.status === "NOT_SUBMITTED" )
+    }, [user])
     
+  
   const onDrop = (acceptedFiles: File[]) => {
     setFiles(acceptedFiles[0]);
+    setUploadedDoc((prev) => [...prev, acceptedFiles[0]])
   };
  const { getRootProps } = useDropzone({ onDrop });
 
@@ -27,15 +39,32 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
 
   const handleclick = async() =>{
     if(!files) return
+    const requestId =  requestedDoc.id
     const response = await postRequest({
-      uri: `/private/aws-s3/generate-s3-sensitive-upload-url?fileType=${files?.type}&fileName=${files?.name}`,
+      uri: `/private/request-document/generate-upload-url?contentType=${files?.type}&requestId=${requestId}`,
       postData: files
     })
-    console.log(response)
+    const uploadUrl = response?.data.uploadUrl?.uploadUrl
+    const uploadKey = response?.data.key
+    if( !uploadUrl) throw new Error('upload url not found')
+      console.log(uploadUrl,"uploadUrluploadUrl")
+    const formData = new FormData();
+    formData.append('file', files);
+    formData.append('url', uploadUrl);
+    await axios.put('/api/persona', formData)
+    await postRequest({
+      uri: `/private/request-document/update-document-metadata?filePath=${uploadKey}&requestId=${requestId}`
+    })
+
+
     setShowSuccessToast(true)
     setTimeout(() => setShowSuccessToast(false), 5000);
     setShowAdditionalDoc(true)
     closePopup()
+    setShowUnderReviewDoc(true)
+    const responseData = await getUser();
+    if (responseData?.id) {
+      signIn({ user: responseData });}
   }
 
   return (
@@ -64,7 +93,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
         </p>
         <p className="bg-[#D5DCEB] border w-full h-1"></p>
         <p className="font-normal text-base text-[#87878D]">
-          We need: <span className="font-bold">“Document name”</span>
+          We need: <span className="font-bold">{requestedDoc.description}</span>
         </p>
         <div
           {...(getRootProps() as DropzoneRootProps)}
@@ -85,3 +114,7 @@ const Popup: React.FC<PopupProps> = ({ showPopup, closePopup,setShowAdditionalDo
 };
 
 export default Popup;
+function getUser() {
+  throw new Error('Function not implemented.');
+}
+

@@ -100,6 +100,7 @@ export type User = {
   } | null;
   usedReferralCodeId: number | null;
   isUserRewardClaimed: boolean;
+  requestDocument: any[]
 };
 
 interface Reward {
