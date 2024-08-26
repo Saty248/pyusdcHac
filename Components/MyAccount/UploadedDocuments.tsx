@@ -8,7 +8,7 @@ const UploadedDocuments = ({ uploadedDoc }:{uploadedDoc: File[]}) => {
       <div className="md:w-[40%] w-full">
       <h2 className="text-xl font-semibold">My Additional Documents</h2>
         <p className="mt-4 text-[#87878D] text-[12px]">
-          We requested your “Document Name’ and “Document Name’
+          We requested your Proof Of Ownership
         </p>
       </div>
       <div className="md:w-[60%] w-full flex flex-col md:flex-row justify-end items-center gap-8">
@@ -18,7 +18,7 @@ const UploadedDocuments = ({ uploadedDoc }:{uploadedDoc: File[]}) => {
             <FileIcon />
             <div>
               <p className="text-[#1F7DFD] text-xs">{file?.name}</p>
-              <p className="text-xs">“Document Name”</p>
+              <p className="text-xs">Proof Of Ownership</p>
             </div>
           </div>
           )

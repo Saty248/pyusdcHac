@@ -39,7 +39,7 @@ const AccountVerification = ({
 console.log(requestedDoc, "requestedDoc")
   return (
  <div>
-   {KYCStatusId === 0 && (
+   {KYCStatusId === 4 && (
     <div className="flex w-full rounded-[30px] gap-[15px] bg-white" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
     <div className="md:w-[50%]  p-6  flex flex-col justify-center items-center md:gap-6 gap-4">
       <h1 className="text-xl font-medium text-[#222222]  text-center">🚀 Attention Airspace Owner!</h1>
@@ -57,7 +57,7 @@ console.log(requestedDoc, "requestedDoc")
     </div>
   )}
 
- {KYCStatusId === 4 && (
+ {KYCStatusId === 0 && (
    <div className="flex flex-col py-[17px] md:px-[25px] px-[20px] rounded-[30px] gap-[15px] bg-white"  style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
    <div className="flex items-center justify-between">
      <h2 className="text-xl font-medium text-[#222222]">
