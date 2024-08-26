@@ -89,6 +89,7 @@ const PortfolioList = ({ title, selectAirspace, setUploadedDoc, uploadedDoc }) =
                   selectAirspace={() => selectAirspace(airspace)}
                   uploadedDoc={uploadedDoc}
                   setUploadedDoc={setUploadedDoc}
+                  assetId={airspace?.id}
                 />
               ))
             ) : (

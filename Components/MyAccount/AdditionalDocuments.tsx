@@ -5,8 +5,11 @@ import { useMobile } from "@/hooks/useMobile";
 import Service from "@/services/Service";
 import DocumentUploadServices from "@/services/DocumentUploadServices";
 import axios from "axios";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 
 interface PopupProps {
+  assetId:any;
+  setIndex:any;
   showPopup: boolean;
   closePopup: () => void;
   setUploadedDoc: Dispatch<SetStateAction<File[]>>;
@@ -15,6 +18,8 @@ interface PopupProps {
 }
 
 const Popup: React.FC<PopupProps> = ({
+  assetId,
+  setIndex,
   showPopup,
   closePopup,
   setUploadedDoc,
@@ -27,13 +32,21 @@ const Popup: React.FC<PopupProps> = ({
   const { postRequest } = Service();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadUrls, setUploadUrls] = useState([]);
-
+  const [loading,setLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+};
   const onDrop = (acceptedFiles) => {
     setSelectedFiles(acceptedFiles);
   };
   const { getRootProps } = useDropzone({ onDrop ,multiple: true,});
 
   if (!showPopup) return null;
+  const toggleCollapse = () => {
+    setIsOpen(!isOpen);
+};
+
   const getPresignedUrls = async (selectedFiles) => {
     let urls =[] ;
     await Promise.all(
@@ -49,6 +62,12 @@ const Popup: React.FC<PopupProps> = ({
     return urls
     // setUploadUrls(urls);
   };
+  function formatTextToReadable(text) {
+    let words = text.toLowerCase().split('_');
+    let formattedText = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  
+    return formattedText;
+  }
   // const convertToBlob = (base64Image) => {
   //   let binary = atob(base64Image.split(',')[1]);
   //   let array = [];
@@ -88,12 +107,15 @@ const Popup: React.FC<PopupProps> = ({
             console.log(response,"happy");
             if (response.status === 200) {
               console.log(`${file.name} uploaded successfully`);
+              return true;
             } else {
               console.error(`${file.name} upload failed`);
+              return false;
             }
           } catch (error) {
             // console.error(`Error uploading ${file.name}:`, error);
             console.log('error 2',error)
+            return false;
           }
         })
       );
@@ -101,6 +123,7 @@ const Popup: React.FC<PopupProps> = ({
       console.log('All files uploaded successfully');
     } catch (error) {
       console.error('Error during upload:', error);
+      return false
     }
   };
 
@@ -110,16 +133,23 @@ const Popup: React.FC<PopupProps> = ({
 
     // console.log(file, "test file");
     // console.log(response,"hello response test");
-    console.log(selectedFiles,"hello")
+    try {
+      setLoading(true);
+      
+   
+  //   console.log(selectedFiles,"hello")
    const urls = await getPresignedUrls(selectedFiles);  
-   console.log(urls,"urls");
-  // let urls = [];
+  //  console.log(urls,"urls");
+  // // let urls = [];
    const upload = await uploadImages(urls)
-   console.log(upload ,"helo test 1")
+  //  console.log(upload ,"helo test 1")
   const path = urls[0]?.key.toString();
-  // console.log(path,"path");
-  const result = await updateDocument(path,Number(requestDocument?.id))
-  console.log(result , "happy ")
+  // // console.log(path,"path");
+
+    const result = await updateDocument(path,Number(requestDocument?.id))
+    console.log(result,"result");
+  
+  // console.log(result , "happy ")
     // const uploadImage = async () => {
     //   // const response1 = await generateS3UploadUrl(
     //   //   file?.type,
@@ -184,15 +214,23 @@ const Popup: React.FC<PopupProps> = ({
     // });
     // await uploadImage();
     // console.log(file, "file 2");
-    console.log();
+    // console.log();
     // console.log( response,"response" );
     // console.log(file.type, "cccccccccc");
     // console.log(file, "cccccccccc");
-
-    // setUploadedDoc((prev) => [...prev, file]);
+    setIndex(assetId);
+    setUploadedDoc((prev) => [...prev, selectedFiles[0]]);
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 2000);
     closePopup();
+  } 
+  catch (error) {
+    console.log(error,"error")
+  }
+  finally{
+    setLoading(false);
+
+  }
   };
 
   return (
@@ -239,27 +277,65 @@ const Popup: React.FC<PopupProps> = ({
         <hr className="bg-[#D5DCEB] w-full" />
         <p className="font-normal text-base text-[#87878D]">
           We need:{" "}
-          <span className="font-bold">{requestDocument?.description}</span>
+          <span className="font-bold">{formatTextToReadable(requestDocument?.description)}</span>
         </p>
         <div
           {...(getRootProps() as DropzoneRootProps)}
           className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500"
         >
-          {isMobile ? (
-            <p className="text-base font-medium text-[#87878D]">
-              click to upload Document
-            </p>
-          ) : (
-            <p className="text-base font-medium text-[#87878D]">
-              Drag here or click to upload
-            </p>
-          )}
+          {
+            selectedFiles[0] ? (
+              <div>{selectedFiles[0]?.name}</div>
+            ):
+            isMobile ? (
+              <p className="text-base font-medium text-[#87878D]">
+                click to upload Document
+              </p>
+            ) : (
+              <p className="text-base font-medium text-[#87878D]">
+                Drag here or click to upload
+              </p>
+            )
+
+          }
         </div>
+        <div className="overflow-y-auto max-h-60 text-gray-600 mb-4 p-2 border border-gray-300 rounded">
+                    <p>To prove homeownership in the United States, you’ll typically need one or more of the following documents:</p>
+                    <ol className="list-decimal list-inside mt-2 space-y-2">
+                        <li><strong>Deed</strong>: The most definitive proof of ownership is your property deed, which shows you as the legal owner.</li>
+                        <li><strong>Title</strong>: The title indicates your legal ownership of the property and is often accompanied by title insurance.</li>
+                        <li><strong>Mortgage Statement or Satisfaction of Mortgage</strong>: Your mortgage statement or a letter from your lender can serve as proof of ownership.</li>
+                        <li><strong>Property Tax Records</strong>: Property tax bills or records can serve as proof of ownership.</li>
+                        <li><strong>Homeowner’s Insurance Policy</strong>: Your insurance policy typically lists the property owner.</li>
+                        <li><strong>Closing Documents</strong>: Includes the purchase agreement and closing disclosure outlining the transfer of ownership.</li>
+                    </ol>
+                    <h3 className="mt-4 font-semibold">Where to Obtain These Documents:</h3>
+                    <ul className="list-disc list-inside mt-2 space-y-2">
+                        <li><strong>County Clerk or Recorder’s Office</strong>: For deed and title documents.</li>
+                        <li><strong>Title Company</strong>: If used during the purchase.</li>
+                        <li><strong>Mortgage Lender</strong>: For mortgage-related documents.</li>
+                        <li><strong>Property Tax Office</strong>: For property tax records.</li>
+                        <li><strong>Your Records</strong>: Copies of closing documents, insurance policies, or your deed.</li>
+                    </ul>
+                    <p className="mt-4">Having one or more of these documents readily available will generally be sufficient to prove you own your home.</p>
+                </div>
+                <div className="flex items-center">
+                    <input 
+                        type="checkbox" 
+                        id="acknowledge" 
+                        className="mr-2 cursor-pointer" 
+                        checked={isChecked} 
+                        onChange={handleCheckboxChange} 
+                    />
+                    <label htmlFor="acknowledge" className="text-gray-700">I have read and understand this information.</label>
+                </div>
         <button
-          onClick={handleClick}
-          className="mt-4 px-[10px] py-[17px] text-white bg-dark-blue text-base rounded-[5px]"
+          className={`mt-4 px-[10px] py-[17px] text-white bg-dark-blue text-base rounded-[5px] ${isChecked ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+          disabled={!isChecked}
         >
-          Submit Additional Documents
+        <LoadingButton onClick={handleClick} isLoading={loading} color={'white'} className={`${isChecked ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}>
+            Submit Additional Documents
+        </LoadingButton>
         </button>
       </div>
     </div>

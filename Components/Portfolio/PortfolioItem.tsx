@@ -4,9 +4,10 @@ import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
 
-const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc}) => {
+const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc,assetId}) => {
+  console.log(assetId,"assetId")
   const [showPopup, setShowPopup] = useState(false);
-
+  const [index,setIndex] = useState();
   const [showSuccessToast, setShowSuccessToast] = useState(false)
 
 
@@ -56,8 +57,8 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         )}
 
 
-        {requestDocument?.length>0 && (
-        <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
+        {((requestDocument && requestDocument?.length>0 )&& (!requestDocument[0]?.document) )&&
+        (<div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
         <p className="text-orange-500 font-normal text-sm">
           Additional documents requested
         </p>
@@ -66,7 +67,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         
 
 
-  {requestDocument[0]?.document && requestDocument && (
+  {requestDocument &&  requestDocument[0]?.document && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
@@ -83,10 +84,10 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
       </div>
       </div>
      
-   {uploadedDoc?.length > 0 && requestDocument && <UploadedDocuments  uploadedDoc={uploadedDoc} requestDocument = {requestDocument}/>}
+   {uploadedDoc?.length > 0 && requestDocument && requestDocument?.length>0 && (index === assetId )&& <UploadedDocuments  uploadedDoc={uploadedDoc} requestDocument = {requestDocument}/>}
 
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument[0]} />
+        <AdditionalDocuments assetId={assetId} setIndex={setIndex} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument[0]} />
         )}
  
   {showSuccessToast &&  <VerificationSuccessPopup />}

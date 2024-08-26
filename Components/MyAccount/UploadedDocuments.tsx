@@ -1,14 +1,20 @@
 import React from 'react';
 import { FileIcon } from '../Icons';
+function formatTextToReadable(text) {
+  let words = text.toLowerCase().split('_');
+  let formattedText = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
+  return formattedText;
+}
 const UploadedDocuments = ({ uploadedDoc,requestDocument }:{uploadedDoc: File[],requestDocument:any}) => {
+  console.log(requestDocument,"requestDocument");
   return (
     <div className="p-4 mt-4">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center ">
       <div className="md:w-[40%] w-full">
         <p className="px-10 mt-4 text-[#87878D] text-[12px] flex justify-center items-center">
           {/* We requested your “Document Name’ and “Document Name’ */}
-          We requested your {requestDocument?.description}
+          We requested your {formatTextToReadable(requestDocument[0]?.description)}
         </p>
       </div>
       <div className="md:w-[60%] w-full flex flex-col md:flex-row justify-end items-center gap-8 mt-4">
