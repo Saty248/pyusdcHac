@@ -119,6 +119,7 @@ const usePortfolioList = () => {
     handleTabSwitch,
     handlePrevPage,
     handleNextPage,
+    setAirspaceList,
   };
 };
 
