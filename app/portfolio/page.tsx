@@ -1,5 +1,11 @@
 "use client";
-import { Fragment, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  Fragment,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 import PageHeader from "@/Components/PageHeader";
@@ -28,21 +34,21 @@ const Portfolio = () => {
   
   const id = searchParams?.get("id");
 
-  const { web3auth } = useContext(Web3authContext)
+  const { web3auth } = useContext(Web3authContext);
 
-  useEffect(()=>{
+  useEffect(() => {
     (async () => {
       if (web3auth && web3auth.status === "connected" && id) {
-        let portfolioData = null
+        let portfolioData = null;
         if (!isNaN(Number(id))) {
-          portfolioData = await getPropertyById(id)
+          portfolioData = await getPropertyById(id);
         } else {
-          portfolioData = await getSingleAsset(id)
+          portfolioData = await getSingleAsset(id);
         }
-        setSelectedAirspace(portfolioData)
+        setSelectedAirspace(portfolioData);
       }
-    })()
-  }, [id, web3auth?.status])
+    })();
+  }, [id, web3auth?.status]);
 
   useEffect(() => {
     if (!user) return;
@@ -87,13 +93,13 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-          
+
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace}  selectedAirspace={selectedAirspace} onCloseModal={undefined}              uploadedDoc={uploadedDoc}
-              setUploadedDoc={setUploadedDoc}            />
+              selectAirspace={selectAirspace} selectedAirspace={selectedAirspace} onCloseModal={onCloseModal}
+              uploadedDoc={uploadedDoc}  setUploadedDoc={setUploadedDoc}           />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
             <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />

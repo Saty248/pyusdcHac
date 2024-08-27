@@ -3,10 +3,8 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { PropertyData } from "@/types";
 import { formatDate } from "@/utils";
-import { SetStateAction, useState } from "react";
+import React, { Fragment, SetStateAction, useState } from "react";
 
-const { Fragment } = require("react");
-const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
 interface ModalProps {
     airspace: PropertyData
     onCloseModal:() => void ;
@@ -18,10 +16,9 @@ interface ModalProps {
 
 const  Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0, setAirspaceList }: ModalProps) => {
   const [inputValue, setInputValue] = useState(airspace?.address);
-  const {editAirSpaceAddress} = PropertiesService()
-  const [isLoading, setIsEditLoading] = useState(false)
-  const { user } = useAuth();
-  const {getUnverifiedAirspaces} = AirspaceRentalService();
+  const { editAirSpaceAddress } = PropertiesService();
+  const [isLoading, setIsLoading] = useState(false);
+  const { getUnverifiedAirspaces } = AirspaceRentalService();
 
 const handleEdit = async () => {
   if (!user || inputValue === airspace?.address) return;
@@ -60,20 +57,21 @@ const handleEdit = async () => {
             <CloseIcon />
           </div>
         </div>
-       
-        <div
-          className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue"
-        >
+
+        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
           <div className="w-6 h-6">
             <LocationPointIcon />
           </div>
-          <input className="font-normal text-light-black text-[14px] flex-1 border-none outline-none" 
-          type="text"
-          value={inputValue}
-          onChange={ (e) => { setInputValue(e.target.value); }}
+          <input
+            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none"
+            type="text"
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
           />
-     </div>
- 
+        </div>
+
         <div className="flex gap-[15px]">
           <p className="text-[14px] font-normal text-light-black">ID:</p>
           <p className="text-[14px] font-normal text-light-grey break-all">
@@ -131,7 +129,18 @@ const handleEdit = async () => {
               onClick={handleEdit}
               className=" flex-1 text-white rounded-[5px] bg-[#0653EA]  text-center py-[10px] px-[20px] flex items-center justify-center"
             >
-              {isLoading ? "Editing ..." : "Edit"}
+              {isLoading ? (
+                <>
+                  {activePortfolioTab !== PortfolioTabEnum.RENTED &&
+                    "Editing..."}
+                </>
+              ) : (
+                <>
+                  {activePortfolioTab === PortfolioTabEnum.RENTED
+                    ? "Generate Certificate"
+                    : "Edit"}
+                </>
+              )}
             </button>
           </div>
         )}
@@ -139,4 +148,5 @@ const handleEdit = async () => {
     </Fragment>
   );
 };
-export default Modal
+
+export default Modal;

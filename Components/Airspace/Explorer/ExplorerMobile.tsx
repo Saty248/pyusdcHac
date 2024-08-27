@@ -28,14 +28,9 @@ const ExplorerMobile = ({
   const { isOpen } = useTour();
   return (
     <div className="enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+      <h1 className="text-xl font-medium">Airspaces</h1>
       <div
-        onClick={onGoBack}
-        className="flex h-6 w-6 items-center justify-center"
-      >
-        <ArrowLeftIcon />
-      </div>
-      <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -46,39 +41,12 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
+          className="w-full pr-[20px] outline-none text-sm"
         />
-        <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
+        <div className="absolute right-[20px] top-1/2 h-[15px] w-[15px] -translate-y-1/2">
           <MagnifyingGlassIcon />
         </div>
-        {showOptions && (
-            <div className="absolute left-0 top-[55px] w-full flex-col bg-white mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
-            {addresses.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  // value={item.place_name}
-                  onClick={() => handleSelectAddress(item.place_name)}
-                  className="w-full p-5 text-left text-[#222222]"
-                  style={{
-                    borderTop: "0.2px solid #222222",
-                  }}
-                >
-                  <div className="flex  items-center ">
-                    <div className="w-[10%] h-6 mr-3">
-                      <LocationPointIcon />
-                    </div>
-
-                    <div className="w-[90%]">
-                    {item.place_name}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
           </div>
-        )}
-      </div>
     </div>
   );
 };

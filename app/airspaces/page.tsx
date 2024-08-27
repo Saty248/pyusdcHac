@@ -23,13 +23,18 @@ import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon } from "../../Components/Icons";
+import { HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
 import { defaultData } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
+
+interface Address {
+  id: string;
+  place_name: string;
+}
 
 const Airspaces: React.FC = () => {
 
@@ -542,6 +547,49 @@ const Airspaces: React.FC = () => {
               handleSelectAddress={(value) => handleSelectAddress(value)}
             />
           )}
+          
+           <div>
+              {isMobile && showOptions && addresses.length > 0 && (
+                <div className="w-full flex items-center justify-center bg-white pb-[18px]">
+                  <div className=" p-[16px] w-[345px] flex flex-col items-center justify-center border border-blue-500 rounded-lg ">
+                  <div className="w-[301px]">
+                    {addresses.slice(0, 1).map((item: Address) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleSelectAddress(item.place_name)}
+                        className="w-full text-left text-[#222222]"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-[10%] h-6 mr-3">
+                            <LocationPointIcon />
+                          </div>
+                          <div className="w-[90%] text-[14px]">
+                            {item.place_name}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                   {((isMobile && showMobileMap && flyToAddress ) || (isOpen && currentStep === 2 && isMobile)) && (
+                    <div
+                      onClick={() => {
+                        setShowClaimModal(true);
+                        setIsLoading(true);
+                      }}
+                      className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
+                      style={{ maxWidth: "400px" }}
+                    >
+                      Claim Airspace
+                    </div>
+                  )}
+                  </div>
+              
+                  
+                  </div>
+                </div>
+              )}
+            </div>
+        
           {showHowToModal && (
             <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap}/>
           )}
@@ -558,17 +606,6 @@ const Airspaces: React.FC = () => {
               }}
             />
             <Sidebar />
-             {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
-              <div
-                onClick={() => {
-                  setShowClaimModal(true);
-                  setIsLoading(true);
-                }}
-                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
-            )}
             {isMobile && (
               <Fragment>
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (

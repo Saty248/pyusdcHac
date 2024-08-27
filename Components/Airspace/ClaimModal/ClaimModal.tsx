@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import LoadingButton from "../../../Components/LoadingButton/LoadingButton";
 import useAuth from "../../../hooks/useAuth";
-import { ArrowLeftIcon, CloseIcon, InfoIcon, LocationPointIcon } from "../../../Components/Icons";
+import { ArrowLeftIcon, CloseIconBlack, InfoIcon, LocationPointIcon } from "../../../Components/Icons";
 import Link from "next/link";
 import VariableFeeRentalRangesSelect from "./RentalDetails/VariableFeeRentalRangesSelect";
 import TimeZoneSelect from "./RentalDetails/TimeZoneSelect";
@@ -10,6 +10,7 @@ import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
 import { defaultData } from "../../../types";
+import { useMobile } from "@/hooks/useMobile";
 
 interface PropsI {
   onCloseModal: () => void;
@@ -78,18 +79,16 @@ export const ClaimModal = ({
     }
   };
   const [inputAddress, setInputAddress] = useState('')
+  const { isMobile } = useMobile();
   return ( 
     <div>
     <Backdrop />
-    <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+    <div className="claim-modal-step fixed left-0  md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full max-h-[70vh] md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-hidden md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px]">
       <div
-        className="z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
+        className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <div className="relative flex items-center gap-[20px] md:p-0">
-          <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
-            <ArrowLeftIcon />
-          </div>
+        <div className="  relative flex items-center gap-[20px] md:p-0 ">
           <div className="flex justify-center items-center w-[95%] gap-2 ">
             <h2 className="text-[#222222] text-center font-medium text-xl">
               Claim Airspace
@@ -111,16 +110,24 @@ export const ClaimModal = ({
             onClick={onCloseModal}
             className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
           >
-            <CloseIcon />
+            <CloseIconBlack />
           </div>
         </div>
       </div>
-      <div className="overflow-y-scroll" style={{height: 'calc(100dvh - 68px)'}}>
-        <div className="px-[29px]">
+      <div className="mt-10 md:mt-0 overflow-y-scroll" style={{height: 'calc(100dvh - 68px)'}}>
+      {isMobile && (
+        <div  onClick={onCloseModal} className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="h-2.5 w-16 bg-[#D9D9D9] rounded-full mb-2"></div>
+            <h1 className="text-lg font-semibold">Claim Airspace</h1>
+          </div>
+        </div>
+      )}
+        <div className="px-[29px] mt-4 md:mt-0">
         <div
-      className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-      style={{ border: "1px solid #4285F4" }}
-    >
+          className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+          style={{ border: "1px solid #4285F4" }}
+        >
       <div className="w-6 h-6 flex items-center justify-center">
         <LocationPointIcon />
       </div>
