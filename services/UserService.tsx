@@ -40,13 +40,11 @@ const UserService = () => {
   }
 
   const getUser = async () => {
-    console.log("dsssdjjbjj")
     try {
       const response = await getRequest({
         uri: `/private/users/session`,
         suppressErrorReporting: true,
       });
-      console.log(response?.data,"tttttttttttttt")
       return response?.data;
     } catch (error) {
       console.error(error);

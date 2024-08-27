@@ -37,6 +37,17 @@ export type layers = {
   propertyId: number;
 };
 
+export type RequestDocument ={
+  actionType: string;
+  dateCreated : string;
+  dateUpdated : string;
+  description : string;
+  id: number;
+  referenceId : number;
+  status : string;
+  userId: number;
+}
+
 export type propertyStatus = {
   id: number;
   type: string;
@@ -100,7 +111,7 @@ export type User = {
   } | null;
   usedReferralCodeId: number | null;
   isUserRewardClaimed: boolean;
-  requestDocument: any[]
+  requestDocument: RequestDocument[]
 };
 
 interface Reward {

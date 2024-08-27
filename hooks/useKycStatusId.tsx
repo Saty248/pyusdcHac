@@ -44,7 +44,7 @@ const useKycStatusId = () => {
         });
      }
     }
-    
+
    useEffect(() => {
       handleKyc()
     }, [user, web3authStatus]);

@@ -40,7 +40,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup,  closePopup,setS
 
   const handleclick = async() =>{
     if(!files) return
-    const requestId =  requestedDoc.id
+    const requestId =  requestedDoc?.id
     const response = await postRequest({
       uri: `/private/request-document/generate-upload-url?contentType=${files?.type}&requestId=${requestId}`,
       postData: files
