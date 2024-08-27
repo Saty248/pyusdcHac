@@ -38,16 +38,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
     )}
     <div className="md:block hidden">
       <div className=" flex  justify-center items-center ">
-          <div className="">
-          <div className="relative  border-r-2 border-gray-300 pr-4  ">
-            <AccountNotificationIcon />
-            {hasNotification && (
-                <div className="absolute top-[-6px] left-[-6px] w-[15px] h-[15px] bg-[#4285F4]  flex items-center justify-center text-white text-[10px] font-bold">
-                  1
-                </div>
-              )}
-           </div>
-          </div>
             {
                user?.blockchainAddress?<Link href={'/my-account'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
                     <div className="w-6 h-6  "><UserIcon /></div>
