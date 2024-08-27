@@ -42,6 +42,21 @@ export type propertyStatus = {
   type: string;
 };
 
+export type requestDocument ={
+  actionType: string;
+  dateCreated : string;
+  dateUpdated : string;
+  description : string;
+  id: number;
+  referenceId : number;
+  status : string;
+  userId: number;
+}
+
+type metadata = {
+  endTime : Date;
+}
+
 export type PropertyData = {
   id?: number | string;
   address: string;
@@ -73,7 +88,10 @@ export type PropertyData = {
   status?:number;
   type?:string;
   hasPlanningPermission?:string | null;
+  requestDocument?:requestDocument;
+  metadata?:metadata;
 };
+
 export type User = {
   KYCStatusId: number;
   blockchainAddress: string;

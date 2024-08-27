@@ -992,6 +992,64 @@ export const LoadingSpinner = ({ color }) => {
   );
 };
 
+
+export const ReviewVerificationIcon = () => {
+  return (
+    <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="21" cy="21" r="21" fill="#F79663"/>
+    <circle cx="21" cy="21" r="9" stroke="white" stroke-width="2"/>
+    <path d="M25.5 21H21.25C21.1119 21 21 20.8881 21 20.75V17.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  );
+};
+export const DocumentApprovedIcon = () => {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8.5" cy="8.5" r="8.5" fill="#1FD387"/>
+      <path d="M8.5 4.25C6.016 4.25 4 6.266 4 8.75C4 11.234 6.016 13.25 8.5 13.25C10.984 13.25 13 11.234 13 8.75C13 6.266 10.984 4.25 8.5 4.25ZM8.5 12.35C6.5155 12.35 4.9 10.7345 4.9 8.75C4.9 6.7655 6.5155 5.15 8.5 5.15C10.4845 5.15 12.1 6.7655 12.1 8.75C12.1 10.7345 10.4845 12.35 8.5 12.35ZM10.246 7.0805L7.6 9.7265L6.754 8.8805C6.5785 8.705 6.295 8.705 6.1195 8.8805C5.944 9.056 5.944 9.3395 6.1195 9.515L7.285 10.6805C7.4605 10.856 7.744 10.856 7.9195 10.6805L10.885 7.715C11.0605 7.5395 11.0605 7.256 10.885 7.0805C10.7095 6.905 10.4215 6.905 10.246 7.0805Z" fill="white"/>
+    </svg>
+  );
+};
+export const DocumentRejectedIcon = () => {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8.5" cy="8.5" r="8.5" fill="#E04F64"/>
+      <g clip-path="url(#clip0_2140_17567)">
+      <path d="M11.1761 5.55117C11.0018 5.37692 10.7204 5.37692 10.5461 5.55117L8.3614 7.73144L6.17665 5.5467C6.00241 5.37245 5.72094 5.37245 5.5467 5.5467C5.37245 5.72094 5.37245 6.00241 5.5467 6.17665L7.73144 8.3614L5.5467 10.5461C5.37245 10.7204 5.37245 11.0018 5.5467 11.1761C5.72094 11.3503 6.00241 11.3503 6.17665 11.1761L8.3614 8.99135L10.5461 11.1761C10.7204 11.3503 11.0018 11.3503 11.1761 11.1761C11.3503 11.0018 11.3503 10.7204 11.1761 10.5461L8.99135 8.3614L11.1761 6.17665C11.3459 6.00688 11.3459 5.72094 11.1761 5.55117Z" fill="white"/>
+      </g>
+      <defs>
+      <clipPath id="clip0_2140_17567">
+      <rect width="10.7227" height="10.7227" fill="white" transform="translate(3 3)"/>
+      </clipPath>
+      </defs>
+    </svg>
+
+  );
+};
+
+export const FileIcon = () => {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H12M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125" stroke="#838187" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17.5 15V21M17.5 21L15 18.5M17.5 21L20 18.5" stroke="#838187" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  );
+};
+
+export const CancelIconWhite = () => {
+  return (
+    <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_112_9711)">
+    <path d="M20.3767 6.35831C19.9425 5.92406 19.241 5.92406 18.8067 6.35831L13.3619 11.792L7.91714 6.34717C7.4829 5.91292 6.78142 5.91292 6.34717 6.34717C5.91292 6.78142 5.91292 7.4829 6.34717 7.91714L11.792 13.3619L6.34717 18.8067C5.91292 19.241 5.91292 19.9425 6.34717 20.3767C6.78142 20.811 7.4829 20.811 7.91714 20.3767L13.3619 14.9319L18.8067 20.3767C19.241 20.811 19.9425 20.811 20.3767 20.3767C20.811 19.9425 20.811 19.241 20.3767 18.8067L14.9319 13.3619L20.3767 7.91714C20.7998 7.49403 20.7998 6.78142 20.3767 6.35831Z" fill="white"/>
+    </g>
+    <defs>
+    <clipPath id="clip0_112_9711">
+    <rect width="26.723" height="26.723" fill="white"/>
+    </clipPath>
+    </defs>
+    </svg>
+  );
+};
 export const HistoryArrowIcon  = () => {
   return(
     <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
