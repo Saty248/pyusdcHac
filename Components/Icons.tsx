@@ -992,16 +992,38 @@ export const LoadingSpinner = ({ color }) => {
   );
 };
 
+export const FailedVerificationIcon = () => {
+  return (
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="21" cy="21" r="21" fill="#F79663"/>
+    <path d="M21 16V22M30 21C30 25.9706 25.9706 30 21 30C16.0294 30 12 25.9706 12 21C12 16.0294 16.0294 12 21 12C25.9706 12 30 16.0294 30 21Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="21.0005" cy="25.502" r="1" fill="white"/>
+    </svg>
+    
+  );
+};
 
 export const ReviewVerificationIcon = () => {
   return (
-    <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="21" cy="21" r="21" fill="#F79663"/>
     <circle cx="21" cy="21" r="9" stroke="white" stroke-width="2"/>
     <path d="M25.5 21H21.25C21.1119 21 21 20.8881 21 20.75V17.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
     </svg>
   );
 };
+
+export const VerificationIcon = () => {
+  return (
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="21" cy="21" r="21" fill="#1FD387"/>
+    <rect width="24" height="24" transform="translate(9 9)" fill="#1FD387"/>
+    <path d="M18.3488 20.499L20.3488 22.499L24.5 18.3478M20.7253 12.0775L14.7253 13.7918C14.296 13.9145 14 14.3069 14 14.7533L14 19.8529C14 23.0824 15.5597 26.1131 18.1876 27.9902L20.4188 29.5839C20.7665 29.8322 21.2335 29.8322 21.5812 29.5839L23.8124 27.9902C26.4403 26.1131 28 23.0824 28 19.8529V14.7533C28 14.3069 27.704 13.9145 27.2747 13.7918L21.2747 12.0775C21.0952 12.0262 20.9048 12.0262 20.7253 12.0775Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    
+  );
+};
+
 export const DocumentApprovedIcon = () => {
   return (
     <svg width="100%" height="100%" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1048,6 +1070,16 @@ export const CancelIconWhite = () => {
     </clipPath>
     </defs>
     </svg>
+  );
+};
+
+export const AccountNotificationIcon = () => {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.44784 8.96942C6.76219 6.14032 9.15349 4 12 4C14.8465 4 17.2378 6.14032 17.5522 8.96942L17.804 11.2356C17.8072 11.2645 17.8088 11.279 17.8104 11.2933C17.9394 12.417 18.3051 13.5005 18.8836 14.4725C18.8909 14.4849 18.8984 14.4973 18.9133 14.5222L19.4914 15.4856C20.0159 16.3599 20.2782 16.797 20.2216 17.1559C20.1839 17.3946 20.061 17.6117 19.8757 17.7668C19.5971 18 19.0873 18 18.0678 18H5.93223C4.91268 18 4.40291 18 4.12434 17.7668C3.93897 17.6117 3.81609 17.3946 3.77841 17.1559C3.72179 16.797 3.98407 16.3599 4.50862 15.4856L5.08665 14.5222C5.10161 14.4973 5.10909 14.4849 5.11644 14.4725C5.69488 13.5005 6.06064 12.417 6.18959 11.2933C6.19123 11.279 6.19283 11.2645 6.19604 11.2356L6.44784 8.96942Z" fill="white" stroke="#5D7285" stroke-width="2"/>
+    <path d="M9.10222 18.4059C9.27315 19.1501 9.64978 19.8077 10.1737 20.2767C10.6976 20.7458 11.3396 21 12 21C12.6604 21 13.3024 20.7458 13.8263 20.2767C14.3502 19.8077 14.7269 19.1501 14.8978 18.4059" stroke="#5D7285" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    
   );
 };
 export const HistoryArrowIcon  = () => {

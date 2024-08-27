@@ -16,36 +16,21 @@ import { PersonalInformationType } from "../../types";
 import React from "react";
 import Sidebar from "../Shared/Sidebar";
 import { checkPhoneIsValid } from "../Auth/PhoneValidation";
+import useKycStatusId from "@/hooks/useKycStatusId";
 
 const Account = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [personalInformation, setPersonalInformation] =
-    useState<PersonalInformationType>({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      newsletter: false,
-      KYCStatusId: 0,
-    });
+  const { user, updateProfile } = useAuth();
+const {personalInformation, setPersonalInformation} = useKycStatusId()
 
-  const { user, updateProfile, web3authStatus } = useAuth();
-  const { updateUser } = UserService();
+
+  const { updateUser, getUser } = UserService();
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (!user) return;
-    const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
-    setPersonalInformation({
-      name,
-      email,
-      phoneNumber,
-      newsletter,
-      KYCStatusId,
-    });
-  }, [user, web3authStatus]);
+  const { signIn } = useAuth();
 
   const updateDataHandler = async (e) => {
+    
     e.preventDefault();
     if (!user) return toast.error("User not logged in");
 
@@ -93,10 +78,10 @@ const Account = () => {
     }
   };
 
-  const onVerifyMyAccount = () => {
+  const onVerifyMyAccount = async () => {
     setIsLoading(true);
     // @ts-ignore
-    const client = new Persona.Client({
+    const client =  await new Persona.Client({
         templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
         referenceId: user?.id.toString(),
         environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
@@ -104,6 +89,14 @@ const Account = () => {
             setIsLoading(false);
             client.open();
         },
+        onComplete:  async() => {
+          const responseData = await getUser();
+          console.log(responseData, "responseData")
+          if (responseData?.id) {
+            localStorage.setItem("user", JSON.stringify(responseData));
+            signIn({ user: responseData });}
+          setPersonalInformation((prev) => {return{...prev,KYCStatusId: responseData?.KYCStatusId}})
+        }
     });
   };
 
@@ -129,7 +122,8 @@ const Account = () => {
               KYCStatusId={personalInformation.KYCStatusId}
               isLoading={isLoading}
               onVerifyMyAccount={onVerifyMyAccount}
-            />
+              
+               />
             <PersonalInformation
               personalInformation={personalInformation}
               setPersonalInformation={setPersonalInformation}

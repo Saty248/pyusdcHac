@@ -3,7 +3,7 @@
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { toast } from "react-toastify";
@@ -30,6 +30,7 @@ import { defaultData } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 
 interface Address {
   id: string;
@@ -92,6 +93,8 @@ const Airspaces: React.FC = () => {
   const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const [drawTool, setDrawTool] = useState(null);
   const [isDrawMode, setIsDrawMode] = useState(false);
   const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false)
@@ -473,6 +476,9 @@ const Airspaces: React.FC = () => {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
         setData({ ...defaultData });
+        if (user?.KYCStatusId === 0) {
+          setShowPopup(true);
+        }
       }
       setDontShowAddressOnInput(false)
     } catch (error) {
@@ -525,6 +531,7 @@ const Airspaces: React.FC = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
   } 
+  const router = useRouter();
   return (
     <Fragment>
       <Head>
@@ -722,6 +729,7 @@ const Airspaces: React.FC = () => {
                 </div>
               </div>
             )}
+            {showPopup && <VerificationPopup onVerifyMyAccount={() => router.push('/my-account')}/>}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>

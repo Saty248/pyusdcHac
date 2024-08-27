@@ -1,6 +1,6 @@
 import Service from "./Service"
 interface GenerateS3UploadUrlParams {
-  fileType: File;
+  fileType: string;
   requestId: string | number;
 }
 

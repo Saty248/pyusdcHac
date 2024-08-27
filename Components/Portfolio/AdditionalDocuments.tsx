@@ -15,7 +15,7 @@ interface PopupProps {
   closePopup: () => void;
   setUploadedDoc: Dispatch<SetStateAction<File[]>>;
   setShowSuccessToast: Dispatch<SetStateAction<boolean>>;
-  requestDocument?: requestDocument;
+  requestDocument: requestDocument;
 }
 
 const Popup: React.FC<PopupProps> = ({
@@ -45,7 +45,7 @@ const Popup: React.FC<PopupProps> = ({
     }
   };
   
-  const { getRootProps } = useDropzone({ onDrop, multiple: true });
+  const { getRootProps } = useDropzone({ onDrop, multiple: false });
 
   if (!showPopup) return null;
 
@@ -64,7 +64,11 @@ const Popup: React.FC<PopupProps> = ({
     setLoading(true);
 
     try {
-      const generatedRes = await generateS3UploadUrl(selectedFiles[0]?.type, requestDocument?.id);
+      const generatedRes = await generateS3UploadUrl({ 
+        fileType: selectedFiles[0]?.type, 
+        requestId: requestDocument.id
+      });
+    
       if (!generatedRes?.uploadUrl?.uploadUrl || !generatedRes?.key) {
         throw new Error('Failed to upload file ');
       }
@@ -75,7 +79,10 @@ const Popup: React.FC<PopupProps> = ({
       }
 
       const path = generatedRes.key.toString();
-      const updateResponse = await updateDocument(path, Number(requestDocument?.id));
+      const updateResponse = await updateDocument({
+        path, 
+        requestId: Number(requestDocument.id)
+      });
       if (!updateResponse) {
         throw new Error('Failed to upload file ');
       }
