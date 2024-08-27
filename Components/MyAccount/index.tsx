@@ -95,7 +95,7 @@ const {personalInformation, setPersonalInformation} = useKycStatusId()
           if (responseData?.id) {
             localStorage.setItem("user", JSON.stringify(responseData));
             signIn({ user: responseData });}
-          setPersonalInformation((prev) => {return{...prev,KYCStatusId: responseData.KYCStatusId}})
+          setPersonalInformation((prev) => {return{...prev,KYCStatusId: responseData?.KYCStatusId}})
         }
     });
   };

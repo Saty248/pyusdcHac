@@ -33,8 +33,8 @@ const AccountVerification = ({
 
 
   const requestedDoc = useMemo(() => {
-    return user?.requestDocument.find((doc) => doc.status === "NOT_SUBMITTED" )
-  }, [user])
+    return user?.requestDocument?.find((doc) => doc.status === "NOT_SUBMITTED") || null;
+  }, [user]);
   
 console.log(requestedDoc, "requestedDoc")
   return (
