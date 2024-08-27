@@ -3,7 +3,15 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { PropertyData } from "@/types";
 import { formatDate } from "@/utils";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, SetStateAction, useState } from "react";
+
+interface ModalProps {
+  airspace: any;
+  onCloseModal: () => void;
+  isOffer?: boolean;
+  pageNumber?: number;
+  setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
+}
 
 import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
 import {
@@ -155,25 +163,32 @@ const Modal = ({
 
   const [inputValue, setInputValue] = useState(airspace?.address);
   const { editAirSpaceAddress } = PropertiesService();
-  const [isLoading, setIsEditLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { getUnverifiedAirspaces } = AirspaceRentalService();
 
-  console.log(user, "user");
   const handleEdit = async () => {
     if (!user || inputValue === airspace?.address) return;
-    setIsEditLoading(true);
-    const editResponse = await editAirSpaceAddress({
-      address: inputValue,
-      propertyId: airspace.id,
-    });
-    if (!editResponse) return;
-    const airspaceResp = await getUnverifiedAirspaces(
-      user?.blockchainAddress,
-      pageNumber,
-      10
-    );
-    setAirspaceList(airspaceResp.items);
-    setIsEditLoading(false);
+    try {
+      setIsLoading(true);
+      const editResponse = await editAirSpaceAddress({
+        address: inputValue,
+        propertyId: airspace.id,
+      });
+      if (editResponse) {
+        const airspaceResp = await getUnverifiedAirspaces(
+          user?.blockchainAddress,
+          pageNumber,
+          10
+        );
+        setAirspaceList(airspaceResp.items);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
   };
 
   return (
@@ -264,17 +279,25 @@ const Modal = ({
               Cancel
             </div>
             <button
-              disabled={activePortfolioTab !== PortfolioTabEnum.RENTED}
               onClick={
-                activePortfolioTab !== PortfolioTabEnum.RENTED
+                activePortfolioTab === PortfolioTabEnum.RENTED
                   ? handleGenerateCertificate
                   : handleEdit
               }
-              className={`${activePortfolioTab === PortfolioTabEnum.RENTED ? "bg-blue-500" : "bg-gray-300"} flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
+              className={`bg-blue-500 flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
             >
-              {activePortfolioTab === PortfolioTabEnum.RENTED
-                ? "Generate Certificate"
-                : "Edit"}
+              {isLoading ? (
+                <>
+                  {activePortfolioTab !== PortfolioTabEnum.RENTED &&
+                    "Editing..."}
+                </>
+              ) : (
+                <>
+                  {activePortfolioTab === PortfolioTabEnum.RENTED
+                    ? "Generate Certificate"
+                    : "Edit"}
+                </>
+              )}
             </button>
           </div>
         )}

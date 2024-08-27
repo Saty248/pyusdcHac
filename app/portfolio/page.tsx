@@ -1,5 +1,11 @@
 "use client";
-import { Fragment, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  Fragment,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 import PageHeader from "@/Components/PageHeader";
@@ -86,12 +92,14 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace} selectedAirspace={selectedAirspace} onCloseModal={undefined}            />
+              selectAirspace={selectAirspace}
+              selectedAirspace={selectedAirspace}
+              onCloseModal={onCloseModal}
+            />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
             <PortfolioListMobile selectAirspace={selectAirspace} />
