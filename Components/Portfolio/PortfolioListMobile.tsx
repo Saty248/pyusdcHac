@@ -4,7 +4,6 @@ import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-import UploadedDocuments from "../MyAccount/UploadedDocuments";
 const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) => {
   const {
     handleTabSwitch,

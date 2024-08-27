@@ -1,7 +1,9 @@
 import React from 'react';
 import { FileIcon } from '../Icons';
 import { formatTextToReadable } from '@/utils/propertyUtils/fileUpload';
-const UploadedDocuments = ({ uploadedDoc,requestDocument }:{uploadedDoc: File[],requestDocument:any}) => {
+import { requestDocument } from "@/types";
+
+const UploadedDocuments = ({ uploadedDoc,requestDocument }:{uploadedDoc: File[],requestDocument:requestDocument}) => {
   return (
     <div className="p-4 mt-4">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center ">

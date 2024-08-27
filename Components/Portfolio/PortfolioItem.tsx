@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
 import UploadedDocuments from "./UploadedDocuments";
-import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
+import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import AdditionalDocuments from "./AdditionalDocuments";
 
 const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc,assetId}) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [index,setIndex] = useState();
+  const [index,setIndex] = useState<number | string>();
   const [showSuccessToast, setShowSuccessToast] = useState(false)
 
   const handleButtonClick = () => {

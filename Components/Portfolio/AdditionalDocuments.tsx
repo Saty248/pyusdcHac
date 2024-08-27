@@ -7,15 +7,16 @@ import axios from "axios";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { toast } from "react-toastify";
 import { formatTextToReadable, isFileSizeValid, isValidFileType, uploadImage } from "@/utils/propertyUtils/fileUpload";
+import { requestDocument } from "@/types";
 
 interface PopupProps {
-  assetId: any;
-  setIndex: any;
+  assetId: number | string;
+  setIndex: Dispatch<SetStateAction<number | string>>;
   showPopup: boolean;
   closePopup: () => void;
   setUploadedDoc: Dispatch<SetStateAction<File[]>>;
   setShowSuccessToast: Dispatch<SetStateAction<boolean>>;
-  requestDocument?: any;
+  requestDocument?: requestDocument;
 }
 
 const Popup: React.FC<PopupProps> = ({
@@ -83,6 +84,10 @@ const Popup: React.FC<PopupProps> = ({
     }
   };
 
+  const assert = () =>{
+
+  }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="fixed bottom-0 md:relative md:top-0 flex flex-col h-[75%] md:w-[566px] md:min-h-[350px] md:py-[20px] py-[30px] md:px-[20px] px-[30px] rounded-t-[30px] md:rounded-[15px] bg-white gap-[15px] overflow-auto" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
@@ -107,10 +112,14 @@ const Popup: React.FC<PopupProps> = ({
           <br /><br />
           Please upload additional documents to complete your claim.
         </p>
+        {requestDocument && requestDocument?.description && (
+        <>
         <hr className="bg-[#D5DCEB] w-full" />
         <p className="font-normal text-base text-[#87878D]">
           We need: <span className="font-bold">{formatTextToReadable(requestDocument?.description)}</span>
         </p>
+        </>
+        )}
 
         <div {...(getRootProps() as DropzoneRootProps)} className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500">
           {selectedFiles[0] ? (

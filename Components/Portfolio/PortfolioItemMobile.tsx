@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
 import AdditionalDocuments from "./AdditionalDocuments";
-import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
+import VerificationSuccessPopup from "./VerificationSuccessPopup";
 import UploadedDocuments from "./UploadedDocuments";
 
 const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc,assetId}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
-  const [index,setIndex] = useState();
+  const [index,setIndex] = useState<number | string>();
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -106,20 +106,8 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUplo
         {showSuccessToast &&  <VerificationSuccessPopup />}
 
         </div>
-       </div>
-        
-         
-
-   
-
-
-            {/* {showPopup && (
-            <AdditionalDocuments showPopup={showPopup} closePopup={closePopup} />
-            )} */}
-
-          </div>
-
-          {/* <VerificationSuccessPopup /> */}
+        </div>
+        </div>
       </div>
         );
 }

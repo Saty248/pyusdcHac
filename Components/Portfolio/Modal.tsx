@@ -8,7 +8,7 @@ import { SetStateAction, useState } from "react";
 const { Fragment } = require("react");
 const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
 interface ModalProps {
-  airspace: any
+    airspace: PropertyData
     onCloseModal:() => void ;
     isOffer?:boolean
     pageNumber?: number
@@ -23,11 +23,13 @@ const  Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0, setAirspaceLi
   const { user } = useAuth();
   const {getUnverifiedAirspaces} = AirspaceRentalService();
 
-  console.log(user, "user")
 const handleEdit = async () => {
   if (!user || inputValue === airspace?.address) return;
   setIsEditLoading(true);
-  const editResponse = await editAirSpaceAddress({ address: inputValue, propertyId: airspace.id });
+  let editResponse;
+  if(airspace.id){
+     editResponse = await editAirSpaceAddress({ address: inputValue, propertyId: parseInt(airspace.id.toString()) });
+  }
   if(!editResponse) return
   const airspaceResp = await getUnverifiedAirspaces(
     user?.blockchainAddress,
@@ -100,7 +102,6 @@ const handleEdit = async () => {
                 Offer received
               </p>
               <p className="font-bold text-2xl text-light-black">
-              {/*  {USDollar.format(99.87)} */}
               </p>
             </div>
             <div
@@ -127,7 +128,6 @@ const handleEdit = async () => {
               Cancel
             </div>
             <button
-              // disabled
               onClick={handleEdit}
               className=" flex-1 text-white rounded-[5px] bg-[#0653EA]  text-center py-[10px] px-[20px] flex items-center justify-center"
             >
