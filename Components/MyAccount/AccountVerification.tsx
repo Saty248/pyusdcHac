@@ -86,7 +86,7 @@ const AccountVerification = ({
      
       <div className="flex justify-end mt-2">
       <button  onClick={handleButtonClick} className="text-dark-blue text-base">
-        Add Additionnal Documents
+        Add Additional Documents
       </button>
      </div>
      </div>

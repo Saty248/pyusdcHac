@@ -9,8 +9,7 @@ import { formatTextToReadable, isFileSizeValid, isValidFileType, uploadImage } f
 import { requestDocument } from "@/types";
 
 interface PopupProps {
-  assetId: number | string;
-  setIndex: Dispatch<SetStateAction<number | string>>;
+  setUnderReview: Dispatch<SetStateAction<boolean>>;
   showPopup: boolean;
   closePopup: () => void;
   setUploadedDoc: Dispatch<SetStateAction<File[]>>;
@@ -19,8 +18,7 @@ interface PopupProps {
 }
 
 const Popup: React.FC<PopupProps> = ({
-  assetId,
-  setIndex,
+  setUnderReview,
   showPopup,
   closePopup,
   setUploadedDoc,
@@ -87,7 +85,7 @@ const Popup: React.FC<PopupProps> = ({
         throw new Error('Failed to upload file ');
       }
 
-      setIndex(assetId);
+      setUnderReview(true);
       setUploadedDoc(prev => [...prev, selectedFiles[0]]);
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 4000);
