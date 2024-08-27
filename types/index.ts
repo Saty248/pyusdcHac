@@ -37,15 +37,26 @@ export type layers = {
   propertyId: number;
 };
 
-export type RequestDocument ={
-  actionType: string;
-  dateCreated : string;
-  dateUpdated : string;
-  description : string;
-  id: number;
-  referenceId : number;
-  status : string;
-  userId: number;
+export interface Document {
+    id: number;
+    filePath: string;
+    userId: number;
+    requestDocumentId: number;
+    createdAt: string;
+    updateAt: string;
+}
+
+export interface RequestDocument {
+    id: number;
+    userId: number;
+    actionType: string;
+    status: string;
+    description: string;
+    referenceId: number;
+    dateCreated: string;
+    dateUpdated: string;
+    document: Document;
+    previewUrl: string;
 }
 
 export type propertyStatus = {
@@ -197,14 +208,6 @@ export interface UserType {
   KYCStatusId: number;
 }
 
-export interface PersonalInformationType {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  newsletter: boolean;
-  KYCStatusId: number;
-}
-
 export interface Web3authContextType {
   web3auth: any;
   setWeb3auth: React.Dispatch<React.SetStateAction<any>>;
@@ -299,3 +302,22 @@ export type defaultData = {
     { fromTime:number, toTime: number, isAvailable: boolean, weekDayId:number },
   ],
 };
+
+export enum StatusTypes {
+  NotAttempted = 0,
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+  Completed = 4,
+  Failed = 5,
+  Expired = 6,
+  Declined = 7,
+  DocumentError = 8,
+}
+
+export enum RequestDocumentStatus {
+  NOT_SUBMITTED = 'NOT_SUBMITTED',
+  SUBMITTED = 'SUBMITTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}

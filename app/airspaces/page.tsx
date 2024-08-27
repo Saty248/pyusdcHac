@@ -26,7 +26,7 @@ import Link from "next/link";
 import { HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
-import { defaultData } from "../../types";
+import { defaultData, StatusTypes } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
@@ -476,7 +476,7 @@ const Airspaces: React.FC = () => {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
         setData({ ...defaultData });
-        if (user?.KYCStatusId === 0) {
+        if (user?.KYCStatusId === StatusTypes.NotAttempted) {
           setShowPopup(true);
         }
       }

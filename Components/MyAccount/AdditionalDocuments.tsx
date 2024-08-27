@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useDropzone, DropzoneRootProps } from 'react-dropzone';
-import { CloseIcon } from "../Icons";
+import { CloseIconBlack } from "../Icons";
 import { useMobile } from '@/hooks/useMobile';
 import useAuth from '@/hooks/useAuth';
 import UserService from '@/services/UserService';
@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import DocumentUploadServices from '@/services/DocumentUploadServices';
 import { formatTextToReadable, isFileSizeValid, isValidFileType, uploadImage } from '@/utils/propertyUtils/fileUpload';
 import LoadingButton from '../LoadingButton/LoadingButton';
+import { RequestDocumentStatus } from '@/types';
 
 
 interface PopupProps {
@@ -29,7 +30,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup, closePopup, setS
   const [loading, setLoading] = useState(false);
 
   const requestDocument = useMemo(() => {
-    return user?.requestDocument.find((doc) => doc.status === "NOT_SUBMITTED")
+    return user?.requestDocument.find((doc) => doc.status === RequestDocumentStatus.NOT_SUBMITTED)
   }, [user])
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -64,6 +65,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup, closePopup, setS
 
     setLoading(true);
 
+
     try {
       const generatedRes = await generateS3UploadUrl({
         fileType: selectedFiles[0]?.type,
@@ -89,6 +91,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup, closePopup, setS
       }
 
       setShowSuccessToast(true)
+      setUploadedDoc(prev => [...prev, selectedFiles[0]]);
       setTimeout(() => setShowSuccessToast(false), 5000);
       setShowAdditionalDoc(true)
       closePopup()
@@ -121,7 +124,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup, closePopup, setS
               <div className="flex justify-between">
                 <h2 className="text-xl font-medium text-[#222222]">Documents</h2>
                 <div onClick={closePopup} className="w-4 h-4 cursor-pointer">
-                  <CloseIcon />
+                  <CloseIconBlack />
                 </div>
               </div>
             )}
@@ -149,7 +152,7 @@ const AdditionalDocuments: React.FC<PopupProps> = ({ showPopup, closePopup, setS
           onClick={handleClick}
           isLoading={loading}
           color={"white"}
-          className="mt-4 px-6 py-2 text-white bg-dark-blue text-base"
+          className="mt-4 px-6 py-2 text-white bg-dark-blue text-base flex justify-center"
         >
           Submit Additional Documents
         </LoadingButton>
