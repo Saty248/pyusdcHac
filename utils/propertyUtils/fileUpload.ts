@@ -21,12 +21,12 @@ export const isValidFileType = (fileName: string) => {
 
 export  const uploadImage = async (response: any,file:File) => {
     const url = response?.uploadUrl?.uploadUrl;
-    console.log(url,"test")
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("url", url);
     try {
       const response = await axios.put(
-        url,
+        `${process.env.NEXT_PUBLIC_FRONTEND_URI}/api/documentUpload`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

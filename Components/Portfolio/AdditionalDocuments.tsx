@@ -62,6 +62,11 @@ const Popup: React.FC<PopupProps> = ({
 
     try {
       setLoading(true);
+      let config = {
+        headers: {
+        'Content-Type': 'multipart/form-data',
+        }
+      }      
       const url = await generateS3UploadUrl(selectedFiles[0]?.type,requestDocument?.id)
       await uploadImage(url,selectedFiles[0]);
       const path = url?.key.toString();
@@ -148,14 +153,14 @@ const Popup: React.FC<PopupProps> = ({
 
         <div className="flex justify-center">
         <button
-          className={`mt-4  w-full text-white bg-dark-blue text-base rounded-[5px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+          className={`flex justify-center items-center mt-4  w-full text-white bg-dark-blue text-base rounded-[5px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
           disabled={(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (requestDocument?.description === 'PROOF_OF_OWNERSHIP' && !isChecked)}
         >
           <LoadingButton
             onClick={handleClick}
             isLoading={loading}
             color={"white"}
-            className={`${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"} w-full h-full px-[10px] py-[17px]`}
+            className={`flex justify-center w-full h-full px-[10px] py-[17px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"} `}
           >
             Submit Additional Documents
           </LoadingButton>
