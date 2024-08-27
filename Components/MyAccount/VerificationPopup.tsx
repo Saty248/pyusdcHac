@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Backdrop from "../../Components/Backdrop";
 
 interface VerificationPopupProps {
-    onVerifyMyAccount: () => void;
+  onVerifyMyAccount: () => void;
   }
 
-  const VerificationPopup: React.FC<VerificationPopupProps> = ({ onVerifyMyAccount }) => {
+  const VerificationPopup: React.FC<VerificationPopupProps> = ({ onVerifyMyAccount, }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleClose = () => {
@@ -13,13 +13,13 @@ interface VerificationPopupProps {
   };
 
   return (
-    <div>
-    {<Backdrop />}
-
+    <Fragment>
    { isOpen && (
-      <div  onClick={onVerifyMyAccount}  className="fixed inset-0 flex items-center justify-center z-50">
+    <div>
+    {<Backdrop onClick={handleClose} />}
+      <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="relative w-[800px] h-[600px] rounded-[30px] bg-white shadow-lg" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
-          <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onClick={onVerifyMyAccount} >
+          <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onClick={handleClose} >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -41,9 +41,10 @@ interface VerificationPopupProps {
           </div>
         </div>
       </div>
+      </div>
     )}
     
-    </div>
+    </Fragment>
   );
 };
 

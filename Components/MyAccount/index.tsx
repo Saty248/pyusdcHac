@@ -20,14 +20,25 @@ import useKycStatusId from "@/hooks/useKycStatusId";
 
 const Account = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { user, updateProfile } = useAuth();
-const {personalInformation, setPersonalInformation} = useKycStatusId()
+  const { user, updateProfile,signIn, web3authStatus } = useAuth();
+  const {personalInformation, setPersonalInformation} = useKycStatusId()
 
 
   const { updateUser, getUser } = UserService();
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const { signIn } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
+    setPersonalInformation({
+      name,
+      email,
+      phoneNumber,
+      newsletter,
+      KYCStatusId,
+    });
+  }, [user, web3authStatus]);
 
   const updateDataHandler = async (e) => {
     
@@ -119,7 +130,7 @@ const {personalInformation, setPersonalInformation} = useKycStatusId()
               </p>
             </div>
             <AccountVerification
-              KYCStatusId={personalInformation.KYCStatusId}
+              KYCStatusId={personalInformation?.KYCStatusId}
               isLoading={isLoading}
               onVerifyMyAccount={onVerifyMyAccount}
               
