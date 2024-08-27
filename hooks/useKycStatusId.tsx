@@ -4,13 +4,11 @@ import { PersonalInformationType } from '@/types';
 import UserService from '@/services/UserService';
 
 const useKycStatusId = () => {
-
     const { user, web3authStatus } = useAuth();
     const { getUser } = UserService();
     const { signIn } = useAuth();
 
-    const [personalInformation, setPersonalInformation] =
-    useState<PersonalInformationType>({
+    const [personalInformation, setPersonalInformation] = useState<PersonalInformationType>({
       name: "",
       email: "",
       phoneNumber: "",
@@ -18,20 +16,24 @@ const useKycStatusId = () => {
       KYCStatusId: 0,
     });
 
-
     const handleKyc = async () => {
         if (!user) return;
-        const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
+
+      const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
+
         let id = KYCStatusId
+
         if(id !== 0){
             const responseData = await getUser();
-            if(responseData.KYCStatusId){
-                id = responseData.KYCStatusId
-                if(id !== user.KYCStatusId){
-                    localStorage.setItem("user", JSON.stringify(responseData));
-                    signIn({ user: responseData })
-                }
-           }
+
+          if(responseData.KYCStatusId){
+            id = responseData.KYCStatusId
+
+            if(id !== user.KYCStatusId){
+                localStorage.setItem("user", JSON.stringify(responseData));
+                signIn({ user: responseData })
+            }
+          }
         
         setPersonalInformation({
           name,
@@ -40,14 +42,14 @@ const useKycStatusId = () => {
           newsletter,
           KYCStatusId: id,
         });
+     }
     }
+    
+   useEffect(() => {
+      handleKyc()
+    }, [user, web3authStatus]);
 
-
-    useEffect(() => {
-        handleKyc()
-      }, [user, web3authStatus]);
-}
-return {personalInformation, setPersonalInformation}
+  return {personalInformation, setPersonalInformation}
 }
 
 export default useKycStatusId

@@ -36,7 +36,6 @@ const AccountVerification = ({
     return user?.requestDocument?.find((doc) => doc.status === "NOT_SUBMITTED") || null;
   }, [user]);
   
-console.log(requestedDoc, "requestedDoc")
   return (
  <div>
    {KYCStatusId === 0 && (
@@ -117,7 +116,7 @@ console.log(requestedDoc, "requestedDoc")
    </div>
 )}
 
-{KYCStatusId === 5 && (
+  {KYCStatusId === 5 && (
     <div className="flex flex-col py-[17px] md:px-[25px] px-[20px] rounded-[30px] gap-[15px] bg-white"  style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }} >
     <div className="flex items-center justify-between">
       <h2 className="text-xl font-medium text-[#222222]">
@@ -136,9 +135,7 @@ console.log(requestedDoc, "requestedDoc")
           Verify my account
     </button>
   </div> 
-
-)}
-
+  )}
     {showAdditionalDoc && (
      <UploadedDocuments uploadedDoc={uploadedDoc} />
     )}
@@ -149,7 +146,5 @@ console.log(requestedDoc, "requestedDoc")
     </div>
   );
 };
-
-
 export default AccountVerification;
 
