@@ -1,3 +1,4 @@
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import { CategoryI, User, UserUSDWalletBalanceI } from "@/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
@@ -9,6 +10,7 @@ interface UserState {
   user: User | null;
   isWaitingScreenVisible: boolean;
   userUSDWalletBalance: UserUSDWalletBalanceI;
+  activePortfolioTab: PortfolioTabEnum;
 }
 
 const initialState: UserState = {
@@ -19,6 +21,7 @@ const initialState: UserState = {
   user: null,
   isWaitingScreenVisible: false,
   userUSDWalletBalance: { amount: "0", isLoading: true },
+  activePortfolioTab: PortfolioTabEnum.VERIFIED,
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -51,6 +54,9 @@ const userSlice: Slice<UserState> = createSlice({
     ) => {
       state.userUSDWalletBalance = action.payload;
     },
+    setActivePortfolioTab: (state, action: PayloadAction<PortfolioTabEnum>) => {
+      state.activePortfolioTab = action.payload;
+    },
   },
 });
 
@@ -62,5 +68,6 @@ export const {
   setIsWaitingScreenVisible,
   setUser,
   setUserUSDWalletBalance,
+  setActivePortfolioTab,
 } = userSlice.actions;
 export default userSlice.reducer;
