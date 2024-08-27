@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-export async function PUT (request: NextRequest){
+import axios from "axios";
+
+export async function PUT(request: NextRequest) {
   try {
     const body = await request.formData();
-    const url =  body.get('url')!.toString();
+    const url = body.get('url')!.toString();
     const file = body.get('file');
     const formData = new FormData();
     formData.append('file', file!);
-    const res = await fetch(url!,{method:'PUT',headers:{'Content-Type': 'multipart/form-data'},body:formData}).then(()=>{console.log('success')}).catch(()=>{console.log('error')})
-    return  NextResponse.json(200);
+    await axios.put(url, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return NextResponse.json({ status: 'SUCCESS', message: 'File uploaded successfully' });
+
   } catch (error) {
-    console.log(error,"error")
+    console.error('Error', error);
     return NextResponse.json(
-      { error },
-      {
-        status: 500,
-      }
+      { status: 'error', message: 'Failed to upload file' },
+      { status: 500 }
     );
   }
 }

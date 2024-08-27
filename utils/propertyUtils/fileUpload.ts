@@ -30,7 +30,7 @@ export  const uploadImage = async (response: any,file:File) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      return true;
+      return response;
     } catch {
       return false;
     }

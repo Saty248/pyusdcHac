@@ -6,36 +6,190 @@ import { formatDate } from "@/utils";
 import React, { Fragment, SetStateAction, useState } from "react";
 
 interface ModalProps {
-    airspace: PropertyData
-    onCloseModal:() => void ;
-    isOffer?:boolean
-    pageNumber?: number
-    setAirspaceList:  (value: SetStateAction<PropertyData[]>) => void
+  airspace: any;
+  onCloseModal: () => void;
+  isOffer?: boolean;
+  pageNumber?: number;
+  setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
 }
 
+import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  pdf,
+  Image,
+} from "@react-pdf/renderer";
+import { useAppSelector } from "@/redux/store";
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-const  Modal = ({ airspace, onCloseModal, isOffer, pageNumber = 0, setAirspaceList }: ModalProps) => {
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: "#fff",
+    paddingRight: 30,
+    paddingLeft: 30,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  title: {
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  section: {
+    margin: 10,
+    paddingVertical: 10,
+    fontSize: 12,
+    lineHeight: 1.5,
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  footer: {
+    fontSize: 12,
+    marginTop: 30,
+    paddingHorizontal: 10,
+  },
+  image: {
+    width: 200,
+    height: 60,
+    marginVertical: 20,
+    margin: "right",
+  },
+  mb: {
+    marginTop: 10,
+  },
+
+  mapImage: {
+    margin: "auto",
+    width: 450,
+    height: 300,
+    marginVertical: 10,
+  },
+});
+
+const Certificate = ({
+  user,
+  rentalId,
+  dateOfRent,
+  timeFrame,
+  longitude,
+  latitude,
+  amount,
+}) => (
+  <Document>
+    <Page style={styles.page}>
+      <Image style={styles.image} src={"/images/logwo.png"} />
+      <Text style={styles.title}>Rental Certificate</Text>
+      <View style={styles.section}>
+        <Text>
+          This certifies that {user.name}, with the blockchain address{" "}
+          {user.blockchainAddress} has successfully rented an airspace on
+          SkyTrade with the following details:
+        </Text>
+        <Text style={[styles.bold, styles.mb]}></Text>
+        <Text style={styles.bold}>Rental ID: {rentalId}</Text>
+        <Text style={styles.bold}>Date of Rental: {dateOfRent}</Text>{" "}
+        <Text style={styles.bold}>Expiration Date: {timeFrame}</Text>
+        <Text style={styles.bold}>Amount: {amount}</Text>
+      </View>
+
+      <Image
+        style={styles.mapImage}
+        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${longitude},${latitude},14/600x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
+      />
+
+      <View style={styles.section}>
+        <Text>
+          This rental agreement is valid for the specified date and time frame
+          mentioned above. This agreement is subject to SkyTrade's Rental
+          Agreement and Terms of Service.
+        </Text>
+
+        <Text>
+          If you have any questions or require more information, please contact
+          the SkyTrade team and we will reach out at our earliest convenience.
+        </Text>
+      </View>
+      <View style={styles.footer}>
+        <Text>SkyTrade Team</Text>
+        <Text>Website: https://app.sky.trade</Text>
+        <Text>E-mail: info@sky.trade</Text>
+      </View>
+    </Page>
+  </Document>
+);
+
+const Modal = ({
+  airspace,
+  onCloseModal,
+  isOffer,
+  pageNumber = 0,
+  setAirspaceList,
+}: ModalProps) => {
+  const { user, activePortfolioTab } = useAppSelector((state) => {
+    const { user, activePortfolioTab } = state.userReducer;
+    return { user, activePortfolioTab };
+  });
+
+  const handleGenerateCertificate = async () => {
+    const rentalId = airspace?.id;
+    const dateOfRent = formatDate(airspace?.metadata?.startTime);
+    const timeFrame = formatDate(airspace?.metadata?.endTime);
+    const amount = `$${airspace?.currentPrice}`;
+    const longitude = airspace?.property?.longitude;
+    const latitude = airspace?.property?.latitude;
+
+    const certificate = (
+      <Certificate
+        user={user}
+        longitude={longitude}
+        latitude={latitude}
+        rentalId={rentalId}
+        dateOfRent={dateOfRent}
+        timeFrame={timeFrame}
+        amount={amount}
+      />
+    );
+
+    const blob = await pdf(certificate).toBlob();
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, "_blank");
+  };
+
   const [inputValue, setInputValue] = useState(airspace?.address);
   const { editAirSpaceAddress } = PropertiesService();
   const [isLoading, setIsLoading] = useState(false);
   const { getUnverifiedAirspaces } = AirspaceRentalService();
 
-const handleEdit = async () => {
-  if (!user || inputValue === airspace?.address) return;
-  setIsEditLoading(true);
-  let editResponse;
-  if(airspace.id){
-     editResponse = await editAirSpaceAddress({ address: inputValue, propertyId: parseInt(airspace.id.toString()) });
-  }
-  if(!editResponse) return
-  const airspaceResp = await getUnverifiedAirspaces(
-    user?.blockchainAddress,
-    pageNumber,
-    10,
-  );
-  setAirspaceList(airspaceResp.items);
-  setIsEditLoading(false);
-};
+  const handleEdit = async () => {
+    if (!user || inputValue === airspace?.address) return;
+    try {
+      setIsLoading(true);
+      const editResponse = await editAirSpaceAddress({
+        address: inputValue,
+        propertyId: airspace.id,
+      });
+      if (editResponse) {
+        const airspaceResp = await getUnverifiedAirspaces(
+          user?.blockchainAddress,
+          pageNumber,
+          10
+        );
+        setAirspaceList(airspaceResp.items);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
+  };
 
   return (
     <Fragment>
@@ -89,7 +243,7 @@ const handleEdit = async () => {
             </p>
           </div>
         )}
-        
+
         {isOffer ? (
           <div
             className="flex gap-[20px] md:mt-[15px] mt-auto py-[16px] md:py-0 -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 md:shadow-none"
@@ -99,8 +253,7 @@ const handleEdit = async () => {
               <p className="font-normal text-[12px] text-[#838187]">
                 Offer received
               </p>
-              <p className="font-bold text-2xl text-light-black">
-              </p>
+              <p className="font-bold text-2xl text-[#222222]"></p>
             </div>
             <div
               onClick={onCloseModal}
@@ -126,8 +279,12 @@ const handleEdit = async () => {
               Cancel
             </div>
             <button
-              onClick={handleEdit}
-              className=" flex-1 text-white rounded-[5px] bg-[#0653EA]  text-center py-[10px] px-[20px] flex items-center justify-center"
+              onClick={
+                activePortfolioTab === PortfolioTabEnum.RENTED
+                  ? handleGenerateCertificate
+                  : handleEdit
+              }
+              className={`bg-blue-500 flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
             >
               {isLoading ? (
                 <>

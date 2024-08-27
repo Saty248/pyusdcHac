@@ -3,7 +3,6 @@ import { useDropzone, DropzoneRootProps } from "react-dropzone";
 import { CloseIconBlack } from "../Icons";
 import { useMobile } from "@/hooks/useMobile";
 import DocumentUploadServices from "@/services/DocumentUploadServices";
-import axios from "axios";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
 import { toast } from "react-toastify";
 import { formatTextToReadable, isFileSizeValid, isValidFileType, uploadImage } from "@/utils/propertyUtils/fileUpload";
@@ -50,6 +49,7 @@ const Popup: React.FC<PopupProps> = ({
 
   if (!showPopup) return null;
 
+  
   const handleClick = async () => {
     if (selectedFiles.length === 0) {
       toast.error('Please upload a file before submitting!');
@@ -61,32 +61,39 @@ const Popup: React.FC<PopupProps> = ({
       return;
     }
 
+    setLoading(true);
+
     try {
-      setLoading(true);
-      let config = {
-        headers: {
-        'Content-Type': 'multipart/form-data',
-        }
-      }      
-      const url = await generateS3UploadUrl(selectedFiles[0]?.type,requestDocument?.id)
-      await uploadImage(url,selectedFiles[0]);
-      const path = url?.key.toString();
-      await updateDocument(path, Number(requestDocument?.id));
+      const generatedRes = await generateS3UploadUrl(selectedFiles[0]?.type, requestDocument?.id);
+      if (!generatedRes?.uploadUrl?.uploadUrl || !generatedRes?.key) {
+        throw new Error('Failed to upload file ');
+      }
+
+      const imageRes = await uploadImage(generatedRes, selectedFiles[0]);
+      if ((imageRes && imageRes?.data?.status !== 'SUCCESS') || !imageRes) {
+        throw new Error('Failed to upload file ');
+      }
+
+      const path = generatedRes.key.toString();
+      const updateResponse = await updateDocument(path, Number(requestDocument?.id));
+      if (!updateResponse) {
+        throw new Error('Failed to upload file ');
+      }
+
       setIndex(assetId);
       setUploadedDoc(prev => [...prev, selectedFiles[0]]);
       setShowSuccessToast(true);
-      setTimeout(() => setShowSuccessToast(false), 2000);
+      setTimeout(() => setShowSuccessToast(false), 4000);
       closePopup();
+
     } catch (error) {
       console.error("Error during upload:", error);
+      toast.error('An error occurred during the upload process');
     } finally {
       setLoading(false);
     }
   };
 
-  const assert = () =>{
-
-  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -162,6 +169,7 @@ const Popup: React.FC<PopupProps> = ({
 
         <div className="flex justify-center">
         <button
+          type="button"
           className={`flex justify-center items-center mt-4  w-full text-white bg-dark-blue text-base rounded-[5px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
           disabled={(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (requestDocument?.description === 'PROOF_OF_OWNERSHIP' && !isChecked)}
         >

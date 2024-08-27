@@ -84,10 +84,6 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
             ) : (
               <AirspacesEmptyMessage />
             )}
-
-         {/* {activeTab === PortfolioTabEnum.UNVERIFIED &&(
-          <UploadedDocuments uploadedDoc={uploadedDoc} />
-          )} */}
           </div>
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
