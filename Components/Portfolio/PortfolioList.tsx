@@ -6,13 +6,13 @@ import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import Modal from "../Portfolio/Modal";
 
 
-const PortfolioList = ({ title, selectAirspace }) => {
+const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
-
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -20,7 +20,8 @@ const PortfolioList = ({ title, selectAirspace }) => {
     loading,
     airspaceList,
     pageNumber,
-    activeTab
+    activeTab,
+    setAirspaceList
   } = usePortfolioList()
   
   useEffect(() => {
@@ -32,8 +33,13 @@ const PortfolioList = ({ title, selectAirspace }) => {
   }, [user])
 
 
+  
   return (
-    <div
+    <>
+              {selectedAirspace !== null && (
+            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} setAirspaceList={setAirspaceList} />
+          )}
+              <div
       className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
@@ -72,7 +78,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
           Rejected Airspaces
         </div>
       </div>
-
       {loading ? (
         <div>
           {" "}
@@ -116,7 +121,6 @@ const PortfolioList = ({ title, selectAirspace }) => {
               <AirspacesEmptyMessage />
             )}
           </div>
-
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
@@ -141,7 +145,8 @@ const PortfolioList = ({ title, selectAirspace }) => {
         </>
       )}
     </div>
+    </>
+
   );
 };
-
 export default PortfolioList;

@@ -36,6 +36,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     };
   }, [setShowSuccess, setShowClaimModal]);
 
+  const handalClosePop = () => {
+    setShowSuccess(false);
+    setShowClaimModal(false);
+  }
+
   return (
     <div>
     <Backdrop/>
@@ -44,7 +49,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
       className={`md:max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:rounded-[30px] w-full  z-50`}
     >
       <div
-        className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`w-[100%] md:h-[100%] h-screen py-10 z-40 flex flex-col gap-[15px] items-center  md:rounded-3xl ${ finalAns?.status === "Rent Successful" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         <div
           onClick={() => {
@@ -62,7 +67,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           {finalAns?.status === "Rent Successful" ? (
             <SuccessIconwhite />
           ) : (
-            <CloseIconWhite />
+            <CloseIconWhite/>
           )}
         </div>
         {finalAns?.status === "Rent Successful" ? (
@@ -143,10 +148,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
         ) : (
           <>
             <button
-              onClick={() => {
-                setShowSuccess(false);
-                setShowClaimModal(false);
-              }}
+              onClick={handalClosePop}
               className=" mt-[2.5rem] py-2 w-[50%] h-[41px]  border rounded-md gap-10 text-center text-[#FFFFFF] text-lg"
             >
               Close

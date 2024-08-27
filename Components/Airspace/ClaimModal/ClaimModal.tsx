@@ -16,8 +16,10 @@ interface PropsI {
   onCloseModal: () => void;
   data: any;
   setData: React.Dispatch<React.SetStateAction<any>>;
-  onClaim: () => void;
+  onClaim: (address?: string ) => void;
   claimButtonLoading: boolean;
+  dontShowAddressOnInput: boolean
+  setDontShowAddressOnInput:React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const ClaimModal = ({
@@ -26,6 +28,8 @@ export const ClaimModal = ({
   setData,
   onClaim,
   claimButtonLoading,
+  dontShowAddressOnInput,
+  setDontShowAddressOnInput
 }: PropsI) => {
 
   const [isInfoVisible, setIsInfoVisible] = useState(false);
@@ -74,9 +78,10 @@ export const ClaimModal = ({
       });
     }
   };
+  const [inputAddress, setInputAddress] = useState('')
   return ( 
     <div>
-    <Backdrop onClick={onCloseModal}/>
+    <Backdrop />
     <div className="claim-modal-step fixed top-0 left-0 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] w-full max-h-screen h-screen md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
       <div
         className="z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
@@ -113,34 +118,61 @@ export const ClaimModal = ({
       </div>
       <div className="overflow-y-scroll" style={{height: 'calc(100dvh - 68px)'}}>
         <div className="px-[29px]">
-          <div
-            className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-            style={{ border: "1px solid #4285F4" }}
-          >
-            <div className="w-6 h-6">
-              <LocationPointIcon />
-            </div>
-            <p className="font-normal text-[#222222] text-[14px] flex-1">
-              {data?.address}
-            </p>
-          </div>
-          <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
-            <label htmlFor="name">
-              Name of airspace<span className="text-[#E04F64]">*</span>
-            </label>
-            <input
-              value={data?.title}
-              onChange={(e) =>
-                setData((prev) => ({ ...prev, title: e.target.value }))
+        <div
+      className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
+      style={{ border: "1px solid #4285F4" }}
+    >
+      <div className="w-6 h-6 flex items-center justify-center">
+        <LocationPointIcon />
+      </div>
+      {dontShowAddressOnInput ? (
+              <input
+              value={inputAddress}
+              onChange={(e) =>{
+                setInputAddress(e.target.value)
               }
-              className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
-              style={{ border: "1px solid #87878D" }}
+              
+              }
+              className="text-[14px] outline-none text-[#222222] flex-1"
+              style={{ border: "none" }}
               type="text"
-              name="name"
-              id="name"
+              name="address"
+              id="address"
               autoComplete="off"
+              placeholder="Enter address" 
             />
-          </div>
+      ) : (
+      <input
+      value={data?.address}
+      className="text-[14px] outline-none text-[#222222] flex-1"
+      style={{ border: "none" }}
+      type="text"
+      name="address"
+      id="address"
+      autoComplete="off"
+      placeholder="Enter address" 
+    />
+      )}
+
+    </div>
+    <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
+        <label htmlFor="name">
+          Name of airspace<span className="text-[#E04F64]">*</span>
+        </label>
+        
+        <input
+          value={data?.title}
+          onChange={(e) =>
+            setData((prev) => ({ ...prev, title: e.target.value }))
+          }
+          className="py-[16px] px-[22px] rounded-lg text-[14px] outline-none text-[#222222] mt-0.5 md:mt-1"
+          style={{ border: "1px solid #87878D" }}
+          type="text"
+          name="name"
+          id="name"
+          autoComplete="off"
+        />
+      </div>
           <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
             <p className="text-[14px] font-normal text-[#838187] ">
               Are you looking to Rent or Sell your airspace?
@@ -439,7 +471,7 @@ export const ClaimModal = ({
 
             <div className="Claim-airspacebtn2-step w-[75%] md:w-[25%] rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer">
               <div className="flex justify-center items-center w-full ">
-                <LoadingButton  onClick={onClaim} isLoading={claimButtonLoading} color={'white'}>
+                <LoadingButton onClick={() => onClaim(inputAddress)} isLoading={claimButtonLoading} color={'white'}>
                   Claim Airspace
                 </LoadingButton>
               </div>
