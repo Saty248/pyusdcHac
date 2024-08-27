@@ -11,7 +11,6 @@ const DocumentUploadServices = () => {
     const  response = await postRequest({
         uri: `/private/request-document/generate-upload-url?contentType=${fileType}&requestId=${requestId}`,
       });
-      console.log(response,"hello test")
       return response?.data;
     } catch (error) {
       console.error(error);

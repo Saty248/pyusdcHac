@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { ChevronRightIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
-import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
-import UploadedDocuments from "../MyAccount/UploadedDocuments";
+import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
+import UploadedDocuments from "./UploadedDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
+import AdditionalDocuments from "./AdditionalDocuments";
 
 const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc,assetId}) => {
-  console.log(assetId,"assetId")
   const [showPopup, setShowPopup] = useState(false);
   const [index,setIndex] = useState();
   const [showSuccessToast, setShowSuccessToast] = useState(false)
-
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -18,7 +16,6 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
   const closePopup = () => {
     setShowPopup(false);
   };
-  console.log()
   return (
     <div
       className="p-[11px] items-center justify-between gap-[10px] rounded-lg bg-white cursor-pointer"
@@ -64,10 +61,7 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
         </p>
        </div>
         )}
-        
-
-
-  {requestDocument &&  requestDocument[0]?.document && (
+        {requestDocument &&  requestDocument[0]?.status == 'SUBMITTED' && (
           <div className="flex justify-center items-center gap-2">
           <div className="w-6 h-6">
           <ReviewVerificationIcon />
@@ -76,21 +70,39 @@ const PortfolioItem = ({ airspaceName, tags, type, selectAirspace, setUploadedDo
                  Documents under review
           </p>
           </div>
-   )}
-        
+        )}
+        {requestDocument &&  requestDocument[0]?.status == 'APPROVED' && (
+          <div className="flex justify-center items-center gap-2">
+          <div className="w-6 h-6">
+          <DocumentApprovedIcon />
+          </div>
+          <p className="text-[#1FD387] font-normal text-sm">
+          Documents approved
+          </p>
+          </div>
+        )}
+        {requestDocument &&  requestDocument[0]?.status == 'REJECTED' && (
+          <div className="flex justify-center items-center gap-2">
+          <div className="w-6 h-6">
+          <DocumentRejectedIcon />
+          </div>
+          <p className="text-[#E04F64] font-normal text-sm">
+          Documents rejected
+          </p>
+          </div>
+        )}
         <div className="w-[7px] h-[14px]">
           <ChevronRightIcon />
         </div>
       </div>
       </div>
-     
-   {uploadedDoc?.length > 0 && requestDocument && requestDocument?.length>0 && (index === assetId )&& <UploadedDocuments  uploadedDoc={uploadedDoc} requestDocument = {requestDocument}/>}
 
+      {uploadedDoc?.length > 0 && requestDocument && requestDocument?.length>0 && (index === assetId )&& <UploadedDocuments  uploadedDoc={uploadedDoc } requestDocument = {requestDocument}/>}
       {showPopup && (
         <AdditionalDocuments assetId={assetId} setIndex={setIndex} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument[0]} />
         )}
  
-  {showSuccessToast &&  <VerificationSuccessPopup />}
+    {showSuccessToast &&  <VerificationSuccessPopup />}
     </div>
   );
 };
