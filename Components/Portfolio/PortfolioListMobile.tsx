@@ -5,7 +5,6 @@ import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import UploadedDocuments from "../MyAccount/UploadedDocuments";
-
 const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) => {
   const {
     handleTabSwitch,
@@ -16,7 +15,6 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
     pageNumber,
     activeTab
   } = usePortfolioList();
-
   return (
     <div className="overflow-x-hidden mb-24">
       <div
@@ -60,7 +58,6 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
           Rejected Airspaces
         </div>
       </div>
-
       {loading ? (
         <div>
           {" "}
@@ -74,14 +71,15 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
               airspaceList[0].address ? (
               airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
-                  airspaceName={airspace?.address}
-                  key={index}
-                  tags={[true, false, false, false]}
-                  type={airspace?.type}
-                  uploadedDoc={uploadedDoc}
-                  setUploadedDoc={setUploadedDoc}
-                  isDocumentRequired={index === 0}
-                  selectAirspace={() => selectAirspace(airspace)}
+                airspaceName={airspace?.address}
+                key={index}
+                tags={[true, false, false, false]}
+                type={airspace?.type}
+                requestDocument={airspace?.requestDocument}
+                selectAirspace={() => selectAirspace(airspace)}
+                uploadedDoc={uploadedDoc}
+                setUploadedDoc={setUploadedDoc}
+                assetId={airspace?.id}
                 />
               ))
             ) : (
@@ -92,7 +90,6 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
           <UploadedDocuments uploadedDoc={uploadedDoc} />
           )} */}
           </div>
-
           <div className="flex flex-col w-full text-gray-600">
             <div className="flex self-end items-center gap-2 w-[5rem]">
               <button
@@ -119,5 +116,4 @@ const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) =>
     </div>
   );
 };
-
 export default PortfolioListMobile;

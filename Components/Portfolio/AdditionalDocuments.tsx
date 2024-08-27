@@ -62,10 +62,8 @@ const Popup: React.FC<PopupProps> = ({
 
     try {
       setLoading(true);
-        const url = await generateS3UploadUrl(selectedFiles[0]?.type,requestDocument?.id)
-        console.log
+      const url = await generateS3UploadUrl(selectedFiles[0]?.type,requestDocument?.id)
       await uploadImage(url,selectedFiles[0]);
-
       const path = url?.key.toString();
       await updateDocument(path, Number(requestDocument?.id));
       setIndex(assetId);
@@ -82,7 +80,7 @@ const Popup: React.FC<PopupProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="fixed bottom-0 md:relative md:top-0 flex flex-col md:w-[566px] md:min-h-[350px] md:py-[20px] py-[30px] md:px-[20px] px-[30px] rounded-t-[30px] md:rounded-[15px] bg-white gap-[15px]" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
+      <div className="fixed bottom-0 md:relative md:top-0 flex flex-col h-[75%] md:w-[566px] md:min-h-[350px] md:py-[20px] py-[30px] md:px-[20px] px-[30px] rounded-t-[30px] md:rounded-[15px] bg-white gap-[15px] overflow-auto" style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}>
         <div>
           {isMobile ? (
             <div className="flex flex-col justify-center items-center">
@@ -150,14 +148,14 @@ const Popup: React.FC<PopupProps> = ({
 
         <div className="flex justify-center">
         <button
-          className={`mt-4 px-[10px] py-[17px] w-full text-white bg-dark-blue text-base rounded-[5px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+          className={`mt-4  w-full text-white bg-dark-blue text-base rounded-[5px] ${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
           disabled={(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (requestDocument?.description === 'PROOF_OF_OWNERSHIP' && !isChecked)}
         >
           <LoadingButton
             onClick={handleClick}
             isLoading={loading}
             color={"white"}
-            className={`${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+            className={`${(requestDocument?.description != 'PROOF_OF_OWNERSHIP') || (isChecked && requestDocument?.description === 'PROOF_OF_OWNERSHIP') ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"} w-full h-full px-[10px] py-[17px]`}
           >
             Submit Additional Documents
           </LoadingButton>

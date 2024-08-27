@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, SetStateAction, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import PageHeader from "@/Components/PageHeader";
@@ -15,6 +15,7 @@ import { useSearchParams } from "next/navigation";
 import PropertiesService from "@/services/PropertiesService";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { Web3authContext } from "@/providers/web3authProvider";
+import { PropertyData } from "@/types";
 
 const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -86,15 +87,12 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
-          {selectedAirspace !== null && (
-            <Modal airspace={selectedAirspace} onCloseModal={onCloseModal} uploadedDoc={uploadedDoc}/>
-          )}
+          
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace} 
-              uploadedDoc={uploadedDoc}
+              selectAirspace={selectAirspace}  selectedAirspace={selectedAirspace} onCloseModal={undefined}              uploadedDoc={uploadedDoc}
               setUploadedDoc={setUploadedDoc}            />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">

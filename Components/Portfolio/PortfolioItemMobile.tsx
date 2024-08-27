@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { ChevronRightIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
-import AdditionalDocuments from "../MyAccount/AdditionalDocuments";
+import { ChevronRightIcon, DocumentApprovedIcon, DocumentRejectedIcon, LocationPointIcon, ReviewVerificationIcon } from "../Icons";
+import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "../MyAccount/VerificationSuccessPopup";
-import UploadedDocuments from "../MyAccount/UploadedDocuments";
+import UploadedDocuments from "./UploadedDocuments";
 
-const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocumentRequired,setUploadedDoc,uploadedDoc }) => {
+const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace, setUploadedDoc, requestDocument,uploadedDoc,assetId}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [index,setIndex] = useState();
 
   const handleButtonClick = () => {
     setShowPopup(true);
@@ -52,22 +53,7 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocume
                   Review Offer
                 </div>
               )}
-            
-            </div>
-            {isDocumentRequired && (
-            <div className="flex justify-between items-center gap-12 w-full mt-4">
-            <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
-            <p className="text-orange-500 font-normal text-sm">
-              Additional documents requested
-            </p>
-            </div> 
-          <div className="w-[7px] h-[14px]">
-              <ChevronRightIcon />
-            </div>
-          </div>
-        )}
-            
-            {uploadedDoc?.length > 0 && isDocumentRequired && (
+            {requestDocument &&  requestDocument[0]?.status == 'SUBMITTED' && (
                 <div className=" mt-4 flex justify-start items-center gap-2">
                 <div className="w-6 h-6">
                 <ReviewVerificationIcon />
@@ -77,11 +63,44 @@ const PortfolioItemMobile = ({ airspaceName, tags, type, selectAirspace,isDocume
                 </p>
             </div>
             )}
-      
-      {uploadedDoc?.length > 0 && isDocumentRequired && <UploadedDocuments uploadedDoc={uploadedDoc}/>}
-      
+            {requestDocument &&  requestDocument[0]?.status == 'APPROVED' && (
+          <div className="flex justify-center items-center gap-2">
+          <div className="w-6 h-6">
+          <DocumentApprovedIcon />
+          </div>
+          <p className="text-[#1FD387] font-normal text-sm">
+          Documents approved
+          </p>
+          </div>
+        )}
+        {requestDocument &&  requestDocument[0]?.status == 'REJECTED' && (
+          <div className="flex justify-center items-center gap-2">
+          <div className="w-6 h-6">
+          <DocumentRejectedIcon />
+          </div>
+          <p className="text-[#E04F64] font-normal text-sm">
+          Documents rejected
+          </p>
+          </div>
+        )}
+            </div>
+            {((requestDocument && requestDocument?.length>0 )&& (!requestDocument[0]?.document) )&&(
+            <div className="flex justify-between items-center gap-12 w-full mt-4">
+            <div onClick={handleButtonClick} className="p-2 border border-orange-500 rounded-md">
+            <p className="text-orange-500 font-normal text-sm">
+              Additional documents requested
+            </p>
+            </div> 
+            <div className="w-[7px] h-[14px]">
+                  <ChevronRightIcon />
+                </div>
+              </div>
+            )}
+            
+            
+      {uploadedDoc?.length > 0 && requestDocument && requestDocument?.length>0 && (index === assetId )&& <UploadedDocuments  uploadedDoc={uploadedDoc } requestDocument = {requestDocument}/>}
       {showPopup && (
-        <AdditionalDocuments showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} />
+        <AdditionalDocuments assetId={assetId} setIndex={setIndex} showPopup={showPopup} setUploadedDoc={setUploadedDoc} setShowSuccessToast={setShowSuccessToast} closePopup={closePopup} requestDocument = {requestDocument[0]} />
         )}
  
         {showSuccessToast &&  <VerificationSuccessPopup />}

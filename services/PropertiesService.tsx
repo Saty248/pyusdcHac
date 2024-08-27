@@ -76,6 +76,33 @@ const PropertiesService = () => {
     }
   }
 
+  const getRentedTimes = async (propertyId: string | number)=>{
+    try {
+      const response = await getRequest({
+        uri: `/private/properties/get-rental-timeframe/${propertyId}`
+      })
+      console.log(response , "response")
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  const editAirSpaceAddress = async (postData: {address: string, propertyId: number}) => {
+    try {
+      const response = await patchRequest({
+        uri: `/private/properties/update`,
+        postData,
+      
+      }) 
+       console.log(postData, "postData")
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   return { 
     findPropertiesByCoordinates,
@@ -83,7 +110,9 @@ const PropertiesService = () => {
     claimProperty,
     updateClaimedProperty,
     deleteProperty,
-    getClaimedPropertiesByUserAddress
+    getClaimedPropertiesByUserAddress,
+    getRentedTimes,
+    editAirSpaceAddress
   };
 };
 
