@@ -1,11 +1,20 @@
 import Service from "./Service"
+interface GenerateS3UploadUrlParams {
+  fileType: File;
+  requestId: string | number;
+}
+
+interface UpdateDocumentParams {
+  path: string;
+  requestId: string | number;
+}
 
 const DocumentUploadServices = () => {
   const { getRequest, postRequest, patchRequest } = Service();
 
 
 
-  const generateS3UploadUrl = async ( fileType,requestId )=>{
+  const generateS3UploadUrl = async ( {fileType,requestId } : GenerateS3UploadUrlParams )=>{
     try {
       if(!fileType || !requestId)return;
     const  response = await postRequest({
@@ -17,7 +26,7 @@ const DocumentUploadServices = () => {
       throw new Error(error.message)
     }
   }
-  const updateDocument = async ( path,requestId )=>{
+  const updateDocument = async ({ path,requestId} : UpdateDocumentParams)=>{
     try {
       if(!path || !requestId)return;
     const  response = await postRequest({
