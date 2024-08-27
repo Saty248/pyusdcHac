@@ -9,6 +9,7 @@ import WeekDayRangesForm from "./RentalDetails/WeekDayRangesForm";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 import Backdrop from "@/Components/Backdrop";
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
 import { defaultData } from "../../../types";
 import { useMobile } from "@/hooks/useMobile";
 

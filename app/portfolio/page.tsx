@@ -27,10 +27,11 @@ const Portfolio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAirspace, setSelectedAirspace] = useState(null);
   const { user, web3authStatus } = useAuth();
-  const { getPropertyById } = PropertiesService();
-  const { getSingleAsset } = AirspaceRentalService();
-  const searchParams = useSearchParams();
-
+  const {getPropertyById} = PropertiesService()
+  const { getSingleAsset } = AirspaceRentalService()
+  const searchParams = useSearchParams()
+  const [uploadedDoc, setUploadedDoc] =useState<File[]>([])
+  
   const id = searchParams?.get("id");
 
   const { web3auth } = useContext(Web3authContext);
@@ -92,17 +93,16 @@ const Portfolio = () => {
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
+
           <PageHeader pageTitle={"Portfolio"} />
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace}
-              selectedAirspace={selectedAirspace}
-              onCloseModal={onCloseModal}
-            />
+              selectAirspace={selectAirspace} selectedAirspace={selectedAirspace} onCloseModal={onCloseModal}
+              uploadedDoc={uploadedDoc}  setUploadedDoc={setUploadedDoc}           />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
-            <PortfolioListMobile selectAirspace={selectAirspace} />
+            <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />
           </section>
         </div>
       </div>
