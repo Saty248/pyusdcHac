@@ -1,5 +1,11 @@
 "use client";
-import { Fragment, SetStateAction, useContext, useEffect, useState } from "react";
+import {
+  Fragment,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 import PageHeader from "@/Components/PageHeader";
@@ -24,24 +30,25 @@ const Portfolio = () => {
   const {getPropertyById} = PropertiesService()
   const { getSingleAsset } = AirspaceRentalService()
   const searchParams = useSearchParams()
+  const [uploadedDoc, setUploadedDoc] =useState<File[]>([])
   
   const id = searchParams?.get("id");
 
-  const { web3auth } = useContext(Web3authContext)
+  const { web3auth } = useContext(Web3authContext);
 
-  useEffect(()=>{
+  useEffect(() => {
     (async () => {
       if (web3auth && web3auth.status === "connected" && id) {
-        let portfolioData = null
+        let portfolioData = null;
         if (!isNaN(Number(id))) {
-          portfolioData = await getPropertyById(id)
+          portfolioData = await getPropertyById(id);
         } else {
-          portfolioData = await getSingleAsset(id)
+          portfolioData = await getSingleAsset(id);
         }
-        setSelectedAirspace(portfolioData)
+        setSelectedAirspace(portfolioData);
       }
-    })()
-  }, [id, web3auth?.status])
+    })();
+  }, [id, web3auth?.status]);
 
   useEffect(() => {
     if (!user) return;
@@ -91,10 +98,11 @@ const Portfolio = () => {
           <section className="relative w-full h-full md:flex flex-wrap gap-6 py-[43px] px-[45px] hidden overflow-y-auto">
             <PortfolioList
               title={"My Airspaces"}
-              selectAirspace={selectAirspace} selectedAirspace={selectedAirspace} onCloseModal={undefined}            />
+              selectAirspace={selectAirspace} selectedAirspace={selectedAirspace} onCloseModal={onCloseModal}
+              uploadedDoc={uploadedDoc}  setUploadedDoc={setUploadedDoc}           />
           </section>
           <section className="relative w-full h-full flex flex-wrap gap-6 py-[10px] md:hidden overflow-y-auto ">
-            <PortfolioListMobile selectAirspace={selectAirspace} />
+            <PortfolioListMobile selectAirspace={selectAirspace} uploadedDoc={uploadedDoc} setUploadedDoc={setUploadedDoc} />
           </section>
         </div>
       </div>

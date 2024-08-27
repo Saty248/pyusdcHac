@@ -9,10 +9,13 @@ import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
 
 
-const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal }) => {
+
+const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal, setUploadedDoc, uploadedDoc }) => {
+
   const { user } = useAuth();
   const router = useRouter();
   const [showPopup, setShowPopup] = useState<boolean>(false);
+
   const {
     handleTabSwitch,
     handlePrevPage,
@@ -29,7 +32,6 @@ const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal }) 
       setShowPopup(true);
       return
     }
-
   }, [user])
 
 
@@ -59,17 +61,26 @@ const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal }) 
         >
           Rented Airspaces
         </div>
-        <div
-          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+        <div className="flex">
+        <div  className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
         >
           Pending Rented Airspaces
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
-          onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
-        >
-          Pending Verification
+         
+        className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 flex items-center`}
+        onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
+      >
+        <span>Pending Verification</span>
+        
+        <div className="relative w-[24px] h-[24px] ml-2">
+          <div className="absolute inset-0 bg-[#F79663] text-white text-xs flex items-center justify-center rounded-md">
+            1
+          </div>
+        </div>
+      </div>
+
         </div>
         <div
           className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
@@ -114,7 +125,11 @@ const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal }) 
                   key={index}
                   tags={[true, false, false, false]}
                   type={airspace?.type}
+                  requestDocument={airspace?.requestDocument}
                   selectAirspace={() => selectAirspace(airspace)}
+                  uploadedDoc={uploadedDoc}
+                  setUploadedDoc={setUploadedDoc}
+                  assetId={airspace?.id}
                 />
               ))
             ) : (
