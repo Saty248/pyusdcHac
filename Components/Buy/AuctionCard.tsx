@@ -2,6 +2,8 @@ import { AuctionDataI } from "@/types";
 import { getMapboxStaticImage, getTimeLeft } from "@/utils/marketplaceUtils";
 
 import Carousel from "../Shared/Carousel";
+import Image from "next/image";
+import { shortenAddress } from "@/utils";
 interface AuctionCardProps {
   data: AuctionDataI;
   handleShowBidDetail: Function;
@@ -11,7 +13,6 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   data,
   handleShowBidDetail,
 }) => {
-
   const endDate = new Date(data?.endDate);
   const timeLeft = getTimeLeft(endDate);
 
@@ -50,31 +51,48 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
       style={{ boxShadow: "0px 4px 10px 0px #0000001a" }}
     >
       <div className="relative w-full h-[130px]">
-        <Carousel images={images} />
+        {/* <Carousel images={images} /> */}
+        <Image
+          src={imageUrl}
+          alt={`Map at ${latitude}, ${longitude}`}
+          layout="fill"
+          objectFit="cover"
+        />
       </div>
       <div className="px-4 py-2 flex flex-col items-start">
         <div className="text-sm text-black font-bold flex items-center justify-between w-full">
-          Name
+          {shortenAddress(title, 10)}
           <div className="text-xs text-[#727272]">{getStatus(endDate)}</div>
         </div>
         <div className="text-sm text-[#727272] truncate w-[95%] text-left">
-          {title}
+          {shortenAddress(data.assetId, 15)}
         </div>
       </div>
 
       <div className="flex justify-between px-4 pb-2 bg-[#4285F4]/5 pt-1">
         <div className="flex flex-col items-start">
           <div className="text-sm text-[#727272]">Highest Bid</div>
-          <div className="text-sm text-black font-bold">${data.currentPrice}</div>
+          <div className="text-sm text-black font-bold">
+            ${data.currentPrice}
+          </div>
         </div>
         <div className="flex flex-col items-end">
-          <div className="text-sm text-[#727272]">Time Left</div>
-          <div className="text-sm text-black font-bold">{timeLeft}</div>
+          <div className="text-sm text-[#727272]">
+            {timeLeft.toLowerCase() === "time's up!"
+              ? "Time's up!"
+              : "Time Left"}
+          </div>
+          <div className="text-sm text-black font-bold">
+            {timeLeft.toLowerCase() !== "time's up!" ? timeLeft : ""}
+          </div>
         </div>
       </div>
       <div className="flex justify-center px-[15px] py-[10px] h-[51px]">
-        <div className=" bg-[#0653EA] w-full flex items-center rounded-lg h-[31px]">
+        <div
+          className={`${timeLeft.toLowerCase() === "time's up!" ? "bg-gray-300" : "bg-[#0653EA]"} w-full flex items-center rounded-lg h-[31px]`}
+        >
           <button
+            disabled={timeLeft.toLowerCase() === "time's up!"}
             onClick={() => handleShowBidDetail(data)}
             className="w-full text-white text-[14px] leading-[21px]"
           >

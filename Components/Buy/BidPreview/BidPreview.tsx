@@ -57,47 +57,42 @@ const BidPreview: React.FC<BidPreviewProps> = ({
   const { provider } = useContext(Web3authContext);
   const [isLoading, setIsLoading] = useState(false);
   const { createBid, submitSignature } = MarketplaceService();
-  console.log({ user });
 
   const handleBid = async () => {
-    if (user?.blockchainAddress === auctionDetailData?.owner) {
+    if (user?.blockchainAddress === auctionDetailData?.seller) {
       return toast.error("You cannot bid on your own property!");
     }
 
-    // const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
-    // if (balance === 0) {
-    //   return toast.info(
-    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
-    //   );
-    // }
+    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    if (balance === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
+      );
+    }
 
-    // if (parseFloat(userUSDWalletBalance.amount) === 0) {
-    //   return toast.info(
-    //     "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
-    //   );
-    // }
-    // console.log({ userUSDWalletBalance });
-    // console.log({ auctionDetailData });
-    // console.log({ userSolBalance });
-    // console.log({ currentUserBid });
-    // return;
+    if (parseFloat(userUSDWalletBalance.amount) === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
+      );
+    }
+
     try {
       setIsLoading(true);
       if (
         currentUserBid &&
         auctionDetailData &&
-        currentUserBid < auctionDetailData?.currentPrice
+        currentUserBid <= auctionDetailData?.initialPrice
       ) {
-        toast.error("bid value less than the minimum bid price!");
+        toast.error("Your bid should be higher than the highest bid");
         setIsLoading(false);
         return;
       }
       const postData = {
-        account:user?.blockchainAddress,
+        account: user?.blockchainAddress,
       };
       const auction = auctionDetailData?.pdaAddress.toString();
-      const response: any = await createBid( postData , auction, currentUserBid);
-      if (response  && response?.data && response?.data?.transaction) {
+      const response: any = await createBid(postData, auction, currentUserBid);
+      if (response && response?.data && response?.data?.transaction) {
         const transaction = VersionedTransaction.deserialize(
           new Uint8Array(Buffer.from(response?.data?.transaction, "base64"))
         );
@@ -109,7 +104,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           const result: any = await submitSignature({ postData });
           if (
             result == undefined ||
-            result?.data?.txSignature == "" || 
+            result?.data?.txSignature == "" ||
             result?.data?.txSignature == null ||
             result?.status != 201
           ) {
@@ -139,12 +134,15 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       setIsLoading(false);
     }
   };
-  const { latitude, longitude, title } = auctionDetailData?.layer?.property || {};
+  const { latitude, longitude, title } =
+    auctionDetailData?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
-  const images = [{ "image_url": "/images/imagetest1.jpg" },
-    { "image_url": "/images/imagetest2.jpg" },
-    { "image_url": "/images/imagetest3.jpg" }]
-    images[0] = {image_url:imageUrl};
+  const images = [
+    { image_url: "/images/imagetest1.jpg" },
+    { image_url: "/images/imagetest2.jpg" },
+    { image_url: "/images/imagetest3.jpg" },
+  ];
+  images[0] = { image_url: imageUrl };
 
   return (
     <div className="fixed inset-0 bottom-[74px] sm:bottom-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
@@ -191,14 +189,13 @@ const BidPreview: React.FC<BidPreviewProps> = ({
           <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
             <div className="relative h-[130px]">
               <div className="relative w-full h-[130px] ">
-                {/* <Image
+                <Image
                   src={imageUrl}
                   alt={`Map at ${latitude}, ${longitude}`}
                   layout="fill"
                   objectFit="cover"
-                /> */}
-                  <Carousel images={images} />
-
+                />
+                {/* <Carousel images={images} /> */}
               </div>
             </div>
           </div>
@@ -207,20 +204,19 @@ const BidPreview: React.FC<BidPreviewProps> = ({
               <div className="flex">
                 <div>Owner:</div>
                 <div className="text-light-grey pl-[15px] truncate ">
-                  {auctionDetailData?.owner}
+                  {auctionDetailData?.seller}
                 </div>
               </div>
               <div className="flex">
                 <div>Expiration Date:</div>
                 <div className="text-light-grey pl-[15px]">
                   {formatDate(auctionDetailData?.endDate)}
-                  {/* 15 january 2024 at 11:49 AM */}
                 </div>
               </div>
               <div className="flex">
-                <div>Fees:</div>
+                <div>Minimum Bid:</div>
                 <div className="text-light-grey pl-[15px]">
-                  {auctionDetailData?.price}
+                  $ {auctionDetailData?.initialPrice}
                 </div>
               </div>
             </div>
@@ -265,7 +261,6 @@ const BidPreview: React.FC<BidPreviewProps> = ({
             onClick={handleBid}
             className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
           >
-            {/* <button onClick={() => handleBid()}>Confirm Bid</button> */}
             Confirm Bid
           </LoadingButton>
         </div>

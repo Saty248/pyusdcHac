@@ -49,7 +49,7 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
       className={`fixed inset-0 z-50 flex items-start sm:pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]`}
     >
       <div
-        className={`w-[100vw] h-[100vh] sm:w-[422px] sm:h-[525px]  z-40 flex flex-col items-center justify-center sm:rounded-3xl ${responseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
+        className={`relative w-[100vw] h-[100vh] sm:w-[422px] sm:h-[525px]  z-40 flex flex-col items-center justify-center sm:rounded-3xl ${responseStatus === "SUCCESS" ? "bg-[#34A853]" : "bg-[#F5AA5E]"}`}
       >
         {
           <div
@@ -119,10 +119,10 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
                   View transaction on{" "}
                   <a
                     className="underline"
-                    href={`https://solscan.io/tx/${txHash}`}
+                    href={`https://solana.fm/tx/${txHash}?cluster=devnet-alpha`}
                     target="blank"
                   >
-                    solscan.io
+                    solana.fm
                   </a>
                 </p>
               </div>
@@ -135,10 +135,10 @@ const SuccessFailPopup: React.FC<SuccessFailPopupProps> = ({
                   View transaction on{" "}
                   <a
                     className="underline"
-                    href={`https://solscan.io/tx/${txHash}`}
+                    href={`https://solana.fm/tx/${txHash}?cluster=devnet-alpha`}
                     target="blank"
                   >
-                    solscan.io
+                    solana.fm
                   </a>
                 </p>
               </div>

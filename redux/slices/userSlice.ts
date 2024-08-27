@@ -18,7 +18,7 @@ interface UserState {
   isTriggerRefresh: boolean;
   priceRange: number[];
   endDate: string | null;
-  minSalePrice: number;
+  minSalePrice: number | null;
   assetId: string;
 }
 
@@ -38,7 +38,7 @@ const initialState: UserState = {
   isTriggerRefresh: false,
   priceRange: [0, 0],
   endDate: null,
-  minSalePrice: 0,
+  minSalePrice: null,
   assetId: "",
 };
 

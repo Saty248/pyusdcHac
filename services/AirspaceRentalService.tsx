@@ -44,6 +44,22 @@ const AirspaceRentalService = () => {
     }
   };
 
+  const getBidsAndOffers = async (callerAddress) => {
+    try {
+      if (!callerAddress) return [];
+      const response = await getRequest({
+        uri: `/private/auction-house/get-user-bids`,
+      });
+      if (!response) {
+        return [];
+      }
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   const getUnverifiedAirspaces = async (
     callerAddress: string | undefined,
     page: string | number,
@@ -145,6 +161,7 @@ const AirspaceRentalService = () => {
     getTotalAirspacesByUserAddress,
     getSingleAsset,
     getRetrievePendingRentalAirspace,
+    getBidsAndOffers,
   };
 };
 

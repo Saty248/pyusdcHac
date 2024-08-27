@@ -5,7 +5,6 @@ import Spinner from "../Spinner";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-
 const PortfolioList = ({ title, selectAirspace }) => {
   const {
     handleTabSwitch,
@@ -14,8 +13,8 @@ const PortfolioList = ({ title, selectAirspace }) => {
     loading,
     airspaceList,
     pageNumber,
-    activeTab
-  } = usePortfolioList()
+    activeTab,
+  } = usePortfolioList();
   return (
     <div
       className="py-[43px] px-[29px] rounded-[30px] bg-white flex flex-col gap-[43px] min-w-[516px] flex-1"
@@ -24,36 +23,44 @@ const PortfolioList = ({ title, selectAirspace }) => {
       <h2 className="font-medium text-xl text-[#222222] text-center">
         {title}
       </h2>
-      <div className="flex items-center gap-16">
+      <div className="flex items-center gap-2">
         <div
-          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
         >
-          Verified Airspaces
+          Verified
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
-          Rented Airspaces
+          Rented
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
         >
-          Pending Rented Airspaces
+          Pending Rented
         </div>
+
         <div
-          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.BIDS ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          onClick={() => handleTabSwitch(PortfolioTabEnum.BIDS)}
+        >
+          Bids and Offers
+        </div>
+
+        <div
+          className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           Pending Verification
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75`}
+          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
         >
-          Rejected Airspaces
+          Rejected
         </div>
       </div>
       {loading ? (
@@ -63,13 +70,12 @@ const PortfolioList = ({ title, selectAirspace }) => {
       ) : (
         <>
           <div className="flex flex-col gap-[15px] min-h-[20rem]">
-            {airspaceList && airspaceList[0] && airspaceList[0].address ? (
+            {airspaceList && airspaceList[0] ? (
               airspaceList?.map((airspace, index) => (
                 <PortfolioItem
-                  airspaceName={airspace?.address}
+                  airspace={airspace}
                   key={index}
                   tags={[true, false, false, false]}
-                  type={airspace?.type}
                   selectAirspace={() => selectAirspace(airspace)}
                 />
               ))

@@ -16,9 +16,9 @@ const Accordion: React.FC<AccordionProps> = ({ content, title }) => {
   return (
     <div>
       <button
-        className="flex justify-between items-center cursor-not-allowed "
+        className="flex justify-between items-center "
         onClick={toggleAccordion}
-        disabled
+        // disabled
       >
         {
           <div className="text-light-black text-[15px] leading-[22.5px] font-500">

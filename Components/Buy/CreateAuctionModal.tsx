@@ -96,9 +96,21 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                 {" "}
                 <div>Select the Airspace you would like to auction</div>
                 <div className="text-black">
-                  <HiMiniPlusSmall />
+                  <button
+                    disabled={pageNumber === 1}
+                    onClick={handlePrevPage}
+                    className={` ${pageNumber === 1 ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
+                  >
+                    <HiMiniMinusSmall />
+                  </button>
                   {pageNumber}
-                  <HiMiniMinusSmall />
+                  <button
+                    disabled={!hasMore}
+                    onClick={handleNextPage}
+                    className={` ${!hasMore ? "text-slate-300" : "cursor-pointer hover:bg-light-grey hover:text-white"} border rounded transition ease-in-out duration-200`}
+                  >
+                    <HiMiniPlusSmall />
+                  </button>
                 </div>
               </div>
 
