@@ -26,9 +26,9 @@ interface VerificationPopupProps {
           </button>
           <div className="flex w-full h-full">
             <div className="md:w-[50%] p-8 flex flex-col justify-center items-center md:gap-6 gap-4">
-              <h1 className="text-xl font-medium text-[#222222] text-center w-56 border">🚀 Attention Airspace Owner!</h1>
+              <h1 className="text-xl font-medium text-[#222222] text-center w-56 ">🚀 Attention Airspace Owner!</h1>
               <h1 className="text-xl font-medium text-[#222222] block md:hidden">Account verification</h1>
-              <p className="text-base font-normal text-[#838187] text-center leading-7 w-[235px] border">
+              <p className="text-base font-normal text-[#838187] text-center leading-7 w-[235px] ">
               Your airspace awaits verification by our operation team. Complete your KYC to expedite the process and ensure swift approval. Plus, <span className="text-[#87878D] text-base font-bold">earn 10 SKY points</span>  as a token of our appreciation! Don't delay - verify now and unlock the full potential of your airspace! 
               </p>
               <button onClick={onVerifyMyAccount} className="text-base font-medium w-[235px] px-6 py-3 text-white bg-dark-blue">
