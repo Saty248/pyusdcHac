@@ -75,9 +75,9 @@ const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal, se
         <span>Pending Verification</span>
         
         <div className="relative w-[24px] h-[24px] ml-2">
-          <div className="absolute inset-0 bg-[#F79663] text-white text-xs flex items-center justify-center rounded-md">
+          {/* <div className="absolute inset-0 bg-[#F79663] text-white text-xs flex items-center justify-center rounded-md">
             1
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -127,9 +127,7 @@ const PortfolioList = ({ title, selectAirspace,selectedAirspace,onCloseModal, se
                   type={airspace?.type}
                   requestDocument={airspace?.requestDocument}
                   selectAirspace={() => selectAirspace(airspace)}
-                  uploadedDoc={uploadedDoc}
                   setUploadedDoc={setUploadedDoc}
-                  assetId={airspace?.id}
                 />
               ))
             ) : (

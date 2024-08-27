@@ -1005,7 +1005,7 @@ export const FailedVerificationIcon = () => {
 
 export const ReviewVerificationIcon = () => {
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="21" cy="21" r="21" fill="#F79663"/>
     <circle cx="21" cy="21" r="9" stroke="white" stroke-width="2"/>
     <path d="M25.5 21H21.25C21.1119 21 21 20.8881 21 20.75V17.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
