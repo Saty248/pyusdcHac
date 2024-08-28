@@ -26,28 +26,28 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
   return (
     <div className="overflow-x-hidden mb-24">
       <div
-        className=" flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-6"
+        className="flex items-center overflow-x-scroll border-b border-[#5D7285]/50 gap-12"
         style={{ scrollbarWidth: "none", scrollbarColor: "none" }}
       >
         <div
-          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A] " : "text-[#5D7285]"} px-6 py-2.5 cursor-pointer transition ease-linear delay-75 whitespace-nowrap text-base font-bold`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
         >
           Verified Airspaces
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-6 py-2.5 cursor-pointer transition ease-linear delay-75 whitespace-nowrap text-base font-bold`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
         >
           Rented Airspaces
         </div>
         <div
-          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-6 py-2.5 cursor-pointer transition ease-linear delay-75 whitespace-nowrap text-base font-bold`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
         >
           Pending Rented Airspaces
         </div>
-        <div className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7]" : ""} px-8 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap flex`}
+        <div className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4 border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-6 py-2.5 cursor-pointer transition ease-linear delay-75 whitespace-nowrap text-base font-bold flex`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
         >
           <span className="flex-1">Pending Verification</span>
@@ -60,7 +60,7 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
         </div>
 
         <div
-          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7]" : ""} px-3 py-2 cursor-pointer transition ease-linear delay-75 whitespace-nowrap`}
+          className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-6 py-2.5 cursor-pointer transition ease-linear delay-75 whitespace-nowrap text-base font-bold`}
           onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
         >
           Rejected Airspaces
