@@ -161,7 +161,6 @@ const Airspaces: React.FC = () => {
     let timeoutId: NodeJS.Timeout;
 
     const getAddresses = async () => {
-      setCoordinates({ longitude: "", latitude: "" });
 
       timeoutId = setTimeout(async () => {
         try {
@@ -189,7 +188,7 @@ const Airspaces: React.FC = () => {
   //flies to the new address
   useEffect(() => {
     const propertyAddress = searchParams?.get('propertyAddress')
-    if (!flyToAddress && !propertyAddress) return;
+    if ((!flyToAddress || flyToAddress == '') && !propertyAddress) return;
 
     const goToAddress = async () => {
       try {
@@ -216,9 +215,6 @@ const Airspaces: React.FC = () => {
           center: temp,
           zoom: 16,
         });
-        if (marker) {
-          marker.remove();
-        }
       } catch (error) {
         setIsLoading(false);
         toast.error("invalid address")
@@ -227,14 +223,18 @@ const Airspaces: React.FC = () => {
        goToAddress();
   }, [flyToAddress, map]);
   useEffect(()=>{
-    if(map && coordinates[0] !== "" && coordinates[1] !== ""){
+    if(map && coordinates?.latitude !== "" && coordinates?.longitude !== ""){
       let  temp:mapboxgl.LngLatLike={lng:Number(coordinates.longitude) ,lat:Number(coordinates?.latitude)}
-        const newMarker = new mapboxgl.Marker({
+      if (marker) {
+          marker.remove();
+          setMarker(null)
+        }  
+      const newMarker = new mapboxgl.Marker({
           color: "#3FB1CE",}).setLngLat(temp)
           .addTo(map as mapboxgl.Map);
           setMarker(newMarker);
     }
-  },[map,coordinates])
+  },[map,coordinates.latitude,coordinates.longitude])
 
   //adds address for the new address
   useEffect(() => {
@@ -444,7 +444,15 @@ const Airspaces: React.FC = () => {
         center: [longitude, latitude],
         zoom: 15,
       });
-    }
+      if (marker) {
+        marker.remove();
+        setMarker(null)
+      }  
+      const newMarker = new mapboxgl.Marker({
+        color: "#3FB1CE",}).setLngLat({lng:longitude,lat:latitude})
+        .addTo(map as mapboxgl.Map);
+        setMarker(newMarker);
+      }
     } catch (error) {
       console.error("Error:", error);
     }
