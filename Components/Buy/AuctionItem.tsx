@@ -2,10 +2,12 @@ import { AuctionPropertyI, PropertyData } from "@/types";
 import { useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { convertDate } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setEndDate, setMinSalePrice } from "@/redux/slices/userSlice";
+import setHours from "react-datepicker/dist/date_utils";
+import setMinutes from "react-datepicker/dist/date_utils";
 
 interface AuctionItemProps {
   data: PropertyData | AuctionPropertyI;
@@ -90,11 +92,13 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
   };
 
   const now = new Date();
-  const maxDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+  const maxDate = new Date(now.getTime() + 40 * 24 * 60 * 60 * 1000);
 
-  const isToday = endDate ? now.toDateString() === endDate.toString() : false;
+  const isToday = endDate
+    ? now.toLocaleString() === endDate.toLocaleString()
+    : false;
   const minTime = isToday ? now : new Date().setHours(0, 0);
-
+  // const maxTime = new Date().setHours(23, 59, 59, 999);
   return (
     <div
       className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
@@ -127,7 +131,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
               <span className="pr-1">$</span>
               <input
                 className="focus:outline-none h-[49px]"
-                value={minSalePrice}
+                value={minSalePrice as number}
                 onChange={handleMinSalePriceChange}
               />
             </div>
@@ -143,6 +147,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
             >
               <DatePicker
                 id="datetime"
+                //@ts-ignore
                 selected={endDate}
                 onChange={handleEndDateChange}
                 showTimeSelect
@@ -152,9 +157,7 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
                 className="focus:outline-none h-[49px] w-full"
                 placeholderText="Select date & time"
                 minDate={now}
-                maxDate={maxDate} // Set the max date to two weeks from now
-                // minTime={minTime as Date}
-                // maxTime={null}
+                maxDate={maxDate}
               />
             </div>
           </div>

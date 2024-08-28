@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import UploadedDocuments from "./UploadedDocuments";
 import AdditionalDocuments from "./AdditionalDocuments";
 import VerificationSuccessPopup from "./VerificationSuccessPopup";
+import { RequestDocumentStatus } from "@/types";
 
 const PortfolioItem = ({
   airspace,

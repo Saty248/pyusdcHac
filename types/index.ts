@@ -366,20 +366,58 @@ export enum ToastEnum {
   SUCCESS,
 }
 
-export interface AuctionDataI {
-  assetId: string;
-  bidder: string;
-  endDate: Date;
-  highestBid: number;
+export type AuctionDataI = {
   id: number;
-  listType: string;
-  metadata: any;
-  owner: string;
-  price: number;
-  properties: PropertyData;
-  bids: any[];
-  totalBid: number;
-}
+  assetId: string;
+  seller: string;
+  pdaAddress: string;
+  initialPrice: number;
+  endDate: string;
+  currentPrice: number;
+  currentBidder: string;
+  paymentToken: string;
+  transactions: string[];
+  isCancelled: boolean;
+  isExecuted: boolean;
+  AuctionBid: {
+    id: number;
+    price: number;
+    bidder: string;
+    transaction: string;
+    auctionId: number;
+  }[];
+  layer: {
+    id: number;
+    createdAt: string;
+    updateAt: string;
+    tokenId: string;
+    propertyId: number;
+    isCurrentlyInAuction: boolean;
+    property: {
+      id: number;
+      createdAt: string;
+      updateAt: string;
+      title: string;
+      transitFee: string;
+      address: string;
+      timezone: string;
+      hasLandingDeck: boolean;
+      hasChargingStation: boolean;
+      hasStorageHub: boolean;
+      isFixedTransitFee: boolean;
+      isRentableAirspace: boolean;
+      ownerId: number;
+      noFlyZone: boolean;
+      isBoostedArea: boolean;
+      latitude: number;
+      longitude: number;
+      propertyStatusId: number;
+      isActive: boolean;
+      isPropertyRewardClaimed: boolean;
+      vertexes?: [];
+    };
+  };
+};
 
 export enum StatusTypes {
   NotAttempted = 0,

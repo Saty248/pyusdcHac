@@ -23,6 +23,7 @@ export const useDrawBidPolygons = ({
   const markersRef = useRef({});
   const polygonsRef = useRef({});
 
+  //@ts-ignore
   useEffect(() => {
     if (map) {
       const handleMapLoad = () => setMapLoaded(true);

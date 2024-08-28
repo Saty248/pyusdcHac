@@ -41,7 +41,8 @@ const BidDetails: React.FC<BidDetailsProps> = ({
     setCurrentUserBid(inputValue);
   };
 
-  const getStatus = (endDate: Date) => {
+  const getStatus = (endDate: Date | undefined) => {
+    if (!endDate) return;
     const now = new Date();
     const timeDiff = endDate.getTime() - now.getTime();
 
@@ -120,10 +121,11 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 <LocationPointIcon />
               </div>
               <p className="font-normal text-[#222222] text-[14px] flex-1 items-center justify-between">
-                {shortenAddress(
-                  auctionDetailData?.layer?.property?.address,
-                  35
-                )}
+                {auctionDetailData &&
+                  shortenAddress(
+                    auctionDetailData?.layer?.property?.address,
+                    35
+                  )}
               </p>
             </div>
 
@@ -158,7 +160,7 @@ const BidDetails: React.FC<BidDetailsProps> = ({
           </div>
           {isAuctionComplete ? (
             <div className="flex flex-col gap-[10px] px-[15px] py-[10px] bg-[#f9f9f9] rounded-lg">
-              {auctionDetailData && auctionDetailData.bids.length > 0 ? (
+              {auctionDetailData && auctionDetailData.AuctionBid.length > 0 ? (
                 <div>
                   <p className="text-[14px] leading-[26px] text-[#727272]">
                     Bid Winner
@@ -213,7 +215,11 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <div className="opacity-60">
                 <Accordion
                   // title={`Previous Bid (${totalBId})`}
-                  title={`Previous Bids (${auctionDetailData.AuctionBid.length})`}
+                  title={
+                    (auctionDetailData &&
+                      `Previous Bids (${auctionDetailData.AuctionBid.length})`) ||
+                    ""
+                  }
                   content={
                     <CustomTable
                       header={["Price($)", "From"]}

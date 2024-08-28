@@ -67,7 +67,13 @@ const Buy = () => {
     searchTerm
   );
 
-  useDrawBidPolygons({ map, auctions, setShowBidDetail, setAuctionDetailData });
+  useDrawBidPolygons({
+    map,
+    //@ts-ignore
+    auctions,
+    setShowBidDetail,
+    setAuctionDetailData,
+  });
 
   useEffect(() => {
     if (map) return;
@@ -230,7 +236,7 @@ const Buy = () => {
                   setShowDetail={setShowBidDetail}
                   responseStatus={bidResponseStatus}
                   data={{
-                    address: auctionDetailData?.layer?.property?.address,
+                    address: auctionDetailData?.layer?.property?.address || "",
                     currentUserBid: currentUserBid,
                   }}
                   txHash={txHash}

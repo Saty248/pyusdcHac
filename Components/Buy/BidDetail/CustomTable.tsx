@@ -12,7 +12,15 @@ interface Bid {
 
 interface CustomTableProps {
   header: string[];
-  auctionBids: Bid[];
+  auctionBids:
+    | {
+        id: number;
+        price: number;
+        bidder: string;
+        transaction: string;
+        auctionId: number;
+      }[]
+    | undefined;
 }
 const CustomTable: React.FC<CustomTableProps> = ({ header, auctionBids }) => {
   return (

@@ -54,6 +54,7 @@ const PortfolioList = ({
         <Modal
           airspace={selectedAirspace}
           onCloseModal={onCloseModal}
+          //@ts-ignore
           setAirspaceList={setAirspaceList}
         />
       )}
