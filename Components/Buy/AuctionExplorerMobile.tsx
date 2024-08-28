@@ -32,14 +32,6 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
     setAuctionDetailData(item);
   };
 
-  // const dispatch = useAppDispatch();
-
-  // let filteredAuctions = auctions;
-
-  // const { isCreateAuctionModalOpen } = useAppSelector((state) => {
-  //   const { isCreateAuctionModalOpen } = state.userReducer;
-  //   return { isCreateAuctionModalOpen };
-  // });
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
@@ -86,7 +78,10 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
                         key={index}
                         // onClick={() => handleTrayToggle(item)}
                       >
-                        <AuctionCard data={item} handleShowBidDetail={handleTrayToggle}/>
+                        <AuctionCard
+                          data={item}
+                          handleShowBidDetail={handleTrayToggle}
+                        />
                       </div>
                     ))
                 ) : (
