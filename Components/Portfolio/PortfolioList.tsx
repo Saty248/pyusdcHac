@@ -56,28 +56,28 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
         <h2 className="font-medium text-xl text-[#222222] text-center">
           {title}
         </h2>
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-16">
           <div
-            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear whitespace-nowrap delay-75 text-base  font-bold`}
+            className={`${activeTab === PortfolioTabEnum.VERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear delay-75 text-base font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.VERIFIED)}
           >
             Verified Airspaces
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear whitespace-nowrap delay-75 text-base  font-bold`}
+            className={`${activeTab === PortfolioTabEnum.RENTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.RENTED)}
           >
             Rented Airspaces
           </div>
           <div className="flex gap-10">
-            <div className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear whitespace-nowrap delay-75 text-base  font-bold`}
+            <div className={`${activeTab === PortfolioTabEnum.PENDING_RENTAL ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.PENDING_RENTAL)}
             >
               Pending Rented Airspaces
             </div>
             <div
 
-              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear whitespace-nowrap delay-75 text-base  font-bold`}
+              className={`${activeTab === PortfolioTabEnum.UNVERIFIED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
               onClick={() => handleTabSwitch(PortfolioTabEnum.UNVERIFIED)}
             >
               Pending Verification
@@ -85,7 +85,7 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
 
           </div>
           <div
-            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear whitespace-nowrap delay-75 text-base  font-bold`}
+            className={`${activeTab === PortfolioTabEnum.REJECTED ? "border-b-4  border-[#6CA1F7] text-[#232F4A]" : "text-[#5D7285]"} px-8 py-2 cursor-pointer transition ease-linear  delay-75 text-base  font-bold`}
             onClick={() => handleTabSwitch(PortfolioTabEnum.REJECTED)}
           >
             Rejected Airspaces
