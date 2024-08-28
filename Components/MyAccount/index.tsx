@@ -112,10 +112,13 @@ const Account = () => {
 
   return (
     <Fragment>
-      {isLoading || !newUserDetail &&
-        createPortal(<Backdrop />, document?.getElementById("backdrop-root")!)}
-      {isLoading || !newUserDetail &&
-        createPortal(<Spinner />, document?.getElementById("backdrop-root")!)}
+      {isLoading &&
+        createPortal(
+          <Backdrop onClick={() => { }} />,
+          document.getElementById("backdrop-root")!
+        )}
+      {isLoading &&
+        createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
