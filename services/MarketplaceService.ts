@@ -51,23 +51,6 @@ const MarketplaceService = () => {
     }
   };
 
-  // const createAuctionTx = async ({
-  //   postData,
-  // }: {
-  //   postData: AuctionListingI;
-  // }) => {
-  //   try {
-  //     const response = await postRequest({
-  //       uri: `/market/nft`,
-  //       postData,
-  //     });
-  //     console.log("test create auction", response);
-  //     return response?.data;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const submitAuction = async (postData: { serializedTx: string }) => {
     try {
       const response = await postRequest({
@@ -153,7 +136,7 @@ const MarketplaceService = () => {
       const response = await getRequest({
         uri: `/private/auction-house/get-auction-with-bids?auction_id=${auction_id}`,
       });
-      console.log(response?.data, "hello auctionable");
+      console.log(response?.data, "hello with bid");
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -171,7 +154,7 @@ const MarketplaceService = () => {
     submitSignature,
     // createAuctionTx,
     getAuctionableAirspaces,
-    getAuctionWithBid
+    getAuctionWithBid,
   };
 };
 

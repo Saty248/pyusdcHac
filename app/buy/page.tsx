@@ -26,6 +26,8 @@ import SuccessFailPopup from "@/Components/Buy/SuccessFailPopup";
 import { useDrawBidPolygons } from "@/hooks/useDrawBidPolygons";
 import MarketplaceService from "@/services/MarketplaceService";
 import useFetchAuctions from "@/hooks/useFetchAuctions";
+import useAuction from "@/hooks/useAuction";
+import { useSearchParams } from "next/navigation";
 
 const Buy = () => {
   const { isCreateAuctionModalOpen } = useAppSelector((state) => {
@@ -34,11 +36,9 @@ const Buy = () => {
   }, shallowEqual);
 
   const dispatch = useAppDispatch();
-  const { getAuctions } = MarketplaceService();
+  const { getAuctions, getAuctionWithBid } = MarketplaceService();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  // const filteredAuctions = DUMMY_AUCTIONS.filter((auction) =>
-  //   auction.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
@@ -67,8 +67,7 @@ const Buy = () => {
     searchTerm
   );
 
-  useDrawBidPolygons({ map, auctions , setShowBidDetail,
-    setAuctionDetailData });
+  useDrawBidPolygons({ map, auctions, setShowBidDetail, setAuctionDetailData });
 
   useEffect(() => {
     if (map) return;
@@ -131,6 +130,25 @@ const Buy = () => {
     setShowBidPreview(false);
     setShowBidDetail(false);
   };
+
+  useEffect(() => {
+    const fetchAuctionData = async () => {
+      const assetId = searchParams?.get("assetId");
+
+      if (assetId) {
+        try {
+          const data = await getAuctionWithBid(parseFloat(assetId));
+          setAuctionDetailData(data);
+          setShowBidDetail(true);
+          console.log({ data });
+        } catch (error) {
+          console.error("Error fetching auction with bids:", error);
+        }
+      }
+    };
+
+    fetchAuctionData();
+  }, [searchParams, getAuctionWithBid]);
 
   return (
     <Fragment>

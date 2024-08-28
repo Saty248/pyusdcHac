@@ -50,35 +50,39 @@ const PortfolioItem = ({ airspace, selectAirspace, tags }) => {
               </span>
             </div>
 
-            {type === "receivedBid" &&
+            {/* {type === "receivedBid" &&
               calculateTimeLeft(airspace?.auction?.endDate).toLowerCase() ===
                 "ended" && (
                 <button
                   onClick={() =>
-                    router.push(`/buy?assetId=${airspace?.auction?.assetId}`)
+                    router.push(
+                      `/buy?assetId=${airspace?.auction?.id}&viewHistory=true`
+                    )
                   }
                   className="text-sm px-4 py-2 bg-[#4285F4] text-white rounded"
                 >
                   Auction History
                 </button>
-              )}
+              )} */}
 
-            {type === "placedBid" &&
+            {/* {type === "placedBid" &&
               calculateTimeLeft(airspace?.auction?.endDate).toLowerCase() !==
                 "ended" && (
                 <button
                   onClick={() =>
-                    router.push(`/buy?assetId=${airspace?.auction?.assetId}`)
+                    router.push(
+                      `/buy?assetId=${airspace?.auction?.id}&bid=true`
+                    )
                   }
                   className="text-sm px-4 py-2 bg-[#4285F4] text-white rounded"
                 >
                   Place Higher Bid
                 </button>
-              )}
+              )} */}
 
-            {/* <div className="w-[7px] h-[14px]">
+            <div className="w-[7px] h-[14px]">
               <ChevronRightIcon />
-            </div> */}
+            </div>
           </div>
         </div>
       ) : (

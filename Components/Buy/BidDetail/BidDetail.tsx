@@ -163,18 +163,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                   <p className="text-[14px] leading-[26px] text-[#727272]">
                     Bid Winner
                   </p>
-                  {/* <div className="flex items-center gap-8">
-                    <h1 className="text-[14px]  leading-[26px] font-bold text-[#050505]">
-                      {shortenAddress(
-                        (sortedBids && sortedBids[0]?.bidder) || "",
-                        10
-                      )}
-                    </h1>
-
-                    <h1 className="text-[14px]  leading-[26px] font-bold text-[#050505]">
-                      $ {sortedBids && sortedBids[0]?.bidOffer}
-                    </h1>
-                  </div> */}
                 </div>
               ) : (
                 <p className="text-[14px] leading-[26px] text-[#727272] text-center italic">

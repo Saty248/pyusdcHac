@@ -1,6 +1,12 @@
 import { calculateTimeLeft, formatDate } from "@/utils";
 import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
 import Image from "next/image";
+import Accordion from "../Buy/BidDetail/Accordion";
+import CustomTable from "../Buy/BidDetail/CustomTable";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import MarketplaceService from "@/services/MarketplaceService";
+import Spinner from "../Spinner";
 
 const { Fragment } = require("react");
 const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
@@ -13,11 +19,37 @@ interface ModalProps {
 
 const Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
   console.log({ airspace });
+
+  const { getAuctionWithBid } = MarketplaceService();
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(false);
   const property = airspace?.auction?.layer?.property;
   const imageUrl = getMapboxStaticImage(
     property?.latitude,
     property?.longitude
   );
+
+  useEffect(() => {
+    const fetchAuctionData = async () => {
+      setLoading(true);
+      const assetId = airspace?.auction?.id;
+
+      if (assetId) {
+        try {
+          const data = await getAuctionWithBid(assetId);
+          setLoading(false);
+
+          setBids(data.AuctionBid);
+          console.log({ data });
+        } catch (error) {
+          setLoading(false);
+          console.error("Error fetching auction with bids:", error);
+        }
+      }
+    };
+
+    fetchAuctionData();
+  }, [airspace]);
   return (
     <Fragment>
       {airspace.type === "placedBid" || airspace.type === "receivedBid" ? (
@@ -87,6 +119,23 @@ const Modal = ({ airspace, onCloseModal, isOffer }: ModalProps) => {
               objectFit="cover"
             />
           </div>
+
+          <hr />
+          <div className="opacity-60">
+            <Accordion
+              title={`Previous Bids (${bids.length})`}
+              content={
+                <CustomTable header={["Price($)", "From"]} auctionBids={bids} />
+              }
+            />
+
+            {loading && (
+              <div className="my-4">
+                <Spinner />
+              </div>
+            )}
+          </div>
+          <hr />
 
           <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
             <div
