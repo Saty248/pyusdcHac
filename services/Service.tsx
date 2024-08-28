@@ -74,6 +74,8 @@ const Service = () => {
 
         let message = new SIWWeb3({ header, payload, network });
 
+        console.log({ message })
+
         const messageText = message.prepareMessage();
         const msg = new TextEncoder().encode(messageText);
         const result = await solanaWallet.signMessage(msg);
