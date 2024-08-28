@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
@@ -7,10 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { toast } from "react-toastify";
-import {
-  removePubLicUserDetailsFromLocalStorage,
-  removePubLicUserDetailsFromLocalStorageOnClose,
-} from "@/helpers/localstorage";
+import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helpers/localstorage";
 import axios from "axios";
 import Head from "next/head";
 import Backdrop from "../../Components/Backdrop";
@@ -41,6 +38,7 @@ interface Address {
 }
 
 const Airspaces: React.FC = () => {
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   //
   const [claimButtonLoading, setClaimButtonLoading] = useState<boolean>(false);
@@ -103,13 +101,13 @@ const Airspaces: React.FC = () => {
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
-    const propertyAddress = searchParams?.get("propertyAddress");
-    const geoLocation = searchParams?.get("geoLocation");
+    const propertyAddress = searchParams?.get('propertyAddress')
+    const geoLocation = searchParams?.get('geoLocation');
 
     if (propertyAddress || geoLocation) {
-      localStorage.removeItem("airSpaceData");
+      localStorage.removeItem('airSpaceData');
     }
-  }, [pathname]);
+  }, [pathname])
 
   // new map is created if not rendered
   useEffect(() => {
@@ -198,17 +196,18 @@ const Airspaces: React.FC = () => {
 
       setMap(newMap);
 
-      //doesnt move the map to iplocation when user persisted initial state in
-      const initialAirSpaceData = localStorage.getItem("airSpaceData");
+      //doesnt move the map to iplocation when user persisted initial state in 
+      const initialAirSpaceData = localStorage.getItem('airSpaceData')
       if (!initialAirSpaceData) {
         flyToUserIpAddress(newMap);
       }
+
     };
     createMap();
   }, [user]);
 
 
-  //gets address suggestions
+  //gets address suggestions 
   useEffect(() => {
     if(isDrawMode){
       setIsDrawMode(false)
@@ -273,7 +272,7 @@ const Airspaces: React.FC = () => {
         let  temp:mapboxgl.LngLatLike={lng:coordinates[0] ,lat:coordinates[1]}
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setIsLoading(false);
-        setAddress(data.features[0]?.place_name);
+        setAddress(data.features[0]?.place_name)
 
         map?.flyTo({
           center: temp,
@@ -308,8 +307,9 @@ const Airspaces: React.FC = () => {
 
   //adds address for the new address
   useEffect(() => {
-    const propertyAddress = searchParams?.get("propertyAddress");
-    const geoLocation = searchParams?.get("geoLocation");
+    const propertyAddress = searchParams?.get('propertyAddress')
+    const geoLocation = searchParams?.get('geoLocation');
+
 
     if ((propertyAddress || geoLocation) && !address) {
       // this condition prevent rerenderings,
@@ -345,21 +345,24 @@ const Airspaces: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [showFailurePopUp]);
 
+
+
   useEffect(() => {
-    const inintialAirSpaceDataString = localStorage.getItem("airSpaceData");
+    const inintialAirSpaceDataString = localStorage.getItem('airSpaceData');
 
     if (inintialAirSpaceDataString) {
       const parsedInitialAirspaceData = JSON.parse(inintialAirSpaceDataString);
       if (parsedInitialAirspaceData?.address?.length > 2) {
         setData(parsedInitialAirspaceData);
-        setFlyToAddress(parsedInitialAirspaceData.address);
-        setAddress(parsedInitialAirspaceData.address);
-        setShowClaimModal(true);
+        setFlyToAddress(parsedInitialAirspaceData.address)
+        setAddress(parsedInitialAirspaceData.address)
+        setShowClaimModal(true)
       } else {
-        console.log("no initial datta");
+        console.log('no initial datta')
       }
     }
-  }, []);
+  }, [])
+
 
   const handleSelectAddress = (placeName) => {
     setAddress(placeName);
@@ -396,12 +399,13 @@ const Airspaces: React.FC = () => {
   const onClaim = async (_address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
+      
+      if (isRedirecting)
+        {
+          setAndClearOtherPublicRouteData("airSpaceData", data)
 
-      if (isRedirecting) {
-        setAndClearOtherPublicRouteData("airSpaceData", data);
-
-        return;
-      }
+          return;
+        } 
       if (!user) return;
 
       setClaimButtonLoading(true);
@@ -452,12 +456,10 @@ const Airspaces: React.FC = () => {
         weekDayRanges,
       };
       if (!rent) {
-        errors.push(
-          "Please ensure to check the rental checkbox before claiming airspace."
-        );
+        errors.push('Please ensure to check the rental checkbox before claiming airspace.');
       }
-      if (!weekDayRanges.some((item) => item.isAvailable)) {
-        errors.push("Kindly ensure that at least one day is made available.");
+      if (!weekDayRanges.some(item => item.isAvailable)) {
+        errors.push('Kindly ensure that at least one day is made available.');
       }
       if (errors.length > 0) {
         setErrorMessages(errors);
@@ -465,11 +467,12 @@ const Airspaces: React.FC = () => {
         return;
       }
 
-      const responseData = await claimProperty({ postData });
+      const responseData = await claimProperty({ postData })
 
       if (!responseData) {
         setShowFailurePopUp(true);
-      } else {
+      }
+      else {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
         setData({ ...defaultData });
@@ -480,15 +483,12 @@ const Airspaces: React.FC = () => {
       setDontShowAddressOnInput(false)
     } catch (error) {
       console.error(error);
-      toast.error("Error when creating property.");
+      toast.error("Error when creating property.")
     } finally {
       setIsLoading(false);
       setClaimButtonLoading(false);
     }
-    removePubLicUserDetailsFromLocalStorage(
-      "airSpaceData",
-      user?.blockchainAddress
-    );
+    removePubLicUserDetailsFromLocalStorage('airSpaceData', user?.blockchainAddress)
   };
   const flyToUserIpAddress = async (map) => {
     if (!map) {
@@ -524,10 +524,10 @@ const Airspaces: React.FC = () => {
   };
 
   const handleSetAddress = (value) => {
-    setAddress(value);
-    if (!showOptions) setShowOptions(true);
-  };
-  const handleOpenAirspaceMap = () => {
+    setAddress(value)
+    if (!showOptions) setShowOptions(true)
+  }
+  const handleOpenAirspaceMap = () =>{
     setShowHowToModal(false);
     setShowMobileMap(true);
   } 
@@ -538,11 +538,7 @@ const Airspaces: React.FC = () => {
         <title>SkyTrade - Airspaces</title>
       </Head>
       {isLoading && <Backdrop />}
-      {isLoading && (
-        <div className="flex items-center justify-center w-screen h-screen">
-          <Spinner />
-        </div>
-      )}
+      {isLoading && <Spinner />}
 
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
         <div className="flex h-full w-full flex-col">
@@ -602,10 +598,7 @@ const Airspaces: React.FC = () => {
             </div>
         
           {showHowToModal && (
-            <HowToModal
-              goBack={() => setShowHowToModal(false)}
-              handleOpenAirspaceMap={handleOpenAirspaceMap}
-            />
+            <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap}/>
           )}
 
           <section
@@ -640,17 +633,9 @@ const Airspaces: React.FC = () => {
                     setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
-                {(showSuccessPopUp || showFailurePopUp) && (
-                  <SuccessModal
-                    errorMessages={errorMessages}
-                    isSuccess={showSuccessPopUp}
-                    closePopUp={() => {
-                      showFailurePopUp
-                        ? setShowFailurePopUp(false)
-                        : setShowSuccessPopUp(false);
-                    }}
-                  />
-                )}
+                {(showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
+                  showFailurePopUp ? setShowFailurePopUp(false) : setShowSuccessPopUp(false)
+                }} />}
               </Fragment>
             )}
             {!isMobile && (
@@ -677,9 +662,7 @@ const Airspaces: React.FC = () => {
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
-                      removePubLicUserDetailsFromLocalStorageOnClose(
-                        "airSpaceData"
-                      );
+                      removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
                       setData({...defaultData})

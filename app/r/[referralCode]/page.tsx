@@ -14,7 +14,7 @@ import { Web3authContext } from '@/providers/web3authProvider';
 import useInitAuth from '@/hooks/useInitAuth';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 import LoadingMessage from "@/Components/Auth/LoadingMessage";
 import EmailInput from "@/Components/Auth/EmailInput";
 import { useAppSelector } from "@/redux/store";
@@ -39,10 +39,12 @@ const ReferralCodeRedirect = () => {
     localStorage.setItem("referralCode", String(queryParams.referralCode));
   }, [queryParams?.referralCode]);
 
+
   const { isWaitingScreenVisible } = useAppSelector((state) => {
     const { isWaitingScreenVisible } = state.userReducer;
     return { isWaitingScreenVisible };
   }, shallowEqual);
+
 
   const loginUser = async (isEmail: boolean) => {
     try {
@@ -84,6 +86,7 @@ const ReferralCodeRedirect = () => {
       setIsLoading(false);
     }
   };
+
 
   const isEmailValid = (email) => {
     const regex = /^\S+@\S+\.\S+$/;

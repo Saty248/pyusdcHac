@@ -3,11 +3,8 @@ import useAuth from "@/hooks/useAuth";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
 import { Web3authContext } from "@/providers/web3authProvider";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
-import {
-  setActivePortfolioTab,
-  setAirspaceList,
-} from "@/redux/slices/userSlice";
+import { useAppDispatch } from "@/redux/store";
+import { setActivePortfolioTab } from "@/redux/slices/userSlice";
 
 export enum PortfolioTabEnum {
   VERIFIED,
@@ -15,17 +12,12 @@ export enum PortfolioTabEnum {
   REJECTED,
   RENTED,
   PENDING_RENTAL,
-  BIDS,
 }
 
 const usePortfolioList = () => {
-  const { airspaceList } = useAppSelector((state) => {
-    const { airspaceList } = state.userReducer;
-    return { airspaceList };
-  });
-
-  const dispatch = useAppDispatch();
   const [pageNumber, setPageNumber] = useState(1);
+  const dispatch = useAppDispatch();
+  const [airspaceList, setAirspaceList] = useState<PropertyData[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +32,6 @@ const usePortfolioList = () => {
     getUnverifiedAirspaces,
     getRetrievePendingRentalAirspace,
     getRejectedAirspaces,
-    getBidsAndOffers,
   } = AirspaceRentalService();
 
   useEffect(() => {
@@ -83,12 +74,6 @@ const usePortfolioList = () => {
           if (airspaceResp && airspaceResp.items) {
             airspaces = airspaceResp.items;
           }
-        } else if (activeTab === PortfolioTabEnum.BIDS) {
-          const airspaceResp = await getBidsAndOffers(user?.blockchainAddress);
-
-          if (airspaceResp) {
-            airspaces = airspaceResp;
-          }
         } else {
           const airspaceResp = await getRejectedAirspaces(
             user?.blockchainAddress,
@@ -100,7 +85,7 @@ const usePortfolioList = () => {
             airspaces = airspaceResp.items;
           }
         }
-        dispatch(setAirspaceList(airspaces));
+        setAirspaceList(airspaces);
       } catch (error) {
         console.error(error);
       } finally {
