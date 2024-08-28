@@ -140,8 +140,6 @@ const Modal = ({
   pageNumber = 0,
   setAirspaceList,
 }: ModalProps) => {
-  console.log({ airspace });
-
   const { getAuctionWithBid } = MarketplaceService();
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(false);

@@ -58,7 +58,6 @@ const usePortfolioList = () => {
             10,
             String(assetId)
           );
-          console.log({ airspaces });
         } else if (activeTab === PortfolioTabEnum.RENTED) {
           airspaces = await getPropertiesByUserAddress(
             user?.blockchainAddress,
@@ -86,7 +85,7 @@ const usePortfolioList = () => {
           }
         } else if (activeTab === PortfolioTabEnum.BIDS) {
           const airspaceResp = await getBidsAndOffers(user?.blockchainAddress);
-          console.log({ airspaceResp });
+
           if (airspaceResp) {
             airspaces = airspaceResp;
           }

@@ -96,27 +96,23 @@ const MarketplaceService = () => {
         postData,
       });
 
-      console.log(response, "thanks");
       return response;
     } catch (error) {
       console.error(error);
-      console.log("error here 2 thanks", error);
+
       return [];
     }
   };
   const submitSignature = async ({ postData }) => {
     try {
-      console.log(postData, "postData");
-      // console.log(assetId,signature)
       const response = await postRequest({
         uri: "/private/auction-house/send-tx",
         postData,
       });
-      console.log(response, "hello from service");
+
       return response;
     } catch (error) {
       console.error(error);
-      console.log("error here 2 thanks", error);
       return [];
     }
   };
@@ -125,7 +121,7 @@ const MarketplaceService = () => {
       const response = await getRequest({
         uri: `/private/auction-house/get-auctionable-airspaces?page=${page}&limit=${limit}`,
       });
-      console.log(response?.data, "hello auctionable");
+
       return response?.data;
     } catch (error) {
       console.error(error);
@@ -136,7 +132,7 @@ const MarketplaceService = () => {
       const response = await getRequest({
         uri: `/private/auction-house/get-auction-with-bids?auction_id=${auction_id}`,
       });
-      console.log(response?.data, "hello with bid");
+
       return response?.data;
     } catch (error) {
       console.error(error);

@@ -146,7 +146,6 @@ const Buy = () => {
           const data = await getAuctionWithBid(parseFloat(assetId));
           setAuctionDetailData(data);
           setShowBidDetail(true);
-          console.log({ data });
         } catch (error) {
           console.error("Error fetching auction with bids:", error);
         }
