@@ -139,7 +139,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 layout="fill"
                 objectFit="cover"
               />
-              {/* <Carousel images={images} /> */}
             </div>
           </div>
           <div className="flex justify-between px-[15px] py-[10px] bg-[#4285F4] bg-opacity-5">
@@ -214,7 +213,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
               <hr />
               <div className="opacity-60">
                 <Accordion
-                  // title={`Previous Bid (${totalBId})`}
                   title={
                     (auctionDetailData &&
                       `Previous Bids (${auctionDetailData.AuctionBid.length})`) ||
@@ -229,19 +227,6 @@ const BidDetails: React.FC<BidDetailsProps> = ({
                 />
               </div>
               <hr />
-              {/* <div className="opacity-50">
-                <Accordion
-                  title={"Airspace History"}
-                  content={
-                    <AirspaceHistory
-                      airspaceHistory={airspaceHistoryMockData}
-                      totalLifeTimeIncome={200.0}
-                      MtdTotalIncome={200.0}
-                      WtdTotalIncome={200.0}
-                    />
-                  }
-                />
-              </div> */}
             </>
           )}
         </div>
