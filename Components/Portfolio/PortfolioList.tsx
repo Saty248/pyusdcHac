@@ -7,11 +7,18 @@ import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Modal from "../Portfolio/Modal";
-import { StatusTypes } from "@/types";
+import { PropertyData, StatusTypes } from "@/types";
 
+interface PropsI {
+  title: string;
+  selectAirspace: (data: PropertyData) => void;
+  selectedAirspace: PropertyData | null;
+  onCloseModal: () => void;
+  setUploadedDoc: any;
+  uploadedDoc: any;
+}
 
-
-const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, setUploadedDoc, uploadedDoc }) => {
+const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, setUploadedDoc, uploadedDoc }: PropsI) => {
 
   const { user } = useAuth();
   const router = useRouter();
@@ -29,11 +36,11 @@ const PortfolioList = ({ title, selectAirspace, selectedAirspace, onCloseModal, 
   } = usePortfolioList()
 
   useEffect(() => {
-    if (user?.KYCStatusId === StatusTypes.NotAttempted) {
+    if (user && user.KYCStatusId === StatusTypes.NotAttempted) {
       setShowPopup(true);
       return
     }
-  }, [user])
+  }, [user?.KYCStatusId])
 
 
 

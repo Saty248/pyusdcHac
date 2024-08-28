@@ -1,17 +1,10 @@
-import useAuth from "@/hooks/useAuth";
+"use client";
+
+import React, { Fragment, SetStateAction, useState } from "react";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
 import PropertiesService from "@/services/PropertiesService";
 import { PropertyData } from "@/types";
 import { formatDate } from "@/utils";
-import React, { Fragment, SetStateAction, useState } from "react";
-
-interface ModalProps {
-  airspace: any;
-  onCloseModal: () => void;
-  isOffer?: boolean;
-  pageNumber?: number;
-  setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
-}
 
 import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
 import {
@@ -26,51 +19,14 @@ import {
 import { useAppSelector } from "@/redux/store";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: "#fff",
-    paddingRight: 30,
-    paddingLeft: 30,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  title: {
-    fontSize: 16,
-    textAlign: "center",
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  section: {
-    margin: 10,
-    paddingVertical: 10,
-    fontSize: 12,
-    lineHeight: 1.5,
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  footer: {
-    fontSize: 12,
-    marginTop: 30,
-    paddingHorizontal: 10,
-  },
-  image: {
-    width: 200,
-    height: 60,
-    marginVertical: 20,
-    margin: "right",
-  },
-  mb: {
-    marginTop: 10,
-  },
 
-  mapImage: {
-    margin: "auto",
-    width: 450,
-    height: 300,
-    marginVertical: 10,
-  },
-});
+interface ModalProps {
+  airspace: any;
+  onCloseModal: () => void;
+  isOffer?: boolean;
+  pageNumber?: number;
+  setAirspaceList: (value: SetStateAction<PropertyData[]>) => void;
+}
 
 const Certificate = ({
   user,
@@ -80,49 +36,98 @@ const Certificate = ({
   longitude,
   latitude,
   amount,
-}) => (
-  <Document>
-    <Page style={styles.page}>
-      <Image style={styles.image} src={"/images/logwo.png"} />
-      <Text style={styles.title}>Rental Certificate</Text>
-      <View style={styles.section}>
-        <Text>
-          This certifies that {user.name}, with the blockchain address{" "}
-          {user.blockchainAddress} has successfully rented an airspace on
-          SkyTrade with the following details:
-        </Text>
-        <Text style={[styles.bold, styles.mb]}></Text>
-        <Text style={styles.bold}>Rental ID: {rentalId}</Text>
-        <Text style={styles.bold}>Date of Rental: {dateOfRent}</Text>{" "}
-        <Text style={styles.bold}>Expiration Date: {timeFrame}</Text>
-        <Text style={styles.bold}>Amount: {amount}</Text>
-      </View>
+}) => {
 
-      <Image
-        style={styles.mapImage}
-        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${longitude},${latitude},14/600x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
-      />
+  const styles = StyleSheet.create({
+    page: {
+      backgroundColor: "#fff",
+      paddingRight: 30,
+      paddingLeft: 30,
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
+    title: {
+      fontSize: 16,
+      textAlign: "center",
+      fontWeight: "bold",
+      marginBottom: 10,
+    },
+    section: {
+      margin: 10,
+      paddingVertical: 10,
+      fontSize: 12,
+      lineHeight: 1.5,
+    },
+    bold: {
+      fontWeight: "bold",
+    },
+    footer: {
+      fontSize: 12,
+      marginTop: 30,
+      paddingHorizontal: 10,
+    },
+    image: {
+      width: 200,
+      height: 60,
+      marginVertical: 20,
+      margin: "right",
+    },
+    mb: {
+      marginTop: 10,
+    },
 
-      <View style={styles.section}>
-        <Text>
-          This rental agreement is valid for the specified date and time frame
-          mentioned above. This agreement is subject to SkyTrade's Rental
-          Agreement and Terms of Service.
-        </Text>
+    mapImage: {
+      margin: "auto",
+      width: 450,
+      height: 300,
+      marginVertical: 10,
+    },
+  });
+  
+  return (
+    <Document>
+      <Page style={styles.page}>
+        <Image style={styles.image} src={"/images/logwo.png"} />
+        <Text style={styles.title}>Rental Certificate</Text>
+        <View style={styles.section}>
+          <Text>
+            This certifies that {user.name}, with the blockchain address{" "}
+            {user.blockchainAddress} has successfully rented an airspace on
+            SkyTrade with the following details:
+          </Text>
+          <Text style={[styles.bold, styles.mb]}></Text>
+          <Text style={styles.bold}>Rental ID: {rentalId}</Text>
+          <Text style={styles.bold}>Date of Rental: {dateOfRent}</Text>{" "}
+          <Text style={styles.bold}>Expiration Date: {timeFrame}</Text>
+          <Text style={styles.bold}>Amount: {amount}</Text>
+        </View>
 
-        <Text>
-          If you have any questions or require more information, please contact
-          the SkyTrade team and we will reach out at our earliest convenience.
-        </Text>
-      </View>
-      <View style={styles.footer}>
-        <Text>SkyTrade Team</Text>
-        <Text>Website: https://app.sky.trade</Text>
-        <Text>E-mail: info@sky.trade</Text>
-      </View>
-    </Page>
-  </Document>
-);
+        <Image
+          style={styles.mapImage}
+          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${longitude},${latitude},14/600x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
+        />
+
+        <View style={styles.section}>
+          <Text>
+            This rental agreement is valid for the specified date and time frame
+            mentioned above. This agreement is subject to SkyTrade's Rental
+            Agreement and Terms of Service.
+          </Text>
+
+          <Text>
+            If you have any questions or require more information, please contact
+            the SkyTrade team and we will reach out at our earliest convenience.
+          </Text>
+        </View>
+        <View style={styles.footer}>
+          <Text>SkyTrade Team</Text>
+          <Text>Website: https://app.sky.trade</Text>
+          <Text>E-mail: info@sky.trade</Text>
+        </View>
+      </Page>
+    </Document>
+  )
+};
 
 const Modal = ({
   airspace,

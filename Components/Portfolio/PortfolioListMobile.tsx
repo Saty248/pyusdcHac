@@ -4,7 +4,16 @@ import Spinner from "../Spinner";
 import PortfolioItemMobile from "./PortfolioItemMobile";
 import AirspacesEmptyMessage from "./AirspacesEmptyMessage";
 import usePortfolioList, { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-const PortfolioListMobile = ({ selectAirspace,setUploadedDoc, uploadedDoc  }) => {
+import { PropertyData } from "@/types";
+
+interface PropsI {
+  selectAirspace: (data: PropertyData) => void;
+  setUploadedDoc: any;
+  uploadedDoc: any;
+}
+
+
+const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: PropsI) => {
   const {
     handleTabSwitch,
     handlePrevPage,
