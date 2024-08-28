@@ -21,7 +21,7 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
     loading,
     airspaceList,
     pageNumber,
-    activeTab
+    activeTab,
   } = usePortfolioList();
   return (
     <div className="overflow-x-hidden mb-24">
@@ -67,16 +67,13 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
         </div>
       </div>
       {loading ? (
-        <div>
-          {" "}
+        <div className="flex items-center justify-center w-full h-full">
           <Spinner />
         </div>
       ) : (
         <div className="w-screen ">
           <div className="flex flex-col gap-[2px] pb-2  min-h-[70vh] ">
-            {airspaceList &&
-              airspaceList[0] &&
-              airspaceList[0].address ? (
+            {airspaceList && airspaceList[0] && airspaceList[0].address ? (
               airspaceList.map((airspace, index) => (
                 <PortfolioItemMobile
                 airspaceName={airspace?.address}
@@ -101,9 +98,7 @@ const PortfolioListMobile = ({ selectAirspace, setUploadedDoc, uploadedDoc }: Pr
               >
                 <RxCaretLeft />
               </button>
-              <div>
-                {pageNumber}
-              </div>
+              <div>{pageNumber}</div>
               <button
                 onClick={handleNextPage}
                 disabled={airspaceList?.length < 9}

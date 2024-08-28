@@ -19,10 +19,13 @@ import PropertiesService from "../../services/PropertiesService";
 const Rent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingAddresses, setLoadingAddresses] = useState<boolean>(false);
-  const [loadingRegAddresses, setLoadingRegAddresses] =useState<boolean>(false);
+  const [loadingRegAddresses, setLoadingRegAddresses] =
+    useState<boolean>(false);
   const [map, setMap] = useState<Map | null>(null);
   const { isMobile } = useMobile();
-  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>([]);
+  const [registeredAddress, setRegisteredAddress] = useState<PropertyData[]>(
+    []
+  );
   const [mapMove, setMapMove] = useState();
   const [address, setAddress] = useState<string>("");
   const [addressData, setAddressData] = useState<
@@ -97,7 +100,7 @@ const Rent = () => {
               minLatitude: crds._sw.lat,
               maxLongitude: crds._ne.lng,
               maxLatitude: crds._ne.lat,
-            }
+            },
           });
 
           let formattedProperties = [];
@@ -119,7 +122,10 @@ const Rent = () => {
 
            if (responseData.length > 0) {
             for (let i = 0; i < responseData.length; i++) {
-              const lngLat = new mapboxgl.LngLat(responseData[i].longitude, responseData[i].latitude);
+              const lngLat = new mapboxgl.LngLat(
+                responseData[i].longitude,
+                responseData[i].latitude
+              );
 
                const popup = new mapboxgl.Popup({offset: 25}).trackPointer().setHTML(
                 `<strong>${responseData[i].address}</strong>`
@@ -170,7 +176,13 @@ const Rent = () => {
     if (!address) return setShowOptions(false);
 
     let timeoutId: NodeJS.Timeout | null = null;
-    getAddresses(setAddresses, setCoordinates,setLoadingAddresses, timeoutId, address);
+    getAddresses(
+      setAddresses,
+      setCoordinates,
+      setLoadingAddresses,
+      timeoutId,
+      address
+    );
     return () => {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
@@ -201,10 +213,10 @@ const Rent = () => {
     if(parsedInitialRentData && parsedInitialRentData?.address?.length>2){
 
       setRentData(parsedInitialRentData);
-      setFlyToAddress(parsedInitialRentData.address)
-      setShowClaimModal(true)
-    }else{
-      console.log('no initial datta')
+      setFlyToAddress(parsedInitialRentData.address);
+      setShowClaimModal(true);
+    } else {
+      console.log("no initial datta");
     }
   },[]) 
 
@@ -214,8 +226,12 @@ const Rent = () => {
         <title>SkyTrade - Marketplace : Rent</title>
       </Head>
 
-      {isLoading && <Backdrop onClick={()=>{}}/>}
-      {isLoading && <Spinner />}
+      {isLoading && <Backdrop onClick={() => {}} />}
+      {isLoading && (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Spinner />
+        </div>
+      )}
       {
         <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
           <Sidebar />

@@ -167,10 +167,78 @@ button {
 .fund-table-scrollbar::-webkit-scrollbar-track {
   margin-top: 56px;
   background-color: white;
-  background : transparent;
+  background: transparent;
 }
 .fund-table-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #B8CCE3;
+  background-color: #b8cce3;
+}
+
+/* Custom scrollbar styles */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.slider-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.slider-header {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.horizontal-slider {
+  width: 100%;
+}
+
+.example-thumb {
+  height: 24px;
+  width: 24px;
+  background-color: black;
+  border-radius: 50%;
+  cursor: grab;
+  transform: translate(0%, -50%);
+}
+
+.example-track {
+  top: 50%;
+  transform: translateY(-50%);
+  height: 8px;
+  background: #cce3fc;
+}
+
+.example-track.example-track-0 {
+  background: #cce3fc;
+  border-radius: 10px;
+}
+
+.example-track.example-track-1 {
+  background: #0653ea;
+  border-radius: 10px;
+}
+
+.example-track.example-track-2 {
+  background: #cce3fc;
+  border-radius: 10px;
 }
 
 .fund-table tbody tr:nth-child(odd) {

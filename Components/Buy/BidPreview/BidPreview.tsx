@@ -1,0 +1,287 @@
+import React, { useContext, useState } from "react";
+import {
+  RectangleIcon,
+  LocationPointIcon,
+  CloseIcon,
+} from "@/Components/Icons";
+import Image from "next/image";
+import Image1 from "@/public/images/AHImage.png";
+import { useMobile } from "@/hooks/useMobile";
+import useAuth from "@/hooks/useAuth";
+import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import { executeTransaction } from "@/utils/rent/transactionExecutor";
+import { Web3authContext } from "@/providers/web3authProvider";
+import { AuctionDataI } from "@/types";
+import MarketplaceService from "@/services/MarketplaceService";
+import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
+import { setIsTriggerRefresh } from "@/redux/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { toast } from "react-toastify";
+import useAuction from "@/hooks/useAuction";
+import Carousel from "@/Components/Shared/Carousel";
+import { formatDate } from "@/utils";
+
+interface BidPreviewProps {
+  setTxHash: React.Dispatch<React.SetStateAction<string>>;
+  setShowSuccessAndErrorPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  auctionDetailData: AuctionDataI | undefined;
+  currentUserBid: number | null;
+  setCurrentUserBid: (number: number | null) => void;
+  onClose: () => void;
+  setBidResponseStatus: React.Dispatch<
+    React.SetStateAction<"SUCCESS" | "FAIL">
+  >;
+}
+const BidPreview: React.FC<BidPreviewProps> = ({
+  setTxHash,
+  auctionDetailData,
+  setBidResponseStatus,
+  currentUserBid,
+  setCurrentUserBid,
+  onClose,
+  setShowSuccessAndErrorPopup,
+}) => {
+  const { userSolBalance } = useAppSelector((state) => {
+    const { userSolBalance } = state.userReducer;
+    return {
+      userSolBalance,
+    };
+  });
+
+  const { userUSDWalletBalance } = useAuction();
+
+  const { isMobile } = useMobile();
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const { provider } = useContext(Web3authContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { createBid, submitSignature } = MarketplaceService();
+
+  const handleBid = async () => {
+    if (user?.blockchainAddress === auctionDetailData?.seller) {
+      return toast.error("You cannot bid on your own property!");
+    }
+
+    const balance = parseFloat((userSolBalance / LAMPORTS_PER_SOL).toString());
+    if (balance === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some Sol to continue"
+      );
+    }
+
+    if (parseFloat(userUSDWalletBalance.amount) === 0) {
+      return toast.info(
+        "You don't have sufficient funds to perform this operation, please top up your wallet with some USD to continue"
+      );
+    }
+
+    try {
+      setIsLoading(true);
+      if (
+        currentUserBid &&
+        auctionDetailData &&
+        currentUserBid > auctionDetailData?.initialPrice &&
+        currentUserBid <= auctionDetailData?.currentPrice
+      ) {
+        toast.error("Your bid should be higher than the highest bid");
+        setIsLoading(false);
+        return;
+      } else if (
+        currentUserBid &&
+        auctionDetailData &&
+        currentUserBid < auctionDetailData?.initialPrice
+      ) {
+        toast.error("Your bid should be higher or equal to the starting bid");
+        setIsLoading(false);
+        return;
+      }
+      const postData = {
+        account: user?.blockchainAddress,
+      };
+      const auction = auctionDetailData?.pdaAddress.toString();
+      const response: any = await createBid(postData, auction, currentUserBid);
+      if (response && response?.data && response?.data?.transaction) {
+        const transaction = VersionedTransaction.deserialize(
+          new Uint8Array(Buffer.from(response?.data?.transaction, "base64"))
+        );
+        const signature = await executeTransaction(transaction, provider);
+        if (signature) {
+          const postData = {
+            serializedTx: signature,
+          };
+          const result: any = await submitSignature({ postData });
+          if (
+            result == undefined ||
+            result?.data?.txSignature == "" ||
+            result?.data?.txSignature == null ||
+            result?.status != 201
+          ) {
+            setBidResponseStatus("FAIL");
+            setShowSuccessAndErrorPopup(true);
+            onClose();
+          } else if (result?.data?.txSignature) {
+            setTxHash(result?.data?.txSignature);
+            setBidResponseStatus("SUCCESS");
+            setShowSuccessAndErrorPopup(true);
+            dispatch(setIsTriggerRefresh(true));
+            onClose();
+          }
+        }
+      } else {
+        setBidResponseStatus("FAIL");
+        setShowSuccessAndErrorPopup(true);
+
+        onClose();
+      }
+    } catch (error) {
+      console.error("error:", error);
+      setBidResponseStatus("FAIL");
+      setShowSuccessAndErrorPopup(true);
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const { latitude, longitude, title } =
+    auctionDetailData?.layer?.property || {};
+  const imageUrl = getMapboxStaticImage(latitude, longitude);
+  const images = [
+    { image_url: "/images/imagetest1.jpg" },
+    { image_url: "/images/imagetest2.jpg" },
+    { image_url: "/images/imagetest3.jpg" },
+  ];
+  images[0] = { image_url: imageUrl };
+
+  return (
+    <div className="fixed inset-0 bottom-[74px] sm:bottom-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
+      <div className="fixed bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[540px] md:h-[510px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+        <div className="px-[25px] ">
+          <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 ">
+            {isMobile && (
+              <div
+                onClick={onClose}
+                className=" flex flex-col justify-end items-center mt-4 md:mt-0 "
+              >
+                <div className=" w-[90%] flex justify-center  items-center">
+                  <RectangleIcon />
+                </div>
+              </div>
+            )}
+            <div className="flex w-full items-center mt-[21px]">
+              <div className="flex w-full justify-center">
+                <h2 className="text-[#222222] font-medium text-xl text-center ">
+                  Bid Preview
+                </h2>
+              </div>
+              {!isMobile && (
+                <button
+                  onClick={onClose}
+                  className="flex items-center  justify-end w-[15px] h-[15px] cursor-pointer"
+                >
+                  <CloseIcon />
+                </button>
+              )}
+            </div>
+          </div>
+          <div
+            className="touch-manipulation flex items-center gap-[10px] py-4 px-[22px] mt-[15px] rounded-lg"
+            style={{ border: "1px solid #4285F4" }}
+          >
+            <div className="w-6 h-6">
+              <LocationPointIcon />
+            </div>
+            <p className="font-normal text-[#222222] text-[14px] flex-1">
+              {auctionDetailData?.layer?.property?.address}
+            </p>
+          </div>
+          <div className="flex flex-col gap-y-[15px] mt-[15px] text-[14px] text-light-black leading-[21px]">
+            <div className="relative h-[130px]">
+              <div className="relative w-full h-[130px] ">
+                <Image
+                  src={imageUrl}
+                  alt={`Map at ${latitude}, ${longitude}`}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-between w-full">
+            <div className="flex flex-col gap-y-[15px] mt-[15px] truncate text-[14px] text-light-black leading-[21px]">
+              <div className="flex">
+                <div>Owner:</div>
+                <div className="text-light-grey pl-[15px] truncate ">
+                  {auctionDetailData?.seller}
+                </div>
+              </div>
+              <div className="flex">
+                <div>Expiration Date:</div>
+                <div className="text-light-grey pl-[15px]">
+                  {formatDate(auctionDetailData?.endDate)}
+                </div>
+              </div>
+              <div className="flex">
+                <div>Starting Bid:</div>
+                <div className="text-light-grey pl-[15px]">
+                  $ {auctionDetailData?.initialPrice}
+                </div>
+              </div>
+
+              <div className="flex">
+                <div>Highest Bid:</div>
+                <div className="text-light-grey pl-[15px]">
+                  $ {auctionDetailData?.currentPrice}
+                </div>
+              </div>
+            </div>
+            {!isMobile && (
+              <div className="flex items-end">
+                <div className="text-light-black ">
+                  <div className="text-[14px] leading-[21px] ">Your Bid</div>
+                  <div className="font-bold text-2xl leading-9">
+                    &#36; {currentUserBid}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div
+          className={`px-[29px] py-[10px] ${isMobile ? "shadow-[0_0px_4.2px_0px_rgba(0,0,0,0.25)]" : "shadow-none"} touch-manipulation flex items-center justify-between gap-[20px] text-[14px]`}
+        >
+          <div className="w-1/2 ">
+            {isMobile ? (
+              <div>
+                <div className="text-light-black ">
+                  <div className="text-[14px] leading-[21px] ">Your Bid</div>
+                  <div className="font-bold text-2xl leading-9">
+                    &#36; {currentUserBid}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={onClose}
+                className="touch-manipulation rounded-[5px] w-full text-center py-[10px] border border-[#0653EA] text-[#0653EA] cursor-pointer"
+              >
+                Cancel
+              </div>
+            )}
+          </div>
+
+          <LoadingButton
+            isLoading={false}
+            onClick={handleBid}
+            className="touch-manipulation rounded-[5px]  text-white bg-[#0653EA] cursor-pointer w-1/2 flex justify-center px-[17px] py-[10px]"
+          >
+            Confirm Bid
+          </LoadingButton>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BidPreview;

@@ -45,3 +45,27 @@ export const handleZoomOut = (map) => {
   setMarker(marker1);
 };
  
+export const drawPolygons = (map, index,area) => {
+  if (!map.getSource(`myPolygon-${index}`)) {
+    map.addSource(`myPolygon-${index}`, {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Polygon",
+          coordinates: [area],
+        },
+      },
+    });
+  }
+  map.addLayer({
+    id: `myPolygon-layer-${index}`,
+    type: "fill",
+    source: `myPolygon-${index}`,
+    paint: {
+      "fill-color": "rgba(0, 0, 255, 0.5)",
+      "fill-outline-color": "rgba(0, 0, 255, 0.5)",
+    },
+  });
+};

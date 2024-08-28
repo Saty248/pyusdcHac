@@ -29,7 +29,11 @@ const Funds = () => {
         <title>SkyTrade - Wallet</title>
       </Head>
       {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
+      {isLoading && (
+        <div className="flex items-center justify-center w-screen h-screen">
+          <Spinner />
+        </div>
+      )}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">

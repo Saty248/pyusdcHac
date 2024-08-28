@@ -1,4 +1,4 @@
-import { SuccessIcon,CloseIcon } from "../Icons";
+import { SuccessIcon, CloseIcon } from "../Icons";
 interface PropsI {
   isVisible: boolean;
   setShowSuccessPopUp: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,5 +21,5 @@ const SuccessPopUp = ({ isVisible, setShowSuccessPopUp }: PropsI) => {
     </div>
   );
 };
-  
+
 export default SuccessPopUp;

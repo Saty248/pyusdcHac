@@ -20,7 +20,7 @@ import { checkPhoneIsValid } from "../Auth/PhoneValidation";
 const Account = () => {
   const { user, updateProfile, signIn, web3authStatus } = useAuth();
   const { updateUser, getUser } = UserService();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
   const [newUserDetail, setNewUserDetail] = useState<User | null>(null);
@@ -37,11 +37,10 @@ const Account = () => {
       if (data) {
         setNewUserDetail({ ...data });
       }
-    })()
+    })();
   }, [user?.KYCStatusId, user?.name, user?.phoneNumber, web3authStatus]);
 
   const updateDataHandler = async (e) => {
-
     e.preventDefault();
     if (!user || !newUserDetail) return toast.error("User not logged in");
 
@@ -102,19 +101,18 @@ const Account = () => {
       onComplete: async () => {
         const responseData = await getUser();
         if (responseData) {
-          setNewUserDetail({ ...responseData })
+          setNewUserDetail({ ...responseData });
           signIn({ user: responseData });
         }
-      }
+      },
     });
   };
-
 
   return (
     <Fragment>
       {isLoading &&
         createPortal(
-          <Backdrop onClick={() => { }} />,
+          <Backdrop onClick={() => {}} />,
           document.getElementById("backdrop-root")!
         )}
       {isLoading &&
