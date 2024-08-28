@@ -204,7 +204,6 @@ const BidPreview: React.FC<BidPreviewProps> = ({
                   layout="fill"
                   objectFit="cover"
                 />
-                {/* <Carousel images={images} /> */}
               </div>
             </div>
           </div>

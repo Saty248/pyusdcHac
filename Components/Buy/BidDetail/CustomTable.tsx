@@ -53,11 +53,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ header, auctionBids }) => {
                       >
                         {transaction?.price}
                       </td>
-                      {/* <td
-                        className={`px-2 py-[6px] leading-5 text-[#222222] text-[16px]  text-clip text-start w-[28%] min-w-[120px] sm:w-[20%]`}
-                      >
-                        {transaction?.date}
-                      </td> */}
 
                       <td
                         className={`px-2 py-[6px] leading-5 rounded-r-lg text-[#222222] text-[16px] text-center sm:text-start w-[28%] min-w-[120px] sm:w-[20%]`}

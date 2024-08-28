@@ -98,11 +98,10 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
     ? now.toLocaleString() === endDate.toLocaleString()
     : false;
   const minTime = isToday ? now : new Date().setHours(0, 0);
-  // const maxTime = new Date().setHours(23, 59, 59, 999);
+
   return (
     <div
       className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out ${disabled ? "opacity-50 pointer-events-none" : ""}`}
-      // className={`${isOpen ? "" : "hover:bg-black/10"} flex flex-col p-4 shadow-md rounded-[8px] transition duration-150 ease-in-out `}
     >
       <div
         onClick={handleToggleClick}
@@ -114,7 +113,6 @@ const AuctionItem: React.FC<AuctionItemProps> = ({
               type="checkbox"
               checked={selected}
               onChange={handleCheckboxClick}
-              // disabled={disabled}
             />
           </div>
           <div>{data.address}</div>

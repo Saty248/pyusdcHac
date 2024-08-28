@@ -6,24 +6,30 @@ import Carousel from "../Shared/Carousel";
 
 interface MarkerPopupProps {
   auction: AuctionDataI;
-  setShowBidDetail:Function;
-  setAuctionDetailData:Function;
+  setShowBidDetail: Function;
+  setAuctionDetailData: Function;
 }
 
-const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,setAuctionDetailData}) => {
+const MarkerPopup: React.FC<MarkerPopupProps> = ({
+  auction,
+  setShowBidDetail,
+  setAuctionDetailData,
+}) => {
   const endDate = new Date(auction?.endDate);
   const timeLeft = getTimeLeft(endDate);
   const { latitude, longitude, title } = auction?.layer?.property || {};
   const imageUrl = getMapboxStaticImage(latitude, longitude);
-      const handleShowBidDetail = (item) => {
-      setShowBidDetail(true);
-      setAuctionDetailData(item);
-    };
-    const images = [{ "image_url": "/images/imagetest1.jpg" },
-      { "image_url": "/images/imagetest2.jpg" },
-      { "image_url": "/images/imagetest3.jpg" }]
-      images[0] = {image_url:imageUrl};
-  
+  const handleShowBidDetail = (item) => {
+    setShowBidDetail(true);
+    setAuctionDetailData(item);
+  };
+  const images = [
+    { image_url: "/images/imagetest1.jpg" },
+    { image_url: "/images/imagetest2.jpg" },
+    { image_url: "/images/imagetest3.jpg" },
+  ];
+  images[0] = { image_url: imageUrl };
+
   return (
     <div
       className={
@@ -31,14 +37,7 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
       }
     >
       <div className={" w-1/2 sm:w-[266px] relative h-[151px]"}>
-        {/* <Image
-          src={imageUrl}
-          alt={`Map at ${latitude}, ${longitude}`}
-          layout="fill"
-          objectFit="cover"
-        /> */}
-      <Carousel images={images} />
-
+        <Carousel images={images} />
       </div>
       <div
         className={"w-1/2 h-[151px] sm:w-[266px] flex flex-col justify-between"}
@@ -54,7 +53,7 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
             <div className="flex flex-col ">
               <p className="text-xs  text-[#727272]">Highest Bid</p>
               <h1 className="text-xs  font-bold text-[#050505]">
-                $ {auction?.highestBid}
+                $ {auction?.currentPrice}
               </h1>
             </div>
             <div className="flex flex-col">
@@ -64,7 +63,10 @@ const MarkerPopup: React.FC<MarkerPopupProps> = ({ auction ,setShowBidDetail,set
           </div>
         </div>
         <div className="w-full rounded-b-[5px] px-[15px] py-[10px] h-[51px] flex justify-center items-center">
-          <button onClick={()=>handleShowBidDetail(auction)}  className="flex justify-center items-center h-[31px] text-center text-[14px] leading-[21px] text-white w-full rounded-lg border-[#4285F4] bg-[#0653EA] px-[10px] py-[10px]">
+          <button
+            onClick={() => handleShowBidDetail(auction)}
+            className="flex justify-center items-center h-[31px] text-center text-[14px] leading-[21px] text-white w-full rounded-lg border-[#4285F4] bg-[#0653EA] px-[10px] py-[10px]"
+          >
             Place Bid
           </button>
         </div>

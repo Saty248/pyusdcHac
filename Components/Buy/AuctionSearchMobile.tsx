@@ -54,9 +54,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
   return (
     <div className="md:hidden fixed top-0 left-0 w-full z-20 bg-white p-4 shadow-md text-center">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-light-black text-[20px] leading-[30px]">
-          Buy
-        </div>
+        <div className="text-light-black text-[20px] leading-[30px]">Buy</div>
         <div className="flex justify-between items-center border rounded-lg overflow-hidden p-2">
           <input
             placeholder="Search auctions..."
@@ -88,11 +86,7 @@ const AuctionSearchMobile: React.FC<AuctionSearchMobileProps> = ({
             range={priceRange}
             setRange={(value: number[]) => setPriceRange(value)}
           />
-          {/* <FilterTab
-            title="Price Per Square Foot"
-            range={pricePerSqFt}
-            setRange={(value: number[]) => setPricePerSqFt(value)}
-          /> */}
+
           <button
             onClick={handleSetActiveFilters}
             className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"

@@ -142,7 +142,7 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                             disabled={
                               selectedItemId !== null &&
                               selectedItemId !== item.id
-                            } // Disable if another item is selected
+                            }
                           />
                         ))}
                     </div>
@@ -155,12 +155,10 @@ const CreateAuctionModal: React.FC<CreateAuctionModalProps> = ({
                 </>
               )}
 
-              {/* <div className="flex justify-between gap-4"> */}
               <Button
                 label="Add Properties to Auction"
                 onClick={handleAddProperties}
               />
-              {/* </div> */}
             </div>
           </div>
         )}

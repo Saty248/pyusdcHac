@@ -148,7 +148,6 @@ const MarketplaceService = () => {
     filterAuctions,
     createBid,
     submitSignature,
-    // createAuctionTx,
     getAuctionableAirspaces,
     getAuctionWithBid,
   };

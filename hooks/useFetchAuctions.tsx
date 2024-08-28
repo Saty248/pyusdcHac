@@ -37,18 +37,15 @@ const useFetchAuctions = (
         priceRange[1] === 0
       ) {
         response = await getAuctions(page, limit);
-        // const test = await fetch('/api/sample-data');
-        // response=await test.json();
-        // console.log(response,"test json 1");
       } else if (activeFilters && (priceRange[0] > 0 || priceRange[1] > 0)) {
         const minPrice = priceRange[0];
         const maxPrice = priceRange[1];
 
         response = await filterAuctions(minPrice, maxPrice);
       } else {
-        response = await searchAuctions(page, limit, searchParam);
+        response = await searchAuctions(searchParam);
       }
-      
+
       const newData = response;
       setAuctions((prevData) =>
         page === 1 ? newData : [...prevData, ...newData]

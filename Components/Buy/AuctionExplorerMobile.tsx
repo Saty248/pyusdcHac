@@ -73,11 +73,7 @@ const AuctionExplorerMobile: React.FC<AuctionExplorerMobileProps> = ({
                     .slice()
                     .reverse()
                     .map((item, index) => (
-                      <div
-                        className="mx-auto mb-[15px]"
-                        key={index}
-                        // onClick={() => handleTrayToggle(item)}
-                      >
+                      <div className="mx-auto mb-[15px]" key={index}>
                         <AuctionCard
                           data={item}
                           handleShowBidDetail={handleTrayToggle}

@@ -37,7 +37,6 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
 
   const dispatch = useAppDispatch();
 
-
   const handleShowBidDetail = (item) => {
     setShowBidDetail(true);
     setAuctionDetailData(item);
@@ -65,7 +64,6 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
           <div>
             <button
               onClick={() => dispatch(setIsCreateAuctionModalOpen(true))}
-              // onClick={async () => await handleGetAuctions()}
               className="text-base bg-dark-blue py-2 w-full text-white rounded-lg"
             >
               Create Auction
@@ -114,10 +112,7 @@ const AuctionExplorer: React.FC<AuctionExplorerProps> = ({
                       .slice()
                       .reverse()
                       .map((item, index) => (
-                        <div
-                          key={index}
-                          // onClick={() => handleShowBidDetail(item)}
-                        >
+                        <div key={index}>
                           <AuctionCard
                             data={item}
                             handleShowBidDetail={handleShowBidDetail}
