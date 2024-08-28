@@ -12,46 +12,40 @@ import UserService from "../../services/UserService";
 import { toast } from "react-toastify";
 import AccountVerification from "../../Components/MyAccount/AccountVerification";
 import PersonalInformation from "../../Components/MyAccount/PersonalInformation";
-import { PersonalInformationType } from "../../types";
+import { User } from "../../types";
 import React from "react";
 import Sidebar from "../Shared/Sidebar";
 import { checkPhoneIsValid } from "../Auth/PhoneValidation";
 
 const Account = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [personalInformation, setPersonalInformation] =
-    useState<PersonalInformationType>({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      newsletter: false,
-      KYCStatusId: 0,
-    });
+  const { user, updateProfile, signIn, web3authStatus } = useAuth();
+  const { updateUser, getUser } = UserService();
 
-  const { user, updateProfile, web3authStatus } = useAuth();
-  const { updateUser } = UserService();
+  const [isLoading, setIsLoading] = useState(false);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [newUserDetail, setNewUserDetail] = useState<User | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
-    if (!user) return;
-    const { name, email, phoneNumber, newsletter, KYCStatusId } = user;
-    setPersonalInformation({
-      name,
-      email,
-      phoneNumber,
-      newsletter,
-      KYCStatusId,
-    });
-  }, [user, web3authStatus]);
+    (async () => {
+      let data = user;
+      const responseData = await getUser();
+      if (responseData) {
+        data = responseData;
+        signIn({ user: responseData });
+      }
+      if (data) {
+        setNewUserDetail({ ...data });
+      }
+    })();
+  }, [user?.KYCStatusId, user?.name, user?.phoneNumber, web3authStatus]);
 
   const updateDataHandler = async (e) => {
     e.preventDefault();
-    if (!user) return toast.error("User not logged in");
+    if (!user || !newUserDetail) return toast.error("User not logged in");
 
-    const { name, email, phoneNumber, newsletter } = personalInformation;
-    // TODO: check if data has changed
-    // TODO: check if data is valid
+    const { name, email, phoneNumber, newsletter } = newUserDetail;
+
     const check = await checkPhoneIsValid(phoneNumber);
 
     if (!check.status) {
@@ -93,10 +87,10 @@ const Account = () => {
     }
   };
 
-  const onVerifyMyAccount = () => {
+  const onVerifyMyAccount = async () => {
     setIsLoading(true);
     // @ts-ignore
-    const client = new Persona.Client({
+    const client = await new Persona.Client({
       templateId: process.env.NEXT_PUBLIC_TEMPLATE_ID,
       referenceId: user?.id.toString(),
       environmentId: process.env.NEXT_PUBLIC_ENVIRONMENT_ID,
@@ -104,20 +98,25 @@ const Account = () => {
         setIsLoading(false);
         client.open();
       },
+      onComplete: async () => {
+        const responseData = await getUser();
+        if (responseData) {
+          setNewUserDetail({ ...responseData });
+          signIn({ user: responseData });
+        }
+      },
     });
   };
 
   return (
     <Fragment>
       {isLoading &&
-        createPortal(<Backdrop />, document?.getElementById("backdrop-root")!)}
-      {isLoading &&
         createPortal(
-          <div className="flex items-center justify-center w-screen h-screen">
-            <Spinner />
-          </div>,
-          document?.getElementById("backdrop-root")!
+          <Backdrop onClick={() => {}} />,
+          document.getElementById("backdrop-root")!
         )}
+      {isLoading &&
+        createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
       <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
         <Sidebar />
@@ -130,20 +129,24 @@ const Account = () => {
                 Update your account settings
               </p>
             </div>
-            <AccountVerification
-              KYCStatusId={personalInformation.KYCStatusId}
-              isLoading={isLoading}
-              onVerifyMyAccount={onVerifyMyAccount}
-            />
-            <PersonalInformation
-              personalInformation={personalInformation}
-              setPersonalInformation={setPersonalInformation}
-              isPhoneNumberValid={isPhoneNumberValid}
-              errorMessage={errorMessage}
-              isLoading={isLoading}
-              updateDataHandler={updateDataHandler}
-              setIsPhoneNumberValid={setIsPhoneNumberValid}
-            />
+            {newUserDetail && (
+              <>
+                <AccountVerification
+                  KYCStatusId={newUserDetail.KYCStatusId}
+                  isLoading={isLoading}
+                  onVerifyMyAccount={onVerifyMyAccount}
+                />
+                <PersonalInformation
+                  personalInformation={newUserDetail}
+                  setPersonalInformation={setNewUserDetail}
+                  isPhoneNumberValid={isPhoneNumberValid}
+                  errorMessage={errorMessage}
+                  isLoading={isLoading}
+                  updateDataHandler={updateDataHandler}
+                  setIsPhoneNumberValid={setIsPhoneNumberValid}
+                />
+              </>
+            )}
           </section>
         </div>
       </div>

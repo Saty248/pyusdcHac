@@ -45,6 +45,7 @@ module.exports = {
         "light-green": "#1FD387",
         "light-grey-100": "#FFFFFFCC",
         "pure-blue": "#0000FF",
+        "deep-blue": "#4285F4"
       },
       fontFamily: {
         sans: ["poppins", "sans-serif"],

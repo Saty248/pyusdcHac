@@ -88,8 +88,20 @@ const PropertiesService = () => {
       return [];
     }
   }
- 
-  
+
+  const editAirSpaceAddress = async (postData: {address: string, propertyId: number}) => {
+    try {
+      const response = await patchRequest({
+        uri: `/private/properties/update`,
+        postData,
+      
+      }) 
+       console.log(postData, "postData")
+      return response?.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
 
   return { 
@@ -99,7 +111,8 @@ const PropertiesService = () => {
     updateClaimedProperty,
     deleteProperty,
     getClaimedPropertiesByUserAddress,
-    getRentedTimes
+    getRentedTimes,
+    editAirSpaceAddress
   };
 };
 

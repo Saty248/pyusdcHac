@@ -4,7 +4,10 @@ import AirspaceRentalService from "@/services/AirspaceRentalService";
 import { PropertyData } from "@/types";
 import { Web3authContext } from "@/providers/web3authProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setAirspaceList } from "@/redux/slices/userSlice";
+import {
+  setActivePortfolioTab,
+  setAirspaceList,
+} from "@/redux/slices/userSlice";
 
 export enum PortfolioTabEnum {
   VERIFIED,
@@ -121,6 +124,7 @@ const usePortfolioList = () => {
     setAirspaceList([]);
     setPageNumber(1);
     setActiveTab(tab);
+    dispatch(setActivePortfolioTab(tab));
   };
 
   return {
@@ -131,6 +135,7 @@ const usePortfolioList = () => {
     handleTabSwitch,
     handlePrevPage,
     handleNextPage,
+    setAirspaceList,
   };
 };
 

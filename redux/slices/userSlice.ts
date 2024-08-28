@@ -1,3 +1,4 @@
+import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
 import { CategoryI, PropertyData, User, UserUSDWalletBalanceI } from "@/types";
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 import { number } from "yup";
@@ -20,6 +21,7 @@ interface UserState {
   endDate: string | null;
   minSalePrice: number | null;
   assetId: string;
+  activePortfolioTab: PortfolioTabEnum;
 }
 
 const initialState: UserState = {
@@ -40,6 +42,7 @@ const initialState: UserState = {
   endDate: null,
   minSalePrice: null,
   assetId: "",
+  activePortfolioTab: PortfolioTabEnum.VERIFIED,
 };
 
 const userSlice: Slice<UserState> = createSlice({
@@ -108,6 +111,9 @@ const userSlice: Slice<UserState> = createSlice({
     setAssetId: (state, action: PayloadAction<string>) => {
       state.assetId = action.payload;
     },
+    setActivePortfolioTab: (state, action: PayloadAction<PortfolioTabEnum>) => {
+      state.activePortfolioTab = action.payload;
+    },
   },
 });
 
@@ -129,5 +135,6 @@ export const {
   setEndDate,
   setMinSalePrice,
   setAssetId,
+  setActivePortfolioTab,
 } = userSlice.actions;
 export default userSlice.reducer;

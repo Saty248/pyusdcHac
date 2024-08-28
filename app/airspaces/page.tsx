@@ -3,7 +3,7 @@
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { toast } from "react-toastify";
@@ -26,13 +26,19 @@ import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon } from "../../Components/Icons";
+import { HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
-import { defaultData } from "../../types";
+import { defaultData, StatusTypes } from "../../types";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
+
+interface Address {
+  id: string;
+  place_name: string;
+}
 
 const Airspaces: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,6 +95,8 @@ const Airspaces: React.FC = () => {
   const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const [drawTool, setDrawTool] = useState(null);
   const [isDrawMode, setIsDrawMode] = useState(false);
   const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false)
@@ -465,6 +473,9 @@ const Airspaces: React.FC = () => {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
         setData({ ...defaultData });
+        if (user?.KYCStatusId === StatusTypes.NotAttempted) {
+          setShowPopup(true);
+        }
       }
       setDontShowAddressOnInput(false)
     } catch (error) {
@@ -520,6 +531,7 @@ const Airspaces: React.FC = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
   } 
+  const router = useRouter();
   return (
     <Fragment>
       <Head>
@@ -546,6 +558,49 @@ const Airspaces: React.FC = () => {
               handleSelectAddress={(value) => handleSelectAddress(value)}
             />
           )}
+          
+           <div>
+              {isMobile && showOptions && addresses.length > 0 && (
+                <div className="w-full flex items-center justify-center bg-white pb-[18px]">
+                  <div className=" p-[16px] w-[345px] flex flex-col items-center justify-center border border-blue-500 rounded-lg ">
+                  <div className="w-[301px]">
+                    {addresses.slice(0, 1).map((item: Address) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleSelectAddress(item.place_name)}
+                        className="w-full text-left text-[#222222]"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-[10%] h-6 mr-3">
+                            <LocationPointIcon />
+                          </div>
+                          <div className="w-[90%] text-[14px]">
+                            {item.place_name}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                   {((isMobile && showMobileMap && flyToAddress ) || (isOpen && currentStep === 2 && isMobile)) && (
+                    <div
+                      onClick={() => {
+                        setShowClaimModal(true);
+                        setIsLoading(true);
+                      }}
+                      className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
+                      style={{ maxWidth: "400px" }}
+                    >
+                      Claim Airspace
+                    </div>
+                  )}
+                  </div>
+              
+                  
+                  </div>
+                </div>
+              )}
+            </div>
+        
           {showHowToModal && (
             <HowToModal
               goBack={() => setShowHowToModal(false)}
@@ -565,17 +620,6 @@ const Airspaces: React.FC = () => {
               }}
             />
             <Sidebar />
-             {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
-              <div
-                onClick={() => {
-                  setShowClaimModal(true);
-                  setIsLoading(true);
-                }}
-                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
-            )}
             {isMobile && (
               <Fragment>
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
@@ -702,6 +746,7 @@ const Airspaces: React.FC = () => {
                 </div>
               </div>
             )}
+            {showPopup && <VerificationPopup onVerifyMyAccount={() => router.push('/my-account')}/>}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>
