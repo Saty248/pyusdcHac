@@ -81,9 +81,18 @@ const BidPreview: React.FC<BidPreviewProps> = ({
       if (
         currentUserBid &&
         auctionDetailData &&
-        currentUserBid <= auctionDetailData?.initialPrice
+        currentUserBid > auctionDetailData?.initialPrice &&
+        currentUserBid <= auctionDetailData?.currentPrice
       ) {
         toast.error("Your bid should be higher than the highest bid");
+        setIsLoading(false);
+        return;
+      } else if (
+        currentUserBid &&
+        auctionDetailData &&
+        currentUserBid < auctionDetailData?.initialPrice
+      ) {
+        toast.error("Your bid should be higher or equal to the starting bid");
         setIsLoading(false);
         return;
       }
@@ -146,7 +155,7 @@ const BidPreview: React.FC<BidPreviewProps> = ({
 
   return (
     <div className="fixed inset-0 bottom-[74px] sm:bottom-0 z-50 flex items-start pt-32 justify-center bg-[#294B63] bg-opacity-50 backdrop-blur-[2px]">
-      <div className="fixed bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[510px] md:h-[471px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
+      <div className="fixed bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-white rounded-t-[30px] md:rounded-[30px] w-full h-[540px] md:h-[510px] overflow-y-auto overflow-x-auto md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px] ">
         <div className="px-[25px] ">
           <div className=" flex flex-col justify-end items-center mt-4 md:mt-0 ">
             {isMobile && (
@@ -214,9 +223,16 @@ const BidPreview: React.FC<BidPreviewProps> = ({
                 </div>
               </div>
               <div className="flex">
-                <div>Minimum Bid:</div>
+                <div>Starting Bid:</div>
                 <div className="text-light-grey pl-[15px]">
                   $ {auctionDetailData?.initialPrice}
+                </div>
+              </div>
+
+              <div className="flex">
+                <div>Highest Bid:</div>
+                <div className="text-light-grey pl-[15px]">
+                  $ {auctionDetailData?.currentPrice}
                 </div>
               </div>
             </div>
