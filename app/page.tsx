@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import { useEffect, useContext } from "react";
-import { useRouter } from "next/navigation";
-import Spinner from "@/Components/Spinner";
-import useAutoLogout from "@/hooks/useAutoLogout";
-import { Web3authContext } from "@/providers/web3authProvider";
+import { useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import Spinner from '@/Components/Spinner';
+import useAutoLogout from '@/hooks/useAutoLogout';
+import { Web3authContext } from '@/providers/web3authProvider';
+
 
 export default function Home() {
   useAutoLogout();
@@ -15,15 +16,15 @@ export default function Home() {
   const logout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    router.push("/airspaces");
-  };
+    router.push('/airspaces');
+  }
 
   useEffect(() => {
     if (web3auth) {
       if (web3auth.status === "connected") {
         const userData = localStorage.getItem("user");
         if (userData && userData !== "undefined") {
-          router.push("/dashboard");
+          router.push('/dashboard');
         } else {
           logout();
         }
@@ -31,9 +32,6 @@ export default function Home() {
     }
   }, [web3auth?.status]);
 
-  return (
-    <div className="flex items-center justify-center w-screen h-screen">
-      <Spinner />
-    </div>
-  );
+
+  return <Spinner />
 }

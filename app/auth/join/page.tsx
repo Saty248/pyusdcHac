@@ -136,11 +136,7 @@ const IndividualSignup: React.FC = () => {
   };
 
   if (pageLoad) {
-    return (
-      <div className="flex items-center justify-center w-screen h-screen">
-        <Spinner />
-      </div>
-    );
+    return <Spinner />;
   }
 
   return (
@@ -154,12 +150,7 @@ const IndividualSignup: React.FC = () => {
           document.getElementById("backdrop-root")!
         )}
       {isLoading &&
-        createPortal(
-          <div className="flex items-center justify-center w-screen h-screen">
-            <Spinner />
-          </div>,
-          document.getElementById("backdrop-root")!
-        )}
+        createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
       <div className="relative rounded bg-[#F6FAFF] max-sm:bg-[white] h-screen w-screen flex items-center justify-center overflow-hidden">
         <div className="mx-auto w-[372px] md:w-[449px] flex flex-col items-center gap-[15px] bg-white md:py-[40px] px-[30px] rounded relative justify-center">

@@ -1,12 +1,12 @@
-import { calculateTimeLeft, formatDate } from "@/utils";
-import { getMapboxStaticImage } from "@/utils/marketplaceUtils";
-import Image from "next/image";
-import Accordion from "../Buy/BidDetail/Accordion";
-import CustomTable from "../Buy/BidDetail/CustomTable";
-import { SetStateAction, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import MarketplaceService from "@/services/MarketplaceService";
-import Spinner from "../Spinner";
+"use client";
+
+import React, { Fragment, SetStateAction, useState } from "react";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
+import PropertiesService from "@/services/PropertiesService";
+import { PropertyData } from "@/types";
+import { formatDate } from "@/utils";
+
+import { ArrowLeftIcon, CloseIcon, LocationPointIcon } from "../Icons";
 import {
   Page,
   Text,
@@ -14,15 +14,11 @@ import {
   Document,
   StyleSheet,
   pdf,
-  Image as Img,
+  Image,
 } from "@react-pdf/renderer";
 import { useAppSelector } from "@/redux/store";
-import PropertiesService from "@/services/PropertiesService";
-import AirspaceRentalService from "@/services/AirspaceRentalService";
-import { PropertyData } from "@/types";
 import { PortfolioTabEnum } from "@/hooks/usePortfolioList";
-const { Fragment } = require("react");
-const { ArrowLeftIcon, CloseIcon, LocationPointIcon } = require("../Icons");
+
 
 interface ModalProps {
   airspace: any;
@@ -41,6 +37,7 @@ const Certificate = ({
   latitude,
   amount,
 }) => {
+
   const styles = StyleSheet.create({
     page: {
       backgroundColor: "#fff",
@@ -86,11 +83,11 @@ const Certificate = ({
       marginVertical: 10,
     },
   });
-
+  
   return (
     <Document>
       <Page style={styles.page}>
-        <Img style={styles.image} src={"/images/logwo.png"} />
+        <Image style={styles.image} src={"/images/logwo.png"} />
         <Text style={styles.title}>Rental Certificate</Text>
         <View style={styles.section}>
           <Text>
@@ -105,7 +102,7 @@ const Certificate = ({
           <Text style={styles.bold}>Amount: {amount}</Text>
         </View>
 
-        <Img
+        <Image
           style={styles.mapImage}
           src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${longitude},${latitude},14/600x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`}
         />
@@ -118,9 +115,8 @@ const Certificate = ({
           </Text>
 
           <Text>
-            If you have any questions or require more information, please
-            contact the SkyTrade team and we will reach out at our earliest
-            convenience.
+            If you have any questions or require more information, please contact
+            the SkyTrade team and we will reach out at our earliest convenience.
           </Text>
         </View>
         <View style={styles.footer}>
@@ -130,7 +126,7 @@ const Certificate = ({
         </View>
       </Page>
     </Document>
-  );
+  )
 };
 
 const Modal = ({
@@ -140,48 +136,10 @@ const Modal = ({
   pageNumber = 0,
   setAirspaceList,
 }: ModalProps) => {
-  const { getAuctionWithBid } = MarketplaceService();
-  const [bids, setBids] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const property = airspace?.auction?.layer?.property;
-  const [inputValue, setInputValue] = useState(airspace?.address);
-  const { editAirSpaceAddress } = PropertiesService();
-  const [isLoading, setIsLoading] = useState(false);
-  const { getUnverifiedAirspaces } = AirspaceRentalService();
-  const imageUrl = getMapboxStaticImage(
-    property?.latitude,
-    property?.longitude
-  );
-
   const { user, activePortfolioTab } = useAppSelector((state) => {
     const { user, activePortfolioTab } = state.userReducer;
     return { user, activePortfolioTab };
   });
-
-  const handleEdit = async () => {
-    if (!user || inputValue === airspace?.address) return;
-    try {
-      setIsLoading(true);
-      const editResponse = await editAirSpaceAddress({
-        address: inputValue,
-        propertyId: airspace.id,
-      });
-      if (editResponse) {
-        const airspaceResp = await getUnverifiedAirspaces(
-          user?.blockchainAddress,
-          pageNumber,
-          10
-        );
-        setAirspaceList(airspaceResp.items);
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.error(error);
-    }
-  };
 
   const handleGenerateCertificate = async () => {
     const rentalId = airspace?.id;
@@ -208,123 +166,115 @@ const Modal = ({
     window.open(blobUrl, "_blank");
   };
 
-  useEffect(() => {
-    const fetchAuctionData = async () => {
-      setLoading(true);
-      const assetId = airspace?.auction?.id;
+  const [inputValue, setInputValue] = useState(airspace?.address);
+  const { editAirSpaceAddress } = PropertiesService();
+  const [isLoading, setIsLoading] = useState(false);
+  const { getUnverifiedAirspaces } = AirspaceRentalService();
 
-      if (assetId) {
-        try {
-          const data = await getAuctionWithBid(assetId);
-          setLoading(false);
-
-          setBids(data.AuctionBid);
-          console.log({ data });
-        } catch (error) {
-          setLoading(false);
-          console.error("Error fetching auction with bids:", error);
-        }
+  const handleEdit = async () => {
+    if (!user || inputValue === airspace?.address) return;
+    try {
+      setIsLoading(true);
+      const editResponse = await editAirSpaceAddress({
+        address: inputValue,
+        propertyId: airspace.id,
+      });
+      if (editResponse) {
+        const airspaceResp = await getUnverifiedAirspaces(
+          user?.blockchainAddress,
+          pageNumber,
+          10
+        );
+        setAirspaceList(airspaceResp.items);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
       }
-    };
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
+  };
 
-    fetchAuctionData();
-  }, [airspace]);
   return (
     <Fragment>
-      {airspace.type === "placedBid" || airspace.type === "receivedBid" ? (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
+        <div
+          className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
+          style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+        >
+          <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
+            <ArrowLeftIcon />
+          </div>
+          <h2 className="text-light-black text-center font-medium text-xl">
+            {inputValue}
+          </h2>
           <div
-            className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-            style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
+            onClick={onCloseModal}
+            className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
           >
-            <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
-              <ArrowLeftIcon />
+            <CloseIcon />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
+          <div className="w-6 h-6">
+            <LocationPointIcon />
+          </div>
+          <input
+            className="font-normal text-light-black text-[14px] flex-1 border-none outline-none"
+            type="text"
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+          />
+        </div>
+
+        <div className="flex gap-[15px]">
+          <p className="text-[14px] font-normal text-light-black">ID:</p>
+          <p className="text-[14px] font-normal text-light-grey break-all">
+            {airspace?.id}
+          </p>
+        </div>
+
+        {airspace?.metadata?.endTime && (
+          <div className="flex gap-[15px]">
+            <p className="text-[14px] font-normal text-light-black">
+              Expiration Date:
+            </p>
+            <p className="text-[14px] font-normal text-light-grey">
+              {formatDate(airspace?.metadata?.endTime)}
+            </p>
+          </div>
+        )}
+
+        {isOffer ? (
+          <div
+            className="flex gap-[20px] md:mt-[15px] mt-auto py-[16px] md:py-0 -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 md:shadow-none"
+            style={{ boxShadow: "0px 0px 4.199999809265137px 0px #00000040" }}
+          >
+            <div className="flex flex-col">
+              <p className="font-normal text-[12px] text-[#838187]">
+                Offer received
+              </p>
+              <p className="font-bold text-2xl text-[#222222]"></p>
             </div>
-
-            <h2 className="text-[#222222] text-center font-medium text-xl break-words">
-              {property?.title > 60
-                ? property?.title.slice(0, 57) + " ..."
-                : property?.title}
-            </h2>
-
             <div
               onClick={onCloseModal}
-              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
+              className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+              style={{ border: "1px solid #0653EA" }}
             >
-              <CloseIcon />
+              Decline
+            </div>
+            <div
+              className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
+              style={{ border: "1px solid #0653EA" }}
+            >
+              Approve
             </div>
           </div>
-
-          <div
-            className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg"
-            style={{ border: "1px solid #4285F4" }}
-          >
-            <div className="w-6 h-6">
-              <LocationPointIcon />
-            </div>
-            <p className="font-normal text-[#222222] text-[14px] flex-1 break-words">
-              {airspace?.auction?.layer?.property?.address}
-            </p>
-          </div>
-
-          <div className="flex gap-[15px]">
-            <p className="text-[14px] font-normal text-[#222222]">ID:</p>
-            <p className="text-[14px] font-normal text-[#87878D] break-all">
-              {airspace?.auction?.assetId}
-            </p>
-          </div>
-
-          <div className="flex gap-[15px]">
-            <p className="text-[14px] font-normal text-[#222222]">
-              Highest Bid:
-            </p>
-            <p className="text-[14px] font-normal text-[#87878D] break-all">
-              ${airspace?.auction?.currentPrice}
-            </p>
-          </div>
-
-          <div className="flex gap-[15px]">
-            <p className="text-[14px] font-normal text-[#222222]">
-              Highest Bidder:
-            </p>
-            <p className="text-[14px] font-normal text-[#87878D] break-all">
-              {airspace?.auction?.currentBidder}
-            </p>
-          </div>
-
-          <div className="flex gap-[15px]">
-            <p className="text-[14px] font-normal text-[#222222]">Time Left:</p>
-            <p className="text-[14px] font-normal text-[#87878D] break-all">
-              {calculateTimeLeft(airspace?.auction?.endDate)}
-            </p>
-          </div>
-
-          <div className="relative w-full h-32">
-            <Image
-              src={imageUrl}
-              alt={`Map at ${property?.latitude}, ${property?.longitude}`}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-
-          <hr />
-          <div className="opacity-60">
-            <Accordion
-              title={`Previous Bids (${bids.length})`}
-              content={
-                <CustomTable header={["Price($)", "From"]} auctionBids={bids} />
-              }
-            />
-
-            {loading && (
-              <div className="my-4">
-                <Spinner />
-              </div>
-            )}
-          </div>
-          <hr />
-
+        ) : (
           <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
             <div
               onClick={onCloseModal}
@@ -334,125 +284,31 @@ const Modal = ({
               Cancel
             </div>
             <button
-              disabled
-              className="disabled flex-1 text-white rounded-[5px] bg-gray-300 cursor-not-allowed text-center py-[10px] px-[20px] flex items-center justify-center"
+              onClick={
+                activePortfolioTab === PortfolioTabEnum.RENTED
+                  ? handleGenerateCertificate
+                  : handleEdit
+              }
+              className={`bg-blue-500 flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
             >
-              Edit
+              {isLoading ? (
+                <>
+                  {activePortfolioTab !== PortfolioTabEnum.RENTED &&
+                    "Editing..."}
+                </>
+              ) : (
+                <>
+                  {activePortfolioTab === PortfolioTabEnum.RENTED
+                    ? "Generate Certificate"
+                    : "Edit"}
+                </>
+              )}
             </button>
           </div>
-        </div>
-      ) : (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full h-full md:h-auto md:w-[689px] z-[500] md:z-50 flex flex-col gap-[15px]">
-          <div
-            className="relative flex items-center gap-[20px] md:p-0 py-[20px] px-[29px] -mx-[29px] -mt-[30px] md:my-0 md:mx-0 md:shadow-none"
-            style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
-          >
-            <div className="w-[16px] h-[12px] md:hidden" onClick={onCloseModal}>
-              <ArrowLeftIcon />
-            </div>
-            <h2 className="text-light-black text-center font-medium text-xl">
-              {inputValue}
-            </h2>
-            <div
-              onClick={onCloseModal}
-              className="hidden md:block absolute top-0 right-0 w-[15px] h-[15px] ml-auto cursor-pointer"
-            >
-              <CloseIcon />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-[10px] py-4 px-[22px] rounded-lg border border-deep-blue">
-            <div className="w-6 h-6">
-              <LocationPointIcon />
-            </div>
-            <input
-              className="font-normal text-light-black text-[14px] flex-1 border-none outline-none"
-              type="text"
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="flex gap-[15px]">
-            <p className="text-[14px] font-normal text-light-black">ID:</p>
-            <p className="text-[14px] font-normal text-light-grey break-all">
-              {airspace?.id}
-            </p>
-          </div>
-
-          {airspace?.metadata?.endTime && (
-            <div className="flex gap-[15px]">
-              <p className="text-[14px] font-normal text-light-black">
-                Expiration Date:
-              </p>
-              <p className="text-[14px] font-normal text-light-grey">
-                {formatDate(airspace?.metadata?.endTime)}
-              </p>
-            </div>
-          )}
-
-          {isOffer ? (
-            <div
-              className="flex gap-[20px] md:mt-[15px] mt-auto py-[16px] md:py-0 -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 md:shadow-none"
-              style={{ boxShadow: "0px 0px 4.199999809265137px 0px #00000040" }}
-            >
-              <div className="flex flex-col">
-                <p className="font-normal text-[12px] text-[#838187]">
-                  Offer received
-                </p>
-                <p className="font-bold text-2xl text-[#222222]"></p>
-              </div>
-              <div
-                onClick={onCloseModal}
-                className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-                style={{ border: "1px solid #0653EA" }}
-              >
-                Decline
-              </div>
-              <div
-                className="flex-1 text-white rounded-[5px] bg-[#0653EA] text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-                style={{ border: "1px solid #0653EA" }}
-              >
-                Approve
-              </div>
-            </div>
-          ) : (
-            <div className="flex gap-[20px] md:mt-[15px] mt-auto -mx-[30px] md:mx-0 md:mb-0 -mb-[30px] px-[14px] md:px-0 py-[16px] md:py-0">
-              <div
-                onClick={onCloseModal}
-                className="flex-1 text-[#0653EA] rounded-[5px] bg-white text-center py-[10px] px-[20px] cursor-pointer flex items-center justify-center"
-                style={{ border: "1px solid #0653EA" }}
-              >
-                Cancel
-              </div>
-              <button
-                onClick={
-                  activePortfolioTab === PortfolioTabEnum.RENTED
-                    ? handleGenerateCertificate
-                    : handleEdit
-                }
-                className={`bg-blue-500 flex-1 text-white rounded-[5px]  text-center py-[10px] px-[20px] flex items-center justify-center`}
-              >
-                {isLoading ? (
-                  <>
-                    {activePortfolioTab !== PortfolioTabEnum.RENTED &&
-                      "Editing..."}
-                  </>
-                ) : (
-                  <>
-                    {activePortfolioTab === PortfolioTabEnum.RENTED
-                      ? "Generate Certificate"
-                      : "Edit"}
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </Fragment>
   );
 };
+
 export default Modal;
