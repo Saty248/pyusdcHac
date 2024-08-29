@@ -1,6 +1,6 @@
 import Account from "@/Components/MyAccount";
 
-function MyAccount () {
+const MyAccount = () => {
     return <Account/>
 }
 

@@ -19,6 +19,16 @@ const AirspaceRentalService = () => {
     }
   }
 
+  const getNonceAccountEntry=async ()=>{
+    try {
+      const response = await getRequest({uri:`/private/airspace-rental/get-nonce-account-entry`}) 
+      return response?.data
+    } catch (error) {
+      console.error(error)
+      throw new Error(error.message)
+    }
+  }
+
   const getRetrievePendingRentalAirspace = async (callerAddress: string | undefined, page: string | number, limit: string | number)=>{
     try {
       if (!callerAddress) return [];
@@ -122,6 +132,7 @@ const AirspaceRentalService = () => {
     getPropertiesByUserAddress,
     getUnverifiedAirspaces,
     getRejectedAirspaces,
+    getNonceAccountEntry,
     createMintRentalToken,
     executeMintRentalToken,
     getTotalAirspacesByUserAddress, 
