@@ -493,7 +493,7 @@ const Airspaces: React.FC = () => {
           )}
 
           <section
-            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px] overflow-hidden"}`}
+            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
             <div
               className={`!absolute !left-0 !top-0 !m-0 !h-[100%] !w-[100%] `}
