@@ -27,7 +27,7 @@ const ExplorerMobile = ({
   const searchParams = useSearchParams();
   const { isOpen } = useTour();
   return (
-    <div className="enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+    <div className="fixed enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px] w-full">
       <div
         onClick={onGoBack}
         className="flex h-6 w-6 items-center justify-center"

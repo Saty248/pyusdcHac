@@ -493,7 +493,7 @@ const Airspaces: React.FC = () => {
           )}
 
           <section
-            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
+            className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px] overflow-hidden"}`}
           >
             <div
               className={`!absolute !left-0 !top-0 !m-0 !h-[100%] !w-[100%] `}
@@ -505,15 +505,15 @@ const Airspaces: React.FC = () => {
             />
             <Sidebar />
              {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
-              <div
-                onClick={() => {
-                  setShowClaimModal(true);
-                  setIsLoading(true);
-                }}
-                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
+             <div
+             onClick={() => {
+               setShowClaimModal(true);
+               setIsLoading(true);
+             }}
+             className="Claim-airspacebtn-step fixed bottom-28 left-1/2 transform -translate-x-1/2 z-[40] w-[90%] cursor-pointer rounded-lg bg-[#0653EA] text-center text-[15px] font-normal text-white flex justify-center items-center py-[14px]">
+             Claim Airspace
+           </div>
+           
             )}
             {isMobile && (
               <Fragment>
