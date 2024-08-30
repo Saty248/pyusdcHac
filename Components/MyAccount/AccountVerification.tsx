@@ -37,7 +37,7 @@ const AccountVerification = ({
     return user?.requestDocument?.find((doc) => doc.status === RequestDocumentStatus.NOT_SUBMITTED) || null;
   }, [user]);
 
-  if (!KYCStatusId) return <></>
+  if (typeof KYCStatusId === undefined) return <></>
 
   return (
     <div>
