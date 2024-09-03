@@ -610,6 +610,7 @@ const Airspaces: React.FC = () => {
               }}
             />
             <Sidebar />
+
             {isMobile && (
               <Fragment>
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
