@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
+import { CircledCloseIcon, SuccessIconwhite } from "../Icons";
 
 interface PropsI {
   closePopUp: () => void;
@@ -22,7 +22,7 @@ const SuccessModal = ({ closePopUp, isSuccess, errorMessages }: PropsI) => {
             {isSuccess ? (
               <SuccessIconwhite />
             ) : (
-              <CloseIconWhite />
+              <CircledCloseIcon />
             )}
           </div>
           <div>

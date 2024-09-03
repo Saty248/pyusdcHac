@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeftIcon, MagnifyingGlassIcon } from "../../Icons";
+import { ArrowLeftIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
 import { useTour } from "@reactour/tour";
 import { useSearchParams } from "next/navigation";
 interface Address {
@@ -27,15 +27,10 @@ const ExplorerMobile = ({
   const searchParams = useSearchParams();
   const { isOpen } = useTour();
   return (
-    <div className="fixed enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px] w-full">
+    <div className="enter-address-step z-[40] flex items-center gap-[15px] bg-white px-[21px] py-[19px]">
+      <h1 className="text-xl font-medium">Airspaces</h1>
       <div
-        onClick={onGoBack}
-        className="flex h-6 w-6 items-center justify-center"
-      >
-        <ArrowLeftIcon />
-      </div>
-      <div
-        className="relative w-full rounded-lg bg-white px-[22px] py-[16px]"
+        className="relative w-[230px] h-[49px] rounded-lg bg-white px-[22px] py-[10px]"
         style={{ border: "1px solid #87878D" }}
       >
         <input
@@ -46,31 +41,12 @@ const ExplorerMobile = ({
           name="searchAirspaces"
           id="searchAirspaces"
           placeholder="Search Airspaces"
-          className="w-full pr-[20px] outline-none"
+          className="w-full pr-[20px] outline-none text-sm"
         />
-        <div className="absolute right-[22px] top-1/2 h-[17px] w-[17px] -translate-y-1/2">
+        <div className="absolute right-[20px] top-1/2 h-[15px] w-[15px] -translate-y-1/2">
           <MagnifyingGlassIcon />
         </div>
-        {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
-            {addresses.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  // value={item.place_name}
-                  onClick={() => handleSelectAddress(item.place_name)}
-                  className="w-full p-5 text-left text-[#222222]"
-                  style={{
-                    borderTop: "0.2px solid #222222",
-                  }}
-                >
-                  {item.place_name}
-                </div>
-              );
-            })}
           </div>
-        )}
-      </div>
     </div>
   );
 };
