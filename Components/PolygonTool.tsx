@@ -19,6 +19,7 @@ const PolygonTool = ({ drawTool,isDrawMode, setDrawMode }: PolygonToolProps) => 
   };
   
   return (
+    <div>
     <div
       className="absolute top-0 right-0 bg-light-grey-100 rounded-lg z-20 m-4"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
@@ -75,6 +76,15 @@ const PolygonTool = ({ drawTool,isDrawMode, setDrawMode }: PolygonToolProps) => 
         </button>
       </div>
     </div>
+    {isDrawMode &&(
+      <div className="bg-white rounded-lg p-4 w-[410px] z-20 absolute top-28 right-2 ">
+      <p className="text-[13px]">
+          Please ensure the address entered matches the registered property address to accurately claim this area.
+      </p>
+     </div>
+    )}
+    </div>
+    
   );
 };
 
