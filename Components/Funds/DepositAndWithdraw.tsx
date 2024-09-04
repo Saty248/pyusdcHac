@@ -14,6 +14,7 @@ import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, Payment
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
+import { initializeTransak } from "@/utils/transak";
 
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
@@ -220,11 +221,30 @@ const DepositAndWithdraw = ({
     setActiveSection(index);
     setAmount("");
   }
+  const handleDeposit = () => {
+    const walletAddress = user?.blockchainAddress;
+    const email = user?.email;
+
+    initializeTransak({
+      walletAddress , 
+      email, 
+      productsAvailed:'BUY',
+      onSuccess:(orderData) => {
+        toast.success(`Deposited ${orderData?.status?.fiatAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `);
+      },
+      onFailure:() => {
+        toast.error('Deposit failed!');
+      }
+    });
+  };
 
   const handleSelection = (method: PaymentMethod) => {
     setSelectedMethod(method);
     if (method.name === "Ramp") {
       handleOnAndOffRamp()
+    }
+    else if (method.name === "Transak"){
+      handleDeposit()
     }
   };
   
