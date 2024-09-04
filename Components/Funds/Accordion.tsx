@@ -19,8 +19,8 @@ const supportedMethods = [
     name: "Stripe",
   },
   {
-    icon: "/images/Stripe.svg",
-    name: "LIFI",
+    icon: "/images/LI-FI.svg",
+    name: "LI.FI",
   },
 ];
 

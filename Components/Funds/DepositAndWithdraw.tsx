@@ -14,7 +14,7 @@ import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, Payment
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
-import { LiFiComponent } from "./LifiComponent";
+import { LiFiComponent, TRANSACTION_TYPE } from "./LifiComponent";
 import Backdrop from "../Backdrop";
 
 const defaultPaymentMethod = {
@@ -43,6 +43,7 @@ const DepositAndWithdraw = ({
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
   const [showLIFI ,setShowLIFI] = useState(false);
+  const [LIFITransactionType,setLIFITransactionType] = useState<TRANSACTION_TYPE.DEPOSIT| TRANSACTION_TYPE.WITHDRAW>(TRANSACTION_TYPE.DEPOSIT);
   
   const notifySuccess = () => {
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -51,7 +52,13 @@ const DepositAndWithdraw = ({
   const handleWithdraw = async () => {
     if (selectedMethod.name === "Ramp") {
       handleOnAndOffRamp()
-    } else {
+    } 
+    else if(selectedMethod.name === "LI.FI") {
+      setLIFITransactionType(TRANSACTION_TYPE.WITHDRAW);
+      setShowLIFI(true);
+
+    }
+    else {
       await handleNativeAssetWithdrawal();
     }
   }
@@ -176,6 +183,9 @@ const DepositAndWithdraw = ({
       setIsLoading(false);
       toast.error(error.message);
     }
+    finally{
+      setIsLoading(false);
+    }
   };
   
   const { SVG } = useQRCode();
@@ -227,10 +237,12 @@ const DepositAndWithdraw = ({
     if (method.name === "Ramp") {
       handleOnAndOffRamp()
     }
-    else if (method.name === 'LIFI'){
+    else if (method.name === 'LI.FI'){
+      setLIFITransactionType(TRANSACTION_TYPE.DEPOSIT);
       setShowLIFI(true);
     }
   };
+  const walletAddress = user?.blockchainAddress;
   
   return (
     <div
@@ -442,7 +454,12 @@ const DepositAndWithdraw = ({
         showLIFI && 
         <div>
           <Backdrop />
-          <LiFiComponent onClose={()=>(setShowLIFI(false))}/>
+          <LiFiComponent
+          transactionType={LIFITransactionType}
+          walletAddress={walletAddress}
+          onClose={()=>(setShowLIFI(false))}
+          />
+
         </div>
         }
     </div>
