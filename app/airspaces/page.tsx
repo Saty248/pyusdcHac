@@ -536,8 +536,9 @@ const Airspaces: React.FC = () => {
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
 
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        <div className="flex h-full w-full flex-col">
+      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+          <Sidebar />
+          <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
           {((showMobileMap && isMobile) ||
             (isOpen && currentStep === 1 && isMobile)) && (
@@ -608,7 +609,6 @@ const Airspaces: React.FC = () => {
                 zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
               }}
             />
-            <Sidebar />
             {isMobile && (
               <Fragment>
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
