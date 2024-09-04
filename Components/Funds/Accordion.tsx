@@ -18,6 +18,10 @@ const supportedMethods = [
     icon: "/images/Stripe.svg",
     name: "Stripe",
   },
+  {
+    icon: "/images/Stripe.svg",
+    name: "LIFI",
+  },
 ];
 
 const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {

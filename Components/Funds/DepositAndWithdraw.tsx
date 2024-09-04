@@ -14,6 +14,8 @@ import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, Payment
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
+import { LiFiComponent } from "./LifiComponent";
+import Backdrop from "../Backdrop";
 
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
@@ -40,8 +42,7 @@ const DepositAndWithdraw = ({
 
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
-
-
+  const [showLIFI ,setShowLIFI] = useState(false);
   
   const notifySuccess = () => {
     toast.success("Success !. Your funds have been withdrawn successfully");
@@ -225,6 +226,9 @@ const DepositAndWithdraw = ({
     setSelectedMethod(method);
     if (method.name === "Ramp") {
       handleOnAndOffRamp()
+    }
+    else if (method.name === 'LIFI'){
+      setShowLIFI(true);
     }
   };
   
@@ -433,7 +437,14 @@ const DepositAndWithdraw = ({
       }
       </>
     )}
-
+        
+        {
+        showLIFI && 
+        <div>
+          <Backdrop />
+          <LiFiComponent onClose={()=>(setShowLIFI(false))}/>
+        </div>
+        }
     </div>
   );
 };
