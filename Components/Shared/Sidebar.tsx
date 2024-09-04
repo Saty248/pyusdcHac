@@ -4,7 +4,7 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon, DroneIcon, GiftIconsidebar,EarthIconsidebar,HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon, WalletIcon, MenuIcon, } from './Icons';
+import { ArrowCompressIcon, ArrowExpandIcon, DashboardIcon,GiftIconsidebar,EarthIconsidebar,HelpQuestionIcon, LogoutIcon, MapIcon, ShoppingBagsIcon,MenuIcon, DroneIconsidebar, WalletIconsidebar, } from './Icons';
 import useAuth from '@/hooks/useAuth';
 import { SidebarContext } from '@/hooks/sidebarContext';
 import { useMobile } from "@/hooks/useMobile";
@@ -167,9 +167,9 @@ const Sidebar = () => {
         <div className='bg-[#00000012] w-full h-[1px]' />
         {!isCollapsed && <p className='font-normal tracking-[1%] text-[#5D7285] self-start px-[14.64px]'>MARKETPLACE</p>}
         <SidebarItem href={'https://sky.trade/waitlist'} target={'_blank'} text={'Buy Airspace'} children={<MapIcon isActive={false} />} />
-        <SidebarItem href={'/rent'} text={'Rent Airspace'} children={<DroneIcon isActive={false} />} />
+        <SidebarItem href={'/rent'} text={'Rent Airspace'} children={<DroneIconsidebar isActive={false} />} />
         <SidebarItem href={'/portfolio'} text={'Portfolio'} children={<ShoppingBagsIcon isActive={false} />} numberOfUnseenNotifications={0} />
-        <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIcon isActive={false} />} />
+        <SidebarItem href={'/funds'} text={'Funds'} children={<WalletIconsidebar isActive={false} />} />
         <div className='bg-[#00000012] w-full h-[1px]' />
         <SidebarItem href={'https://skytrade.tawk.help'} target={'_blank'} text={'Help Center'} children={<HelpQuestionIcon isActive={false} color={undefined} />} />
         {user?.blockchainAddress && <SidebarItem onClick={logoutHandler} text={'Logout'} children={<LogoutIcon isActive={false} />} />}

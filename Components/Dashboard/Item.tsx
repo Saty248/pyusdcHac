@@ -27,7 +27,7 @@ const Item: FC<ItemProps> = ({
         <p className="text-xl font-medium text-[#222222]">{title} </p>
         <Link
           href={href}>
-          <div className="h-6 w-6">{icon}</div>
+          <div className="h-10 w-10">{icon}</div>
         </Link>
       </div>
       {children}
