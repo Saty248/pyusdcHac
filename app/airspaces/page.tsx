@@ -138,7 +138,6 @@ const Airspaces: React.FC = () => {
         defaultMode: "draw_polygon",
       });
       setDrawTool(draw);
-      newMap.addControl(draw);
 
       newMap.on("render", function () {
         newMap.resize()
@@ -653,7 +652,7 @@ const Airspaces: React.FC = () => {
                 {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
                 {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
                 {!showSuccessPopUp && !isMobile &&(<div>
-                  <PolygonTool drawTool={drawTool} isDrawMode={isDrawMode} setDrawMode={setIsDrawMode}/>
+                  <PolygonTool drawTool={drawTool} map={map} isDrawMode={isDrawMode} setDrawMode={setIsDrawMode}/>
                   </div>
                 )}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (

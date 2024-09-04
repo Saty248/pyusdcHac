@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Image from 'next/image';
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { Map } from 'mapbox-gl';
 
 interface PolygonToolProps {
   drawTool: MapboxDraw; 
   isDrawMode: boolean; 
   setDrawMode: React.Dispatch<React.SetStateAction<boolean>>
+  map: Map | null
 }
 
-const PolygonTool = ({ drawTool,isDrawMode, setDrawMode }: PolygonToolProps) => {
+const PolygonTool = ({ drawTool,isDrawMode, setDrawMode, map }: PolygonToolProps) => {
+  const ref = useRef(false)
 
   const deletePolygon = () => {
     const selectedFeatures = drawTool.getSelectedIds();
@@ -31,7 +34,10 @@ const PolygonTool = ({ drawTool,isDrawMode, setDrawMode }: PolygonToolProps) => 
           className={`px-2 py-2 rounded-lg ${isDrawMode && "bg-pure-blue"} hover:bg-pure-blue group `}
           onClick={() => {
             if(drawTool){
-
+              if(!ref.current){
+                map?.addControl(drawTool);
+                ref.current = true
+              }
               drawTool?.changeMode("draw_polygon");
               setDrawMode(true)
             }
