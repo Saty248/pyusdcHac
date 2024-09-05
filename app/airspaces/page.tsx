@@ -23,7 +23,7 @@ import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
+import { ChevronRightIcon, HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
 import { defaultData, StatusTypes } from "../../types";
@@ -31,6 +31,8 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
 import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
+import MyMobileAirspacesPage from "@/Components/Airspace/ClaimedAirspaceList";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
 
 interface Address {
   id: string;
@@ -97,7 +99,43 @@ const Airspaces: React.FC = () => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [drawTool, setDrawTool] = useState(null);
   const [isDrawMode, setIsDrawMode] = useState(false);
-  const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false)
+  const [dontShowAddressOnInput,setDontShowAddressOnInput] = useState(false);
+  const [showAirspacePage, setShowAirspacePage] = useState(false);
+  const [airspaces, setAirspaces] = useState<any[]>([]);
+  const [totalAirspace, setTotalAirspace] = useState(0);
+
+
+  const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const airspaces = await getTotalAirspacesByUserAddress(
+          user?.blockchainAddress
+        );
+
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item: any) => ({
+            address: item.address,
+            id: item?.id,
+          }));
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
+          } else {
+            console.info("No airspaces found.");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [user]);
+
+  if (!user) {
+    return <Spinner />;
+  }
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -574,7 +612,7 @@ const Airspaces: React.FC = () => {
                       </div>
                     ))}
 
-                   {((isMobile && showMobileMap && flyToAddress ) || (isOpen && currentStep === 2 && isMobile)) && (
+                   {((isMobile && showMobileMap) || (isOpen && currentStep === 2 && isMobile)) && (
                     <div
                       onClick={() => {
                         setShowClaimModal(true);
@@ -598,6 +636,24 @@ const Airspaces: React.FC = () => {
             <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap}/>
           )}
 
+          {isMobile && showAirspacePage &&(
+            <MyMobileAirspacesPage setShowAirspacePage={setShowAirspacePage} airspaces={airspaces} />
+          )}
+          
+           {isMobile && showMobileMap && !showAirspacePage && (
+               <div onClick={() => {setShowAirspacePage(true) }} className='flex fixed bottom-[76px] left-0 w-full z-40 bg-white'> 
+               <div className="bg-white w-full p-4 shadow-md flex items-center">
+               <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
+                 <p className='text-xl font-[500px] flex gap-4 items-center'>My Airspaces  {!isLoading && (<span className="text-[15px] font-normal rounded-full border-2 border-black flex items-center justify-center h-8 w-8"> {totalAirspace}</span>)}</p>
+                 <div className="w-5 h-5">
+                     <ChevronRightIcon />
+                 </div>
+                 </div>
+                 </div>
+             </div>
+          )}
+     
+
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
           >
@@ -606,7 +662,7 @@ const Airspaces: React.FC = () => {
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
+                zIndex: !isMobile ? "20" : showMobileMap ? "10" : "-20",
               }}
             />
             {isMobile && (
