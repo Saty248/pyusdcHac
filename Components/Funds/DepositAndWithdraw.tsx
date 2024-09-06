@@ -14,6 +14,8 @@ import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, Payment
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
+import axios from "axios";
+import OnrampComponent from "./Stripe/StripeComponent";
 
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
@@ -40,6 +42,9 @@ const DepositAndWithdraw = ({
 
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
+
+  const [showOnramp, setShowOnramp] = useState<boolean>(false); 
+  const [clientSecret, setClientSecret] = useState<string>("");
 
 
   
@@ -226,8 +231,34 @@ const DepositAndWithdraw = ({
     if (method.name === "Ramp") {
       handleOnAndOffRamp()
     }
+    else if(method.name === "Stripe"){
+      handleStripe();
+    }
   };
   
+  async function handleStripe() {
+    // const res = await axios.post('http://localhost:8888/public/stripe/onramp-session',{
+    //   "transaction_details": {
+    //     "destination_currency": "usdc",
+    //     "destination_exchange_amount": "13.37",
+    //     "destination_network": "solana"
+    //   }
+    // })
+    // console.log(res,"halu")
+
+      const res = await axios.post('http://localhost:8888/public/stripe/onramp-session',{
+        "transaction_details": {
+          "destination_currency": "usdc",
+          "destination_exchange_amount": "13.37",
+          "destination_network": "solana"
+        }
+      })
+      setShowOnramp(true);
+      
+      setClientSecret(res.data.clientSecret);
+    
+  }
+
   return (
     <div
       className="flex flex-col gap-[15px] items-center w-[89%] sm:w-[468px] bg-white rounded-[30px] py-[30px] sm:px-[29px] sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]"
@@ -388,6 +419,7 @@ const DepositAndWithdraw = ({
       )}
       {activeSection === 0 && (
       <>
+            <OnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp}/>
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
       <div className="w-6 h-6">
         <WarningIcon />
