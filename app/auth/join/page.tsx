@@ -153,7 +153,7 @@ const IndividualSignup: React.FC = () => {
         createPortal(<Spinner />, document.getElementById("backdrop-root")!)}
 
       <div className="bg-[#F6FAFF]  max-sm:bg-[white]  md:w-full md:h-full  w-screen h-screen flex items-center justify-center mx-auto">
-        <div className=" w-[372px] md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto">
+        <div className=" w-full md:w-[449px]  flex flex-col items-center gap-[15px] bg-white py-[40px] px-[30px] justify-center m-auto">
           <Image
             src={"/images/logo-1.svg"}
             alt="Company's logo"
