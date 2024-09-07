@@ -84,12 +84,12 @@ export const ClaimModal = ({
   return ( 
     <div>
     <Backdrop />
-    <div className="claim-modal-step fixed left-0  md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full max-h-[70vh] md:max-h-[640px] md:h-auto overflow-y-auto overflow-x-hidden md:w-[689px] z-[500] sm:z-50 flex flex-col gap-[15px]">
+    <div className="claim-modal-step fixed left-0 top-1/2 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white md:rounded-[30px] rounded-t-3xl w-full md:w-[689px] max-h-[50dvh] md:max-h-[640px] h-[90%] md:h-auto z-[500] sm:z-50 flex flex-col gap-[15px] overflow-y-auto overflow-x-hidden">
       <div
-        className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 bg-white py-[20px] px-[29px] -mt-[1px] md:shadow-none"
+        className=" hidden md:block z-[100] h-[68px] sticky top-0 left-0 right-0 py-[20px] px-[29px] -mt-[1px] md:shadow-none bg-white "
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
       >
-        <div className="  relative flex items-center gap-[20px] md:p-0 ">
+        <div className="relative flex items-center gap-[20px] md:p-0 ">
           <div className="flex justify-center items-center w-[95%] gap-2 ">
             <h2 className="text-[#222222] text-center font-medium text-xl">
               Claim Airspace
@@ -115,7 +115,7 @@ export const ClaimModal = ({
           </div>
         </div>
       </div>
-      <div className="mt-10 md:mt-0 overflow-y-scroll" style={{height: 'calc(100dvh - 68px)'}}>
+      <div className="mt-3 md:mt-0 overflow-y-scroll">
       {isMobile && (
         <div  onClick={onCloseModal} className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center">
@@ -162,7 +162,7 @@ export const ClaimModal = ({
       )}
 
     </div>
-    <div className="flex flex-col gap-[5px] mt-3 md:mt-4 ">
+    <div className="flex flex-col gap-[5px] mt-3 md:mt-4">
         <label htmlFor="name">
           Name of airspace<span className="text-[#E04F64]">*</span>
         </label>
@@ -180,7 +180,7 @@ export const ClaimModal = ({
           autoComplete="off"
         />
       </div>
-          <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
+        <div className="flex flex-col gap-[10px] mt-2 md:mt-3">
             <p className="text-[14px] font-normal text-[#838187] ">
               Are you looking to Rent or Sell your airspace?
             </p>
