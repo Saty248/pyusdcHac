@@ -221,7 +221,7 @@ const Rent = () => {
 
           <div className="w-full h-full flex flex-col ">
        <div className="md:hidden">
-       {!isMobile && <PageHeader pageTitle={"Marketplace: Rent" } />}
+       <PageHeader pageTitle={!isMobile ? "Marketplace: Rent" : ""} />
        </div>
             {isMobile && (
               <ExplorerMobile
