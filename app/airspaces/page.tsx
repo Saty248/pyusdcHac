@@ -574,7 +574,7 @@ const Airspaces: React.FC = () => {
                       </div>
                     ))}
 
-                   {((isMobile && showMobileMap && flyToAddress ) || (isOpen && currentStep === 2 && isMobile)) && (
+                  {((isMobile && showMobileMap) || (isOpen && currentStep === 2 && isMobile)) && (
                     <div
                       onClick={() => {
                         setShowClaimModal(true);
