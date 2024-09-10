@@ -15,8 +15,10 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
 import axios from "axios";
-import OnrampComponent from "./Stripe/StripeComponent";
-
+import StripeOnrampComponent from "./Stripe/StripeComponent";
+import StripeService from '@/services/StripeService'
+import Backdrop from "../Backdrop";
+import Spinner from "../Spinner";
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
   name: "Native",
@@ -33,6 +35,7 @@ const DepositAndWithdraw = ({
 }: DepositAndWithdrawProps) => {
   const router = useRouter();
   const { user } = useAuth();
+  const {createStripe} = StripeService();
   const { provider } = useContext(Web3authContext) as Web3authContextType
 
 
@@ -45,7 +48,7 @@ const DepositAndWithdraw = ({
 
   const [showOnramp, setShowOnramp] = useState<boolean>(false); 
   const [clientSecret, setClientSecret] = useState<string>("");
-
+  const [stripeLoading , setStripeLoading] = useState(false);
 
   
   const notifySuccess = () => {
@@ -237,25 +240,22 @@ const DepositAndWithdraw = ({
   };
   
   async function handleStripe() {
-    // const res = await axios.post('http://localhost:8888/public/stripe/onramp-session',{
-    //   "transaction_details": {
-    //     "destination_currency": "usdc",
-    //     "destination_exchange_amount": "13.37",
-    //     "destination_network": "solana"
-    //   }
-    // })
-    // console.log(res,"halu")
-
-      const res = await axios.post('http://localhost:8888/public/stripe/onramp-session',{
-        "transaction_details": {
-          "destination_currency": "usdc",
-          "destination_exchange_amount": "13.37",
-          "destination_network": "solana"
+    try{
+      setStripeLoading(true);
+      const postData = {
+        "blockchainAddress": walletId
+      }
+        const res = await createStripe(postData)
+        if(res.data.client_secret){
+          setShowOnramp(true);
+          setClientSecret(res.data.client_secret);
         }
-      })
-      setShowOnramp(true);
-      
-      setClientSecret(res.data.clientSecret);
+      }catch(error){
+        toast.error('something went wrong please try again later!')
+      }
+      finally{
+        setStripeLoading(false);
+      }
     
   }
 
@@ -392,11 +392,7 @@ const DepositAndWithdraw = ({
                 </CopyToClipboard>
             </div>
                 <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
-          {selectedMethod.name == "Stripe" && (
-            <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
-              COMING SOON{" "}
-            </div>
-          )}
+          
         </>
       )}
 
@@ -419,7 +415,6 @@ const DepositAndWithdraw = ({
       )}
       {activeSection === 0 && (
       <>
-            <OnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp}/>
       <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
       <div className="w-6 h-6">
         <WarningIcon />
@@ -465,7 +460,20 @@ const DepositAndWithdraw = ({
       }
       </>
     )}
-
+    {stripeLoading ?
+      <div >
+          {" "}
+          <Backdrop />
+          <Spinner />
+      </div> : 
+          showOnramp && 
+          (
+            <div>
+              <Backdrop />
+              <StripeOnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp} />
+            </div>
+          )
+      }
     </div>
   );
 };

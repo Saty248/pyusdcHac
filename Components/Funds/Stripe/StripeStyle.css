@@ -1,7 +1,6 @@
 #root {
     display: flex;
     align-items: center;
-    z-index: 1000;
   }
   
   body {
@@ -11,9 +10,7 @@
     display: flex;
     justify-content: center;
     align-content: center;
-    height: 100vh;
     width: 100vw;
-    z-index: 1000;
   }
   
   #onramp-message {
@@ -23,21 +20,27 @@
     padding-top: 12px;
     text-align: center;
   }
-/*   
+  
   #onramp-element {
     min-width: min(450px, 60vw);
-    margin-bottom: 24px;
-  } */
-  #onramp-element {
+    margin:0px !important;
+    height: 100px !important;
+  }
+  #onramp-element iframe {
+    border: none;
+    border-radius: 8px;
+    margin: 0px;
+    padding: 0px;
+    aspect-ratio: 2 / 3;
     width: 100%;
-    height: auto;
     min-width: 320px;
     min-height: 480px;
-    max-width: 500px;
+    max-width: 635px !important;
     max-height: 1000px;
-    margin: 0 auto;
-    border-radius: 8px;
     overflow: hidden;
     display: block;
+    user-select: none;
+    transform: translate(0px);
+    color-scheme: light only;
+    height: 480px !important;
   }
-  
