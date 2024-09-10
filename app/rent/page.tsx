@@ -42,7 +42,6 @@ const Rent = () => {
   const [regAdressShow, setRegAdressShow] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const { findPropertiesByCoordinates } = PropertiesService();
-
   useEffect(() => {
     if (map) return;
     const createMap = () => {
@@ -217,11 +216,13 @@ const Rent = () => {
       {isLoading && <Backdrop onClick={()=>{}}/>}
       {isLoading && <Spinner />}
       {
-        <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
+        <div className="relative rounded md:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center  overflow-hidden ">
           <Sidebar />
 
-          <div className="w-full h-full flex flex-col">
-            <PageHeader pageTitle={isMobile ? "Rent" : "Marketplace: Rent"} />
+          <div className="w-full h-full flex flex-col ">
+       <div className="md:hidden">
+       <PageHeader pageTitle={!isMobile ? "Marketplace: Rent" : ""} />
+       </div>
             {isMobile && (
               <ExplorerMobile
                 loadingReg={loadingRegAddresses}
