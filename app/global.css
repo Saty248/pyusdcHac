@@ -215,3 +215,9 @@ button {
     font-family: "Inter", sans-serif;
   }
 }
+#transakCloseIcon{
+  top:4px !important;
+  right:4px !important;
+  width: 22px !important;
+  height: 22px !important;
+}
