@@ -16,6 +16,11 @@ import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
 import { initializeTransak } from "@/utils/transak";
 
+import axios from "axios";
+import StripeOnrampComponent from "./Stripe/StripeComponent";
+import StripeService from '@/services/StripeService'
+import Backdrop from "../Backdrop";
+import Spinner from "../Spinner";
 const defaultPaymentMethod = {
   icon: "/images/bank-note-arrow.svg",
   name: "Native",
@@ -32,6 +37,7 @@ const DepositAndWithdraw = ({
 }: DepositAndWithdrawProps) => {
   const router = useRouter();
   const { user } = useAuth();
+  const {createStripe} = StripeService();
   const { provider } = useContext(Web3authContext) as Web3authContextType
 
 
@@ -42,6 +48,9 @@ const DepositAndWithdraw = ({
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
 
+  const [showOnramp, setShowOnramp] = useState<boolean>(false); 
+  const [clientSecret, setClientSecret] = useState<string>("");
+  const [stripeLoading , setStripeLoading] = useState(false);
 
   
   const notifySuccess = () => {
@@ -240,14 +249,31 @@ const DepositAndWithdraw = ({
 
   const handleSelection = (method: PaymentMethod) => {
     setSelectedMethod(method);
-    if (method.name === "Ramp") {
-      handleOnAndOffRamp()
-    }
-    else if (method.name === "Transak"){
-      handleDeposit()
-    }
+    if (method.name === "Ramp") handleOnAndOffRamp()
+    else if (method.name === "Transak") handleDeposit()
+    else if(method.name === "Stripe") handleStripe();
   };
   
+  async function handleStripe() {
+    try{
+      setStripeLoading(true);
+      const postData = {
+        "blockchainAddress": walletId
+      }
+        const res = await createStripe(postData)
+        if(res.data.client_secret){
+          setShowOnramp(true);
+          setClientSecret(res.data.client_secret);
+        }
+      }catch(error){
+        toast.error('something went wrong please try again later!')
+      }
+      finally{
+        setStripeLoading(false);
+      }
+    
+  }
+
   return (
     <div
       className="flex flex-col gap-[15px] items-center w-[89%] sm:w-[468px] bg-white rounded-[30px] py-[30px] sm:px-[29px] sm:shadow-[0_12px_34px_-10px_rgba(58, 77, 233, 0.15)]"
@@ -381,11 +407,7 @@ const DepositAndWithdraw = ({
                 </CopyToClipboard>
             </div>
                 <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
-          {selectedMethod.name == "Stripe" && (
-            <div className="w-full py-2 bg-[#0653EA] text-white flex items-center justify-center rounded-lg">
-              COMING SOON{" "}
-            </div>
-          )}
+          
         </>
       )}
 
@@ -453,7 +475,20 @@ const DepositAndWithdraw = ({
       }
       </>
     )}
-
+    {stripeLoading ?
+      <div >
+          {" "}
+          <Backdrop />
+          <Spinner />
+      </div> : 
+          showOnramp && 
+          (
+            <div>
+              <Backdrop />
+              <StripeOnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp} />
+            </div>
+          )
+      }
     </div>
   );
 };
