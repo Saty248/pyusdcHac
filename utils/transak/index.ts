@@ -31,6 +31,7 @@ export const initializeTransak = ({
     hideMenu: true,
     widgetHeight: '520px',
     widgetWidth: '500px',
+    disableWalletAddressForm:true
   };
 
   const transak = new Transak(transakConfig);

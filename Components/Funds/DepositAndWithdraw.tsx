@@ -230,7 +230,7 @@ const DepositAndWithdraw = ({
       email, 
       productsAvailed:'BUY',
       onSuccess:(orderData) => {
-        toast.success(`Deposited ${orderData?.status?.fiatAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `);
+      toast.success(`Deposited ${orderData?.status?.cryptoAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `);
       },
       onFailure:() => {
         toast.error('Deposit failed!');
