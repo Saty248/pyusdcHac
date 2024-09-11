@@ -202,6 +202,7 @@ const DepositAndWithdraw = ({
 
 
   const handleOnAndOffRamp = () => {
+    const isMobile = window.innerWidth <= 768;  
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
       hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
@@ -213,10 +214,16 @@ const DepositAndWithdraw = ({
       enabledFlows: [activeSection === 0 ? 'ONRAMP' : 'OFFRAMP'],
       ...(process.env.NEXT_PUBLIC_SOLANA_DISPLAY_NAME === "devnet" && {
         url: "https://app.demo.ramp.network",
+      }),
+      ...(isMobile && {
+        variant: 'mobile', 
+        width: '100vw',
+        height: '100vh', 
       })
-    }).show()
-  }
-  
+    }).show();
+
+  };
+
   const copyTextHandler = () => {
     setCopy(true);
 
