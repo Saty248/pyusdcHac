@@ -226,6 +226,7 @@ const Airspaces: React.FC = () => {
             setFlyToAddress(data.features[0].place_name);
           }
         }
+        setIsDrawMode(false);
       };
 
       newMap.on("draw.create", handleCoordinates);
