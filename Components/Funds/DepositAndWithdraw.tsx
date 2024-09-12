@@ -10,10 +10,11 @@ import { useQRCode } from "next-qrcode";
 import { toast } from "react-toastify";
 import { Tooltip, CopyIcon, WarningIcon } from "../Icons";
 import Accordion from "./Accordion";
-import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, PaymentMethod  } from "../../types";
+import { DepositAndWithdrawProps, Web3authContextType, ConnectionConfig, PaymentMethod } from "../../types";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk"
 import { TransactionInstruction } from "@solana/web3.js";
+import { LiFiComponent, TRANSACTION_TYPE } from "./LifiComponent";
 import { initializeTransak } from "@/utils/transak";
 
 import axios from "axios";
@@ -37,41 +38,49 @@ const DepositAndWithdraw = ({
 }: DepositAndWithdrawProps) => {
   const router = useRouter();
   const { user } = useAuth();
-  const {createStripe} = StripeService();
+  const { createStripe } = StripeService();
   const { provider } = useContext(Web3authContext) as Web3authContextType
 
 
   const [amount, setAmount] = useState<string>('');
   const [copy, setCopy] = useState(false);
-  const [isCopyTooltipVisible,setIsCopyTooltipVisible] = useState(false);
+  const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
 
   const [selectedMethod, setSelectedMethod] = useState(defaultPaymentMethod);
   const [recipientWalletAddress, setRecipientWalletAddress] = useState("");
+  const [showLIFI, setShowLIFI] = useState(false);
+  const [LIFITransactionType, setLIFITransactionType] = useState<TRANSACTION_TYPE.DEPOSIT | TRANSACTION_TYPE.WITHDRAW>(TRANSACTION_TYPE.DEPOSIT);
 
-  const [showOnramp, setShowOnramp] = useState<boolean>(false); 
+  const [showOnramp, setShowOnramp] = useState<boolean>(false);
   const [clientSecret, setClientSecret] = useState<string>("");
-  const [stripeLoading , setStripeLoading] = useState(false);
+  const [stripeLoading, setStripeLoading] = useState(false);
 
-  
+
   const notifySuccess = () => {
     toast.success("Success !. Your funds have been withdrawn successfully");
   }
-    
+
   const handleWithdraw = async () => {
     if (selectedMethod.name === "Ramp") {
       handleOnAndOffRamp()
-    } else {
+    }
+    else if (selectedMethod.name === "LI.FI") {
+      setLIFITransactionType(TRANSACTION_TYPE.WITHDRAW);
+      setShowLIFI(true);
+
+    }
+    else {
       await handleNativeAssetWithdrawal();
     }
   }
 
   const handleNativeAssetWithdrawal = async () => {
-    if(!amount) return
+    if (!amount) return
     if (!user) return
     try {
       if (
         activeSection == 1 &&
-      parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
+        parseFloat(tokenBalance.toString()) <= parseFloat(amount || '0')
       ) {
         toast.error("You do not have enough funds");
 
@@ -84,9 +93,9 @@ const DepositAndWithdraw = ({
       const accounts = await solanaWallet.requestAccounts();
 
       const connectionConfig: ConnectionConfig = await solanaWallet.request({
-          method: "solana_provider_config",
-          params: [],
-        });
+        method: "solana_provider_config",
+        params: [],
+      });
 
       const connection = new Connection(connectionConfig.rpcTarget);
       const solbalance = await connection.getBalance(
@@ -156,7 +165,7 @@ const DepositAndWithdraw = ({
       try {
         let estimatedGas = await tx.getEstimatedFee(connection);
 
-        if(!estimatedGas) return
+        if (!estimatedGas) return
 
         if (addRentFee) {
           estimatedGas += Number(process.env.NEXT_PUBLIC_ATA_RENT_FEE) * LAMPORTS_PER_SOL;
@@ -185,8 +194,11 @@ const DepositAndWithdraw = ({
       setIsLoading(false);
       toast.error(error.message);
     }
+    finally {
+      setIsLoading(false);
+    }
   };
-  
+
   const { SVG } = useQRCode();
 
   const handleAmountInputChanged = (e) => {
@@ -202,7 +214,7 @@ const DepositAndWithdraw = ({
 
 
   const handleOnAndOffRamp = () => {
-    const isMobile = window.innerWidth <= 768;  
+    const isMobile = window.innerWidth <= 768;
     new RampInstantSDK({
       hostAppName: 'SKYTRADE APP',
       hostLogoUrl: 'https://app.sky.trade/images/logo-1.svg',
@@ -216,9 +228,9 @@ const DepositAndWithdraw = ({
         url: "https://app.demo.ramp.network",
       }),
       ...(isMobile && {
-        variant: 'mobile', 
+        variant: 'mobile',
         width: '100vw',
-        height: '100vh', 
+        height: '100vh',
       })
     }).show();
 
@@ -242,13 +254,13 @@ const DepositAndWithdraw = ({
     const email = user?.email;
 
     initializeTransak({
-      walletAddress , 
-      email, 
-      productsAvailed:'BUY',
-      onSuccess:(orderData) => {
-      toast.success(`Deposited ${orderData?.status?.cryptoAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `);
+      walletAddress,
+      email,
+      productsAvailed: 'BUY',
+      onSuccess: (orderData) => {
+        toast.success(`Deposited ${orderData?.status?.cryptoAmount} ${orderData?.status?.cryptoCurrency} to ${orderData?.status?.walletAddress} successfully! `);
       },
-      onFailure:() => {
+      onFailure: () => {
         toast.error('Deposit failed!');
       }
     });
@@ -258,27 +270,32 @@ const DepositAndWithdraw = ({
     setSelectedMethod(method);
     if (method.name === "Ramp") handleOnAndOffRamp()
     else if (method.name === "Transak") handleDeposit()
-    else if(method.name === "Stripe") handleStripe();
+    else if (method.name === "Stripe") handleStripe();
+    else if (method.name === 'LI.FI') {
+      setLIFITransactionType(TRANSACTION_TYPE.DEPOSIT);
+      setShowLIFI(true);
+    }
   };
-  
+  const walletAddress = user?.blockchainAddress;
+
   async function handleStripe() {
-    try{
+    try {
       setStripeLoading(true);
       const postData = {
         "blockchainAddress": walletId
       }
-        const res = await createStripe(postData)
-        if(res.data.client_secret){
-          setShowOnramp(true);
-          setClientSecret(res.data.client_secret);
-        }
-      }catch(error){
-        toast.error('something went wrong please try again later!')
+      const res = await createStripe(postData)
+      if (res.data.client_secret) {
+        setShowOnramp(true);
+        setClientSecret(res.data.client_secret);
       }
-      finally{
-        setStripeLoading(false);
-      }
-    
+    } catch (error) {
+      toast.error('something went wrong please try again later!')
+    }
+    finally {
+      setStripeLoading(false);
+    }
+
   }
 
   return (
@@ -364,7 +381,7 @@ const DepositAndWithdraw = ({
         )}
       </div>
 
-        {activeSection === 0 && (
+      {activeSection === 0 && (
         <>
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col items-start gap-[5px] flex-1">
@@ -374,7 +391,7 @@ const DepositAndWithdraw = ({
               >
                 Deposit Wallet ID
               </label>
-              
+
             </div>
             <div className="w-[72px] h-[72px] bg-cover bg-no-repeat bg-center">
               {walletId && (
@@ -391,30 +408,30 @@ const DepositAndWithdraw = ({
                 />
               )}
             </div>
-            
+
           </div>
           <div className="flex bg-[#DFF1FF] w-full justify-between rounded-lg">
-              <input
-                  className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
-                  type="text"
-                  name="walletId"
-                  id="walletId"
-                  value={walletId}
-                  disabled
-                />
-                <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
-                  <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
-                    <div className="relative">
-                      {isCopyTooltipVisible && <Tooltip isCopied={copy}/> }
-                      <div onMouseEnter={()=>setIsCopyTooltipVisible(true)} onMouseLeave={()=>setIsCopyTooltipVisible(false)}>
-                        <CopyIcon />
-                      </div>
-                    </div>
+            <input
+              className=" text-[#222222] text-[10px] sm:text-[13px] rounded-lg w-full py-[14px] pl-[20px] focus:outline-none"
+              type="text"
+              name="walletId"
+              id="walletId"
+              value={walletId}
+              disabled
+            />
+            <CopyToClipboard text={walletId} onCopy={copyTextHandler}>
+              <div className="flex items-center text-[#0653EA] text-[14px] cursor-pointer pl-[4px] pr-[18px]">
+                <div className="relative">
+                  {isCopyTooltipVisible && <Tooltip isCopied={copy} />}
+                  <div onMouseEnter={() => setIsCopyTooltipVisible(true)} onMouseLeave={() => setIsCopyTooltipVisible(false)}>
+                    <CopyIcon />
                   </div>
-                </CopyToClipboard>
-            </div>
-                <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full"/>
-          
+                </div>
+              </div>
+            </CopyToClipboard>
+          </div>
+          <hr className=" sm:hidden border border-black border-opacity-20 h-[1px]  w-full" />
+
         </>
       )}
 
@@ -436,65 +453,78 @@ const DepositAndWithdraw = ({
         </>
       )}
       {activeSection === 0 && (
-      <>
-      <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
-      <div className="w-6 h-6">
-        <WarningIcon />
-      </div>
-      <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
-        {
-          selectedMethod.name == "Stripe" ? (
-            <p>
-              Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
-            </p>
-          ):
-          <div >
-              To complete your deposit, please use your crypto wallet to deposit
-              USDC to the following address:
-            <br/>
-            <div className="w-full">
-              <p 
-                className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
-                style={{ color: "#0653EA" }}
-              >
-                {walletId}  
-              </p>
+        <>
+          <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2] ">
+            <div className="w-6 h-6">
+              <WarningIcon />
+            </div>
+            <div className="text-[#222222] sm:text-[14px] font-normal w-full ">
+              {
+                selectedMethod.name == "Stripe" ? (
+                  <p>
+                    Funds may be irrecoverable if you enter an incorrect wallet ID. It is crucial to ensure the accuracy of the provided ID to avoid any loss.
+                  </p>
+                ) :
+                  <div >
+                    To complete your deposit, please use your crypto wallet to deposit
+                    USDC to the following address:
+                    <br />
+                    <div className="w-full">
+                      <p
+                        className="break-words w-[250px] sm:w-full text-[10px] sm:text-[13px]"
+                        style={{ color: "#0653EA" }}
+                      >
+                        {walletId}
+                      </p>
+                    </div>
+                  </div>
+              }
+
             </div>
           </div>
-        }
+          {
+            selectedMethod.name == "Native" &&
+            <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
+              <div className="w-6 h-6">
+                <WarningIcon />
+              </div>
+              <div className="text-[#222222] text-[14px] font-normal w-full">
+                Scan the QR Code with your Wallet, you can use Phantom Wallet,
+                Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
+                that funds may be irrecoverable if you enter an incorrect wallet ID.
+                It is crucial to ensure the accuracy of the provided ID to avoid any
+                loss.
+              </div>
+            </div>
+          }
+        </>
+      )}
 
-      </div>
-    </div>
       {
-        selectedMethod.name == "Native" &&
-    <div className="flex items-center gap-[15px] p-[15px] bg-[#F2F2F2]">
-      <div className="w-6 h-6">
-        <WarningIcon />
-      </div>
-      <div className="text-[#222222] text-[14px] font-normal w-full">
-        Scan the QR Code with your Wallet, you can use Phantom Wallet,
-        Solflare, Exodus, Atomic Wallet, Coinbase Wallet, Metamask Span. Note
-        that funds may be irrecoverable if you enter an incorrect wallet ID.
-        It is crucial to ensure the accuracy of the provided ID to avoid any
-        loss.
-      </div>
-    </div>
+        showLIFI &&
+        <div>
+          <Backdrop />
+          <LiFiComponent
+            transactionType={LIFITransactionType}
+            walletAddress={walletAddress}
+            onClose={() => (setShowLIFI(false))}
+          />
+
+        </div>
       }
-      </>
-    )}
-    {stripeLoading ?
-      <div >
+      {stripeLoading ?
+        <div>
           {" "}
           <Backdrop />
           <Spinner />
-      </div> : 
-          showOnramp && 
-          (
-            <div>
-              <Backdrop />
-              <StripeOnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp} />
-            </div>
-          )
+        </div> :
+        showOnramp &&
+        (
+          <div>
+            <Backdrop />
+            <StripeOnrampComponent clientSecret={clientSecret} setClientSecret={setClientSecret} setShowOnramp={setShowOnramp} showOnramp={showOnramp} />
+          </div>
+        )
       }
     </div>
   );

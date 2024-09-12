@@ -19,6 +19,10 @@ const supportedMethods = [
     name: "Stripe",
   },
   {
+    icon: "/images/LI-FI.svg",
+    name: "LI.FI",
+  },
+  {
     icon: "/images/transak.svg",
     name: "Transak",
   },
