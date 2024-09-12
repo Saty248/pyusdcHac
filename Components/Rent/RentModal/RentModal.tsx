@@ -1,4 +1,4 @@
-import { CloseIcon, InfoIcon, LocationPointIcon } from "@/Components/Icons";
+import { CloseIcon, LocationPointIcon } from "@/Components/Icons";
 import useAuth from "@/hooks/useAuth";
 import { Web3authContext } from "@/providers/web3authProvider";
 import AirspaceRentalService from "@/services/AirspaceRentalService";
@@ -16,7 +16,6 @@ import { getTokenBalance } from "@/utils/apiUtils/apiFunctions";
 import { validateRental } from "@/utils/rent/rentalValidation";
 import { handleMintResponse } from "@/utils/rent/mintResponseHandler";
 import { executeTransaction } from "@/utils/rent/transactionExecutor";
-import { handleExecuteResponse } from "@/utils/rent/executeResponseHandler";
 import { PropertyData } from "@/types";
 import { toast } from "react-toastify";
 import Backdrop from "@/Components/Backdrop";
@@ -42,7 +41,6 @@ const RentModal: React.FC<RentModalProps> = ({
     .set("minute", 30)
     .startOf("minute");
   const maxDate = dayjs().add(29, "day");
-  const [landAssetIds, setLandAssetIds] = useState([]);
   const [tokenBalance, setTokenBalance] = useState<string>("0");
   const [date, setDate] = useState(defaultValueDate);
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
@@ -50,34 +48,39 @@ const RentModal: React.FC<RentModalProps> = ({
   const [finalAns, setFinalAns] = useState<
     { status: string; message?: string | undefined } | null | undefined
   >();
-  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
   const { createMintRentalToken, executeMintRentalToken } =
     AirspaceRentalService();
   const { provider } = useContext(Web3authContext);
 
-  localStorage.setItem('rentData',JSON.stringify(rentData));
-  
+  localStorage.setItem('rentData', JSON.stringify(rentData));
+
   useEffect(() => {
-    if(user){
+    if (user) {
       getTokenBalance(user, setTokenBalance);
     }
-    
+
   }, [user]);
 
   const handleRentAirspace = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
-      if (isRedirecting) 
-        {
-          setAndClearOtherPublicRouteData("rentData", rentData);
-          return;
-        }
+      if (isRedirecting) {
+        setAndClearOtherPublicRouteData("rentData", rentData);
+        return;
+      }
       const currentDate = new Date();
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
 
+      if (!rentData?.price) {
+        toast.error("Price for airspace not found");
+        return;
+      }
+
       if (
         !validateRental(
+          rentData?.price,
           currentDate,
           startDate,
           endDate,
@@ -89,7 +92,7 @@ const RentModal: React.FC<RentModalProps> = ({
         return;
 
       setIsLoading(true);
-      if(rentData?.layers){
+      if (rentData?.layers) {
 
         const postData = {
           callerAddress: user?.blockchainAddress,
@@ -97,7 +100,7 @@ const RentModal: React.FC<RentModalProps> = ({
           endTime: endDate.toISOString(),
           landAssetIds: [rentData.layers[0].tokenId],
         };
-  
+
         const createMintResponse = await createMintRentalToken({ postData });
         const mintResponse = await handleMintResponse(
           createMintResponse,
@@ -111,20 +114,20 @@ const RentModal: React.FC<RentModalProps> = ({
         );
         const txString = await executeTransaction(transaction, provider);
         if (!txString) return;
-  
+
         const postExecuteMintData = {
           transaction: txString,
           landAssetIds: [rentData?.layers[0].tokenId],
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
-        };       
-  
+        };
+
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
 
         console.log({ executionResponse })
-  
+
 
         if (executionResponse && executionResponse.errorMessage) {
           toast.error(executionResponse.errorMessage);
@@ -146,8 +149,8 @@ const RentModal: React.FC<RentModalProps> = ({
           }
           setShowSuccess(true);
         }
-      }else{
-        toast.error('something went wrong!')        
+      } else {
+        toast.error('something went wrong!')
       }
       localStorage.removeItem("rentData")
     } catch (error) {
@@ -155,7 +158,7 @@ const RentModal: React.FC<RentModalProps> = ({
       localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
-      
+
     }
   };
 
@@ -182,12 +185,12 @@ const RentModal: React.FC<RentModalProps> = ({
       return false;
     }
   };
-  
+
 
   return (
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-         {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
-        {!isMobile && (<Backdrop onClick={() => { setShowClaimModal(false)}}/>)}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> */}
+      {!isMobile && (<Backdrop onClick={() => { setShowClaimModal(false) }} />)}
       <div
         style={{ boxShadow: "0px 12px 34px -10px #3A4DE926", zIndex: 100 }}
         className="touch-manipulation fixed top-0 md:top-1/2  left-0 sm:left-2/3 md:-translate-x-1/2 md:-translate-y-1/2 bg-white py-[30px] md:rounded-[30px] px-[29px] w-full max-h-screen h-screen md:max-h-[700px] md:h-auto md:w-[689px] z-[100] md:z-40 flex flex-col gap-[15px]"
@@ -247,21 +250,21 @@ const RentModal: React.FC<RentModalProps> = ({
               shouldDisableTime={shouldDisableTime}
               slotProps={{
                 popper: {
-                modifiers: [
-                  {
-                    name: 'offset',
-                    options: {
-                      offset: [-10, -30],
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [-10, -30],
+                      },
                     },
-                  },
-                  {
-                    name: 'preventOverflow',
-                    options: {
-                      altAxis: true, 
+                    {
+                      name: 'preventOverflow',
+                      options: {
+                        altAxis: true,
+                      },
                     },
-                  },
-                ],
-              }
+                  ],
+                }
               }}
             />
           </div>
@@ -280,7 +283,7 @@ const RentModal: React.FC<RentModalProps> = ({
           </div>
           <LoadingButton
             onClick={handleRentAirspace}
-            isLoading={isLoading} 
+            isLoading={isLoading}
             className="flex justify-center items-center text-center touch-manipulation rounded-[5px] py-[10px] px-[22px] text-white bg-[#0653EA] cursor-pointer w-1/2"
           >
             Rent Airspace
