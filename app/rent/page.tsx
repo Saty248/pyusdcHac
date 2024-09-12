@@ -141,7 +141,6 @@ const Rent = () => {
               .setPopup(popup) 
               .addTo(newMap);               
                
-                 const filteredData = responseData.filter(item => item.type === 'rent');
                 marker.getElement().addEventListener('click', function() {
                   setRentData(responseData[i]);
                   setShowClaimModal(true);
