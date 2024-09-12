@@ -31,8 +31,6 @@ const DepositAndWithdraw = ({
   walletId,
   activeSection,
   setActiveSection,
-  setIsLoading,
-  isLoading,
   setTokenBalance,
   tokenBalance,
 }: DepositAndWithdrawProps) => {
@@ -40,6 +38,7 @@ const DepositAndWithdraw = ({
   const { user } = useAuth();
   const { createStripe } = StripeService();
   const { provider } = useContext(Web3authContext) as Web3authContextType
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
 
   const [amount, setAmount] = useState<string>('');
