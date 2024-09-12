@@ -19,6 +19,7 @@ body {
   padding: 0;
   background-color: #f6faff;
   font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
 }
 
 #map {

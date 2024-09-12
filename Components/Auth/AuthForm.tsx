@@ -34,7 +34,6 @@ const AuthForm: FC<AuthFormProps> = ({
   const router = useRouter();
   const { isMobile } = useMobile();
   const { init } = useInitAuth();
-  const { signIn } = useAuth();
   const { web3auth, provider, setProvider } = useContext(Web3authContext);
 
   const isEmailValid = (email: string): boolean => {
@@ -73,7 +72,7 @@ const AuthForm: FC<AuthFormProps> = ({
           loginProvider: "google",
         });
       }
-
+      localStorage.setItem("showbanner", "true");
       setProvider(web3authProvider);
     } catch (error) {
       console.error("Error occurred:", error);

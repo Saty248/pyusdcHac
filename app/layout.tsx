@@ -20,6 +20,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { TourProvider } from "@reactour/tour";
 import React from "react";
 import { OnboardingTour } from "../Components/Tours";
+import NotificationBanner from "@/Components/NotificationBanner";
 
 
 export const metadata: Metadata = {
@@ -96,6 +97,7 @@ export default function RootLayout({
               speed={300}
               shadow="0 0 10px #2299DD,0 0 5px #2299DD"
               />
+              <NotificationBanner />
               <OnboardingTour>
                 {children}
               </OnboardingTour>
