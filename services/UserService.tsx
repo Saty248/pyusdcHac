@@ -45,12 +45,12 @@ const UserService = () => {
         uri: `/private/users/session`,
         suppressErrorReporting: true,
       });
-
       return response?.data;
     } catch (error) {
       console.error(error);
     }
   }
+
 
   const deleteUser = async () => {
     try {

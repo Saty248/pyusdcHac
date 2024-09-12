@@ -40,13 +40,13 @@ const ReferralProgramOverview: React.FC<ReferralProgramOverviewProps> = ({
         />
         <HorizontalSeparatorLine />
         <Item
-          icon={<EarthIcon isActive={true} />}
+          icon={<EarthIcon  />}
           title={"Register & Claim"}
           text={"Let them register and claim their airspaces using your referral link or code"}
         />
         <HorizontalSeparatorLine />
         <Item
-          icon={<GiftIcon isActive={true} />}
+          icon={<GiftIcon  />}
           title={"Earn"}
           text={"You and your friends are rewarded with 5 SKY points and more"}
         />

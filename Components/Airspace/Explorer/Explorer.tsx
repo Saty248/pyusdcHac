@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InfoIcon, MagnifyingGlassIcon } from "../../Icons";
+import { InfoIcon, LocationPointIcon, MagnifyingGlassIcon } from "../../Icons";
 import { useSearchParams } from "next/navigation";
 import { useTour } from "@reactour/tour";
 
@@ -28,7 +28,7 @@ const Explorer = ({
 
   return (
     <div
-      className="z-20 m-[39px] hidden max-h-full max-w-[362px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
+      className="z-20 m-[39px] hidden max-h-full max-w-[370px] flex-col items-center gap-[15px] rounded-[30px] bg-[#FFFFFFCC] px-[29px] py-[43px] md:flex"
       style={{ boxShadow: "0px 12px 34px -10px #3A4DE926" }}
     >
       <div className="flex items-center gap-[5px]">
@@ -47,7 +47,7 @@ const Explorer = ({
           )}
         </div>
       </div>
-      <p className="text-[15px] font-normal text-[#222222]">
+      <p className="  text-[15px] font-normal text-[#222222] break-words">
         Ready to claim your airspace? No registered airspace yet, but exciting
         times ahead!
       </p>
@@ -69,19 +69,27 @@ const Explorer = ({
           <MagnifyingGlassIcon />
         </div>
         {showOptions && (
-          <div className="absolute left-0 top-[55px] w-full flex-col bg-white">
+          <div className="absolute left-0 top-[55px] w-full flex-col h-[279px] overflow-y-scroll bg-white rounded-lg mt-2 border-t-4 border-t-[#4285F4] rounded-t-[8px]">
             {addresses.map((item) => {
               return (
                 <div
                   key={item.id}
                   // value={item.place_name}
                   onClick={() => handleSelectAddress(item.place_name)}
-                  className="w-full p-5 text-left text-[#222222]"
+                  className="w-full p-4 text-left text-[#222222]"
                   style={{
-                    borderTop: "0.2px solid #222222",
+                    borderBottom: "0.2px solid #DBDBDB",
                   }}
                 >
-                  {item.place_name}
+                  <div className="flex  items-center ">
+                    <div className="w-[10%] h-6 mr-2">
+                      <LocationPointIcon />
+                    </div>
+
+                    <div className="w-[90%]">
+                      {item.place_name}
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -89,14 +97,31 @@ const Explorer = ({
         )}
       </div>
       {(flyToAddress && address  || isOpen )&& (
+        <div>
+        <p className="my-4 text-[20px] text-center font-medium">My Airspaces</p>
+         <p className="  text-[15px] font-normal text-[#222222]">
+         Please ensure the address entered matches the registered property address to accurately claim this area.
+         </p>
+
+       <div className="bg-white w-[304px] mt-4 p-4  rounded-2xl">
+        <div className="flex  items-center mb-6">
+        <div className="w-[10%] h-6 mr-2">
+          <LocationPointIcon />
+        </div>
+        <div className="w-[90%]">
+          {address}
+        </div>
+       </div>
         <div
           onClick={onClaimAirspace}
           className="Claim-airspacebtn-step w-full cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
         >
           Claim Airspace
         </div>
+        </div>
+        </div>
       )}
-    </div>
+      </div>
   );
 };
 
