@@ -23,7 +23,7 @@ const NotificationBanner: React.FC = () => {
       <div className="flex gap-5 items-center">
         <p>🚀</p>
         <p className='font-normal'>
-          Don't Miss Out! Our Seasonal SKY Points Referral Program is Live. Share Your Link and Earn Automatically — No Air rights Claim Needed! <br /> Ends August 31st, 2024! Act Now!
+          Don't Miss Out! Our Seasonal SKY Points Referral Program is Live. Share Your Link and Earn Automatically — No Air rights Claim Needed!
         </p>
       </div>
       <button onClick={handleClose} className="text-white text-3xl">
