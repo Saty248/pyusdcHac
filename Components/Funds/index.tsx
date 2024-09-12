@@ -14,22 +14,17 @@ import Sidebar from "../Shared/Sidebar";
 import { useMobile } from "@/hooks/useMobile";
 
 const Funds = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeSection, setActiveSection] = useState<number>(0);
   const { user } = useAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const { isMobile } = useMobile();
   
 
-
-
   return (
     <Fragment>
       <Head>
         <title>SkyTrade - Wallet</title>
       </Head>
-      {isLoading && <Backdrop />}
-      {isLoading && <Spinner />}
       <div className="relative rounded bg-white sm:bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden ">
         <Sidebar />
         <div className="w-full h-full flex flex-col">
@@ -46,7 +41,7 @@ const Funds = () => {
                   tokenBalance={tokenBalance}
                 />
               </div>
-              <TransactionHistory isLoading={isLoading} setIsLoading={setIsLoading}/>
+              <TransactionHistory />
             </div>
           </section>
         </div>
