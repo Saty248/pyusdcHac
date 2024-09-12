@@ -14,7 +14,7 @@ import Sidebar from "../Shared/Sidebar";
 import { useMobile } from "@/hooks/useMobile";
 
 const Funds = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeSection, setActiveSection] = useState<number>(0);
   const { user } = useAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
@@ -42,8 +42,6 @@ const Funds = () => {
                   walletId={user?.blockchainAddress || ""}
                   activeSection={activeSection}
                   setActiveSection={setActiveSection}
-                  setIsLoading={setIsLoading}
-                  isLoading={isLoading}
                   setTokenBalance={setTokenBalance}
                   tokenBalance={tokenBalance}
                 />

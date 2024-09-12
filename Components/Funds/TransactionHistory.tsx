@@ -17,16 +17,13 @@ interface TransactionListI {
   difference: string | number;
 }
 
-export interface TransactionHistoryPropsI {
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryPropsI) => {
+const TransactionHistory = () => {
   const limit: number = 10;
   const targetRpcUrl = process.env.NEXT_PUBLIC_RPC_TARGET as string;
   const minterAddress = process.env.NEXT_PUBLIC_MINT_ADDRESS as string;
   const rentalFeePublicKey = "HmqstutaEpbddgt5hjhJAsnrXhTUfQpveCpyWEvEdnWM";
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { web3auth } = useContext(Web3authContext);
   const { isMobile } = useMobile();
