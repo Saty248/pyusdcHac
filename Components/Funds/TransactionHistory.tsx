@@ -59,7 +59,6 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
             ...(firstTxHash && { until: firstTxHash }),
           };
         }
-
         const tokenAcc = await connection.getTokenAccountsByOwner(
           new PublicKey(user?.blockchainAddress as string),
           { mint: new PublicKey(minterAddress) }
@@ -69,7 +68,6 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
           options
         );
         const txs = _txs.slice(-limit);
-
         const signatureList = txs.map(transaction => transaction.signature);
         const transactionDetails = await connection.getParsedTransactions(signatureList, { maxSupportedTransactionVersion: 0 });
         const data = transactionDetails?.map((item, idx) => {
@@ -93,7 +91,7 @@ const TransactionHistory = ({ isLoading, setIsLoading }: TransactionHistoryProps
               difference = (preTokenBalObject[0]?.uiTokenAmount?.uiAmount as number);
             }
           }
-
+          difference=parseFloat(difference.toPrecision(5))
           let type = difference > 0 ? 'Deposit' : 'Withdraw';
 
           item?.transaction.message.accountKeys?.forEach((item) => {

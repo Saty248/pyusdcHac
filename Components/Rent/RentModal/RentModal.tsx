@@ -8,10 +8,10 @@ import {
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import SuccessModal from "../SuccessModal";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { VersionedTransaction } from "@solana/web3.js";
+import { Connection, VersionedTransaction, NonceAccount, PublicKey } from '@solana/web3.js';
 import { getTokenBalance } from "@/utils/apiUtils/apiFunctions";
 import { validateRental } from "@/utils/rent/rentalValidation";
 import { handleMintResponse } from "@/utils/rent/mintResponseHandler";
@@ -23,6 +23,11 @@ import Backdrop from "@/Components/Backdrop";
 import { removePubLicUserDetailsFromLocalStorageOnClose } from "@/helpers/localstorage";
 import { useMobile } from "@/hooks/useMobile";
 import LoadingButton from "@/Components/LoadingButton/LoadingButton";
+
+import { createNonceIx } from "../../../helpers/solanaHelper";
+
+import PropertiesService from "@/services/PropertiesService";
+
 
 
 interface RentModalProps {
@@ -48,15 +53,18 @@ const RentModal: React.FC<RentModalProps> = ({
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
   const { isMobile } = useMobile();
   const [finalAns, setFinalAns] = useState<
-    { status: string; message?: string | undefined; tokenId?: string } | null | undefined
+    { status: string; message?: string | undefined } | null | undefined
   >();
   const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData  } = useAuth();
-  const { createMintRentalToken, executeMintRentalToken } =
-    AirspaceRentalService();
-  const { provider } = useContext(Web3authContext);
 
+  const { getNonceAccountEntry,createMintRentalToken, executeMintRentalToken } =
+    AirspaceRentalService();
+
+  const { provider } = useContext(Web3authContext);
+  const {getRentedTimes} = PropertiesService()
   localStorage.setItem('rentData',JSON.stringify(rentData));
-  
+  const rentedTimes = useRef([])
+
   useEffect(() => {
     if(user){
       getTokenBalance(user, setTokenBalance);
@@ -64,9 +72,23 @@ const RentModal: React.FC<RentModalProps> = ({
     
   }, [user]);
 
+  const fetchAndSetRentedTimes = async () => {
+    const rentedData = await getRentedTimes(rentData?.id as string);
+    const checkStartTimes = rentedData?.map(item => item.startTime);
+    rentedTimes.current = checkStartTimes || []
+  };
+  
+
+  useEffect(() => {
+    if (rentData?.id) {
+      fetchAndSetRentedTimes();
+    }
+  }, [rentData]);
+
   const handleRentAirspace = async () => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
+      let connection =new  Connection(process.env.NEXT_PUBLIC_RPC_TARGET as string)
       if (isRedirecting) 
         {
           setAndClearOtherPublicRouteData("rentData", rentData);
@@ -76,7 +98,7 @@ const RentModal: React.FC<RentModalProps> = ({
       const startDate = new Date(date.toString());
       const endDate = new Date(startDate.getTime() + 30 * 60000);
 
-      if (
+       if (
         !validateRental(
           currentDate,
           startDate,
@@ -86,18 +108,28 @@ const RentModal: React.FC<RentModalProps> = ({
           setShowSuccess
         )
       )
-        return;
+        return; 
 
       setIsLoading(true);
       if(rentData?.layers){
-
+        
+         //get the nonce data. and wait if needed
+        
+         const nonceAccountEntry=await getNonceAccountEntry()
+          
+         let nonceAccount =await createNonceIx(connection,new PublicKey(nonceAccountEntry.publicKey))
+        
+        
+        
         const postData = {
           callerAddress: user?.blockchainAddress,
           startTime: startDate.toISOString(),
           endTime: endDate.toISOString(),
           landAssetIds: [rentData.layers[0].tokenId],
+          nonceAccount,
+          nonceAccountEntry
         };
-  
+
         const createMintResponse = await createMintRentalToken({ postData });
         const mintResponse = await handleMintResponse(
           createMintResponse,
@@ -110,8 +142,11 @@ const RentModal: React.FC<RentModalProps> = ({
           new Uint8Array(Buffer.from(createMintResponse, "base64"))
         );
         const txString = await executeTransaction(transaction, provider);
+
+
+        
         if (!txString) return;
-  
+        
         const postExecuteMintData = {
           transaction: txString,
           landAssetIds: [rentData?.layers[0].tokenId],
@@ -122,18 +157,40 @@ const RentModal: React.FC<RentModalProps> = ({
         const executionResponse = await executeMintRentalToken({
           postData: { ...postExecuteMintData },
         });
+
+        console.log({ executionResponse })
   
-        handleExecuteResponse(executionResponse, setFinalAns, setShowSuccess); 
+
+        if (executionResponse && executionResponse.errorMessage) {
+          toast.error(executionResponse.errorMessage);
+          return;
+        }
+        if (executionResponse) {
+          if (executionResponse.data && executionResponse.data.status === "success") {
+            setFinalAns({
+              status: "Rent Successful",
+              message: executionResponse.data.message,
+            });
+          } else {
+            if (executionResponse.data) {
+              setFinalAns({
+                status: "Rent failed",
+                message: executionResponse.data.message,
+              });
+            }
+          }
+          setShowSuccess(true);
+        }
       }else{
         toast.error('something went wrong!')        
       }
       localStorage.removeItem("rentData")
     } catch (error) {
+      console.error('error here',error)
       setFinalAns({ status: "Rent failed", message: error.message });
       localStorage.removeItem("rentData")
     } finally {
       setIsLoading(false);
-      
     }
   };
 
@@ -147,7 +204,11 @@ const RentModal: React.FC<RentModalProps> = ({
       />
     );
   }
+
+
+
   const shouldDisableTime = (value, view) => {
+   
     if (view === "minutes" && value.minute() >= 1 && value.minute() <= 29) {
       return true;
     } else if (
@@ -156,11 +217,17 @@ const RentModal: React.FC<RentModalProps> = ({
       value.minute() <= 59
     ) {
       return true;
-    } else {
-      return false;
     }
+
+    const time = value.toDate().getTime();
+    const isTimeRented  = rentedTimes.current.some((rentedTime) => {
+      const rentedStart = new Date(rentedTime).getTime();
+      return time === rentedStart;
+    });
+    return isTimeRented 
+ 
+   
   };
-  
 
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>

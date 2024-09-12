@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { CloseIconWhite, SuccessIconwhite } from "../Icons";
+import { CircledCloseIcon, SuccessIconwhite } from "../Icons";
 
 interface PropsI {
   closePopUp: () => void;
@@ -11,7 +11,7 @@ interface PropsI {
 const SuccessModal = ({ closePopUp, isSuccess, errorMessages }: PropsI) => {
   const router = useRouter();
   const handleButtonClick = () => {
-    router.push("/referral");
+    router.push("/points");
   };
 
   return (
@@ -22,7 +22,7 @@ const SuccessModal = ({ closePopUp, isSuccess, errorMessages }: PropsI) => {
             {isSuccess ? (
               <SuccessIconwhite />
             ) : (
-              <CloseIconWhite />
+              <CircledCloseIcon />
             )}
           </div>
           <div>

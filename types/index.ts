@@ -37,10 +37,47 @@ export type layers = {
   propertyId: number;
 };
 
+export interface Document {
+    id: number;
+    filePath: string;
+    userId: number;
+    requestDocumentId: number;
+    createdAt: string;
+    updateAt: string;
+}
+
+export interface RequestDocument {
+    id: number;
+    userId: number;
+    actionType: string;
+    status: string;
+    description: string;
+    referenceId: number;
+    dateCreated: string;
+    dateUpdated: string;
+    document: Document;
+    previewUrl: string;
+}
+
 export type propertyStatus = {
   id: number;
   type: string;
 };
+
+export type requestDocument ={
+  actionType: string;
+  dateCreated : string;
+  dateUpdated : string;
+  description : string;
+  id: number;
+  referenceId : number;
+  status : string;
+  userId: number;
+}
+
+type metadata = {
+  endTime : Date;
+}
 
 export type PropertyData = {
   id?: number | string;
@@ -73,7 +110,10 @@ export type PropertyData = {
   status?:number;
   type?:string;
   hasPlanningPermission?:string | null;
+  requestDocument?:requestDocument;
+  metadata?:metadata;
 };
+
 export type User = {
   KYCStatusId: number;
   blockchainAddress: string;
@@ -100,6 +140,7 @@ export type User = {
   } | null;
   usedReferralCodeId: number | null;
   isUserRewardClaimed: boolean;
+  requestDocument: RequestDocument[]
 };
 
 interface Reward {
@@ -160,14 +201,6 @@ export type RentTokenResponse = {
 
 export interface UserType {
   id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  newsletter: boolean;
-  KYCStatusId: number;
-}
-
-export interface PersonalInformationType {
   name: string;
   email: string;
   phoneNumber: string;
@@ -270,3 +303,21 @@ export type defaultData = {
   ],
 };
 
+export enum StatusTypes {
+  NotAttempted = 0,
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+  Completed = 4,
+  Failed = 5,
+  Expired = 6,
+  Declined = 7,
+  DocumentError = 8,
+}
+
+export enum RequestDocumentStatus {
+  NOT_SUBMITTED = 'NOT_SUBMITTED',
+  SUBMITTED = 'SUBMITTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}

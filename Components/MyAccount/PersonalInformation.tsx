@@ -1,10 +1,10 @@
 
 import React, { FormEvent, useState } from 'react';
-import { PersonalInformationType } from '../../types';
+import { User } from '../../types';
 
 interface PersonalInformationProps {
-    personalInformation: PersonalInformationType;
-    setPersonalInformation: React.Dispatch<React.SetStateAction<PersonalInformationType>>
+    personalInformation: User;
+    setPersonalInformation: React.Dispatch<React.SetStateAction<User>>
     isPhoneNumberValid: boolean;
     errorMessage: string;
     isLoading: boolean;

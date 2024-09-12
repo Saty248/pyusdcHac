@@ -1,6 +1,9 @@
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
 import { UserIcon } from "./Shared/Icons";
+import { AccountNotificationIcon } from "./Icons";
+import { useState } from "react";
+import { useMobile } from "@/hooks/useMobile";
 
 interface PageHeaderProps {
   pageTitle: string;
@@ -8,27 +11,38 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle }) => {
   const { user } = useAuth();
+  const { isMobile } = useMobile();
 
   return (
-    <div className="relative w-full z-30 flex flex-col">
+    <div className=" w-full z-30 flex flex-col">
       <div
         className="flex items-center justify-between py-[25.5px] md:pb-[23px] md:pt-[32px] md:pl-[39.71px] md:pr-[41px] text-[#222222] bg-white"
-        style={{ boxShadow: "0px 2px 12px 0px #00000014" }}
+        style={isMobile ?{ boxShadow: "0px 2px 12px 0px rgba(58, 77, 233, 0.2)" }:{boxShadow: "0px 2px 12px 0px #00000014"}}
       >
-        <p className="md:text-2xl text-xl font-normal md:font-medium mx-auto md:m-0">
-          {pageTitle}
-        </p>
-        {
-                user?.blockchainAddress?<Link href={'/my-account'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
-                    <div className="w-6 h-6"><UserIcon /></div>
-                    <p className='md:block hidden'>{user?.name}</p>
+    {isMobile ? (
+        <p className="text-xl font-normal mx-auto">
+        {pageTitle}
+      </p>
+    ) : (
+      <p className="text-2xl font-medium m-0">
+      {pageTitle}
+     </p>
+    )}
+    <div className="md:block hidden">
+      <div className=" flex  justify-center items-center ">
+            {
+               user?.blockchainAddress?<Link href={'/my-account'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
+                    <div className="w-6 h-6  "><UserIcon /></div>
+                    <p className=''>{user?.name}</p>
                 </Link>
                 :
                 <Link href={'/auth'} className="gap-[14px] items-center absolute md:flex md:relative left-[19px]">
                     <div className="w-6 h-6"><UserIcon /></div>
-                    <p className='md:block hidden'>Login or Register</p>
+                    <p className=''>Login or Register</p>
                 </Link>
                 }
+       </div>
+       </div>
       </div>
     </div>
   );

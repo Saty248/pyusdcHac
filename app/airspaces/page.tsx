@@ -3,10 +3,9 @@
 import useAuth from "../../hooks/useAuth";
 import { useMobile } from "../../hooks/useMobile";
 import PropertiesService from "../../services/PropertiesService";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import mapboxgl, { LngLat } from "mapbox-gl";
-import maplibregl, { Marker } from "maplibre-gl";
 import { toast } from "react-toastify";
 import { removePubLicUserDetailsFromLocalStorage, removePubLicUserDetailsFromLocalStorageOnClose } from "../../helpers/localstorage";
 import axios from "axios";
@@ -17,18 +16,28 @@ import Sidebar from "../../Components/Shared/Sidebar";
 import PageHeader from "../../Components/PageHeader";
 import ExplorerMobile from "../../Components/Airspace/Explorer/ExplorerMobile";
 import HowToModal from "../../Components/Airspace/HowToModal";
-import {ClaimModal} from "../../Components/Airspace/ClaimModal/ClaimModal";
+import { ClaimModal } from "../../Components/Airspace/ClaimModal/ClaimModal";
 import SuccessModal from "../../Components/Airspace/SuccessModal";
 import Explorer from "../../Components/Airspace/Explorer/Explorer";
 import Slider from "../../Components/Airspace/Slider";
 import SuccessPopUp from "../../Components/Airspace/SuccessPopUp";
 import FailurePopUp from "../../Components/Airspace/FailurePopUp";
 import Link from "next/link";
-import { HelpQuestionIcon } from "../../Components/Icons";
+import { ChevronRightIcon, HelpQuestionIcon, LocationPointIcon } from "../../Components/Icons";
 import ZoomControllers from "../../Components/ZoomControllers";
 import { useTour } from "@reactour/tour";
+import { defaultData, StatusTypes } from "../../types";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import PolygonTool from "../../Components/PolygonTool";
 import React from "react";
-import { defaultData } from "../../types";
+import VerificationPopup from "@/Components/MyAccount/VerificationPopup";
+import MyMobileAirspacesPage from "@/Components/Airspace/ClaimedAirspaceList";
+import AirspaceRentalService from "@/services/AirspaceRentalService";
+
+interface Address {
+  id: string;
+  place_name: string;
+}
 
 const Airspaces: React.FC = () => {
 
@@ -48,8 +57,8 @@ const Airspaces: React.FC = () => {
     longitude: "",
     latitude: "",
   });
-  const [marker, setMarker] = useState<mapboxgl.Marker| null>(null);
-  const defaultData:defaultData = {
+  const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
+  const defaultData: defaultData = {
     address: address,
     title: "",
     rent: true,
@@ -83,9 +92,50 @@ const Airspaces: React.FC = () => {
   // database
   const { claimProperty } = PropertiesService();
 
-  const { user, redirectIfUnauthenticated,setAndClearOtherPublicRouteData } = useAuth();
+  const { user, redirectIfUnauthenticated, setAndClearOtherPublicRouteData } = useAuth();
   const searchParams = useSearchParams()
   const pathname = usePathname()
+
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [drawTool, setDrawTool] = useState(null);
+  const [isDrawMode, setIsDrawMode] = useState(false);
+  const [dontShowAddressOnInput, setDontShowAddressOnInput] = useState(false);
+  const [showAirspacePage, setShowAirspacePage] = useState(false);
+  const [airspaces, setAirspaces] = useState<any[]>([]);
+  const [totalAirspace, setTotalAirspace] = useState(0);
+
+
+  const { getTotalAirspacesByUserAddress } = AirspaceRentalService();
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const airspaces = await getTotalAirspacesByUserAddress(
+          user?.blockchainAddress
+        );
+
+        if (airspaces && airspaces.previews) {
+          let retrievedAirspaces = airspaces.previews.map((item: any) => ({
+            address: item.address,
+            id: item?.id,
+          }));
+          if (retrievedAirspaces.length > 0) {
+            setAirspaces(retrievedAirspaces);
+            setTotalAirspace(airspaces.total);
+          } else {
+            console.info("No airspaces found.");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [user]);
+
+  if (!user) {
+    return <Spinner />;
+  }
 
   //removes cached airspaceData when address is in coOrdinates
   useLayoutEffect(() => {
@@ -100,6 +150,7 @@ const Airspaces: React.FC = () => {
   // new map is created if not rendered
   useEffect(() => {
     if (map) return;
+    if (!user) return;
 
     const createMap = () => {
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
@@ -116,6 +167,16 @@ const Airspaces: React.FC = () => {
         // attributionControl: false
       });
 
+      const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+        defaultMode: "draw_polygon",
+      });
+      setDrawTool(draw);
+
       newMap.on("render", function () {
         newMap.resize()
       });
@@ -127,7 +188,7 @@ const Airspaces: React.FC = () => {
             type: "geojson",
             data: {
               type: "Feature",
-              properties:[],
+              properties: [],
               geometry: {
                 type: "Polygon",
                 coordinates: [],
@@ -141,6 +202,36 @@ const Airspaces: React.FC = () => {
         });
       });
 
+      const handleCoordinates = async (e) => {
+        setIsDrawMode(true);
+        setIsLoading(true);
+        const drawnFeatures = draw.getAll();
+        if (drawnFeatures.features.length > 0) {
+          const coordinates = drawnFeatures.features[0].geometry.coordinates[0][0]
+          let el = document.createElement("div");
+          el.id = "markerWithExternalCss";
+          new mapboxgl.Marker(el).setLngLat(coordinates).addTo(newMap);
+          const longitude = coordinates[0];
+          const latitude = coordinates[1];
+          setCoordinates({ longitude, latitude });
+          const response = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`
+          );
+          const data = await response.json();
+          setDontShowAddressOnInput(true)
+          if (data.features && data.features.length > 0) {
+            setAddress(data.features[0].place_name);
+            setData((prev) => { return { ...prev, address: data.features[0].place_name } })
+            setShowClaimModal(true);
+            setFlyToAddress(data.features[0].place_name);
+          }
+        }
+        setIsDrawMode(false);
+      };
+
+      newMap.on("draw.create", handleCoordinates);
+      newMap.on("draw.update", handleCoordinates);
+
       setMap(newMap);
 
       //doesnt move the map to iplocation when user persisted initial state in 
@@ -151,26 +242,28 @@ const Airspaces: React.FC = () => {
 
     };
     createMap();
-  }, []);
+  }, [user]);
 
 
   //gets address suggestions 
   useEffect(() => {
+    if (isDrawMode) {
+      setIsDrawMode(false)
+      return
+    }
+
     if (!address) return setShowOptions(false);
 
     let timeoutId: NodeJS.Timeout;
 
     const getAddresses = async () => {
-      setCoordinates({ longitude: "", latitude: "" });
 
       timeoutId = setTimeout(async () => {
         try {
           const mapboxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
 
           const response = await fetch(mapboxGeocodingUrl);
-
           if (!response.ok) throw new Error("Error while getting addresses");
-
           const data = await response.json();
           if (data.features && data.features.length > 0) {
             setAddresses(data.features);
@@ -190,62 +283,55 @@ const Airspaces: React.FC = () => {
 
   //flies to the new address
   useEffect(() => {
-    if (!flyToAddress) return;
+    const propertyAddress = searchParams?.get('propertyAddress')
+    if ((!flyToAddress || flyToAddress == '') && !propertyAddress) return;
 
     const goToAddress = async () => {
       try {
         setIsLoading(true);
-
-        const mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
-
+        let mapBoxGeocodingUrl;
+        if (flyToAddress) {
+          mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${flyToAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+        } else {
+          mapBoxGeocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${propertyAddress}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_KEY}`;
+        }
         const response = await fetch(mapBoxGeocodingUrl);
-
         if (!response.ok)
           throw new Error("Error while getting new address location");
-
         const data = await response.json();
-
         if (!data.features || data.features.length === 0) {
           throw new Error("Address not found");
         }
-
         const coordinates = data.features[0].geometry.coordinates;
-        const endPoint = [coordinates[0], coordinates[1]];
-        let  temp:mapboxgl.LngLatLike={lng:coordinates[0] ,lat:coordinates[1]}
+        let temp: mapboxgl.LngLatLike = { lng: coordinates[0], lat: coordinates[1] }
         setCoordinates({ longitude: coordinates[0], latitude: coordinates[1] });
         setIsLoading(false);
         setAddress(data.features[0]?.place_name)
-
         map?.flyTo({
           center: temp,
           zoom: 16,
         });
-
-        if (marker) {
-          marker.remove();
-        }
-
-
-
-        // Add the new marker to the map and update the marker state
-        const newMarker = new mapboxgl.Marker({
-          color: "#3FB1CE",
-          
-      })
-          .setLngLat(temp)
-          .addTo(map as mapboxgl.Map);
-          
-        setMarker(newMarker);
       } catch (error) {
         setIsLoading(false);
-        console.error(error);
-
         toast.error("invalid address")
       }
     };
-
     goToAddress();
   }, [flyToAddress, map]);
+  useEffect(() => {
+    if (map && coordinates?.latitude !== "" && coordinates?.longitude !== "") {
+      let temp: mapboxgl.LngLatLike = { lng: Number(coordinates.longitude), lat: Number(coordinates?.latitude) }
+      if (marker) {
+        marker.remove();
+        setMarker(null)
+      }
+      const newMarker = new mapboxgl.Marker({
+        color: "#3FB1CE",
+      }).setLngLat(temp)
+        .addTo(map as mapboxgl.Map);
+      setMarker(newMarker);
+    }
+  }, [map, coordinates.latitude, coordinates.longitude])
 
   //adds address for the new address
   useEffect(() => {
@@ -255,18 +341,18 @@ const Airspaces: React.FC = () => {
 
     if ((propertyAddress || geoLocation) && !address) {
       // this condition prevent rerenderings,
-      if(isMobile){
+      if (isMobile) {
         setShowMobileMap(true)
       }
       if (((propertyAddress && propertyAddress.length > 2) || (geoLocation && geoLocation.length > 2))) {
         if (geoLocation) {   // prioritizing the geolocation over Property Address as it is more consistant             
           setFlyToAddress(geoLocation)
-        } else if (propertyAddress){
+        } else if (propertyAddress) {
           setFlyToAddress(propertyAddress)
         }
       }
-      
-    
+
+
     }
 
     if (flyToAddress === address) setShowOptions(false);
@@ -338,16 +424,15 @@ const Airspaces: React.FC = () => {
     }
   }, [isOpen]);
 
-  const onClaim = async () => {
+  const onClaim = async (_address?: string) => {
     try {
       const isRedirecting = redirectIfUnauthenticated();
-      
-      if (isRedirecting)
-        {
-          setAndClearOtherPublicRouteData("airSpaceData", data)
 
-          return;
-        } 
+      if (isRedirecting) {
+        setAndClearOtherPublicRouteData("airSpaceData", data)
+
+        return;
+      }
       if (!user) return;
 
       setClaimButtonLoading(true);
@@ -374,7 +459,7 @@ const Airspaces: React.FC = () => {
       }
 
       const postData = {
-        address,
+        address: _address || address,
         ownerId: user.id,
         propertyStatusId: 0,
         hasChargingStation,
@@ -418,7 +503,11 @@ const Airspaces: React.FC = () => {
         setShowSuccessPopUp(true);
         setShowClaimModal(false);
         setData({ ...defaultData });
+        if (user?.KYCStatusId === StatusTypes.NotAttempted) {
+          setShowPopup(true);
+        }
       }
+      setDontShowAddressOnInput(false)
     } catch (error) {
       console.error(error);
       toast.error("Error when creating property.")
@@ -434,28 +523,37 @@ const Airspaces: React.FC = () => {
     }
     try {
       const propertyAddress = searchParams?.get('propertyAddress')
-    const geoLocation = searchParams?.get('geoLocation');
+      const geoLocation = searchParams?.get('geoLocation');
 
-      if(propertyAddress || geoLocation){
+      if (propertyAddress || geoLocation) {
         //do nothing
       }
-      else{
+      else {
         const ipResponse = await axios.get("https://api.ipify.org/?format=json");
-      const ipAddress = ipResponse.data.ip;
-      const ipGeolocationApiUrl = await axios.get(
-        `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
-      );
-      const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
-      const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
+        const ipAddress = ipResponse.data.ip;
+        const ipGeolocationApiUrl = await axios.get(
+          `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEOLOCATION}&ip=${ipAddress}`
+        );
+        const latitude = parseFloat(ipGeolocationApiUrl.data.latitude);
+        const longitude = parseFloat(ipGeolocationApiUrl.data.longitude);
 
-      if (isNaN(latitude) || isNaN(longitude)) {
-        return;
+        if (isNaN(latitude) || isNaN(longitude)) {
+          return;
+        }
+        map.flyTo({
+          center: [longitude, latitude],
+          zoom: 15,
+        });
+        if (marker) {
+          marker.remove();
+          setMarker(null)
+        }
+        const newMarker = new mapboxgl.Marker({
+          color: "#3FB1CE",
+        }).setLngLat({ lng: longitude, lat: latitude })
+          .addTo(map as mapboxgl.Map);
+        setMarker(newMarker);
       }
-      map.flyTo({
-        center: [longitude, latitude],
-        zoom: 15,
-      });
-    }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -465,10 +563,11 @@ const Airspaces: React.FC = () => {
     setAddress(value)
     if (!showOptions) setShowOptions(true)
   }
-  const handleOpenAirspaceMap = () =>{
+  const handleOpenAirspaceMap = () => {
     setShowHowToModal(false);
     setShowMobileMap(true);
-  } 
+  }
+  const router = useRouter();
   return (
     <Fragment>
       <Head>
@@ -477,24 +576,85 @@ const Airspaces: React.FC = () => {
       {isLoading && <Backdrop />}
       {isLoading && <Spinner />}
 
-      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded bg-[#F0F0FA]">
-        {!isMobile && <Sidebar />}
-        <div className="flex h-full w-full flex-col">
+      <div className="relative rounded bg-[#F6FAFF] h-screen w-screen flex items-center justify-center overflow-hidden">
+        <Sidebar />
+        <div className="w-full h-full flex flex-col overflow-scroll md:overflow-hidden">
           {!showMobileMap && <PageHeader pageTitle={"Airspaces"} />}
           {((showMobileMap && isMobile) ||
             (isOpen && currentStep === 1 && isMobile)) && (
-            <ExplorerMobile
-              onGoBack={() => setShowMobileMap(false)}
-              address={address}
-              setAddress={handleSetAddress}
-              addresses={addresses}
-              showOptions={showOptions}
-              handleSelectAddress={(value) => handleSelectAddress(value)}
-            />
-          )}
+              <ExplorerMobile
+                onGoBack={() => setShowMobileMap(false)}
+                address={address}
+                setAddress={handleSetAddress}
+                addresses={addresses}
+                showOptions={showOptions}
+                handleSelectAddress={(value) => handleSelectAddress(value)}
+              />
+            )}
+
+          <div>
+            {isMobile && showOptions && addresses.length > 0 && (
+              <div className="w-full flex items-center justify-center bg-white pb-[18px]">
+                <div className=" p-[16px] w-[345px] flex flex-col items-center justify-center border border-blue-500 rounded-lg ">
+                  <div className="w-[301px]">
+                    {addresses.slice(0, 1).map((item: Address) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleSelectAddress(item.place_name)}
+                        className="w-full text-left text-[#222222]"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-[10%] h-6 mr-3">
+                            <LocationPointIcon />
+                          </div>
+                          <div className="w-[90%] text-[14px]">
+                            {item.place_name}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {((isMobile && showMobileMap) || (isOpen && currentStep === 2 && isMobile)) && (
+                      <div
+                        onClick={() => {
+                          setShowClaimModal(true);
+                          setIsLoading(true);
+                        }}
+                        className="mt-2 w-[301px] rounded-lg bg-[#0653EA] py-4 text-center text-white cursor-pointer"
+                        style={{ maxWidth: "400px" }}
+                      >
+                        Claim Airspace
+                      </div>
+                    )}
+                  </div>
+
+
+                </div>
+              </div>
+            )}
+          </div>
+
           {showHowToModal && (
-            <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap}/>
+            <HowToModal goBack={() => setShowHowToModal(false)} handleOpenAirspaceMap={handleOpenAirspaceMap} />
           )}
+
+          {isMobile && showAirspacePage && (
+            <MyMobileAirspacesPage setShowAirspacePage={setShowAirspacePage} airspaces={airspaces} />
+          )}
+
+          {isMobile && showMobileMap && !showAirspacePage && (
+            <div onClick={() => { setShowAirspacePage(true) }} className='flex fixed bottom-[76px] left-0 w-full z-40 bg-white'>
+              <div className="bg-white w-full p-4 shadow-md flex items-center">
+                <div className="flex items-center justify-between  gap-8 w-[375px] h-[50px] px-4">
+                  <p className='text-xl font-[500px] flex gap-4 items-center'>My Airspaces  {!isLoading && (<span className="text-[15px] font-normal rounded-full border-2 border-black flex items-center justify-center h-8 w-8"> {totalAirspace}</span>)}</p>
+                  <div className="w-5 h-5">
+                    <ChevronRightIcon />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
 
           <section
             className={`relative flex h-full w-full items-start justify-start md:mb-0 ${showMobileMap ? "" : "mb-[79px]"}`}
@@ -504,35 +664,27 @@ const Airspaces: React.FC = () => {
               id="map"
               style={{
                 opacity: !isMobile ? "1" : showMobileMap ? "1" : "0",
-                zIndex: !isMobile ? "20" : showMobileMap ? "20" : "-20",
+                zIndex: !isMobile ? "20" : showMobileMap ? "10" : "-20",
               }}
             />
-             {((isMobile && showMobileMap && flyToAddress) || (isOpen && currentStep === 2 && isMobile)) && (
-              <div
-                onClick={() => {
-                  setShowClaimModal(true);
-                  setIsLoading(true);
-                }}
-                className="Claim-airspacebtn-step absolute  bottom-[128px] right-[14px]  translate-y-[28px]  left-1/2 z-[25] w-[90%] -translate-x-1/2 cursor-pointer rounded-lg bg-[#0653EA] py-[16px] text-center text-[15px] font-normal text-white"
-              >
-                Claim Airspace
-              </div>
-            )}
             {isMobile && (
               <Fragment>
                 {(showClaimModal || (isOpen && currentStep >= 3)) && (
                   <ClaimModal
                     onCloseModal={() => {
+                      setDontShowAddressOnInput(false)
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
-                      setData({...defaultData})
+                      setData({ ...defaultData })
 
                     }}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
                 {(showSuccessPopUp || showFailurePopUp) && <SuccessModal errorMessages={errorMessages} isSuccess={showSuccessPopUp} closePopUp={() => {
@@ -555,20 +707,26 @@ const Airspaces: React.FC = () => {
                   }}
                 />
                 <div className="hidden sm:block"><Slider /></div>
-                {showSuccessPopUp &&<SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
-                {showFailurePopUp &&<FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
+                {showSuccessPopUp && <SuccessPopUp isVisible={showSuccessPopUp} setShowSuccessPopUp={setShowSuccessPopUp} />}
+                {showFailurePopUp && <FailurePopUp isVisible={showFailurePopUp} errorMessages={errorMessages} />}
+                {!showSuccessPopUp && !isMobile && (<div>
+                  <PolygonTool drawTool={drawTool} map={map} isDrawMode={isDrawMode} setDrawMode={setIsDrawMode} />
+                </div>
+                )}
                 {(showClaimModal || (isOpen && currentStep >= 2)) && (
                   <ClaimModal
                     onCloseModal={() => {
                       removePubLicUserDetailsFromLocalStorageOnClose('airSpaceData')
                       setShowClaimModal(false);
                       setIsLoading(false);
-                      setData({...defaultData})
+                      setData({ ...defaultData })
                     }}
                     data={data}
                     setData={setData}
                     onClaim={onClaim}
                     claimButtonLoading={claimButtonLoading}
+                    dontShowAddressOnInput={dontShowAddressOnInput}
+                    setDontShowAddressOnInput={setDontShowAddressOnInput}
                   />
                 )}
               </div>
@@ -625,6 +783,7 @@ const Airspaces: React.FC = () => {
                 </div>
               </div>
             )}
+            {showPopup && <VerificationPopup onVerifyMyAccount={() => router.push('/my-account')} />}
             <div className="hidden sm:block">
               <ZoomControllers map={map} />
             </div>
