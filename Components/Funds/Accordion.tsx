@@ -22,6 +22,10 @@ const supportedMethods = [
     icon: "/images/LI-FI.svg",
     name: "LI.FI",
   },
+  {
+    icon: "/images/transak.svg",
+    name: "Transak",
+  },
 ];
 
 const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: AccordionProps) => {
@@ -65,7 +69,7 @@ const Accordion = ({ selectedMethod, setSelectedMethod, activeSection }: Accordi
           <div className=" p-4">
             <ul>
               {supportedMethods.map((method, index) => {
-                if (activeSection === 1 && method.name === "Ramp") return null;
+                if ((activeSection === 1 && method.name === "Ramp") || (activeSection === 1 && method.name === "Transak")) return null;
                 else {
                   return (
                     <li

@@ -176,7 +176,7 @@ const Sidebar = () => {
         <SidebarItem onClick={() => setIsCollapsed(prev => !prev)} text={'Collapse'} children={isCollapsed ? <ArrowExpandIcon isActive={false} /> : <ArrowCompressIcon isActive={false} />} />
       </aside>
       {isMobile && !showMobileNavbar && (
-        <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar '>
+        <nav className='flex fixed bottom-0 left-0 w-full z-50 bg-white overflow-y-scroll no-scrollbar border-t-2 '>
           <SidebarItemMobile href={'/dashboard'} text={"Dashboard"} children={<DashboardIcon isActive={false} />} numberOfUnseenNotifications={0} />
           <SidebarItemMobile href={'/airspaces'} text={"Airspaces"} children={<GiftIconsidebar isActive={false} />} numberOfUnseenNotifications={0} />
           <SidebarItemMobile href={'/marketplace'} text={"Marketplace"} children={<MapIcon isActive={false} />} numberOfUnseenNotifications={0} />
